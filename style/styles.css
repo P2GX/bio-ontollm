@@ -1,0 +1,195 @@
+/* style.css */
+
+/* 1. Global Font Size for the entire presentation */
+:root {
+  --r-main-font-size: 28px; /* Default is usually ~40px. Adjust this number. */
+  --r-heading-margin: 20px;
+}
+
+/* 2. Specifically target the slide content area */
+.reveal .slides section {
+  font-size: 0.85em; /* This shrinks everything inside a slide to 85% of the root */
+}
+
+/* 3. Keep headings slightly larger but proportional */
+.reveal h1, .reveal h2, .reveal h3 {
+  margin-bottom: 30px;
+  font-size: 1.6em; /* Adjusts the "Header" scale */
+}
+
+
+/* 1. Make the table container small and centered */
+.small-table table {
+  font-size: 0.55em !important; 
+  line-height: 1.1 !important;
+  width: 95% !important;
+  margin-left: auto;
+  margin-right: auto;
+  border-collapse: collapse;
+}
+
+/* 2. Tighten the cell spacing */
+.small-table td, .small-table th {
+  padding: 4px 8px !important;
+  border: 1px solid #ddd !important;
+}
+
+/* 3. Style the headers */
+.small-table th {
+  background-color: #f2f2f2 !important;
+  font-weight: bold !important;
+  letter-spacing: 1px;
+}
+
+/* 4. Highlight the first column (The Tokens) */
+.small-table td:first-child {
+  background-color: #ffffff !important;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 5. Custom class for the red results from your image */
+.pe-result {
+  color: #a52a2a;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+
+/* Bottom Bar for Tables */
+.slide-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  font-size: 0.5em !important;
+  color: #666;
+  border-top: 1px solid #eee;
+  padding-top: 5px;
+}
+
+/* style.css */
+video {
+  width: 90% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* style.css */
+.callout {
+  font-size: 0.75em !important; /* Matches your smaller slide text */
+  border-left: 5px solid #1f77b4 !important; /* Transformer-blue accent */
+  background-color: #f8f9fa;
+  margin: 10px 0;
+}
+
+.callout-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #1f77b4;
+}
+
+
+/* style/styles.css */
+
+/* Target the footer container */
+.reveal .footer {
+  display: flex !important;
+  justify-content: space-between; /* Pushes content to the edges */
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  font-size: 0.4em; /* Adjust based on your global font shrink */
+}
+
+/* Force the logo to the absolute left */
+.footer-logo {
+  height: 35px !important; 
+  margin-left: 50px !important;
+  margin-right: auto;      /* Pushes following text away */
+  vertical-align: middle;
+}
+
+/* Ensure slide numbers stay at the far right and don't overlap */
+.reveal .slide-number {
+  bottom: 8px !important;
+  right: 20px !important;
+  background: transparent !important;
+  font-size: 0.4em !important;
+}
+
+/* style/styles.css */
+
+.hl-container {
+  position: relative;
+  display: inline-block;
+}
+
+.hl-box {
+  position: absolute;
+  border: 4px solid #1D9A73; /* BIH Green */
+  border-radius: 8px;
+  box-shadow: 0 0 15px #1D9A73;
+  pointer-events: none; /* Allows you to click 'through' the box */
+  z-index: 10;
+  /* Simple pulse animation */
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* style/styles.css */
+
+.toc-list {
+  list-style: none !important;
+  margin-left: 0 !important;
+  font-family: 'Arial', sans-serif;
+}
+
+.toc-item {
+  font-size: 1.2em;
+  color: #ccc; /* Dimmed color */
+  margin-bottom: 20px;
+  padding-left: 15px;
+  border-left: 5px solid transparent;
+  transition: all 0.4s ease;
+}
+
+.toc-active {
+  color: #1D9A73 !important; /* BIH Green */
+  border-left: 5px solid #1D9A73 !important;
+  font-weight: bold;
+  transform: translateX(20px); /* Subtle indentation shift */
+}
+
+.dimmed {
+  opacity: 0.3;
+  filter: grayscale(100%);
+}
+
+
+/* Neon Red Pulsing Effect */
+.neon-todo {
+  color: #ff0000;
+  font-weight: bold;
+  text-shadow: 0 0 2px #ff0000, 0 0 4px #ff0000;
+  animation: pulse-red 1.5s infinite alternate;
+}
+
+@keyframes pulse-red {
+  from {
+    text-shadow: 0 0 2px #ff0000, 0 0 5px #ff0000;
+    transform: scale(1);
+  }
+  to {
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
+    transform: scale(1.02);
+  }
+}
