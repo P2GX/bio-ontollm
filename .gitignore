@@ -196,3 +196,4 @@ __marimo__/
 **/*.quarto_ipynb
 
 transformer1.html
+temp.*

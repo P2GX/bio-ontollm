@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" style="background-color: #fff;">
+  <rect x="20" y="40" width="360" height="520" rx="15" fill="#fdfdfd" stroke="#333" stroke-width="2" stroke-dasharray="8,5" />
+  <text x="40" y="30" font-family="Arial, sans-serif" font-weight="bold" font-size="18" fill="#333">Encoder Layer (Nx)</text>
+
+  <g transform="translate(100, 80)">
+    <rect x="0" y="0" width="200" height="50" rx="5" fill="#93c5fd" stroke="#3b82f6" stroke-width="2"/>
+    <text x="100" y="30" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="14">Feed Forward</text>
+  </g>
+
+  <g transform="translate(100, 160)">
+    <rect x="0" y="0" width="200" height="40" rx="20" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+    <text x="100" y="25" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="14">Add &amp; Norm</text>
+  </g>
+
+  <g transform="translate(100, 300)">
+    <rect x="0" y="0" width="200" height="50" rx="5" fill="#fdba74" stroke="#f97316" stroke-width="2"/>
+    <text x="100" y="30" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="14">Multi-Head Attention</text>
+  </g>
+
+  <g transform="translate(100, 380)">
+    <rect x="0" y="0" width="200" height="40" rx="20" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+    <text x="100" y="25" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="14">Add &amp; Norm</text>
+  </g>
+
+  <path d="M100 500 H50 V180 H100" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5" />
+  <path d="M100 280 H50 V105 H100" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5" />
+
+  <line x1="200" y1="540" x2="200" y2="420" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="200" y1="380" x2="200" y2="350" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="200" y1="300" x2="200" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="200" y1="160" x2="200" y2="130" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="200" y1="80" x2="200" y2="50" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orientation="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#333" />
+    </marker>
+  </defs>
+</svg>

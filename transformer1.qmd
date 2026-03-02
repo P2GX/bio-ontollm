@@ -76,12 +76,11 @@ This lecture is the first of ??? about the transformer algorithm and selected ap
 
 ::: {.toc-item}
 3. Multi-head attention
-   <br><span style="font-size: 0.6em; font-weight: normal; color: #666;">
-   • Todo<br>
-   • Todo (ReLU/GELU)
-   </span>
 :::
 
+::: {.toc-item}
+4. Layer Normalization
+:::
 
 :::
 :::
@@ -251,10 +250,10 @@ $$
 
 ::: {.toc-item}
 3. Multi-head attention
-   <br><span style="font-size: 0.6em; font-weight: normal; color: #666;">
-   • Todo<br>
-   • Todo (ReLU/GELU)
-   </span>
+:::
+
+::: {.toc-item}
+4. Layer Normalization
 :::
 
 
@@ -584,7 +583,7 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 :::
 
 
-# Section 3: Still completely todo
+# Section 3: Multi-head attention
 
 ::: {.columns}
 
@@ -592,7 +591,7 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 ::: {.hl-container}
 ![](https://d2l.ai/_images/transformer.svg){width="100%"}
 
-::: {.hl-box style="top: 28%; left: 10%; width: 35%; height: 15%;"}
+::: {.hl-box style="top: 60%; left: 15%; width: 23%; height: 8%;"}
 :::
 :::
 :::
@@ -610,12 +609,11 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 
 ::: {.toc-item .toc-active}
 3. Multi-head attention
-   <br><span style="font-size: 0.6em; font-weight: normal; color: #666;">
-   • todo<br>
-   • todo
-   </span>
 :::
 
+::: {.toc-item}
+4. Layer Normalization
+:::
 
 
 :::
@@ -624,6 +622,466 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 :::
 ---
 
-## Multi-head attention
 
-- Explain single-head attention and wave hands
+## The Encoder: Multi-head attention
+
+::: {.columns}
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| out-height: "65vh"
+#| fig-align: center
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+def draw_encoder_compact(highlight=None):
+    fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 10) 
+    ax.axis('off')
+
+    colors = {
+        'mha': '#fdba74', 'ffn': '#93c5fd', 'norm': '#e2e8f0',
+        'text': '#333333', 'highlight': '#1D9A73', 'residual': '#64748b'
+    }
+
+    def draw_box(y, text, color, key):
+        is_hl = (highlight == key)
+        rect = patches.FancyBboxPatch((2.5, y), 5, 0.8, boxstyle="round,pad=0.1", 
+                                      linewidth=3 if is_hl else 1.5, 
+                                      edgecolor=colors['highlight'] if is_hl else '#333333', 
+                                      facecolor=color)
+        ax.add_patch(rect)
+        ax.text(5, y + 0.4, text, ha='center', va='center', fontsize=10, fontweight='bold')
+
+    ax.plot([5, 5], [0.2, 0.8], color='#333', lw=1.5)
+    ax.plot([3.5, 6.5], [0.8, 0.8], color='#333', lw=1.5)
+    for x, label in zip([3.5, 5, 6.5], ['K', 'Q', 'V']):
+        ax.plot([x, x], [0.8, 1.5], color='#333', lw=1.5)
+        ax.text(x, 1.1, label, ha='center', va='center', fontsize=9, fontweight='bold', backgroundcolor='white')
+
+    # --- MHA ---
+    draw_box(1.5, "Multi-Head Attention", colors['mha'], 'mha')
+    
+    # Residual 1
+    ax.plot([5, 1, 1], [0.6, 0.6, 3.2], color=colors['residual'], lw=1.2, ls='--')
+    ax.annotate('', xy=(2.5, 3.2), xytext=(1, 3.2), arrowprops=dict(arrowstyle='->', color=colors['residual'], ls='--'))
+
+    # --- Add & Norm 1 ---
+    draw_box(2.8, "Add & Norm", colors['norm'], 'norm1')
+    ax.annotate('', xy=(5, 2.8), xytext=(5, 2.3), arrowprops=dict(arrowstyle='->', lw=1.5))
+
+    # --- FFN ---
+    draw_box(4.5, "Feed Forward (FFN)", colors['ffn'], 'ffn')
+    
+    # Residual 2
+    ax.plot([5, 1, 1], [4.0, 4.0, 6.2], color=colors['residual'], lw=1.2, ls='--')
+    ax.annotate('', xy=(2.5, 6.2), xytext=(1, 6.2), arrowprops=dict(arrowstyle='->', color=colors['residual'], ls='--'))
+
+    # --- Add & Norm 2 ---
+    draw_box(5.8, "Add & Norm", colors['norm'], 'norm2')
+    ax.annotate('', xy=(5, 5.8), xytext=(5, 5.3), arrowprops=dict(arrowstyle='->', lw=1.5))
+
+    # Output
+    ax.annotate('', xy=(5, 7.5), xytext=(5, 6.6), arrowprops=dict(arrowstyle='->', lw=1.5))
+    ax.text(5, 7.8, "Output to Next Layer", ha='center', fontsize=9, fontweight='bold')
+
+    return fig
+
+fig = draw_encoder_compact(highlight='ffn')
+plt.show()
+```
+:::
+
+::: {.column width="50%"}
+### Step 2: Position-wise FFN
+- Tokens "think" individually.
+- Two linear transformations.
+- Non-linear activation (ReLU/GELU).
+:::
+:::
+
+
+
+## Notation
+
+- An input sequence $\mathbf{X}$ is an $n \times d$ matrix ($n$ tokens, $d$ features).
+- Each row is a token (sum of embedding and positional matrix)
+- For each token $x_i$ (a $1 \times d$ row vector):
+$$\underbrace{q_i}_{1 \times 64} = \underbrace{x_i}_{1 \times 768} \times \underbrace{W^Q}_{768 \times 64}$$
+
+- For the entire sequence $X$:
+$$\underbrace{Q}_{n \times 64} = \underbrace{X}_{n \times 768} \times \underbrace{W^Q}_{768 \times 64}, \quad \underbrace{K}_{n \times 64} = \underbrace{X}_{n \times 768} \times \underbrace{W^K}_{768 \times 64}, \quad \underbrace{V}_{n \times 64} = \underbrace{X}_{n \times 768} \times \underbrace{W^V}_{768 \times 64}$$
+
+
+## Learning Weight Matrix $W^K$
+
+- Learned weight matrix
+- Key vectors capture features of the token that are useful for the attention mechanism
+- Helps the model to assess the relevance of each word, such as "crane" within the context of the sentence "The wattled crane is a migratory bird"
+$$
+W^K = \begin{bmatrix}
+w_{11} & w_{12} & \dots  & w_{1d_k} \\
+w_{21} & w_{22} & \dots  & w_{2d_k} \\
+\vdots & \vdots & \ddots & \vdots    \\
+w_{d1} & w_{d2} & \dots  & w_{dd_k}
+\end{bmatrix}_{d \times d_k}
+$$
+
+Here, $d \times d_k = 768\times 64$ in the original implementation of BERT.
+
+---
+
+## The Resulting Key Matrix ($K$)
+
+$$
+K = XW^K = 
+\begin{bmatrix}
+k_{11} & k_{12} & \dots  & k_{1d_k} \\
+k_{21} & k_{22} & \dots  & k_{2d_k} \\
+\vdots & \vdots & \ddots & \vdots    \\
+k_{n1} & k_{n2} & \dots  & k_{nd_k}
+\end{bmatrix}_{n \times d_k}
+$$
+
+Each row of $K$ is the "Key" for a specific token in the input.
+
+The first scalar entry of this matrix corresponds to
+$$k_{1,1} = \sum_{j=1}^{768} x_{1,j} \cdot w_{j,1}$$
+
+- $k_{1,1}$) is the first of 64 coordinates that describe token 1's "Key identity."
+- The entire Key vector for token 1 can be represented as:
+$$k_1 = [x_{1,1}, x_{1,2}, \dots, x_{1,768}] \begin{bmatrix} | & |  && | & \\ w_{col1} & w_{col2} & \dots& w_{col64} \\ | & | && | & \end{bmatrix}$$
+
+---
+
+## Nomenclature
+
+- The weight matrix columns ($\mathbf{w}_j$) are referred to as __projection vectors__. 
+- Each one projects the 768-dimensional input onto a single axis of the 64-dimensional "Key space." (or "Query space")
+
+---
+
+## Learnable Weight Matrix ($W^Q$)
+
+The query vectors are constructed in an analogous way.
+$$
+Q = XW^Q = 
+\begin{bmatrix}
+q_{11} & q_{12} & \dots  & q_{1d_k} \\
+q_{21} & q_{22} & \dots  & q_{2d_k} \\
+\vdots & \vdots & \ddots & \vdots    \\
+q_{n1} & q_{n2} & \dots  & q_{nd_k}
+\end{bmatrix}_{n \times d_k}
+$$
+
+## $W^K$ versus $W^Q$
+
+The Functional RolesThey act as two different "filters" applied to the same input data:
+
+- $W^K$ (The Key Matrix): Learns how to describe a word so it can be found. It extracts features that make a token an attractive match for others (e.g., "I am a verb," "I am a plural noun," "I am the subject").
+- $W^Q$ (The Query Matrix): Learns how to ask a question to find other words. It extracts features that define what the current token needs to understand its own context (e.g., "I am an adjective; where is the noun I modify?" or "I am the word 'it'; what did I refer to earlier?").
+
+- [Todo: find reference/citation for above]{.neon-todo}
+
+---
+
+## Attention Scores
+
+- The attention mechanism compares every Query to every Key.
+- Recall that our query and key vectors are both row-vectors
+- This means that the dot product of the first Query and all Keys is simply $q_1 K^\top$. 
+- The entire matrix of scores is:
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
+
+- We will go through this step-by-step
+
+--- 
+
+## $QK^\top$
+
+- When we multiply $Q$ and $K^\top$, the "hidden" dimensions (64) cancel out
+- We are left with a square matrix representing the relationships between words:$$\underbrace{Q}_{n \times 64} \times \underbrace{K^\top}_{64 \times n} = \underbrace{\text{Scores}}_{n \times n}$$
+
+$$
+QK^\top = 
+\begin{bmatrix}
+q_1 \cdot k_1 & q_1 \cdot k_2 & \dots & q_1 \cdot k_n \\
+q_2 \cdot k_1 & q_2 \cdot k_2 & \dots & q_2 \cdot k_n \\
+\vdots & \vdots & \ddots & \vdots \\
+q_n \cdot k_1 & q_n \cdot k_2 & \dots & q_n \cdot k_n
+\end{bmatrix}_{n \times n}
+$$
+
+## Visualizing the $n \times n$ Matrix
+
+
+$$\underbrace{\text{Attention Scores}}_{n \times n} = 
+\underbrace{
+\begin{bmatrix} 
+\dots & q_1 & \dots \\
+\dots & q_2 & \dots \\
+ & \vdots & \\
+\dots & q_n & \dots 
+\end{bmatrix}
+}_{n \times 64}
+\times
+\underbrace{
+\begin{bmatrix} 
+\vdots & \vdots & & \vdots \\
+k_1^\top & k_2^\top & \dots & k_n^\top \\
+\vdots & \vdots & & \vdots 
+\end{bmatrix}
+}_{64 \times n}
+$$
+
+If we look at a single scalar in this resulting $n \times n$ matrix, it is the dot product:$$\text{Score}_{i,j} = q_i \cdot k_j = \sum_{m=1}^{64} q_{i,m} k_{j,m}$$
+- $i$: The query token.
+- $j$: The key token.
+- If  $i$ aligns with  $j$, this score will be high.
+
+---
+
+## The scaling factor
+
+- The scaling factor $\frac{1}{\sqrt{d_k}}$ is needed to keep the gradients in a good range
+- Assume your $Q$ and $K$ components are independent random variables with a mean of 0 and a variance of 1. 
+- When you take their dot product:
+  
+    -  $\mathbb{E}(q \cdot k)=0\quad\quad$ (Mean).
+    - The Variance of $q \cdot k$ becomes $d_k$ (which is 64).
+    - The high variance will often lead to very large positive numbers or very large negative numbers.
+
+## Proof
+
+
+The dot product $q \cdot k$ for $d_k$ dimensions is defined as:
+
+$$S = \sum_{i=1}^{d_k} q_i k_i$$
+
+To find the variance of $S$, we first look at the variance of a single term $q_i k_i$:$$Var(q_i k_i) = E[(q_i k_i)^2] - (E[q_i k_i])^2$$Mean of the product: Since $q_i$ and $k_i$ are independent, $E[q_i k_i] = E[q_i]E[k_i] = 0 \cdot 0 = 0$.
+
+- Expected value of the square: $E[q_i^2 k_i^2] = E[q_i^2]E[k_i^2]$. Since $Var(X) = E[X^2] - (E[X])^2$, and $E[X]=0$, then $E[X^2] = Var(X) = 1$. 
+- Thus, $E[q_i^2 k_i^2] = 1 \cdot 1 = 1$.Variance of one term: $Var(q_i k_i) = 1 - 0 = 1$.
+
+Now, because the components are independent, the variance of the sum is the sum of the variances:
+
+$$Var(S) = Var\left(\sum_{i=1}^{d_k} q_i k_i\right) = \sum_{i=1}^{d_k} Var(q_i k_i) = \sum_{i=1}^{d_k} 1 = d_k$$
+
+For BERT-Base, where $d_k = 64$, the variance of the raw dot product is 64.
+
+## Scaling
+
+- If we scale by $\dfrac{1}{\sqrt{d_k}}$, the expected variance is 1, which mitigates the problem of exploding/vanishing gradients
+
+## Softmax
+
+$$
+\begin{bmatrix} 
+1.3 \\
+5.1\\
+2.2 \\
+0.7 \\
+1.1
+\end{bmatrix}
+\rightarrow
+\dfrac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}
+\rightarrow
+\begin{bmatrix} 
+0.02 \\
+0.90\\
+0.05 \\
+0.01 \\
+0.02
+\end{bmatrix}
+$$
+
+- The softmax function transforms a set of inputs into a probability-like distribution
+
+## Softmax and attention
+
+- Each row in the $QK^\top$ matrix represents a single word's "view" of the entire sentence.
+- Row 1: How much Word 1 cares about [Word 1, Word 2, ..., Word $n$].
+- Row 2: How much Word 2 cares about [Word 1, Word 2, ..., Word $n$].
+- etc.
+- Since we want each word to "distribute" its attention across the sentence, the scores in each row must sum to 1.0.
+
+$$
+\text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)
+$$
+
+## Softmax and attention (2)
+
+- In detail, the operation looks like this:
+
+$$
+\text{Softmax} \left( 
+\frac{1}{\sqrt{d_k}} \times 
+\underbrace{
+\begin{bmatrix} 
+q_1 \cdot k_1 & q_1 \cdot k_2 & \dots & q_1 \cdot k_n \\
+q_2 \cdot k_1 & q_2 \cdot k_2 & \dots & q_2 \cdot k_n \\
+\vdots & \vdots & \ddots & \vdots \\
+q_n \cdot k_1 & q_n \cdot k_2 & \dots & q_n \cdot k_n
+\end{bmatrix}
+}_{\text{Raw Scores } (n \times n)}
+\right) = 
+\underbrace{
+\begin{bmatrix} 
+\alpha_{1,1} & \alpha_{1,2} & \dots & \alpha_{1,n} \\
+\alpha_{2,1} & \alpha_{2,2} & \dots & \alpha_{2,n} \\
+\vdots & \vdots & \ddots & \vdots \\
+\alpha_{n,1} & \alpha_{n,2} & \dots & \alpha_{n,n}
+\end{bmatrix}
+}_{\text{Attention Weights } (n \times n)}
+$$
+
+In this resulting matrix:
+
+- $\sum_{j=1}^{n} \alpha_{i,j} = 1$ (Each row sums to 1).
+- $\alpha_{1,2}$ is the percentage of attention Word 1 pays to Word 2.
+
+## Value Vectors
+
+- Value vectors contain detailed information about each token
+- They are transformed embeddings that are weighted and summed based on the attention scores
+- Intuitively, the value vector contains the potential meanings of a word, and the attention scores determine which meanings are most relevant withint a given context
+- We get the value vectors analogously from a learned $W^V$
+
+$$
+V = XW^V = 
+\begin{bmatrix}
+v_{11} & v_{12} & \dots  & v_{1d_k} \\
+v_{21} & v_{22} & \dots  & v_{2d_k} \\
+\vdots & \vdots & \ddots & \vdots    \\
+v_{n1} & v_{n2} & \dots  & v_{nd_k}
+\end{bmatrix}_{n \times d_k}
+$$
+
+## Calculating Values
+Now that we have a matrix of Attention Weights ($\alpha$), we use them to take a weighted average of the information stored in the Value matrix ($V$).
+
+1. The Value Matrix ($V$)Just like $Q$ and $K$, the Value matrix is created by projecting the input $X$ through a learnable weight matrix $W^V$:
+$$\underbrace{V}_{n \times 64} = \underbrace{X}_{n \times 768} \times \underbrace{W^V}_{768 \times 64}$$
+
+The Value represents the actual "content" of the word. 
+
+## The Weighted Sum
+
+We take our $n \times n$ attention weights and multiply them by our $n \times 64$ Values.
+
+$$\text{Output} = \underbrace{\text{Softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)}_{n \times n} \times \underbrace{V}_{n \times 64}$$
+
+To see what happens to Word 1, look at the first row of the multiplication:
+
+$$\text{Output}_1 = \alpha_{1,1}v_1 + \alpha_{1,2}v_2 + \dots + \alpha_{1,n}v_n$$   
+
+- The Final Output is a $n \times 64$ matrix representing the context-aware version of each token.
+
+## Multi-Head Assembly
+
+
+In BERT-Base, this happens 12 times in parallel (12 heads). Each head produces an $n \times 64$ output. We concatenate them all together:$$12 \times 64 = 768$$This brings us back to the original $768$ dimensions, which is why the output can be passed directly into the next layer!
+
+- [Todo: Decide where to talk about multi-head stuff]{.neon-todo}
+
+---
+
+# Section 4: Layer Normalization
+
+::: {.columns}
+
+::: {.column width="45%"}
+::: {.hl-container}
+![](https://d2l.ai/_images/transformer.svg){width="100%"}
+
+::: {.hl-box style="top: 54%; left: 15%; width: 23%; height: 4.75%;"}
+:::
+:::
+:::
+
+::: {.column width="55%"}
+::: {.toc-list style="margin-top: 50px;"}
+
+::: {.toc-item}
+1. Embeddings
+:::
+
+::: {.toc-item}
+2. Positional Encodings
+:::
+
+::: {.toc-item }
+3. Multi-head attention
+:::
+
+::: {.toc-item .toc-active}
+4. Layer Normalization
+:::
+
+:::
+:::
+
+:::
+
+---
+
+
+## Layer Normalization (LN)
+
+For any fixed offset $\Delta k$, the encoding at a shifted position can be represented as a linear transformation of the original:
+
+LN greatly contributes to stabilizing training and optimizing performance in deep learning models, especially in transformers. It works by normalizing the activations at each layer, ensuring a more consistent gradient flow during training. 
+
+:::
+
+__Two flavors__:
+
+- Post-LN transformer applies normalization after the addition of the layer’s output with the residual connection’s output.^[Vaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)]
+- Pre-LN transformers [Xiong et al., 2020] apply normalization before self-attention and feed-forward layers. This configuration is used in modern architectures such as GPT, Llama, and Vision Transformers.^[Xiong R, et al., On layer normalization in the transformer architecture. In International Conference on Machine Learning, PMLR, 2020.]
+
+---
+
+## LN step 1: Add
+
+The "Add" part is a Residual Connection (also called a Skip Connection). 
+
+::: {.callout-note icon=false}
+## Add
+Instead of a layer outputting $Sublayer(X)$, it outputs:
+
+$$\text{Output} = X + Sublayer(X)$$
+
+:::
+
+- strictly element-wise addition
+- For instance,  token $i$ and feature $j$ (out of the 768 features):
+
+$$\text{Output}_{i,j} = x_{i,j} + \text{Sublayer}(X)_{i,j}$$
+
+- Intuition. This operation can be regarded as $X + f(X)$. During backpropagation, we calculate the first derivative as
+
+$$\frac{\partial(X + f(X))}{\partial X} = 1 + f'(X)$$
+
+- Even if the sublayer's gradient $f'(X)$ is near zero (the "vanishing gradient" problem), the total gradient is still at least $1$.^[He K, et al., Deep Residual Learning for Image Recognition, 2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)]
+
+## LN step 2: Norm
+
+::: {.callout-note icon=false}
+## Norm
+The normalization step ensures that values do no not explode^[The $\odot$ symbol represents element-wise multiplication.]
+
+
+
+$$ \text{LayerNorm}(Z) = \gamma \odot \left( \frac{Z - \mu}{\sqrt{\sigma^2 + \epsilon}} \right) + \beta$$
+
+:::
+
+- Mean ($\mu$): Average of the 768 values for a specific token.
+- Variance ($\sigma^2$): Corresponding variance.
+- Standardization: mean of 0 and a variance of 1. Before this step, values can be highly divergent which would lead to softmax saturation problems
+- $\gamma$  and $\beta$ are learnable parameters. They are vectors of size 768:
+
+$$\text{Output}_j = (\gamma_j \cdot \hat{x}_j) + \beta_j$$
+
+- Before training, all $\gamma$ values are initialized to 1 and all $\beta$ values are initialized to 0.
