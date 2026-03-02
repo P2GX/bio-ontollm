@@ -13,3 +13,7 @@ $$PE_{pos + \Delta k} = \mathbf{M}_{\Delta k} \cdot PE_{pos}$$
 :::
 ```
 
+
+# TODO
+
+- [Todo: explain learning procedure (or refer to previous slides)]{.neon-todo}

@@ -1085,3 +1085,305 @@ $$ \text{LayerNorm}(Z) = \gamma \odot \left( \frac{Z - \mu}{\sqrt{\sigma^2 + \ep
 $$\text{Output}_j = (\gamma_j \cdot \hat{x}_j) + \beta_j$$
 
 - Before training, all $\gamma$ values are initialized to 1 and all $\beta$ values are initialized to 0.
+
+
+# Section 5: Feed-Forward Network (FFN)
+
+::: {.columns}
+
+::: {.column width="45%"}
+::: {.hl-container}
+![](https://d2l.ai/_images/transformer.svg){width="100%"}
+
+::: {.hl-box style="top: 44%; left: 15%; width: 23%; height: 7%;"}
+:::
+:::
+:::
+
+::: {.column width="55%"}
+::: {.toc-list style="margin-top: 50px;"}
+
+::: {.toc-item}
+1. Embeddings
+:::
+
+::: {.toc-item}
+2. Positional Encodings
+:::
+
+::: {.toc-item }
+3. Multi-head attention
+:::
+
+::: {.toc-item }
+4. Layer Normalization
+:::
+
+::: {.toc-item .toc-active}
+5. FFN
+:::
+
+:::
+:::
+
+:::
+
+---
+
+## FFN Expansion-Contraction
+
+
+
+
+::: {.columns}
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| out-height: "65vh"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from llm_plots import draw_gelu_block
+
+draw_gelu_block()
+```
+
+:::
+
+::: {.column width="50%"}
+
+- In BERT-Base, the FFN consists of two linear transformations with a non-linear activation (GELU) in between. 
+- Expansion-Contraction architecture
+- Input $x$: $1 \times 768$
+- $W_1$: $768 \times 3072$ (The "Expansion" weights)
+- $b_1$: $1 \times 3072$ (The first bias)
+- $W_2$: $3072 \times 768$ (The "Projection" weights)
+- $b_2$: $1 \times 768$ (The second bias)
+
+::: {.callout-note icon=false}
+
+## FFN layer
+
+$$FFN(x) = \text{GELU}(xW_1 + b_1)W_2 + b_2$$
+
+:::
+
+:::
+:::
+
+---
+
+## ReLU vs GeLU
+
+::: {.callout-note icon=false}
+
+## activation functions
+
+After matrix multiplication (linear), a non-linear activation function is applied, which makes the neural network a non-linear function, allowing it to achieve complex behavior. ReLu is the most widely use activation function (simple, fast to compute)
+
+:::
+
+---
+
+## Rectified Linear Unit (ReLU) 
+
+- The Rectified Linear Unit (ReLU)  outputs the input if positive; otherwise, it outputs zero.
+
+::: {.columns}
+::: {.column width="70%"}
+$$
+\mathrm{ReLU}(x) = \max(0,x)
+$$
+
+The first derivative of ReLU is
+
+$$
+\dfrac{d}{dx}\mathrm{ReLU}(x) =
+\begin{cases}
+x > 0 & 1 \\
+x < 0 & 0 \\
+x = 0 & \text{undefined but usually set to zero in code}\\
+\end{cases}
+$$
+
+
+- the ReLU function may suffer from the dying ReLU problem, where a large fraction of the neurons can become inactive and unresponsive, hindering the learning process^[Lu, L, et al. (2019). Dying ReLU and Initialization: Theory and Numerical Examples.. https://doi.org/10.48550/arxiv.1903.06733]
+- Leaky ReLU:  $f(x) = max(\alpha \cdot x, x)$, where $\alpha$ is a small value such as 0.01. Leaky ReLU enables a small, non-zero gradient for negative values.
+
+
+
+
+:::
+::: {.column width="30%"}
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from llm_plots import plot_activations
+plot_activations(show_gelu=False)
+```
+
+:::
+:::
+
+
+---
+
+## Gaussian Error Linear Unit (GELU)
+
+::: {.columns}
+::: {.column width="70%"}
+
+- GELU has several desirable attributes: smoothness, differentiability, and ability to approximate the widely used ReLU function.
+- GELU is used in many tools including BERT   and GPT
+- GELU weights the input by its magnitude
+
+$$\text{GELU}(x) = x \Phi(x) \approx 0.5x \left( 1 + \tanh \left( \sqrt{\frac{2}{\pi}} (x + 0.044715x^3) \right) \right)$$
+
+- $\Phi(x)$ is the Cumulative Distribution Function (CDF) of the standard normal distribution. The BERT paper uses a fast approximation (shown on right)^[Lee, M, Mathematical Analysis and Performance Evaluation of the GELU Activation Function in Deep Learning, Journal of Mathematics, 2023]
+
+
+:::
+::: {.column width="30%"}
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') # Tell Python to look in the utils folder
+from llm_plots import plot_activations
+plot_activations(show_gelu=True)
+```
+
+:::
+:::
+
+---
+
+## BERT's FFN Block
+
+
+
+
+
+::: {.columns}
+::: {.column width="50%"}
+
+```{python}
+#| echo: false
+#| out-height: "65vh"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from llm_plots import plot_activations
+
+draw_gelu_block()
+```
+
+:::
+
+::: {.column width="50%"}
+- Coming back to the FFN architexture, BERT takes the  $768$-dimensional vector from the Add & Norm layer and expands to  into a $3072$-dimensional space before applying the GELU activation function, following which it projects it back to  $768$-dimensional for further processing
+
+$$
+\underbrace{1 \times 768}_{\text{Input}} 
+\xrightarrow{W_1, b_1} 
+\underbrace{1 \times 3072}_{\text{Linear Expansion}} 
+\xrightarrow{\text{GELU}} 
+\underbrace{1 \times 3072}_{\text{Non-linear Activation}} 
+\xrightarrow{W_2, b_2} 
+\underbrace{1 \times 768}_{\text{Output}}
+$$
+
+:::
+
+- [Todo: explain FFN architexture based on BERT paper - what advantage is there for expanding etc?)]{.neon-todo}
+
+:::
+
+
+# Section 6: Layer Normalization
+
+::: {.columns}
+
+::: {.column width="45%"}
+::: {.hl-container}
+![](https://d2l.ai/_images/transformer.svg){width="100%"}
+
+::: {.hl-box style="top: 37.75%; left: 15%; width: 23%; height: 4.75%;"}
+:::
+:::
+:::
+
+::: {.column width="55%"}
+::: {.toc-list style="margin-top: 50px;"}
+
+::: {.toc-item}
+1. Embeddings
+:::
+
+::: {.toc-item}
+2. Positional Encodings
+:::
+
+::: {.toc-item }
+3. Multi-head attention
+:::
+
+::: {.toc-item}
+4. Layer Normalization
+:::
+
+::: {.toc-item}
+5. FFN
+:::
+
+
+::: {.toc-item .toc-active}
+6. Layer Normalization
+:::
+
+:::
+:::
+:::
+
+
+
+---
+
+
+## Layer Normalization (2)
+
+- The First Add & Norm stabilized the Communication (Attention).
+- This Second Add & Norm stabilizes the Computation (FFN).
+
+$$\text{Layer Output} = \text{LayerNorm} \left( \underbrace{X_{\text{post-attn}}}_{\text{The "Base" Knowledge}} + \underbrace{\text{FFN}(X_{\text{post-attn}})}_{\text{The "New" Insights}} \right)$$
+
+Similar to the previous add & norm layer, this one has two purposes
+- The "Add" (Residual): This ensures that even if the FFN didn't learn anything useful for a particular word (like a common "the" or "a"), the original context from the attention layer is preserved perfectly.
+- The "Norm" (LayerNorm): This resets the "electrical signals" of the 768 features. It ensures that the numbers don't get progressively larger as they move from Layer 1 to Layer 12.
+- The output of this final Norm is exactly the same shape as the input at the very beginning of the layer ($n \times 768$)
+
+- [Todo: explain what is BERT specific here]{.neon-todo}
+
+
+## Conclusion
+
+::: {.callout-note icon=false}
+## Takehome
+
+This lecture introduced the Encoder architecture as it is implemented in BERT. In the next lecture, we will introduce the decoder architecture and discuss how these models are trained.
+
+:::
+
+- [Todo: Talk about some of the BERT use cases]{.neon-todo}
+- [Todo: Homework, using BERT to do something]{.neon-todo}
+- [Todo: Talk about some of the variations of BERT]{.neon-todo}
