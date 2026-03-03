@@ -121,4 +121,44 @@ $$f(z) = \frac{1}{1 + e^{-z}}$$
 
 ---
 
-# next
+# Representation power
+
+
+::: {.columns}
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 4
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from ann_plots import plot_maximum_chaos
+
+plot_maximum_chaos()
+```
+
+:::
+
+::: {.column width="50%"}
+
+::: {.callout-note icon=false}
+
+    ## Approximation
+
+    A neural network with at least one hidden layer is a universal approximator in that it can represent any function
+
+    The capacity of the ANN increases with more hidden units and more hidden layers^[Cybenko G (1989) Approximation by superpositions of a sigmoidal function. Mathematics of Control, Signals, and Systems (MCSS)]
+
+:::
+
+
+:::
+:::
+
+
+
+
+
+plot_maximum_chaos()

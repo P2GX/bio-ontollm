@@ -134,3 +134,70 @@ def plot_neuron():
     ax.set_aspect('equal')
     ax.axis('off')
     plt.show()
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def plot_maximum_chaos(resolution=32, seed=7):
+    np.random.seed(seed)
+    
+    # 1. Setup Grid
+    x = np.linspace(-4, 4, resolution)
+    y = np.linspace(-4, 4, resolution)
+    X, Y = np.meshgrid(x, y)
+    grid_points = np.c_[X.ravel(), Y.ravel()]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+
+    # --- PANEL 1: LINEAR BOUNDARY ---
+    # A simple diagonal line
+    linear_mask = grid_points[:, 1] > (grid_points[:, 0] * 0.7 - 0.5)
+    colors_lin = ['#1F51E5' if m else '#EF3324' for m in linear_mask]
+    
+    ax1.scatter(grid_points[:, 0], grid_points[:, 1], c=colors_lin, s=30, edgecolors='none')
+    ax1.plot([-4, 4], [-4*0.7-0.5, 4*0.7-0.5], color='#58B042', lw=4)
+    ax1.set_title("Linear boundary", fontsize=20, pad=15)
+
+    # --- PANEL 2: HIGH-CHAOS NON-LINEAR ---
+    # This function combines multiple frequencies to ensure "pockets" and "jaggedness"
+    def get_chaos_val(px, py):
+        # Base trend
+        z = py - px * 0.2 
+        # Layer 1: Medium waves
+        z += 1.8 * np.sin(px * 1.5) * np.cos(py * 1.2)
+        # Layer 2: High-frequency "jitters" (the craziness)
+        z += 1.2 * np.cos(px * 3.5 + py * 2.1)
+        # Layer 3: Small isolated "islands"
+        z += 0.7 * np.sin(px * 5.0) * np.sin(py * 5.0)
+        return z
+
+    z_dots = get_chaos_val(grid_points[:, 0], grid_points[:, 1])
+    nonlinear_mask = z_dots > 0
+    colors_nonlin = ['#1F51E5' if m else '#EF3324' for m in nonlinear_mask]
+
+    ax2.scatter(grid_points[:, 0], grid_points[:, 1], c=colors_nonlin, s=30, edgecolors='none')
+    
+    # Generate a very high-res contour for a smooth "wiggly" line
+    xf = np.linspace(-4.2, 4.2, 300)
+    yf = np.linspace(-4.2, 4.2, 300)
+    Xf, Yf = np.meshgrid(xf, yf)
+    Zf = get_chaos_val(Xf, Yf)
+    
+    # Plot the green boundary line where z=0
+    ax2.contour(Xf, Yf, Zf, levels=[0], colors='#58B042', linewidths=4)
+    ax2.set_title("Non-linear boundary", fontsize=20, pad=15)
+
+    # Styling for Quarto/Notebooks
+    for ax in [ax1, ax2]:
+        ax.set_xlim(-4.2, 4.2)
+        ax.set_ylim(-4.2, 4.2)
+        ax.set_aspect('equal')
+        ax.set_xticks(np.arange(-4, 5, 1))
+        ax.set_yticks(np.arange(-4, 5, 1))
+        # Keep it clean
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+
+    plt.tight_layout()
+    plt.show()
+
