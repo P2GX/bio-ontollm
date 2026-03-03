@@ -1,0 +1,124 @@
+---
+title: "Neural networks"
+jupyter: python3
+format: 
+  revealjs:
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.05
+    embed-resources: true
+    css: style/styles.css
+---
+
+## Overview: Lecture 1
+
+::: {.callout-note}
+## Game plan
+This lecture is the first of installment of a series of lectures that delve into the algorithms and mathematics of large-language models. Today, we will review the architecture of artificial neural networks and explain the mathematics of backpropagation.
+:::
+
+::: {.columns}
+
+::: {.column width="33%"}
+### Lecture 1
+**Foundations**
+
+* Top-level overview
+* Embeddings
+* Positional encodings
+:::
+
+::: {.column .dimmed width="33%"}
+### Lecture 2
+**Architecture**
+
+* Multi-Head Attention
+* Residual Connections
+* Layer Norm
+:::
+
+::: {.column .dimmed width="33%"}
+### Lecture 3
+**Applications**
+
+* Training & Data
+* Fine-tuning
+* Toy LLM Coding
+:::
+
+:::
+
+---
+
+## Overview
+
+::: {.columns}
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| out-height: "65vh"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from ann_plots import plot_neural_net
+
+plot_neural_net()
+```
+
+:::
+
+::: {.column width="50%"}
+
+- An artificial neural network (ANN) is a function comprised of neurons, weights, and activation functions
+- Neurons are grouped into three main categories of layers:
+    - Input layer
+    - Hidden layers
+    - Output layers
+- Naming convention for an N-layer ANN
+    - N-1 layers of hidden units
+    - 1 output layer
+    - In our example, we have a 3-layer ANN
+
+:::
+:::
+
+## Neuron
+
+
+::: {.columns}
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 4.8
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from ann_plots import plot_neuron
+
+plot_neuron()
+```
+
+:::
+
+::: {.column width="50%"}
+
+::: {.callout-note icon=false}
+
+    ## Neuron
+
+    Each neuron receives the weight sum of activations from the previous layer (or the input values) and applies a non-linear activation function
+
+:::
+- $$z = \sum_{i=1}^{4} (w_i x_i) + b$$
+- A common activation function is the Sigmoid function 
+
+$$f(z) = \frac{1}{1 + e^{-z}}$$
+
+:::
+:::
+
+---
+
+# next

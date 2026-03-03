@@ -195,5 +195,6 @@ __marimo__/
 /.quarto/
 **/*.quarto_ipynb
 
-transformer1.html
+./encoder.html
+neural.html
 temp.*
