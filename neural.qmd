@@ -10,43 +10,15 @@ format:
     css: style/styles.css
 ---
 
-## Overview: Lecture 1
+## Overview: Neural networks
 
 ::: {.callout-note}
 ## Game plan
-This lecture is the first of installment of a series of lectures that delve into the algorithms and mathematics of large-language models. Today, we will review the architecture of artificial neural networks and explain the mathematics of backpropagation.
+This lecture covers a review of artificial neural networks and provides a
+more detailed treatment of backpropagation and gradient descent algorithms.
 :::
 
-::: {.columns}
-
-::: {.column width="33%"}
-### Lecture 1
-**Foundations**
-
-* Top-level overview
-* Embeddings
-* Positional encodings
-:::
-
-::: {.column .dimmed width="33%"}
-### Lecture 2
-**Architecture**
-
-* Multi-Head Attention
-* Residual Connections
-* Layer Norm
-:::
-
-::: {.column .dimmed width="33%"}
-### Lecture 3
-**Applications**
-
-* Training & Data
-* Fine-tuning
-* Toy LLM Coding
-:::
-
-:::
+![Biological neuron (image: Wikipedia)](./img/Neuron.png){width=100% fig-align="center"}
 
 ---
 
@@ -56,7 +28,9 @@ This lecture is the first of installment of a series of lectures that delve into
 ::: {.column width="50%"}
 ```{python}
 #| echo: false
-#| out-height: "65vh"
+#| fig-width: 12
+#| fig-height: 7.8
+#| out-width: "100%"
 #| fig-align: center
 import sys
 sys.path.append('utils') 
@@ -157,8 +131,52 @@ plot_maximum_chaos()
 :::
 :::
 
+---
+
+## Walk through
+
+::: {.callout-note icon=false, title="Example ANN"}
+
+    We will review the architecture of simple ANNs using an example Python program.
+    We will use the classic digit recognition dataset available skikit-learn
+
+:::
+
+```{python}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "50%"
+#| fig-align: center
+from matplotlib import pyplot as plt
+from sklearn.datasets import load_digits
+
+digits = load_digits()
+
+fig = plt.figure(figsize=(4, 4))  # figure size in inches
+fig.subplots_adjust(left=0, right=1, bottom=0, top=1, hspace=0.05, wspace=0.05)
+
+for i in range(64):
+    ax = fig.add_subplot(8, 8, i + 1, xticks=[], yticks=[])
+    ax.imshow(digits.images[i], cmap=plt.cm.binary, interpolation='nearest')
+    # label the image with the target value
+    ax.text(0, 7, str(digits.target[i]))
+```
 
 
+---
+
+## Learning goal
+
+- Input: 8x8 grey-scale images of handwritten digits
+- Goal: Determine which digit the image represents ($0,\ldots, 9$)
+- Input layer: $X^{64\times 1}$
+- Output layer: $Y^{10\times 1}$
+- Hidden layer(s): three hidden layers (128, 64, 32 neurons)
 
 
-plot_maximum_chaos()
+![ANN](./img/ann.svg){width=100% fig-align="center"}
+
+---
+
+## tm

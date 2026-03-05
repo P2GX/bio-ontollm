@@ -198,3 +198,6 @@ __marimo__/
 ./encoder.html
 neural.html
 temp.*
+
+sandbox/tikz/*.aux
+sandbox/tikz/*.pdf

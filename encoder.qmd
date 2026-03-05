@@ -1093,7 +1093,7 @@ $$\text{Output}_j = (\gamma_j \cdot \hat{x}_j) + \beta_j$$
 
 ::: {.column width="45%"}
 ::: {.hl-container}
-![](https://d2l.ai/_images/transformer.svg){width="100%"}
+![](./img/transformer.svg){width="100%"}
 
 ::: {.hl-box style="top: 44%; left: 15%; width: 23%; height: 7%;"}
 :::
@@ -1316,7 +1316,7 @@ $$
 
 ::: {.column width="45%"}
 ::: {.hl-container}
-![](https://d2l.ai/_images/transformer.svg){width="100%"}
+![](./img/transformer.svg){width="100%"}
 
 ::: {.hl-box style="top: 37.75%; left: 15%; width: 23%; height: 4.75%;"}
 :::
