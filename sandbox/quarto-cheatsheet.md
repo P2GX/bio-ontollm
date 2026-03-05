@@ -32,6 +32,15 @@ multiple figures
 ![Cat](cat.jpg)
 :::
 
+Centering the caption
+
+::: {#fig-ann layout-align="center"}
+![](./img/ann.svg){width=100%}
+
+Architecture: 64 to 10 nodes with weights and biases.
+
+:::
+
 ## Slide Title {background-image="forest.jpg" background-opacity="0.5"}
 
 This content sits on top of the image.

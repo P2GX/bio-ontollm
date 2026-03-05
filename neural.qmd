@@ -174,9 +174,94 @@ for i in range(64):
 - Output layer: $Y^{10\times 1}$
 - Hidden layer(s): three hidden layers (128, 64, 32 neurons)
 
+::: {#fig-ann layout-align="center"}
+![](./img/ann.svg){width=100% fig-align="center"}
 
-![ANN](./img/ann.svg){width=100% fig-align="center"}
+ANN Architecture: $64 \to 128 \to 64 \to 32 \to 10$
+:::
+---
+
+## Representing the network using matrices
+
+::: {.columns}
+::: {.column width="50%"}
+
+::: {#fig-ann layout-align="center"}
+![](./img/ann2.svg){width=100% fig-align="center"}
+
+The activation for the first neuron of the first hidden layer is determined by the weighted sum of each of the values in the input; this weighted sum is passed to the sigmoid activation function
+:::
+
+:::
+::: {.column width="50%"}
+
+$$
+\begin{bmatrix}
+w_{0,0} & w_{0,1} & \cdots & w_{0,63} \\
+ w_{1,0} & w_{1,1} & \cdots & w_{1,63} \\
+ \vdots & \vdots & \ddots & \vdots \\
+ w_{127,0} & w_{127,1} & \cdots &   w_{127,63} \\
+\end{bmatrix}
+\begin{bmatrix}
+x_0\\
+x_1\\
+\vdots \\
+x_{63}
+\end{bmatrix}
++
+\begin{bmatrix}
+b_0\\
+b_1\\
+\; \\
+\vdots \\
+\; \\
+b_{127}
+\end{bmatrix}
+=
+\begin{bmatrix}
+z_0\\
+z_1\\
+\; \\
+\vdots \\
+\; \\
+z_{127}
+\end{bmatrix}
+$$
+followed by activation
+$$
+\begin{bmatrix}
+\sigma(z_0)\\
+\sigma(z_1)\\
+\; \\
+\vdots \\
+\; \\
+\sigma(z_{127})
+\end{bmatrix}
+=
+\begin{bmatrix}
+a_0\\
+a_1\\
+\; \\
+\vdots \\
+\; \\
+a_{127}
+\end{bmatrix}
+$$
+
+::: {style="font-size: 0.65em;"}
+- The $z_j$ values are called the __weighted sums__ or the __pre-activations__.
+- The $a_j$ values are called the __activations__ and these are passed on as the input to the next layer
+- The $w_{j,i}$ values are called the __weights__. They are __learnable__ parameters
+:::
+
+:::
+
+:::
 
 ---
 
-## tm
+## Neurons as functions
+
+Each neuron in the hidden layers can be thought of as a function that takes the results of all neurons in the previous layer as input and returns a number between 0 and 1.
+
+The entire network can be thought of as a function that takes 64 numbers as input and returns 10 numbers as output.
