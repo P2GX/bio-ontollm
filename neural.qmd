@@ -12,15 +12,43 @@ format:
 
 ## Overview: Neural networks
 
-::: {.callout-note}
-## Game plan
+::: {.callout-note title="Game plan" }
 This lecture covers a review of artificial neural networks and provides a
 more detailed treatment of backpropagation and gradient descent algorithms.
 :::
 
-![Biological neuron (image: Wikipedia)](./img/Neuron.png){width=100% fig-align="center"}
 
----
+
+
+::: {.columns}
+
+::: {.column width="33%"}
+### Part 1
+**Review**
+
+* What is an artifical neural network?
+* Forward pass and reverse pass (training)
+* Typical applications in biomedicine
+:::
+
+::: {.column .dimmed width="33%"}
+### Part 2
+**Back propagation**
+
+* Mathematics
+* Automated backprop in software libraries such as PyTorch
+:::
+
+::: {.column .dimmed width="33%"}
+### Lecture 3
+**Gradient descent**
+
+* Mathematics
+* Momentum and Adam
+:::
+
+:::
+
 
 ## Overview
 
@@ -61,26 +89,29 @@ plot_neural_net()
 
 ::: {.columns}
 ::: {.column width="50%"}
+
 ```{python}
 #| echo: false
-#| fig-width: 8
-#| fig-height: 4.8
-#| out-width: "100%"
 #| fig-align: center
 import sys
 sys.path.append('utils') 
+import matplotlib.pyplot as plt
 from ann_plots import plot_neuron
 
-plot_neuron()
+fig = plot_neuron(figsize=(6, 6))
+plt.show()
 ```
 
+::: {#fig-ann layout-align="center"}
+![](./img/Neuron.png){width=75% fig-align="center"}
+
+Biological neuron (image: Wikipedia)
 :::
 
+:::
 ::: {.column width="50%"}
 
-::: {.callout-note icon=false}
-
-    ## Neuron
+::: {.callout-note icon=false, title="Neuron"}
 
     Each neuron receives the weight sum of activations from the previous layer (or the input values) and applies a non-linear activation function
 
@@ -90,10 +121,10 @@ plot_neuron()
 
 $$f(z) = \frac{1}{1 + e^{-z}}$$
 
+
 :::
 :::
 
----
 
 # Representation power
 
@@ -117,9 +148,7 @@ plot_maximum_chaos()
 
 ::: {.column width="50%"}
 
-::: {.callout-note icon=false}
-
-    ## Approximation
+::: {.callout-note icon=false, title="Approximation"}
 
     A neural network with at least one hidden layer is a universal approximator in that it can represent any function
 
@@ -131,14 +160,88 @@ plot_maximum_chaos()
 :::
 :::
 
----
+## Forward pass
 
-## Walk through
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import draw_nn_forward_pass
+
+draw_nn_forward_pass()
+plt.plot()
+```
+
+## Backward pass
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import draw_nn_backpropagation
+
+draw_nn_backpropagation()
+plt.plot()
+```
+
+
+
+::: {#fig-ann layout-align="center"}
+![](./img/anns-in-biomed.png){width=75% fig-align="center"}
+
+Weiss R, et al (2022) Applications of Neural Networks in Biomedical Data Analysis. Biomedicines. 10(7):1469.
+:::
+
+- There is hardly any topic in biomedicine that has not been modeled with ANNs of one type of another
+- Deep understanding of the basics of (simple) feed-forward networks is a prerequisite for understanding more sophisticated models in use today
+
+## Back Propagation
+
+::: {.columns}
+
+::: {.column .dimmed  width="33%"}
+### Part 1
+**Review**
+
+* What is an artifical neural network?
+* Forward pass and reverse pass (training)
+* Typical applications in biomedicine
+:::
+
+::: {.column width="33%"}
+### Part 2
+**Back propagation**
+
+* Mathematics
+* Automated backprop in software libraries such as PyTorch
+:::
+
+::: {.column .dimmed width="33%"}
+### Lecture 3
+**Gradient descent**
+
+* Mathematics
+* Momentum and Adam
+:::
+
+:::
+
+
+## Review: ANN Architecture and Matrix Representation 
+
 
 ::: {.callout-note icon=false, title="Example ANN"}
 
-    We will review the architecture of simple ANNs using an example Python program.
-    We will use the classic digit recognition dataset available skikit-learn
+- We will review the architecture of simple ANNs using the classic digit recognition dataset available skikit-learn
+- We will code a simple ANN to work with this in the homework
+- Input: 8x8 grey-scale images of handwritten digits
+- Classification goal: Determine which of the digits $0,\ldots, 9$ is represented by the image ($10\times 1$ output vector)
 
 :::
 
@@ -164,9 +267,7 @@ for i in range(64):
 ```
 
 
----
-
-## Learning goal
+## ANN Architecture
 
 - Input: 8x8 grey-scale images of handwritten digits
 - Goal: Determine which digit the image represents ($0,\ldots, 9$)
@@ -258,10 +359,424 @@ $$
 
 :::
 
----
+## The Forward Pass: Step-by-Step
+
+A single "layer" of computation follows a predictable three-step cycle:
+
+::: {.columns}
+
+::: {.column width="45%"}
+### 1. Weighted Sum ($z$)
+The input vector $\mathbf{x}$ (or activations from the previous layer $\mathbf{a}_{l-1}$) is multiplied by the weight matrix $W$ and the bias $b$ is added.
+$$\mathbf{z} = W \mathbf{x} + \mathbf{b}$$
+
+### 2. Activation ($a$)
+A non-linear function $\sigma$ (like Sigmoid or ReLU) is applied element-wise to the pre-activations.
+$$\mathbf{a} = \sigma(\mathbf{z})$$
+:::
+
+::: {.column width="55%"}
+::: {.callout-tip icon=false}
+## Summary of the Flow
+
+1. **Input Layer**: Receives raw features $x$ (e.g., pixel values).
+2. **Hidden Layer(s)**: 
+    - Compute weighted sums of inputs.
+    - Apply activation functions to introduce non-linearity.
+3. **Output Layer**: Produces the final prediction $\hat{y}$.
+4. **Prediction**: The value $\hat{y}$ is compared against the actual target $y$ to determine the error.
+:::
+
+> **Note**: This process is repeated for every layer in the network until the data reaches the final output node.
+:::
+
+:::
 
 ## Neurons as functions
 
 Each neuron in the hidden layers can be thought of as a function that takes the results of all neurons in the previous layer as input and returns a number between 0 and 1.
 
 The entire network can be thought of as a function that takes 64 numbers as input and returns 10 numbers as output.
+
+
+
+## Backpropagation
+
+::: {.callout-note icon=false, title="Backpropagation"}
+
+Backprop is __the__ core algorithm behind deep learning.
+
+A key idea of neural nets is to decompose computation into a series of layers, which form modular blocks that can be chained together into a computation graph to perform backprop.
+
+:::
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import draw_forward_block_diagram
+
+draw_forward_block_diagram(fig_size = (8, 3))
+plt.plot()
+```
+
+- The forward operation of each layer computes an output based on its input and the current values of the parameters ($\theta$)
+- The learning problem is to find the parameters that achieve a desired mapping. 
+- We do this via gradient descent. 
+- But how are the gradients computed?
+
+## Backpropagation 
+
+- An algorithm that efficiently calculates the gradient of the loss with respect to each  parameter in a computation graph.
+- To understand backprop, we will first quickly review matrix calculus
+
+## Matrix calculus
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import draw_toy_network
+
+draw_toy_network()
+plt.plot()
+```
+
+- In backpropagation, we need to know how the Loss ($L$) changes with respect to the weights.
+- We will start off by calculating the backprop by hand with this toy network
+
+## Backprop by hand
+
+- Our network will have a sigmoid activation function in the hidden layer, no activation in the output layer
+$$
+\sigma(x) = \dfrac{1}{1+e^{-x}
+$$
+
+- We will use a squared-error loss function (where $y$ is the label, zero or one) and $a_2$ is the output of the ANN for inputs $x_1$ and $a_3$:
+$$
+\mathcal{L} = \dfrac{1}{2}(y-a_3)^2
+$$
+
+## Backprop by hand
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+### Forward pass equations
+
+
+* $z_1 = w_1x_1 + w_3x_2 + b_1$
+* $a_1 = \sigma(z_1)$
+* $z_2 = w_2x_1 + w_4x_2 + b_2$
+* $a_2 = \sigma(z_2)$
+* $a_3 = w_5a_1 +  w_6a_2 + b_3$
+* $z_1$ and $z_2$ are intermediate values that form the argument to the activation function
+* $x_1$, $x_2$, and $y$ are constants as far as the loss function is concerned. However, the loss will change as a function of the parameters 
+$$
+\mathcal{L} = L(w_1,  w_2,w_3, w_4, w_5, w_6, b_1, b_2, b_3; x_1, x_2, y)
+$$
+
+* Equivalently: $\mathcal{L} = L(\Theta; \mathbf{x};y)$
+
+:::
+
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import draw_toy_network
+draw_toy_network()
+``` 
+:::
+:::
+
+## Calculating partial derivatives
+
+To calculate the gradient of the loss function, $\nabla (\Theta; \mathbf{x};y)$, we need all the partial derivatives -- for all weights and biases. Let's do this step by step
+
+- derivative of the sigmoid activation function
+$$
+\begin{eqnarray*}
+\dfrac{d}{dx} \dfrac{1}{1+e^x} &=& \hspace{1cm} \dfrac{-1}{(1+e^{-x})^2}\cdot (-e^{-x})&& \text{chain rule} \\
+&=&\dfrac{e^{-x}}{(1+e^{-x})^2} && \hspace{1cm} \text{simplify}\\
+&=&\dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{rearrange}\\
+&=&\sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{definition of $\sigma(x)$}\\
+&=&\sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}}&& \hspace{1cm} \text{add and substract 1}\\
+&=&\sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right)&& \hspace{1cm} \text{rearrange using definition of $\sigma(x)$}\\
+&=&\sigma(x) \cdot \left( 1 -\sigma(x) \right)&& \hspace{1cm} \text{simplify}\\
+\end{eqnarray*}
+$$
+
+- The forward pass calculates $\sigma(x)$. Using this derivation, the backward pass can calculate the partial derivate easily using the value of $\sigma(x)$.
+
+## Derivative of the loss function
+
+- Recalling that $\mathcal{L}=\dfrac{1}{2}(y-a_3)^2$
+
+$$
+\dfrac{\partial \mathcal{L}}{\partial a_3} = 2\cdot \dfrac{1}{2}(y-a_3)\cdot(-1)
+= a_3 - y
+$$
+
+## Chain rule (review)
+
+- To understand backprop, it is essential to be familiar with the chain rule
+- If $f$ and $g$ are differentiable functions, then
+$$
+\left(f(g(x))\right)^{\prime} = f^{\prime}(g(x))\cdot g^{\prime}(x)
+$$
+
+- The chain rule can also be written as follows. If $y=f(u)$ and $u=g(x)$, then 
+$$
+\dfrac{dy}{dx} =\dfrac{dy}{du}\dfrac{du}{dx}
+$$
+
+Examples
+
+- $(5+3x)^5$. Here, $f(u)=u^5$, $u=5+3x$,  and $g(x)=5+3x$.  
+- $f^{\prime}(u)=5u^4$ and $g^{\prime} = 3$
+$$
+\dfrac{dy}{dx}(5+3x)^5 = 5u^4 \cdot 3 = 15(5+3x)^4
+$$
+- $y = \sin(4x+3)$; $u=4x+3$ and $\frac{du}{dx} = 4$; $\frac{dy}{du} = \frac{d}{du} \sin u = \cos u = \cos(4x+3)$
+$$\frac{d}{dx}\sin(4x+3) = \cos(4x+3) \cdot 4$$
+ 
+
+
+
+## How does the loss change as $w_6$ changes?
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+### Forward pass equations
+
+We have by the chain rule
+
+$$
+\dfrac{\partial \mathcal{L}}{\partial w_6} = 
+\dfrac{\partial \mathcal{L}}{\partial a_3} \cdot \dfrac{\partial a_3}{\partial w_6}
+$$
+
+- from the above, we had that $\dfrac{\partial \mathcal{L}}{\partial a_3} = a_3 - y$
+- we can reuse this value and now just need $\dfrac{\partial a_3}{\partial w_6}$
+
+$$
+\dfrac{\partial a_3}{\partial w_6}
+=
+\dfrac{\partial (w_5a_1 + w_6a_2+b_3)}{\partial w_6} = a_2
+$$
+
+
+* We have calculate the value of $a_2$ in the forward pass, so this is easy
+$$
+\dfrac{\partial \mathcal{L}}{\partial w_6} =  ( a_3 - y)a_2
+$$
+
+
+
+:::
+
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import draw_toy_network
+draw_toy_network()
+``` 
+
+* Similar logic gets us $\dfrac{\partial \mathcal{L}}{\partial w_5} =  ( a_3 - y)a_1$
+* and 
+$$
+$\dfrac{\partial \mathcal{L}}{\partial b_3} = \dfrac{\partial \mathcal{L}}{\partial a_3} \cdot \dfrac{\partial \mathcal{a_3}}{\partial b_3}  ( a_3 - y)\cdot 1 = ( a_3 - y)$
+$$
+:::
+:::
+
+
+## How does the loss change as $b_3$ changes?
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+
+
+We have by the chain rule
+
+$$
+\dfrac{\partial \mathcal{L}}{\partial b_3} = \dfrac{\partial \mathcal{L}}{\partial a_3} \cdot \dfrac{\partial \mathcal{a_3}}{\partial b_3}
+$$
+
+Therefore
+
+$$
+ \dfrac{\partial \mathcal{L}}{\partial b_3} =  ( a_3 - y)\cdot 1 = ( a_3 - y)
+$$
+
+- from the above, we had that $\dfrac{\partial \mathcal{L}}{\partial a_3} = a_3 - y$
+- we can reuse this value and now just need $\dfrac{\partial \mathcal{a_3}}{\partial b_3}$
+
+$$
+\dfrac{\partial a_3}{\partial b_3}
+=
+\dfrac{\partial (w_5a_1 + w_6a_2+b_3)}{\partial b_3} = 1
+$$
+
+
+* this is easy
+$$
+\dfrac{\partial \mathcal{L}}{\partial b_3} =  ( a_3 - y)\cdot 1 =  a_3 - y
+$$
+
+
+:::
+
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import draw_toy_network
+draw_toy_network()
+``` 
+
+:::
+:::
+
+
+## How does the loss change as $b_2$ changes?
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+
+
+We have by the chain rule
+
+$$
+\dfrac{\partial \mathcal{L}}{\partial b_2} = \dfrac{\partial \mathcal{L}}{\partial a_3} \cdot \dfrac{\partial \mathcal{a_3}}{\partial a_2}
+\cdot \dfrac{\partial \mathcal{a_2}}{\partial z_2}
+\cdot \dfrac{\partial \mathcal{z_2}}{\partial b_2}
+$$
+
+* We had that $\frac{\partial \mathcal{L}}{\partial a_3} =  a_3 - y$
+* $a_3 = w_5a_1 +  w_6a_2 + b_3$ and thus $\frac{\partial \mathcal{a_3}}{\partial a_2} = w_6$
+* $a_2 = \sigma(z_2)$, and so
+$$
+\dfrac{\partial \mathcal{a_2}}{\partial z_2} = \sigma^{\prime}(z_2) = \sigma(z_2)(1-\sigma(z_2)) = a_2(1-a_2)
+$$
+
+*  $z_2 = w_2x_1 + w_4x_2 + b_2$ and so $\frac{\partial \mathcal{z_2}}{\partial b_2} = 1$
+* Putting everything together, we have
+$$
+\dfrac{\partial \mathcal{L}}{\partial b_2} =
+( a_3 - y)\cdot w_6 \cdot a_2(1-a_2) \cdot 1
+$$
+
+* Easy! We have the values for $a_3$, $y$, $w_6$, and $a_2$ from the forward pass 
+
+:::
+
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import draw_toy_network
+draw_toy_network()
+``` 
+
+:::
+:::
+
+## How does the loss change as the other parameters change?
+
+- You will be asked to derive expressions for $w_1, w_2, w_3, w_4, w_5, b_1, b_2$ as a homework assignment.
+- If we change the network architecture, the activation function, or the loss function, we would need to recalcute these expressions
+- This manual procedure is __tedious__ and would not scale to exploring various network structures for realistic network sizes. 
+- We will see it is possible to automate this procedure, but to understand that, we will show how it is possible to use __matrix calculus__ to abstract away some of the fidgety work with the indices
+- For a fully connected layer, we will represent the forward pass as 
+
+$$
+\mathbf{y}^{m\times 1} = \mathbf{W}^{m\times n}\mathbf{x}^{n\times 1} + \mathbf{b}^{m\times 1}
+$$
+
+- This notation will require us to take first derivatives with respect to vectors and matrices
+- We will review a few items from matrix calculus before proceding
+
+## tmp
+In backpropagation, we need to know how the Loss ($L$) changes with respect to the weights. 
+Using the chain rule:
+$$\frac{\partial L}{\partial \mathbf{W}} = \frac{\partial L}{\partial \mathbf{y}} \frac{\partial \mathbf{y}}{\partial \mathbf{W}}$$
+
+If $y = \mathbf{W}\mathbf{x}$, then:
+
+$$\frac{\partial (\mathbf{W}\mathbf{x})}{\partial \mathbf{W}} = \text{ (Chain rule result) } = \frac{\partial L}{\partial \mathbf{y}} \mathbf{x}^\top$$
+
+- Summary of the two different derivatives:With respect to Input: $\frac{\partial}{\partial \mathbf{x}} (\mathbf{W}\mathbf{x}) = \mathbf{W}$ (This passes the gradient to the previous layer).
+- With respect to Weights: $\frac{\partial}{\partial \mathbf{W}} (\mathbf{W}\mathbf{x}) \approx \mathbf{x}^\top$ (This is used to update the current layer's weights).
+
+---
+
+## Step 1: The Scalar View
+
+Let's look at just one specific weight, $w_{jk}$, which connects input $x_k$ to the $j$-th neuron.
+
+- The $j$-th output is:$$z_j = \sum_{i} w_{ji} x_i + b_j$$
+
+- If we want to know how the loss $L$ changes when we nudge $w_{jk}$, we use the chain rule:$$\frac{\partial L}{\partial w_{jk}} = \frac{\partial L}{\partial z_j} \cdot \frac{\partial z_j}{\partial w_{jk}}$$
+
+---
+
+## Step 2: The Local Derivative
+
+Now, let's look at that second term, $\frac{\partial z_j}{\partial w_{jk}}$.From our equation $z_j = (w_{j1}x_1 + w_{j2}x_2 + \dots + w_{jk}x_k + \dots)$, the only term that contains $w_{jk}$ is $w_{jk}x_k$.The derivative is simply:$$\frac{\partial z_j}{\partial w_{jk}} = x_k$$So, for a single weight, the gradient is:$$\frac{\partial L}{\partial w_{jk}} = \delta_j \cdot x_k$$
+
+---
+
+## Step 3: Moving to Matrix Form
+
+We want the derivative with respect to the whole matrix $\mathbf{W}$. We need a way to combine all the $\delta_j$ values (from the output side) and all the $x_k$ values (from the input side) into a matrix that matches the shape of $\mathbf{W}$.If $\boldsymbol{\delta}$ is a column vector $(m \times 1)$ and $\mathbf{x}$ is a column vector $(n \times 1)$, we use the Outer Product:$$\frac{\partial L}{\partial \mathbf{W}} = \boldsymbol{\delta} \mathbf{x}^\top$$
+
+
+---
+
+## Step 4: Dimension Check
+
+ Let's check the shapes:$\boldsymbol{\delta}$ is $(m \times 1)$ — the "error" at each of the $m$ output neurons.$\mathbf{x}^\top$ is $(1 \times n)$ — the "signal" from each of the $n$ input neurons.The resulting matrix is $(m \times n)$, which is exactly the shape of your weight matrix $\mathbf{W}$.SummaryThe $\mathbf{x}^\top$ doesn't come from the derivative of $\mathbf{x}$; it comes from the fact that every weight in a row is multiplied by a different element of x, while every weight in a column affects a different output neuron. The transpose is what allows the math to "align" the errors with the signals.Would you like me to show you the final Python line (using NumPy or PyTorch) that actually performs this calculation in a real training loop?

@@ -198,6 +198,9 @@ __marimo__/
 ./encoder.html
 neural.html
 temp.*
+*.html
 
 sandbox/tikz/*.aux
 sandbox/tikz/*.pdf
+sandbox/ATTIC.txt
+sandbox/TMP.py

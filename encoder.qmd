@@ -1,5 +1,5 @@
 ---
-title: "Transformer Architecture (1)"
+title: "Transformer Architecture: Encoder"
 jupyter: python3
 format: 
   revealjs:
@@ -87,7 +87,8 @@ This lecture is the first of ??? about the transformer algorithm and selected ap
 
 :::
 
----
+
+
 
 ## Tokenization 
 
@@ -106,6 +107,7 @@ This lecture is the first of ??? about the transformer algorithm and selected ap
 | **Character** | Individual letters | ["m", "a", "c", "h", "i", "n", "e", "l", "r", "g"] |  Tiny vocabulary; no "unknown" words | Loses semantic meaning; very long sequences |
 
 :::
+
 ## Tokens
 
 Tokenization by Open-AI 
@@ -194,6 +196,7 @@ Where:
 - **Weight Matrix**: $\mathbf{W}_e \in \mathbb{R}^{V \times d}$ contains the learnable parameters.
 * **Projection**: The result $\mathbf{e}_i$ is the $i$-th row of the matrix $\mathbf{W}_e$.
 :::
+
 ::: {.column width="40%"}
 $$
 \mathbf{W}_e = \begin{bmatrix} 
@@ -203,6 +206,7 @@ $$
 \leftarrow & \mathbf{e}_{V-1} & \rightarrow 
 \end{bmatrix}
 $$
+
 :::
 ::::
 
@@ -222,7 +226,6 @@ $$
 
 
 
----
 
 ## Section 2: Positional Encodings {visibility="uncounted"}
 
@@ -347,6 +350,7 @@ styled_df = df.style.set_properties(**{
 
 styled_df
 ``` 
+
 :::
 ::: {.slide-footer}
 Note: $n=100$ is used for visualization; standard models typically use $n=10,000$.
@@ -431,6 +435,7 @@ $$
 
 
 ## Understanding the PE Matrix (4)
+
 ::: {.columns}
 ::: {.column width="60%"}
 ```{python}
@@ -476,19 +481,19 @@ ax.legend(title="Dimension Index", bbox_to_anchor=(1.05, 1), loc='upper left')
 plt.tight_layout()
 plt.show()
 ```
+
 :::
 ::: {.column width="40%"}
 
-
 - If the constant $n$ were too small (e.g., 50), the sine waves would repeat their cycles every 50 tokens. The model wouldn't be able to tell the difference between position 5 and position 55 because their encoding vectors would look identical.
 - $n=10000$ ensures that for any sequence length a Transformer is likely to see (e.g., 512 to 8,192 tokens), every single position has a unique combination of high-frequency and low-frequency signals.
+
 :::
 :::
 
 ## Properties of the Positional Encoding (1)
 
-::: {.callout-note icon=false}
-## The Linearity Property (Relative Positioning)
+::: {.callout-note icon=false, title="The Linearity Property (Relative Positioning)"}
 
 For any fixed offset $\Delta k$, the encoding at a shifted position can be represented as a linear transformation of the original:
 
@@ -507,9 +512,11 @@ $$PE_{pos+k} = M_k \cdot PE_{pos}$$
 ## Properties of the Positional Encoding (2)
 
 For any dimension $i$, the positional encoding is a pair of $(\sin, \cos)$ values. Let's define $\omega_i = \frac{1}{10000^{2i/d_{model}}}$ to simplify the notation.The encoding at position $pos$ is:
+
 $$\begin{bmatrix} \sin(\omega_i \cdot pos) \\ \cos(\omega_i \cdot pos) \end{bmatrix}$$
 
 We want to find the encoding at $pos + k$:
+
 $$\sin(\omega_i(pos + k)) = \sin(\omega_i \cdot pos + \omega_i \cdot k)$$$$\cos(\omega_i(pos + k)) = \cos(\omega_i \cdot pos + \omega_i \cdot k)$$
 
 Plugging into the Angle Addition Formulas:
@@ -538,7 +545,6 @@ The matrix $M_k=\begin{bmatrix} \sin(\omega_i(pos+k)) \\ \cos(\omega_i(pos+k)) \
 
 ## Distance (2)
 
-
 - The dot product between two tokens at positions $i$ and $j$ looks like this:
 
 $$X_i\cdot X_j = (E_i + P_i) \cdot (E_j + P_j)$$
@@ -564,6 +570,7 @@ This results in four distinct terms
 $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\text{Do these words relate?}} + \underbrace{(P_v \cdot P_w)}_{\text{Are they close together?}}$$
 
 ## Rotary Position Embedding
+
 ::: {.columns}
 ::: {.column width="40%"}
 - Rotary Positional Embeddings (RoPE)
@@ -620,7 +627,7 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 :::
 
 :::
----
+
 
 
 ## The Encoder: Multi-head attention
@@ -629,67 +636,14 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 ::: {.column width="50%"}
 ```{python}
 #| echo: false
-#| out-height: "65vh"
+#| fig-width: 10
+#| fig-height: 6
+#| out-width: "100%"
 #| fig-align: center
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-
-def draw_encoder_compact(highlight=None):
-    fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 10) 
-    ax.axis('off')
-
-    colors = {
-        'mha': '#fdba74', 'ffn': '#93c5fd', 'norm': '#e2e8f0',
-        'text': '#333333', 'highlight': '#1D9A73', 'residual': '#64748b'
-    }
-
-    def draw_box(y, text, color, key):
-        is_hl = (highlight == key)
-        rect = patches.FancyBboxPatch((2.5, y), 5, 0.8, boxstyle="round,pad=0.1", 
-                                      linewidth=3 if is_hl else 1.5, 
-                                      edgecolor=colors['highlight'] if is_hl else '#333333', 
-                                      facecolor=color)
-        ax.add_patch(rect)
-        ax.text(5, y + 0.4, text, ha='center', va='center', fontsize=10, fontweight='bold')
-
-    ax.plot([5, 5], [0.2, 0.8], color='#333', lw=1.5)
-    ax.plot([3.5, 6.5], [0.8, 0.8], color='#333', lw=1.5)
-    for x, label in zip([3.5, 5, 6.5], ['K', 'Q', 'V']):
-        ax.plot([x, x], [0.8, 1.5], color='#333', lw=1.5)
-        ax.text(x, 1.1, label, ha='center', va='center', fontsize=9, fontweight='bold', backgroundcolor='white')
-
-    # --- MHA ---
-    draw_box(1.5, "Multi-Head Attention", colors['mha'], 'mha')
-    
-    # Residual 1
-    ax.plot([5, 1, 1], [0.6, 0.6, 3.2], color=colors['residual'], lw=1.2, ls='--')
-    ax.annotate('', xy=(2.5, 3.2), xytext=(1, 3.2), arrowprops=dict(arrowstyle='->', color=colors['residual'], ls='--'))
-
-    # --- Add & Norm 1 ---
-    draw_box(2.8, "Add & Norm", colors['norm'], 'norm1')
-    ax.annotate('', xy=(5, 2.8), xytext=(5, 2.3), arrowprops=dict(arrowstyle='->', lw=1.5))
-
-    # --- FFN ---
-    draw_box(4.5, "Feed Forward (FFN)", colors['ffn'], 'ffn')
-    
-    # Residual 2
-    ax.plot([5, 1, 1], [4.0, 4.0, 6.2], color=colors['residual'], lw=1.2, ls='--')
-    ax.annotate('', xy=(2.5, 6.2), xytext=(1, 6.2), arrowprops=dict(arrowstyle='->', color=colors['residual'], ls='--'))
-
-    # --- Add & Norm 2 ---
-    draw_box(5.8, "Add & Norm", colors['norm'], 'norm2')
-    ax.annotate('', xy=(5, 5.8), xytext=(5, 5.3), arrowprops=dict(arrowstyle='->', lw=1.5))
-
-    # Output
-    ax.annotate('', xy=(5, 7.5), xytext=(5, 6.6), arrowprops=dict(arrowstyle='->', lw=1.5))
-    ax.text(5, 7.8, "Output to Next Layer", ha='center', fontsize=9, fontweight='bold')
-
-    return fig
-
-fig = draw_encoder_compact(highlight='ffn')
-plt.show()
+import sys
+sys.path.append('utils') 
+from llm_plots import draw_encoder_compact
+draw_encoder_compact(highlight='ffn')
 ```
 :::
 
@@ -730,7 +684,6 @@ $$
 
 Here, $d \times d_k = 768\times 64$ in the original implementation of BERT.
 
----
 
 ## The Resulting Key Matrix ($K$)
 
@@ -753,14 +706,13 @@ $$k_{1,1} = \sum_{j=1}^{768} x_{1,j} \cdot w_{j,1}$$
 - The entire Key vector for token 1 can be represented as:
 $$k_1 = [x_{1,1}, x_{1,2}, \dots, x_{1,768}] \begin{bmatrix} | & |  && | & \\ w_{col1} & w_{col2} & \dots& w_{col64} \\ | & | && | & \end{bmatrix}$$
 
----
+
 
 ## Nomenclature
 
 - The weight matrix columns ($\mathbf{w}_j$) are referred to as __projection vectors__. 
 - Each one projects the 768-dimensional input onto a single axis of the 64-dimensional "Key space." (or "Query space")
 
----
 
 ## Learnable Weight Matrix ($W^Q$)
 
@@ -784,7 +736,6 @@ The Functional RolesThey act as two different "filters" applied to the same inpu
 
 - [Todo: find reference/citation for above]{.neon-todo}
 
----
 
 ## Attention Scores
 
@@ -796,7 +747,6 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\rig
 
 - We will go through this step-by-step
 
---- 
 
 ## $QK^\top$
 
@@ -840,7 +790,6 @@ If we look at a single scalar in this resulting $n \times n$ matrix, it is the d
 - $j$: The key token.
 - If  $i$ aligns with  $j$, this score will be high.
 
----
 
 ## The scaling factor
 
@@ -985,7 +934,6 @@ In BERT-Base, this happens 12 times in parallel (12 heads). Each head produces a
 
 - [Todo: Decide where to talk about multi-head stuff]{.neon-todo}
 
----
 
 # Section 4: Layer Normalization
 
@@ -1024,7 +972,6 @@ In BERT-Base, this happens 12 times in parallel (12 heads). Each head produces a
 
 :::
 
----
 
 
 ## Layer Normalization (LN)
@@ -1033,21 +980,19 @@ For any fixed offset $\Delta k$, the encoding at a shifted position can be repre
 
 LN greatly contributes to stabilizing training and optimizing performance in deep learning models, especially in transformers. It works by normalizing the activations at each layer, ensuring a more consistent gradient flow during training. 
 
-:::
 
 __Two flavors__:
 
 - Post-LN transformer applies normalization after the addition of the layer’s output with the residual connection’s output.^[Vaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)]
 - Pre-LN transformers [Xiong et al., 2020] apply normalization before self-attention and feed-forward layers. This configuration is used in modern architectures such as GPT, Llama, and Vision Transformers.^[Xiong R, et al., On layer normalization in the transformer architecture. In International Conference on Machine Learning, PMLR, 2020.]
 
----
 
 ## LN step 1: Add
 
 The "Add" part is a Residual Connection (also called a Skip Connection). 
 
-::: {.callout-note icon=false}
-## Add
+::: {.callout-note icon=false, title="Add"}
+
 Instead of a layer outputting $Sublayer(X)$, it outputs:
 
 $$\text{Output} = X + Sublayer(X)$$
@@ -1067,11 +1012,9 @@ $$\frac{\partial(X + f(X))}{\partial X} = 1 + f'(X)$$
 
 ## LN step 2: Norm
 
-::: {.callout-note icon=false}
-## Norm
+::: {.callout-note icon=false, title="Norm"}
+
 The normalization step ensures that values do no not explode^[The $\odot$ symbol represents element-wise multiplication.]
-
-
 
 $$ \text{LayerNorm}(Z) = \gamma \odot \left( \frac{Z - \mu}{\sqrt{\sigma^2 + \epsilon}} \right) + \beta$$
 
@@ -1128,18 +1071,16 @@ $$\text{Output}_j = (\gamma_j \cdot \hat{x}_j) + \beta_j$$
 
 :::
 
----
 
 ## FFN Expansion-Contraction
-
-
-
 
 ::: {.columns}
 ::: {.column width="50%"}
 ```{python}
 #| echo: false
-#| out-height: "65vh"
+#| fig-width: 10
+#| fig-height: 6
+#| out-width: "100%"
 #| fig-align: center
 import sys
 sys.path.append('utils') 
@@ -1160,16 +1101,14 @@ draw_gelu_block()
 - $W_2$: $3072 \times 768$ (The "Projection" weights)
 - $b_2$: $1 \times 768$ (The second bias)
 
-::: {.callout-note icon=false}
+::: 
+:::
 
 ## FFN layer
 
 $$FFN(x) = \text{GELU}(xW_1 + b_1)W_2 + b_2$$
 
-:::
 
-:::
-:::
 
 ---
 
@@ -1232,8 +1171,6 @@ plot_activations(show_gelu=False)
 :::
 
 
----
-
 ## Gaussian Error Linear Unit (GELU)
 
 ::: {.columns}
@@ -1266,12 +1203,8 @@ plot_activations(show_gelu=True)
 :::
 :::
 
----
 
 ## BERT's FFN Block
-
-
-
 
 
 ::: {.columns}
@@ -1357,8 +1290,6 @@ $$
 
 
 
----
-
 
 ## Layer Normalization (2)
 
@@ -1377,8 +1308,7 @@ Similar to the previous add & norm layer, this one has two purposes
 
 ## Conclusion
 
-::: {.callout-note icon=false}
-## Takehome
+::: {.callout-note icon=false, title: "Take home"}
 
 This lecture introduced the Encoder architecture as it is implemented in BERT. In the next lecture, we will introduce the decoder architecture and discuss how these models are trained.
 

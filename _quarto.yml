@@ -1,6 +1,6 @@
 format:
   revealjs:
-    footer: '<img src="img/bih.png " class="footer-logo">'
+    footer: '<img src="img/bih.png" class="footer-logo">'
     show-slide-number: all   # This shows n/m
     slide-number: true
     css: style/styles.css
