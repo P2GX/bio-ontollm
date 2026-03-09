@@ -56,15 +56,14 @@ more detailed treatment of backpropagation and gradient descent algorithms.
 ::: {.column width="50%"}
 ```{python}
 #| echo: false
-#| fig-width: 12
-#| fig-height: 7.8
-#| out-width: "100%"
 #| fig-align: center
 import sys
+import matplotlib.pyplot as plt
 sys.path.append('utils') 
 from ann_plots import plot_neural_net
 
 plot_neural_net()
+plt.show()
 ```
 
 :::
@@ -94,6 +93,7 @@ plot_neural_net()
 #| echo: false
 #| fig-align: center
 import sys
+import matplotlib.pyplot as plt
 sys.path.append('utils') 
 import matplotlib.pyplot as plt
 from ann_plots import plot_neuron
@@ -133,15 +133,14 @@ $$f(z) = \frac{1}{1 + e^{-z}}$$
 ::: {.column width="50%"}
 ```{python}
 #| echo: false
-#| fig-width: 8
-#| fig-height: 4
-#| out-width: "100%"
 #| fig-align: center
 import sys
+import matplotlib.pyplot as plt
 sys.path.append('utils') 
 from ann_plots import plot_maximum_chaos
 
 plot_maximum_chaos()
+plt.show()
 ```
 
 :::
@@ -152,10 +151,9 @@ plot_maximum_chaos()
 
     A neural network with at least one hidden layer is a universal approximator in that it can represent any function
 
-    The capacity of the ANN increases with more hidden units and more hidden layers^[Cybenko G (1989) Approximation by superpositions of a sigmoidal function. Mathematics of Control, Signals, and Systems (MCSS)]
-
 :::
 
+* The capacity of the ANN increases with more hidden units and more hidden layers^[Cybenko G (1989) Approximation by superpositions of a sigmoidal function. Mathematics of Control, Signals, and Systems (MCSS)]
 
 :::
 :::
@@ -488,19 +486,22 @@ $$
 :::
 
 ::: {.column width="50%"}
+
 ```{python}
 #| echo: false
-#| fig-width: 12
-#| fig-height: 5
-#| out-width: "100%"
 #| fig-align: center
+#| fig-cap: ""
+#| chunk-style: "margin-bottom: 0;"
 import sys
 import matplotlib.pyplot as plt
-
 sys.path.append('utils') 
 from ann_plots import draw_toy_network
 draw_toy_network()
+plt.show()
 ``` 
+
+* The loss is determined by comparing the expected result ($y$) with the prediction of the network ($a_3$): $\mathcal{L} = \dfrac{1}{2}(y-a_3)^2$
+
 :::
 :::
 
@@ -516,8 +517,8 @@ $$
 &=&\dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{rearrange}\\
 &=&\sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{definition of $\sigma(x)$}\\
 &=&\sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}}&& \hspace{1cm} \text{add and substract 1}\\
-&=&\sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right)&& \hspace{1cm} \text{rearrange using definition of $\sigma(x)$}\\
-&=&\sigma(x) \cdot \left( 1 -\sigma(x) \right)&& \hspace{1cm} \text{simplify}\\
+&=&\sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right)&& \hspace{1cm} \text{rearrange}\\
+&=&\sigma(x) \cdot \left( 1 -\sigma(x) \right)&& \hspace{1cm} \text{simplify using definition of $\sigma(x)$}\\
 \end{eqnarray*}
 $$
 
@@ -595,23 +596,20 @@ $$
 ::: {.column width="50%"}
 ```{python}
 #| echo: false
-#| fig-width: 12
+#| fig-width: 6
 #| fig-height: 5
-#| out-width: "100%"
 #| fig-align: center
 import sys
 import matplotlib.pyplot as plt
 
 sys.path.append('utils') 
 from ann_plots import draw_toy_network
-draw_toy_network()
+draw_toy_network(figsize=(6,5))
+plt.show()
 ``` 
 
 * Similar logic gets us $\dfrac{\partial \mathcal{L}}{\partial w_5} =  ( a_3 - y)a_1$
-* and 
-$$
-$\dfrac{\partial \mathcal{L}}{\partial b_3} = \dfrac{\partial \mathcal{L}}{\partial a_3} \cdot \dfrac{\partial \mathcal{a_3}}{\partial b_3}  ( a_3 - y)\cdot 1 = ( a_3 - y)$
-$$
+
 :::
 :::
 
@@ -710,9 +708,6 @@ $$
 ::: {.column width="50%"}
 ```{python}
 #| echo: false
-#| fig-width: 12
-#| fig-height: 5
-#| out-width: "100%"
 #| fig-align: center
 import sys
 import matplotlib.pyplot as plt
@@ -720,6 +715,7 @@ import matplotlib.pyplot as plt
 sys.path.append('utils') 
 from ann_plots import draw_toy_network
 draw_toy_network()
+plt.show()
 ``` 
 
 :::
@@ -731,14 +727,237 @@ draw_toy_network()
 - If we change the network architecture, the activation function, or the loss function, we would need to recalcute these expressions
 - This manual procedure is __tedious__ and would not scale to exploring various network structures for realistic network sizes. 
 - We will see it is possible to automate this procedure, but to understand that, we will show how it is possible to use __matrix calculus__ to abstract away some of the fidgety work with the indices
-- For a fully connected layer, we will represent the forward pass as 
+
+
+
+## Matrix calculus: Vector function with scalar argument
+
+
+::: {.columns}
+::: {.column width="50%"}
+
+- Consider the function
+$$
+\mathbf{f}(t) = \begin{bmatrix} t \cos(t) \\ t \sin (t) \\ t \end{bmatrix}
+$$
+
+* In general, we write such functions as 
 
 $$
-\mathbf{y}^{m\times 1} = \mathbf{W}^{m\times n}\mathbf{x}^{n\times 1} + \mathbf{b}^{m\times 1}
+\mathbf{f}(x) = \begin{bmatrix} f_1(x) \\ f_2(x) \\ \vdots \\ f_n(x) \end{bmatrix}
 $$
 
-- This notation will require us to take first derivatives with respect to vectors and matrices
-- We will review a few items from matrix calculus before proceding
+:::
+::: {.column width="50%"}
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import plot_3d_spiral
+
+plot_3d_spiral()
+``` 
+
+:::
+:::
+
+## Tangent vector
+
+::: {.callout-note title="Tangent vector" }
+
+The derivative of $\mathbf{f}(t)$ is callled the __tangent vector__. The derivative is defined as the derivative of each of the components of $\mathbf{f}(t)$
+
+:::
+
+::: {.columns}
+::: {.column width="50%"}
+$$
+\dfrac{\partial f}{\partial \mathbf{x}}
+=
+\begin{bmatrix} \dfrac{\partial f_1}{\partial x} \\ \dfrac{\partial f_2}{\partial x} \\ \vdots \\ \dfrac{\partial f_n}{\partial x} \end{bmatrix}
+$$
+
+:::
+::: {.column width="50%"}
+
+* Example
+
+$$
+f = \begin{bmatrix} 4x^2-7x +42\\ x^9 -21\end{bmatrix}
+$$
+then
+$$
+\dfrac{\partial f}{\partial \mathbf{x}}
+=
+\begin{bmatrix} 8x-7 \\9x^8 \end{bmatrix}
+$$
+
+:::
+:::
+
+## Matrix calculus: Scalar function with vector argument
+
+
+::: {.callout-note title="Scalar field" }
+
+A function taking a vector argument and returning a scalar is called a __scalar field__: 
+$f: \mathbb{R}^m \rightarrow \mathbb{R}$
+
+:::
+
+::: {.columns}
+::: {.column width="50%"}
+
+In matrix calculus notation^[We are using the numerator layout, where $\frac{\partial df}{\partial dx}$ is written as a __row__ vector. The __denominator__ layout is also commonly used in machine learning, and  $\frac{\partial df}{\partial dx}$ would be written as a __column__ vector. Obviously it is important to be consistent!], we write
+$$
+\dfrac{\partial f}{\partial \mathbf{x}} = 
+\begin{bmatrix} \dfrac{\partial f}{\partial x_1} & \dfrac{\partial f}{\partial x_2} & \cdots & \dfrac{\partial f}{\partial x_n} \end{bmatrix}  
+$$
+
+
+::: 
+::: {.column width="50%"}
+
+
+Another commonly encountered notation is the __gradient__, which by convention is represented as a column vector
+
+$$
+\nabla f(\mathbf{x}) = 
+\begin{bmatrix} \dfrac{\partial f}{\partial \mathbf{x}} \end{bmatrix}^T
+=
+\begin{bmatrix} \dfrac{\partial f}{\partial x_1}\\ \dfrac{\partial f}{\partial x_2} \\ \cdots \\ \dfrac{\partial f}{\partial x_n} \end{bmatrix}  
+$$
+
+:::
+:::
+
+## Matrix calculus: Vector function with vector argument
+
+::: {.callout-note }
+
+We are calculating $\frac{\partial \mathbf{f}}{\partial \mathbf{x}}$, a function that takes a vector input and returns a vector (the two vectors may or may not have the same dimensions).
+
+:::
+
+The numerator layout convention yields a column vector for the derivative of $\mathbf{f}(x)$ (a function that takes a scalar argument and returns a vector).
+
+* For a function that takes an $m$-dimensional vector and returns an $n$-dimensional vector, $\mathbf{f}: \mathbb{R}^m \rightarrow \mathbb{R}^n$, we have:
+
+$$
+\dfrac{\partial \mathbf{f}}{\partial \mathbf{x}}
+=
+\begin{bmatrix}
+\dfrac{\partial f_1}{\partial x_1} & \dfrac{\partial f_1}{\partial x_2} & \cdots & \dfrac{\partial f_1}{\partial x_m} \\
+\dfrac{\partial f_2}{\partial x_1} & \dfrac{\partial f_2}{\partial x_2} & \cdots & \dfrac{\partial f_2}{\partial x_m} \\
+\vdots & \vdots & \ddots & \vdots \\
+\dfrac{\partial f_n}{\partial x_1} & \dfrac{\partial f_n}{\partial x_2} & \cdots & \dfrac{\partial f_n}{\partial x_m} \\
+\end{bmatrix}
+$$
+
+
+## Matrix calculus: Vector function with vector argument
+
+
+::: {.columns}
+::: {.column style="width: 25%; vertical-align: top;"}
+
+$$
+\dfrac{\partial f}{\partial \mathbf{x}}
+=
+\begin{bmatrix} \dfrac{\partial f_1}{\partial x} \\ \dfrac{\partial f_2}{\partial x} \\ \vdots \\ \dfrac{\partial f_n}{\partial x} \end{bmatrix}
+$$
+
+$f: \mathbb{R} \rightarrow \mathbb{R}^n$ (functions takes a scalar  as input and produces a vector)
+
+::: 
+
+::: {.column style="width: 75%; vertical-align: top;"}
+
+$$
+\frac{\partial \mathbf{f}}{\partial \mathbf{x}}
+=
+\begin{bmatrix}
+\dfrac{\partial f_1}{\partial x_1} & \dfrac{\partial f_1}{\partial x_2} & \cdots & \dfrac{\partial f_1}{\partial x_m} \\
+\dfrac{\partial f_2}{\partial x_1} & \dfrac{\partial f_2}{\partial x_2} &  \cdots & \dfrac{\partial f_2}{\partial x_m} \\
+\vdots & \vdots &  \ddots & \vdots \\
+\dfrac{\partial f_n}{\partial x_1} & \dfrac{\partial f_n}{\partial x_2} &  \cdots & \dfrac{\partial f_n}{\partial x_m}
+\end{bmatrix}
+=
+\begin{bmatrix} 
+- \nabla f_1(\mathbf{x})^T - \\ 
+- \nabla f_2(\mathbf{x})^T - \\ 
+\vdots \\ 
+- \nabla f_n(\mathbf{x})^T - 
+\end{bmatrix}
+$$
+
+* Compare the first column of the matrix with the vector on the left
+
+::: 
+:::
+
+
+
+## Matrix calculus: Scalar function with matrix argument
+
+* let $f$ be a function that takes an $n\times m$ matrix as input and produces a scalar value
+* $f: \mathbb{R}^{n\times m}\rightarrow \mathbb{R}$
+* Because of the numerator layout convention, the derivative is arranged like $\mathbf{X}^T$, if $\mathbf{X}^{n\times m}$ is the input
+
+$$
+\dfrac{\partial f}{\partial \mathbf{X}}
+=
+\begin{bmatrix}
+\frac{\partial f}{\partial x_{11}} & \frac{\partial f}{\partial x_{11}} & \cdots \frac{\partial f}{\partial x_{n1}} \\
+\frac{\partial f}{\partial x_{12}} & \frac{\partial f}{\partial x_{22}} & \cdots \frac{\partial f}{\partial x_{n2}} \\
+\vdots & \vdots &  \ddots & \vdots \\
+\frac{\partial f}{\partial x_{1m}} & \frac{\partial f}{\partial x_{2m}} & \cdots \frac{\partial f}{\partial x_{nm}} \\
+\end{bmatrix}
+$$
+
+
+
+
+## Matrix calculus: Scalar function with matrix argument
+
+* Similar to our motivation for the dimensions of the derivative of a vector function with vector arguments, we can intuit that the transpose is necessary by comparing to the definition of $\frac{\partial d}{\partial \mathbf{x}}$
+* We defined $\frac{\partial d}{\partial \mathbf{x}}$ as a __row__ vector, using $\mathbf{x}^T$ as the ordering
+* Therefore, consistency demands that the $\dfrac{\partial f}{\partial \mathbf{X}}$ be ordered as $\mathbf{X}^T$
+
+::: {.columns}
+::: {.column style="width: 25%; vertical-align: top;"}
+
+$$
+\dfrac{\partial f}{\partial \mathbf{x}} = 
+\begin{bmatrix} \dfrac{\partial f}{\partial x_1} & \dfrac{\partial f}{\partial x_2} & \cdots & \dfrac{\partial f}{\partial x_n} \end{bmatrix}^{1\times n} 
+$$
+
+$f: \mathbb{R}^n \rightarrow \mathbb{R}$ (function takes a vector  as input and produces a scalar)
+
+::: 
+
+::: {.column style="width: 75%; vertical-align: top;"}
+
+$$
+\dfrac{\partial f}{\partial \mathbf{X}}
+=
+\begin{bmatrix}
+\frac{\partial f}{\partial x_{11}} & \frac{\partial f}{\partial x_{11}} & \cdots \frac{\partial f}{\partial x_{n1}} \\
+\frac{\partial f}{\partial x_{12}} & \frac{\partial f}{\partial x_{22}} & \cdots \frac{\partial f}{\partial x_{n2}} \\
+\vdots & \vdots &  \ddots & \vdots \\
+\frac{\partial f}{\partial x_{1m}} & \frac{\partial f}{\partial x_{2m}} & \cdots \frac{\partial f}{\partial x_{nm}} \\
+\end{bmatrix}^{m\times n}
+$$
+
+* Compare the first row of the matrix with the row vector on the left
+
+::: 
+:::
+
 
 ## tmp
 In backpropagation, we need to know how the Loss ($L$) changes with respect to the weights. 
@@ -752,31 +971,389 @@ $$\frac{\partial (\mathbf{W}\mathbf{x})}{\partial \mathbf{W}} = \text{ (Chain ru
 - Summary of the two different derivatives:With respect to Input: $\frac{\partial}{\partial \mathbf{x}} (\mathbf{W}\mathbf{x}) = \mathbf{W}$ (This passes the gradient to the previous layer).
 - With respect to Weights: $\frac{\partial}{\partial \mathbf{W}} (\mathbf{W}\mathbf{x}) \approx \mathbf{x}^\top$ (This is used to update the current layer's weights).
 
----
 
-## Step 1: The Scalar View
+## Backpropagation with matrix notation
 
-Let's look at just one specific weight, $w_{jk}$, which connects input $x_k$ to the $j$-th neuron.
+* Each layer of a fully connected feed forward network (FFN) can be thought of as a vector function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$:
 
-- The $j$-th output is:$$z_j = \sum_{i} w_{ji} x_i + b_j$$
+$$
+\mathbf{y}^{m\times 1} = \mathbf{f}(\mathbf{x}^{n\times 1})
+$$
 
-- If we want to know how the loss $L$ changes when we nudge $w_{jk}$, we use the chain rule:$$\frac{\partial L}{\partial w_{jk}} = \frac{\partial L}{\partial z_j} \cdot \frac{\partial z_j}{\partial w_{jk}}$$
+* The input to the layer is an $n$-dimensional vector $\mathbf{x}^{n\times 1}$. This vector is either the actual input to the FFN or (if we are working with a hidden layer), the output of the previous layer.
+* The forward pass runs through each layer of the FFN. $\mathbf{y}^{(i))}$ becomes $\mathbf{x}^{(i+1))}$ (output of layer $i$ becomes the input to layer $i+1$)
+* The output of the final layer is used to calculate the loss. Letting this layer be called $\mathbf{h}$, we have
+$$
+\mathcal{L} = L(\mathbf{h}, \mathbf{y}_{true})
+$$
 
----
+* The loss $\mathcal{L}$ is a scalar value.
+* We need to move this error __back__ through the network to perform back propagation
 
-## Step 2: The Local Derivative
+## FFN forward pass in matrix notation
 
-Now, let's look at that second term, $\frac{\partial z_j}{\partial w_{jk}}$.From our equation $z_j = (w_{j1}x_1 + w_{j2}x_2 + \dots + w_{jk}x_k + \dots)$, the only term that contains $w_{jk}$ is $w_{jk}x_k$.The derivative is simply:$$\frac{\partial z_j}{\partial w_{jk}} = x_k$$So, for a single weight, the gradient is:$$\frac{\partial L}{\partial w_{jk}} = \delta_j \cdot x_k$$
+* For layers with an input vector coming from the previous layer, we have
+$$
+\mathbf{y}^{m\times 1} = \mathbf{W}^{m\times n}\mathbf{x}^{n\times 1} + \mathbf{b}^{m\times 1}
+$$
 
----
+* For activation layers, we have
+$$
+\mathbf{y}^{m\times 1} = \mathbf{\sigma}(\mathbf{x}^{m\times 1} )
+$$
 
-## Step 3: Moving to Matrix Form
+* In this notation, $\mathbf{\sigma}$ is a vector-valued function (and is shown in bold)
 
-We want the derivative with respect to the whole matrix $\mathbf{W}$. We need a way to combine all the $\delta_j$ values (from the output side) and all the $x_k$ values (from the input side) into a matrix that matches the shape of $\mathbf{W}$.If $\boldsymbol{\delta}$ is a column vector $(m \times 1)$ and $\mathbf{x}$ is a column vector $(n \times 1)$, we use the Outer Product:$$\frac{\partial L}{\partial \mathbf{W}} = \boldsymbol{\delta} \mathbf{x}^\top$$
+$$
+\mathbf{\sigma}(\mathbf{x}^{m\times 1} ) =
+\begin{bmatrix}
+\sigma(x_1) \\
+\sigma(x_2) \\
+\vdots \\
+\sigma(x_m) \\
+\end{bmatrix}
+$$
+
+## Backprop derivatives
+
+* The derivative of the loss function with respect to the network output is the first error term
+* To pass this back through the network, we must determine how the error term changes with a change to the input of a layer with respect to how the error changes with respect to the lyers output.
+* The following equation is the change in the error given the output of the layer
+
+$$
+\dfrac{\partial E}{\partial \mathbf{x}}
+$$
+
+* The following equation is the change in the error given the input of the layer
+
+$$
+\dfrac{\partial E}{\partial \mathbf{y}}
+$$
+
+* We can calculate this using the chain rule
+
+$$
+\dfrac{\partial E}{\partial \mathbf{x}}
+= \dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial \mathbf{x}}{\partial \mathbf{x}}
+$$
 
 
----
+## Backprop algorithms
 
-## Step 4: Dimension Check
+* $\dfrac{\partial E}{\partial \mathbf{x}}$ for layer $i$ becomes $\dfrac{\partial E}{\partial \mathbf{y}}$ for layer $i-1$ as we move back through the FFN
 
- Let's check the shapes:$\boldsymbol{\delta}$ is $(m \times 1)$ — the "error" at each of the $m$ output neurons.$\mathbf{x}^\top$ is $(1 \times n)$ — the "signal" from each of the $n$ input neurons.The resulting matrix is $(m \times n)$, which is exactly the shape of your weight matrix $\mathbf{W}$.SummaryThe $\mathbf{x}^\top$ doesn't come from the derivative of $\mathbf{x}$; it comes from the fact that every weight in a row is multiplied by a different element of x, while every weight in a column affects a different output neuron. The transpose is what allows the math to "align" the errors with the signals.Would you like me to show you the final Python line (using NumPy or PyTorch) that actually performs this calculation in a real training loop?
+The entire backprop algorithm can be summarized as follows
+
+1. Run a forward pass to map  $\mathbf{x}\rightarrow \mathbf{y}$ layer for layer, and get the final output $\mathbf{h}$
+2. Calculate the value of the derivative of the loss function using  $\mathbf{h}$ and  $\mathbf{y}_{true}$. This becomes $\frac{\partial E}{\partial \mathbf{y}}$ for the output layer
+3. Repeat for all layers: calculate $\frac{\partial E}{\partial \mathbf{x}}$ from $\frac{\partial E}{\partial \mathbf{y}}$ with $\frac{\partial E}{\partial \mathbf{x}}$ of layer $i$ becoming $\frac{\partial E}{\partial \mathbf{y}}$  for layer $i-1$
+
+
+## Backprop algorithms: Derivative of activation layer
+
+* Let's therefore assume we know $\frac{\partial E}{\partial \mathbf{y}}$ and want to get $\frac{\partial E}{\partial \mathbf{x}}$.
+* Let's start with an activation layer
+* By the chain rule, we have
+
+$$
+\begin{eqnarray*}
+\dfrac{\partial E}{\partial \mathbf{x}} &=& 
+\dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial \mathbf{x}}{\partial \mathbf{x}} \\
+&=& \begin{bmatrix}
+\frac{\partial E}{\partial y_1}\frac{\partial y_1}{\partial x_1}  \\ \frac{\partial E}{\partial y_2}\frac{\partial y_2}{\partial x_2} \\ \vdots \\ \frac{\partial E}{\partial y_m}\frac{\partial y_m}{\partial x_m}
+\end{bmatrix}
+= \begin{bmatrix}
+\frac{\partial E}{\partial y_1} \sigma^{\prime}(x_1)\\ \frac{\partial E}{\partial y_2}\sigma^{\prime}(x_2) \\ \vdots \\ \frac{\partial E}{\partial y_m}\sigma^{\prime}(x_m)
+\end{bmatrix} \\
+\dfrac{\partial E}{\partial \mathbf{y}} \odot \mathbf{\sigma}^{\prime}(\mathbf{x})
+\end{eqnarray*}
+$$
+
+* $\odot$ denotes the Hadamard product (elementwise multiplication)
+
+## Backprop algorithms: Derivative of fully connected layer
+
+
+
+$$
+\begin{eqnarray*}
+\dfrac{\partial E}{\partial \mathbf{x}} &=& 
+\dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial \mathbf{y}}{\partial \mathbf{x}} \\
+&=& \dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial  \mathbf{Wx+b}}{\partial \mathbf{x}}\\
+&=& \dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial  \mathbf{Wx}}{\partial \mathbf{x}}\\
+&=& \mathbf{W}^T\dfrac{\partial E}{\partial \mathbf{y}} 
+\end{eqnarray*}
+$$
+
+* $\mathbf{x}$ is $n\times 1$ (input vector) and $\mathbf{y}$ is $m \times 1$ (output)
+* $\frac{\partial E}{\partial \mathbf{y}}$ is a column vector $(m \times 1)$.
+* $\frac{\partial \mathbf{y}}{\partial \mathbf{x}}$ is the Jacobian matrix $\mathbf{W}$, which is $(m \times n)$.
+* $\frac{\partial E}{\partial \mathbf{x}}$ must be a column vector $(n \times 1)$ to match $\mathbf{x}$.
+
+$$\underbrace{\mathbf{W}^T}_{(n \times m)} \cdot \underbrace{\frac{\partial E}{\partial \mathbf{y}}}_{(m \times 1)} = \underbrace{\frac{\partial E}{\partial \mathbf{x}}}_{(n \times 1)}$$
+
+## Partial derivatives of the bias
+
+* The previous slides told us how to pass the error term backward through the network from layer to layer. 
+* The goal of backprop is to get first derivatives for tthe bias and weight terms (how would a change in the bias/weight affect the error?) to enable __gradient descent__.
+* We need to be able to calculate $\frac{\partial E}{\partial \mathbf{b}}$ and $\frac{\partial E}{\partial \mathbf{W}}$ __given__ that we have $\frac{\partial E}{\partial \mathbf{y}}$ and $\frac{\partial E}{\partial \mathbf{x}}$ from previous calculations
+
+$$
+\begin{eqnarray*}
+\dfrac{\partial E}{\partial \mathbf{b}} &=& 
+\dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial \mathbf{y}}{\partial \mathbf{b}} \\
+&=& \dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial  \mathbf{Wx+b}}{\partial \mathbf{x}}\\
+&=& \dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial  \mathbf{Wx}}{\partial \mathbf{b}}\\
+&=& \dfrac{\partial E}{\partial \mathbf{y}} (\mathbf{0} + \mathbf{1} )\\
+&=& \dfrac{\partial E}{\partial \mathbf{y}}
+\end{eqnarray*}
+$$
+
+## Partial derivatives of the weights
+
+::: {.columns}
+::: {.column width="50%"}
+
+$$
+\begin{eqnarray*}
+\dfrac{\partial E}{\partial \mathbf{W}} &=& 
+\dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial \mathbf{y}}{\partial \mathbf{W}} \\
+&=& \dfrac{\partial E}{\partial \mathbf{y}} \dfrac{\partial  \mathbf{Wx+b}}{\partial \mathbf{W}}\\
+&=& \dfrac{\partial E}{\partial \mathbf{y}} (\mathbf{x}^T + \mathbf{0})\\
+&=& \dfrac{\partial E}{\partial \mathbf{y}} \mathbf{x}^T
+\end{eqnarray*}
+$$
+
+:::
+::: {.column width="50%"}
+* $\mathbf{x}$ is $n \times 1$
+* $\mathbf{W}$ is $m \times n$
+* $\mathbf{y}$ is $m \times 1$
+* $E$ is a scalar ($1 \times 1$)
+* the derivative of a scalar $E$ with respect to a vector $\mathbf{y}$ is a row vector:$\dfrac{\partial E}{\partial \mathbf{y}}$ is $1 \times m$.
+*  the final result $\frac{\partial E}{\partial \mathbf{W}}$ must be $m \times n$ (to match the shape of the weights for the update rule)
+* Derivation of $\frac{\partial \mathbf{Wx+b}}{\partial \mathbf{W}} = \mathbf{x}^T$ is  a bit tricky and available in the appendix to this lecture (not required)
+
+
+:::
+:::
+
+
+
+
+## Gradient descent
+
+::: {.callout-note title="Game plan" }
+This lecture covers a review of artificial neural networks and provides a
+more detailed treatment of backpropagation and gradient descent algorithms.
+:::
+
+
+
+
+::: {.columns}
+
+::: {.column width="33%" .dimmed width="33%"}
+### Part 1
+**Review**
+
+* What is an artifical neural network?
+* Forward pass and reverse pass (training)
+* Typical applications in biomedicine
+:::
+
+::: {.column .dimmed width="33%"}
+### Part 2
+**Back propagation**
+
+* Mathematics
+* Automated backprop in software libraries such as PyTorch
+:::
+
+::: {.column  width="33%"}
+### Lecture 3
+**Gradient descent**
+
+* Mathematics
+* Momentum and Adam
+:::
+
+:::
+
+
+
+# Gradient descent
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import plot_gd
+plot_gd()
+plt.show()
+``` 
+
+## Basic idea of gradient descent
+
+* Update the weights and biases of each layer
+$$
+\begin{eqnarray*}
+\mathbf{W} &\leftarrow &\mathbf{W} - \eta\Delta \mathbf{W} \\
+\mathbf{b} &\leftarrow &\mathbf{b} - \eta\Delta \mathbf{b}
+\end{eqnarray*}
+$$
+
+* Gradient descent is used in a variety of settings outside of back prop. Let's do one simple example -- finding the minimum of a function
+
+$$
+f(x) = 7x^2 + 3x-9
+$$
+
+* It is straightforward to find the minimum analytically by setting the derivative to zero
+
+$$
+\begin{eqnarray*}
+\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &=& 0 \\
+x &=& - \dfrac{3}{14}
+\end{eqnarray*}
+$$
+
+* To use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size $\eta$ ("eta").
+
+$$
+x \leftarrow x-\eta (14x +3 )
+$$
+
+## Gradient descent example
+
+```{python}
+#| echo: true
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "25%"
+import numpy as np
+import matplotlib.pylab as plt
+
+def f(x):
+  return 7*x**2 + 3*x - 9
+
+def d(x):
+  return 14*x + 3
+
+# first guess
+
+eta = 0.03
+# plot
+x = np.linspace(-1, 1.5, 1000)
+plt.figure(figsize=(3, 3))
+plt.plot(x, f(x))
+t = 1
+for i in range(15):
+  plt.plot(t, f(t), marker='o', color='r')
+  t = t - eta*d(t)
+print(f"Solution: {t:.4f} (-3/14={-3/14:.4f})")
+plt.axvline(x=t, color='blue', linestyle='--', linewidth=0.8)
+```
+
+
+
+## Gradient descent: Overshoot
+
+```{python}
+#| echo: false
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "25%"
+import numpy as np
+import matplotlib.pylab as plt
+
+def f(x): 
+    return 7*x**2 + 3*x - 9
+
+def d(x): 
+    return 14*x + 3
+
+# High learning rate to cause overshooting
+eta = 0.13  
+
+# Plotting the parabola
+x = np.linspace(-1.5, 1.5, 1000)
+plt.figure(figsize=(5, 5))
+plt.plot(x, f(x), 'k', alpha=0.3, label='f(x)')
+
+t = 1.2 # Starting point
+history_x = [t]
+history_y = [f(t)]
+
+for i in range(10):
+    # Calculate gradient descent step
+    t = t - eta * d(t)
+    
+    # Store history for dotted lines
+    history_x.append(t)
+    history_y.append(f(t))
+
+# Plot the path with dotted lines and markers
+plt.plot(history_x, history_y, linestyle='--', color='r', marker='o', label=f'Path ($\eta$={eta})')
+
+plt.axvline(-3/14, color='g', linestyle=':', label='Minimum')
+plt.legend()
+plt.show()
+
+print(f"Final Solution: {t:.4f} (Target: {-3/14:.4f})")
+```
+
+* Same code as in the previous example, but learning rate increased from $\eta = 0.03$ to $\eta=0.13$
+
+## Stochastic gradient descent
+
+* If we write the loss as
+
+$$
+\mathcal{L} = L(\Theta; \mathbf{x},y)
+$$
+
+* This means that we are including __all__ training data ($\mathbf{x},y$)
+* Gradient descent needs $\frac{\partial L}{\partial \Theta}$, which is obtained by backprop
+* __batch training__ refers to averaging over all training data
+* As the volume of training data increased, it became less sensible to pass all data to the model for each gradient descent step.
+* __minibatch training__ refers to using a subset of all data for each gradient descent step.
+* Because this procedure is noisy compared to full batch training, we refer to it as __stochastic gradient descent__ (SGD).
+* The noisiness may even be an advantage because it may help avoid falling into local minima
+* minibatch size is a hyperparameter, but typically the order of examples is randomized and chunks of data are chosen until all samples have been used.
+
+## Momentum
+
+* If the local landscape includes many local minima, vanilla GD may "get stuck" in a local minimum
+* Several procedures have been developed that add a form of __momentum__ to the standard GD update rule - this adds inertia to the GD and potentially allows GD to move past local minima.
+
+* Recall that the standard update step is
+$$
+x \leftarrow x - \eta\dfrac{\partial f}{\partial x}
+$$
+
+* With momentum, this becomes
+
+$$
+\begin{eqnarray*}
+v &\leftarrow & \mu v- \eta\dfrac{\partial f}{\partial x}\\
+x &\leftarrow & x + v
+\end{eqnarray*}
+$$
+
+* for some initial velocity $v$ (usually initialized to zero) and mass $\mu\in \left[0,1\right]$.
+* Effectively, this adds back a fraction of the previous step size, which tends to keep things going in the same direction
+
+
+
+
+
+## Gradient descent: Homework
+
+* Momentum approaches can improve the performance of SGD in many cases, especially where there are many local minima
+* We will experiment with adding momentum and more sophisticated related approaches in the Homework

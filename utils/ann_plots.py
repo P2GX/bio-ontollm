@@ -2,8 +2,8 @@ from matplotlib import patches
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_neural_net():
-    fig, ax = plt.subplots(figsize=(12, 7.8))
+def plot_neural_net(figsize=(12, 7.8)):
+    fig, ax = plt.subplots(figsize=figsize)
     left, right   = 0.06, 0.94
     bottom, top   = 0.12, 0.88
     layer_sizes = [3, 6, 4, 1]
@@ -80,7 +80,7 @@ def plot_neural_net():
     ax.set_ylim(0, 1)
     ax.set_aspect("equal")
     ax.axis('off')
-    plt.show()
+    
         
 
 def plot_neuron(figsize=(6, 6)):
@@ -137,7 +137,9 @@ def plot_neuron(figsize=(6, 6)):
 
 
 
-def plot_maximum_chaos(resolution=32, seed=7):
+def plot_maximum_chaos(figsize=(8, 4)):
+    resolution=32
+    seed=7
     np.random.seed(seed)
     
     # 1. Setup Grid
@@ -146,7 +148,7 @@ def plot_maximum_chaos(resolution=32, seed=7):
     X, Y = np.meshgrid(x, y)
     grid_points = np.c_[X.ravel(), Y.ravel()]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
 
     # --- PANEL 1: LINEAR BOUNDARY ---
     # A simple diagonal line
@@ -198,7 +200,7 @@ def plot_maximum_chaos(resolution=32, seed=7):
         ax.spines['right'].set_visible(False)
 
     plt.tight_layout()
-    plt.show()
+
 
 
 
@@ -602,15 +604,7 @@ def draw_toy_network(figsize=(12, 6)):
     ax.annotate("", xy=l3_pos[0], xytext=(7.4, 4.5), arrowprops=bias_props)
     ax.text(7.4, 4.6, '$b_3$', color='gray', fontweight='bold')
 
-    # 5. Loss Function Box with mathcal L
-    ax.annotate("", xy=(9.8, 3.5), xytext=(8.2, 3.5), arrowprops=edge_props)
-    
-    # Loss Box
-    loss_box = patches.FancyBboxPatch((9.5, 3.0), 2.4, 1.0, boxstyle="round,pad=0.1", 
-                                      facecolor='#eeeeee', edgecolor='black', lw=1.5)
-    ax.add_patch(loss_box)
-    ax.text(10.7, 3.5, r'$\mathcal{L} = \frac{1}{2}(y - a_2)^2$', fontsize=18, ha='center', va='center')
-    ax.text(10.7, 2.6, 'Loss Function', fontsize=10, ha='center', fontweight='bold')
+  
 
 
 def plot_3d_spiral(figsize=(8, 6)):
@@ -643,4 +637,122 @@ def plot_3d_spiral(figsize=(8, 6)):
     
     plt.colorbar(scatter, label='Time ($t$)', pad=0.1, shrink=0.5)
 
+
+
+
+def plot_gd(figsize=(9, 6)):
+
+    def cost_func(w):
+        return w**2
+
+
+    def derivative_func(w):
+        return 2 * w
+
+    # --- 2. Generate Data for Plotting ---
+    # Smooth curve for the parabola
+    w_values = np.linspace(-2.5, 2.5, 300)
+    c_values = cost_func(w_values)
+
+    # --- 3. Set up the Figure and Main Curve ---
+    # Using a slightly taller figure for clear labels
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # Plot the smooth parabolic cost curve in coral color, like the image
+    ax.plot(w_values, c_values, color='#F08080', linewidth=3.5, label='Derivative of Cost (Curve)')
+
+    # --- 4. Plot Gradient Descent Steps (The Iterations) ---
+    # Define the starting point and simulated path
+    w_path = np.array([2.0, 1.5, 1.1, 0.8, 0.55, 0.35, 0.2])
+    c_path = cost_func(w_path)
+
+    # 4a. Draw the arrows connecting the steps
+    for i in range(len(w_path)-1):
+        dx = w_path[i+1] - w_path[i]
+        dy = c_path[i+1] - c_path[i]
+        ax.arrow(w_path[i], c_path[i], dx, dy, 
+                color='blue', head_width=0.1, head_length=0.08, 
+                length_includes_head=True, zorder=5)
+
+    # 4b. Draw the path points (dots)
+    ax.scatter(w_path, c_path, color='black', s=40, edgecolors='none', zorder=6)
+
+    # --- 5. Draw Annotations (Labels and Lines) ---
+
+
+    # Initial Weight (The large black dot)
+    w_start = w_path[0]
+    c_start = c_path[0]
+    ax.scatter(w_start, c_start, color='black', s=180, zorder=7) # Bigger dot
+
+    # Arrow/Text for 'Initial Weight'
+    ax.annotate('Initial\nWeight', 
+                xy=(w_start, c_start + 0.3),    # Arrow points slightly above dot
+                xytext=(w_start - 0.5, c_start + 1.5), # Text position
+                arrowprops=dict(facecolor='black', shrink=0.05, width=1, headwidth=6),
+                ha='center', fontsize=12, fontweight='bold')
+
+    # Text and arrow for 'Incremental Step' (pointing to an intermediate step)
+    ax.annotate('Incremental\nStep', 
+                xy=(w_path[3], c_path[3]), 
+                xytext=(w_path[3] - 1.2, c_path[3] + 1.5),
+                arrowprops=dict(arrowstyle="->", color='black', linewidth=1),
+                ha='center', fontsize=11, fontweight='normal')
+
+    # Define and Plot the Tangent Line (for the gradient at start)
+    tangent_slope = derivative_func(w_start)
+    tangent_x = np.array([w_start - 0.4, w_start + 0.4])
+    # Tangent equation: y - y1 = m(x - x1) -> y = m(x - x1) + y1
+    tangent_y = tangent_slope * (tangent_x - w_start) + c_start
+
+    # Dotted tangent line
+    ax.plot(tangent_x, tangent_y, color='black', linestyle='--', linewidth=1.5, zorder=2)
+
+    # Annotation for 'Gradient' (tangent line)
+    ax.annotate('Gradient', 
+                xy=(tangent_x[-1], tangent_y[-1] + 0.1), 
+                xytext=(tangent_x[-1] + 1.2, tangent_y[-1] + 0.5),
+                arrowprops=dict(arrowstyle="->", color='black', linewidth=1),
+                ha='center', va='center', fontsize=11, fontweight='normal')
+
+    # Minimum Cost (Bottom of the parabola)
+    w_min = 0
+    c_min = 0
+    # Small horizontal line for 'minimum' point
+    ax.hlines(y=c_min, xmin=-0.1, xmax=0.1, color='black', linewidth=1.5)
+
+    # Text and arrow for 'Minimum Cost'
+    ax.annotate('Minimum Cost', 
+                xy=(w_min, c_min), 
+                xytext=(w_min + 1.5, c_min + 0.8),
+                arrowprops=dict(arrowstyle="->", color='black', linewidth=1),
+                ha='center', fontsize=12, fontweight='bold', color='darkred')
+
+    # Label for the Main Curve itself
+    # We put this label in an empty space
+    ax.text(-1.8, 1.5, 'Derivative of Cost', fontsize=12, color='#D35400', fontweight='bold', ha='center', va='center')
+
+
+    # --- 6. Set Plot Limits, Axes, and Formatting ---
+    ax.set_xlim(-2.5, 3.0) # Expand right for minimum label
+    ax.set_ylim(-0.5, 7.0)
+
+    # Clean, simple axis spine locations (bottom and left)
+    ax.spines['left'].set_position('zero')
+    ax.spines['bottom'].set_position('zero')
+    ax.spines['right'].set_color('none')
+    ax.spines['top'].set_color('none')
+
+    # Set Labels (Positioning them near the arrow tips)
+    ax.set_xlabel('Weight', fontsize=14, loc='right')
+    ax.set_ylabel('Cost', fontsize=14, loc='top', rotation=0, labelpad=20)
+
+    # Hide grid for a diagram style
+    ax.grid(False)
+
+    # Optional: Tight layout to prevent text cutoff
+    plt.tight_layout()
+
+    # Quarto will automatically collect this plot
+    plt.show()
 
