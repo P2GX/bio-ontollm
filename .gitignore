@@ -204,3 +204,5 @@ sandbox/tikz/*.aux
 sandbox/tikz/*.pdf
 sandbox/ATTIC.txt
 sandbox/TMP.py
+.DS_Store
+img/.DS_Store
