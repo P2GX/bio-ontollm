@@ -113,14 +113,22 @@ is_a: GO:0016740 ! transferase activity
 # OBO Stanzas (Identifiers)
 The stanza begins with the id, which is a unique identifier comparable to an accession number.
 
-```text
+```{.xml code-line-numbers="1"}
 id: GO:0000031
+name: mannosylphosphate transferase activity
+namespace: molecular_function
+def: "Catalysis of the transfer of a mannosylphosphate group from one compound to another." [GOC:jl]
+is_a: GO:0016740 ! transferase activity
 ```
 
 Each term also has a name (concise human-readable description):
 
-```text
+```{.xml code-line-numbers="2"}
+id: GO:0000031
 name: mannosylphosphate transferase activity
+namespace: molecular_function
+def: "Catalysis of the transfer of a mannosylphosphate group from one compound to another." [GOC:jl]
+is_a: GO:0016740 ! transferase activity
 ```
 
 All other tag:value items are optional.
@@ -132,7 +140,11 @@ The is_a keyword indicates subclass links.
 
 Example: mannosylphosphate transferase activity is a subclass of GO:0016740.
 
-```text
+```{.xml code-line-numbers="5"}
+id: GO:0000031
+name: mannosylphosphate transferase activity
+namespace: molecular_function
+def: "Catalysis of the transfer of a mannosylphosphate group from one compound to another." [GOC:jl]
 is_a: GO:0016740 ! transferase activity
 ```
 
@@ -147,7 +159,7 @@ For all other relations, the keyword relationship (or specific relation type) is
 The relation type name must be defined in a [Typedef] stanza.
 :::
 
-```text
+```{.xml code-line-numbers="5"}
 [Typedef]
 id: part_of
 name: part_of
@@ -155,7 +167,7 @@ xref: OBO_REL:part_of
 is_transitive: true
 ```
 
-If A part_of B and B part_of C, then A part_of C.
+* __transitive__: If A part_of B and B part_of C, then A part_of C.
 
 # RDF / RDFS
 OWL and the Semantic Web
@@ -468,7 +480,14 @@ One of the RDFS inference rules states that if there are asserted triples of the
 X rdfs:subClassOf Y .
 b rdf:type X .
 ```
+then the following triple can be inferred:
 
+```text
+b rdf:type Y .
+```
+
+* Thus, we can infer that Mickey is an instance of the class \textit{rodent}!
+  
 
 
 ## RDFS: is a (Inference Rule 2)
@@ -481,11 +500,16 @@ That is, if there are asserted triples about classes $X$, $Y$, and $Z$:
 X rdfs:subClassOf Y .
 Y rdfs:subClassOf Z .
 ```
+then the following triple can be inferred:
 
+```text
+X rdfs:subClassOf Z .
+```
+* Thus, we can infer that `mouse` is a subclass of the class `rodent`! 
 
 ## RDFS: is a (Transitivity Example)
 
-Thus, if we assert the following triples:
+* if we assert the following triples:
 
 ```text
 x:Mouse rdf:type rdfs:Class .
@@ -494,6 +518,12 @@ x:Mammal rdf:type rdfs:Class .
 
 x:Mouse rdfs:subClassOf x:Rodent .
 x:Rodent rdfs:subClassOf x:Mammal .
+```
+
+
+then we can infer that mice are mammals:
+```text
+x:Mouse rdfs:subClassOf x:Mammal .
 ```
 
 
@@ -665,9 +695,9 @@ Cow rdfs:subClassOf :Mammal .
 
 Does not imply that a cow is a pig!
 
-::: {.callout-warning}
+::: {.callout-warning title="Limits of RDFS"}
 
-Limits of RDFSRDFS constructs are not designed to express an exact mathematical equality between sets, such as $A = B \cap C$. It only expresses "is a" relationships, not "is only and exactly" relationships.
+RDFS constructs are not designed to express an exact mathematical equality between sets, such as $A = B \cap C$. It only expresses "is a" relationships, not "is only and exactly" relationships.
 
 :::
 
@@ -703,9 +733,9 @@ b rdf:type Z .
   also infer that any animal with mammary glands is a mammal.
 
 
-# The Web Ontology Language OWL
+## The Web Ontology Language (OWL)
 
-## OWL
+
 
 The acronym OWL stands for **W**eb **O**ntology **L**anguage. While the most natural acronym would have been "WOL," **OWL** was chosen because it is easier to pronounce.^[The claim that the choice of the acronym OWL had something to do with the character Owl from *Winnie the Pooh*, who spelled his name WOL, is apocryphal.] 
 
@@ -715,7 +745,7 @@ In essence, OWL is an ontology language that builds upon RDF and RDFS but provid
 * To a first approximation, we can say that OWL extends the inference capabilities already present in RDFS by the addition of new constructs and new rules.
 
 
-![](./img/Winniethepooh.png){width="25%"}
+![](./img/Winniethepooh.png){fig-align="center" width="20%"}
 
 
 ## Defining Classes in OWL
