@@ -194,3 +194,29 @@ video {
   }
 }
 
+.tiny-credit {
+  font-size: 0.4em; /* This is roughly equivalent to LaTeX \tiny */
+  color: #777;
+  line-height: 1.2;
+  display: block;
+  margin-top: 5px;
+}
+
+/* Optional: if you want the link to not be bright blue/distracting */
+.tiny-credit a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+
+.hw-badge {
+  background-color: #6f42c1; /* Purple */
+  color: white;
+  padding: 4px 8px;
+  text-align: center;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 0.8em;
+  vertical-align: middle;
+  margin-left: 10px;
+}

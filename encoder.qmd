@@ -90,6 +90,39 @@ This lecture is the first of ??? about the transformer algorithm and selected ap
 
 
 
+## Tokens
+
+
+::: {.callout-important icon="true" appearance="default" title="The need for tokenization"}
+
+* LLMs (and many other machine learning algorithms) process numbers rather than text
+* Therefore, to process text, it first must be converted to numbers.
+:::
+
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+Tokenization by Open-AI 
+
+![Created with https://platform.openai.com/tokenizer](img/tokenizing.png){#fig-tokens width=80% fig-align="center"}
+
+:::
+::: {.column width="50%"}
+
+* A __token__ is a piece of text that can be represented by an __integer__. 
+* Here, we see an example GPT subword tokenization of the word *discombobulate*:
+    - dis: 4220
+    - comb: 43606
+    - ob: 630
+    - ulate; 10111
+* The integer that is associated with the token is called __token ID__ or __token index__.^[See https://tiktokenizer.vercel.app/ for an app to visualize different tokenizing schemes.]
+
+:::
+:::
+
+
 ## Tokenization 
 
 ::: {.callout-note}
@@ -108,13 +141,58 @@ This lecture is the first of ??? about the transformer algorithm and selected ap
 
 :::
 
-## Tokens
 
-Tokenization by Open-AI 
+## Why not just use character embeddings?
 
-![Created with https://platform.openai.com/tokenizer](img/tokenizing.png){#fig-tokens width=80% fig-align="center"}
+Major problems with word embeddings
+
+- There are extremely many unique words in natural language
+- Words can have different lexical forms (run, runs, ran, running, ...)
+- Out of vocabulary words cannot be represented
+
+
+
+::: {.columns}
+
+::: {.column width="40%"}
+::: {.hl-container}
+![](img/char-embed.png){width="100%"}
+:::
+
+::: {.tiny-credit}
+image credit: <https://github.com/minimaxir/char-embeddings>
+:::
+:::
+
+
+::: {.column width="10%"}
+:::
+
+
+::: {.column width="50%"}
+* Limitations of character embeddings
+  - Unicode currently has $>$150K characters (growing!)
+  - character-based embeddings ignore linguistic regularities (e.g., in English, 't' is more often followed by 'h' than by 'q')
+  - requires a lot of memory to cover any given text in the context (there are more character embeddings than subword embeddings and more subword embeddings than word embeddings)
+
+:::
+:::
 
 ## Tokens are then converted to embeddings
+
+- LLMs do not use tokens directly.
+- Instead, an intermediate step converts input tokens to embeddings
+
+
+::: {.callout-important icon="true" appearance="default" title="Embeddings"}
+
+* Embeddings are dense numeric representations of tokens
+* Advantages over integers
+ - More text can be represented using fewer numbers
+ - Semantic relations across tokens can be captured
+:::
+
+- During training, an LLM learns embeddings to represent individual tokens
 
 ```{python}
 #| label: fig-polar
@@ -211,7 +289,7 @@ $$
 ::::
 
 
-## Embeddings {.nonincremental}
+## Embeddings
 
 
 - $\mathbf{x}_i^\top \mathbf{W}_e$ just picks out the $i^{th}$ row of $\mathbf{W}_e$.
@@ -221,10 +299,6 @@ $$
 - The embedding matrix is initialized to random values and learned during training by back-propagation
 
 - [Todo: explain learning procedure (or refer to previous slides)]{.neon-todo}
-
-
-
-
 
 
 ## Section 2: Positional Encodings {visibility="uncounted"}
@@ -1308,7 +1382,7 @@ Similar to the previous add & norm layer, this one has two purposes
 
 ## Conclusion
 
-::: {.callout-note icon=false, title: "Take home"}
+::: {.callout-note icon=false title: "Take home"}
 
 This lecture introduced the Encoder architecture as it is implemented in BERT. In the next lecture, we will introduce the decoder architecture and discuss how these models are trained.
 

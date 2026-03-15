@@ -14,7 +14,8 @@ format:
 
 ::: {.callout-note title="Game plan" }
 This lecture covers a review of artificial neural networks and provides a
-more detailed treatment of backpropagation and gradient descent algorithms.
+more detailed treatment of backpropagation and gradient descent algorithms as a
+prerequisite for understanding transformers and LLMs.
 :::
 
 
@@ -40,7 +41,7 @@ more detailed treatment of backpropagation and gradient descent algorithms.
 :::
 
 ::: {.column .dimmed width="33%"}
-### Lecture 3
+### Part 3
 **Gradient descent**
 
 * Mathematics
@@ -54,6 +55,7 @@ more detailed treatment of backpropagation and gradient descent algorithms.
 
 ::: {.columns}
 ::: {.column width="50%"}
+
 ```{python}
 #| echo: false
 #| fig-align: center
@@ -103,20 +105,21 @@ plt.show()
 ```
 
 ::: {#fig-ann layout-align="center"}
-![](./img/Neuron.png){width=75% fig-align="center"}
-
-Biological neuron (image: Wikipedia)
+![](./img/Neuron.png){width=40% fig-align="center"}
+:::
+::: {.tiny-credit}
+image credit: <https://en.wikipedia.org/wiki/Biological_neuron_model>
 :::
 
 :::
 ::: {.column width="50%"}
 
-::: {.callout-note icon=false, title="Neuron"}
+::: {.callout-important  icon=false, title="Neuron"}
 
     Each neuron receives the weight sum of activations from the previous layer (or the input values) and applies a non-linear activation function
 
 :::
-- $$z = \sum_{i=1}^{4} (w_i x_i) + b$$
+- Fully connected layer^[In a Feed-Forward Network (FFN), a __Fully Connected layer__—also known as a __Dense layer__ or __Linear layer__—is a layer where every input neuron is connected to every output neuron.]: $$z = \sum_{i=1}^{4} (w_i x_i) + b$$
 - A common activation function is the Sigmoid function 
 
 $$f(z) = \frac{1}{1 + e^{-z}}$$
@@ -124,6 +127,41 @@ $$f(z) = \frac{1}{1 + e^{-z}}$$
 
 :::
 :::
+
+## Activation functions
+
+
+## Activation Functions {background-color="#f8f9fa"}
+
+Activation functions decide whether a neuron should be "fired" (activated) by calculating the weighted sum and adding bias.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### **Sigmoid**
+Used for probability (0 to 1). Perfect for binary classification.
+
+$$ 
+\sigma(x) = \frac{1}{1 + e^{-x}} 
+$$ {#eq-sigmoid}
+
+* **Pros:** Smooth gradient.
+* **Cons:** Vanishing gradient problem.
+:::
+
+::: {.column width="50%"}
+### **ReLU** (Rectified Linear Unit)
+The industry standard for deep learning hidden layers.
+
+$$ 
+f(x) = \max(0, x) 
+$$ {#eq-relu}
+
+* **Pros:** Computationally efficient.
+* **Cons:** "Dying ReLU" (neurons getting stuck at 0).
+:::
+
+::::
 
 
 # Representation power
@@ -189,6 +227,7 @@ plt.plot()
 ```
 
 
+## Applications in bio-medicine
 
 ::: {#fig-ann layout-align="center"}
 ![](./img/anns-in-biomed.png){width=75% fig-align="center"}
@@ -221,7 +260,7 @@ Weiss R, et al (2022) Applications of Neural Networks in Biomedical Data Analysi
 :::
 
 ::: {.column .dimmed width="33%"}
-### Lecture 3
+### Part 3
 **Gradient descent**
 
 * Mathematics
@@ -236,8 +275,8 @@ Weiss R, et al (2022) Applications of Neural Networks in Biomedical Data Analysi
 
 ::: {.callout-note icon=false, title="Example ANN"}
 
-- We will review the architecture of simple ANNs using the classic digit recognition dataset available skikit-learn
-- We will code a simple ANN to work with this in the homework
+- We will review the architecture of simple ANNs using the classic digit recognition dataset available in `skikit-learn`.
+- [HOMEWORK]{.hw-badge} We will code a simple ANN to work with this.
 - Input: 8x8 grey-scale images of handwritten digits
 - Classification goal: Determine which of the digits $0,\ldots, 9$ is represented by the image ($10\times 1$ output vector)
 
@@ -296,61 +335,63 @@ The activation for the first neuron of the first hidden layer is determined by t
 
 $$
 \begin{bmatrix}
-w_{0,0} & w_{0,1} & \cdots & w_{0,63} \\
- w_{1,0} & w_{1,1} & \cdots & w_{1,63} \\
+w_{1,1} & w_{1,2} & \cdots & w_{1,64} \\
+ w_{2,1} & w_{2,2} & \cdots & w_{2,64} \\
+ & & & \\
  \vdots & \vdots & \ddots & \vdots \\
- w_{127,0} & w_{127,1} & \cdots &   w_{127,63} \\
-\end{bmatrix}
+  & & & \\
+ w_{128,1} & w_{128,2} & \cdots &   w_{128,64} \\
+\end{bmatrix}^{128\times 64}
 \begin{bmatrix}
-x_0\\
 x_1\\
+x_2\\
 \vdots \\
-x_{63}
-\end{bmatrix}
+x_{64}
+\end{bmatrix}^{64\times 1}
 +
 \begin{bmatrix}
-b_0\\
 b_1\\
+b_2\\
 \; \\
 \vdots \\
 \; \\
-b_{127}
-\end{bmatrix}
+b_{128}
+\end{bmatrix}^{128\times 1}
 =
 \begin{bmatrix}
-z_0\\
 z_1\\
+z_2\\
 \; \\
 \vdots \\
 \; \\
-z_{127}
-\end{bmatrix}
+z_{128}
+\end{bmatrix}^{128\times 1}
 $$
 followed by activation
 $$
 \begin{bmatrix}
-\sigma(z_0)\\
 \sigma(z_1)\\
+\sigma(z_2)\\
 \; \\
 \vdots \\
 \; \\
-\sigma(z_{127})
-\end{bmatrix}
+\sigma(z_{128})
+\end{bmatrix}^{128\times 1}
 =
 \begin{bmatrix}
-a_0\\
 a_1\\
+a_2\\
 \; \\
 \vdots \\
 \; \\
-a_{127}
-\end{bmatrix}
+a_{128}
+\end{bmatrix}^{128\times 1}
 $$
 
 ::: {style="font-size: 0.65em;"}
+- The $w_{j,i}$ values are called the __weights__. They are __learnable__ parameters
 - The $z_j$ values are called the __weighted sums__ or the __pre-activations__.
 - The $a_j$ values are called the __activations__ and these are passed on as the input to the next layer
-- The $w_{j,i}$ values are called the __weights__. They are __learnable__ parameters
 :::
 
 :::
@@ -365,7 +406,7 @@ A single "layer" of computation follows a predictable three-step cycle:
 
 ::: {.column width="45%"}
 ### 1. Weighted Sum ($z$)
-The input vector $\mathbf{x}$ (or activations from the previous layer $\mathbf{a}_{l-1}$) is multiplied by the weight matrix $W$ and the bias $b$ is added.
+The input vector $\mathbf{x}$ (or activations from the previous layer $\mathbf{a}_{i-1}$) is multiplied by the weight matrix $W$ and the bias $b$ is added.
 $$\mathbf{z} = W \mathbf{x} + \mathbf{b}$$
 
 ### 2. Activation ($a$)
@@ -374,15 +415,14 @@ $$\mathbf{a} = \sigma(\mathbf{z})$$
 :::
 
 ::: {.column width="55%"}
-::: {.callout-tip icon=false}
-## Summary of the Flow
+::: {.callout-tip icon=false title="Summary/Nomenclature"}
 
 1. **Input Layer**: Receives raw features $x$ (e.g., pixel values).
 2. **Hidden Layer(s)**: 
     - Compute weighted sums of inputs.
     - Apply activation functions to introduce non-linearity.
 3. **Output Layer**: Produces the final prediction $\hat{y}$.
-4. **Prediction**: The value $\hat{y}$ is compared against the actual target $y$ to determine the error.
+4. **Loss**: The predicted value $\hat{y}$ is compared against the actual target $y$ to determine the error.
 :::
 
 > **Note**: This process is repeated for every layer in the network until the data reaches the final output node.
@@ -431,7 +471,7 @@ plt.plot()
 - An algorithm that efficiently calculates the gradient of the loss with respect to each  parameter in a computation graph.
 - To understand backprop, we will first quickly review matrix calculus
 
-## Matrix calculus
+## Backprop: Toy example
 
 ```{python}
 #| echo: false
@@ -451,9 +491,10 @@ plt.plot()
 
 ## Backprop by hand
 
-- Our network will have a sigmoid activation function in the hidden layer, no activation in the output layer
+- Our network will have a sigmoid activation function in the hidden layer, no activation in the output layer:
+
 $$
-\sigma(x) = \dfrac{1}{1+e^{-x}
+\sigma(x) = \dfrac{1}{1+e^{-x}}
 $$
 
 - We will use a squared-error loss function (where $y$ is the label, zero or one) and $a_2$ is the output of the ANN for inputs $x_1$ and $a_3$:
@@ -483,6 +524,7 @@ $$
 
 * Equivalently: $\mathcal{L} = L(\Theta; \mathbf{x};y)$
 
+
 :::
 
 ::: {.column width="50%"}
@@ -490,48 +532,20 @@ $$
 ```{python}
 #| echo: false
 #| fig-align: center
-#| fig-cap: ""
-#| chunk-style: "margin-bottom: 0;"
 import sys
 import matplotlib.pyplot as plt
+
 sys.path.append('utils') 
 from ann_plots import draw_toy_network
+
 draw_toy_network()
-plt.show()
+plt.plot()
 ``` 
 
-* The loss is determined by comparing the expected result ($y$) with the prediction of the network ($a_3$): $\mathcal{L} = \dfrac{1}{2}(y-a_3)^2$
+
 
 :::
 :::
-
-## Calculating partial derivatives
-
-To calculate the gradient of the loss function, $\nabla (\Theta; \mathbf{x};y)$, we need all the partial derivatives -- for all weights and biases. Let's do this step by step
-
-- derivative of the sigmoid activation function
-$$
-\begin{eqnarray*}
-\dfrac{d}{dx} \dfrac{1}{1+e^x} &=& \hspace{1cm} \dfrac{-1}{(1+e^{-x})^2}\cdot (-e^{-x})&& \text{chain rule} \\
-&=&\dfrac{e^{-x}}{(1+e^{-x})^2} && \hspace{1cm} \text{simplify}\\
-&=&\dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{rearrange}\\
-&=&\sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{definition of $\sigma(x)$}\\
-&=&\sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}}&& \hspace{1cm} \text{add and substract 1}\\
-&=&\sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right)&& \hspace{1cm} \text{rearrange}\\
-&=&\sigma(x) \cdot \left( 1 -\sigma(x) \right)&& \hspace{1cm} \text{simplify using definition of $\sigma(x)$}\\
-\end{eqnarray*}
-$$
-
-- The forward pass calculates $\sigma(x)$. Using this derivation, the backward pass can calculate the partial derivate easily using the value of $\sigma(x)$.
-
-## Derivative of the loss function
-
-- Recalling that $\mathcal{L}=\dfrac{1}{2}(y-a_3)^2$
-
-$$
-\dfrac{\partial \mathcal{L}}{\partial a_3} = 2\cdot \dfrac{1}{2}(y-a_3)\cdot(-1)
-= a_3 - y
-$$
 
 ## Chain rule (review)
 
@@ -556,6 +570,36 @@ $$
 - $y = \sin(4x+3)$; $u=4x+3$ and $\frac{du}{dx} = 4$; $\frac{dy}{du} = \frac{d}{du} \sin u = \cos u = \cos(4x+3)$
 $$\frac{d}{dx}\sin(4x+3) = \cos(4x+3) \cdot 4$$
  
+
+
+
+## Calculating partial derivatives
+
+To calculate the gradient of the loss function, $\nabla (\Theta; \mathbf{x};y)$, we need all the partial derivatives -- for all weights and biases. Let's do this step by step
+
+- derivative of the sigmoid activation function
+$$
+\begin{eqnarray*}
+\dfrac{d\sigma(x)}{dx} =\dfrac{d}{dx} \dfrac{1}{1+e^{-x}} &=& \hspace{1cm} \dfrac{-1}{(1+e^{-x})^2}\cdot (-e^{-x})&& \text{chain rule} \\
+&=&\dfrac{e^{-x}}{(1+e^{-x})^2} && \hspace{1cm} \text{simplify}\\
+&=&\dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{rearrange}\\
+&=&\sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{definition of $\sigma(x)$}\\
+&=&\sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}}&& \hspace{1cm} \text{add and substract 1}\\
+&=&\sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right)&& \hspace{1cm} \text{rearrange}\\
+&=&\sigma(x) \cdot \left( 1 -\sigma(x) \right)&& \hspace{1cm} \text{simplify using definition of $\sigma(x)$}\\
+\end{eqnarray*}
+$$
+
+- The forward pass calculates $\sigma(x)$. Using this derivation, the backward pass can calculate the partial derivate easily using the value of $\sigma(x)$.
+
+## Derivative of the loss function
+
+- Recalling that $\mathcal{L}=\dfrac{1}{2}(y-a_3)^2$
+
+$$
+\dfrac{\partial \mathcal{L}}{\partial a_3} = 2\cdot \dfrac{1}{2}(y-a_3)\cdot(-1)
+= a_3 - y
+$$
 
 
 
@@ -628,13 +672,7 @@ $$
 \dfrac{\partial \mathcal{L}}{\partial b_3} = \dfrac{\partial \mathcal{L}}{\partial a_3} \cdot \dfrac{\partial \mathcal{a_3}}{\partial b_3}
 $$
 
-Therefore
-
-$$
- \dfrac{\partial \mathcal{L}}{\partial b_3} =  ( a_3 - y)\cdot 1 = ( a_3 - y)
-$$
-
-- from the above, we had that $\dfrac{\partial \mathcal{L}}{\partial a_3} = a_3 - y$
+- Recall that $\dfrac{\partial \mathcal{L}}{\partial a_3} = a_3 - y$
 - we can reuse this value and now just need $\dfrac{\partial \mathcal{a_3}}{\partial b_3}$
 
 $$
@@ -723,7 +761,7 @@ plt.show()
 
 ## How does the loss change as the other parameters change?
 
-- You will be asked to derive expressions for $w_1, w_2, w_3, w_4, w_5, b_1, b_2$ as a homework assignment.
+- [HOMEWORK]{.hw-badge}  You will be asked to derive expressions for $w_1, w_2, w_3, w_4, w_5, b_1, b_2$.
 - If we change the network architecture, the activation function, or the loss function, we would need to recalcute these expressions
 - This manual procedure is __tedious__ and would not scale to exploring various network structures for realistic network sizes. 
 - We will see it is possible to automate this procedure, but to understand that, we will show how it is possible to use __matrix calculus__ to abstract away some of the fidgety work with the indices
@@ -733,9 +771,11 @@ plt.show()
 ## Matrix calculus: Vector function with scalar argument
 
 
+
+
 ::: {.columns}
 ::: {.column width="50%"}
-
+* We will briefly review matrix calculus before proceeding.
 - Consider the function
 $$
 \mathbf{f}(t) = \begin{bmatrix} t \cos(t) \\ t \sin (t) \\ t \end{bmatrix}
@@ -776,10 +816,16 @@ The derivative of $\mathbf{f}(t)$ is callled the __tangent vector__. The derivat
 ::: {.columns}
 ::: {.column width="50%"}
 $$
-\dfrac{\partial f}{\partial \mathbf{x}}
+\dfrac{\partial \mathbf{f}}{\partial x}
 =
-\begin{bmatrix} \dfrac{\partial f_1}{\partial x} \\ \dfrac{\partial f_2}{\partial x} \\ \vdots \\ \dfrac{\partial f_n}{\partial x} \end{bmatrix}
-$$
+\begin{bmatrix} \dfrac{\partial f_1}{\partial x} \\ \dfrac{\partial f_2}{\partial x} \\ \vdots \\ \dfrac{\partial f_n}{\partial x} \end{bmatrix}^{1\times n}
+$$ {#eq-vec-by-scalar}
+
+* We will use the conventions:
+  - lower case normal font: scalar
+  - lower-case bold font: vector
+  - Uppercase bold font: matrix
+* Here, $\mathbf{f}$ is bold because the function returns a vector, and $x$ is normal font because the function takes a single (scalar) argument.
 
 :::
 ::: {.column width="50%"}
@@ -787,11 +833,11 @@ $$
 * Example
 
 $$
-f = \begin{bmatrix} 4x^2-7x +42\\ x^9 -21\end{bmatrix}
+\mathbf{f} = \begin{bmatrix} 4x^2-7x +42\\ x^9 -21\end{bmatrix}
 $$
 then
 $$
-\dfrac{\partial f}{\partial \mathbf{x}}
+\dfrac{\partial \mathbf{f}}{\partial x}
 =
 \begin{bmatrix} 8x-7 \\9x^8 \end{bmatrix}
 $$
@@ -812,11 +858,11 @@ $f: \mathbb{R}^m \rightarrow \mathbb{R}$
 ::: {.columns}
 ::: {.column width="50%"}
 
-In matrix calculus notation^[We are using the numerator layout, where $\frac{\partial df}{\partial dx}$ is written as a __row__ vector. The __denominator__ layout is also commonly used in machine learning, and  $\frac{\partial df}{\partial dx}$ would be written as a __column__ vector. Obviously it is important to be consistent!], we write
+In matrix calculus notation^[We are using the numerator layout, where $\frac{\partial f}{\partial x}$ is written as a __row__ vector. The __denominator__ layout is also commonly used in machine learning, and  $\frac{\partial f}{\partial x}$ would be written as a __column__ vector. Obviously it is important to be consistent!], we write
 $$
 \dfrac{\partial f}{\partial \mathbf{x}} = 
 \begin{bmatrix} \dfrac{\partial f}{\partial x_1} & \dfrac{\partial f}{\partial x_2} & \cdots & \dfrac{\partial f}{\partial x_n} \end{bmatrix}  
-$$
+$$ {#eq-scalar-by-vec}
 
 
 ::: 
@@ -830,7 +876,7 @@ $$
 \begin{bmatrix} \dfrac{\partial f}{\partial \mathbf{x}} \end{bmatrix}^T
 =
 \begin{bmatrix} \dfrac{\partial f}{\partial x_1}\\ \dfrac{\partial f}{\partial x_2} \\ \cdots \\ \dfrac{\partial f}{\partial x_n} \end{bmatrix}  
-$$
+$$ {#eq-gradient}
 
 :::
 :::
@@ -855,27 +901,12 @@ $$
 \dfrac{\partial f_2}{\partial x_1} & \dfrac{\partial f_2}{\partial x_2} & \cdots & \dfrac{\partial f_2}{\partial x_m} \\
 \vdots & \vdots & \ddots & \vdots \\
 \dfrac{\partial f_n}{\partial x_1} & \dfrac{\partial f_n}{\partial x_2} & \cdots & \dfrac{\partial f_n}{\partial x_m} \\
-\end{bmatrix}
-$$
+\end{bmatrix}^{n\times m}
+$$ {#eq-vec-by-vec}
 
 
 ## Matrix calculus: Vector function with vector argument
 
-
-::: {.columns}
-::: {.column style="width: 25%; vertical-align: top;"}
-
-$$
-\dfrac{\partial f}{\partial \mathbf{x}}
-=
-\begin{bmatrix} \dfrac{\partial f_1}{\partial x} \\ \dfrac{\partial f_2}{\partial x} \\ \vdots \\ \dfrac{\partial f_n}{\partial x} \end{bmatrix}
-$$
-
-$f: \mathbb{R} \rightarrow \mathbb{R}^n$ (functions takes a scalar  as input and produces a vector)
-
-::: 
-
-::: {.column style="width: 75%; vertical-align: top;"}
 
 $$
 \frac{\partial \mathbf{f}}{\partial \mathbf{x}}
@@ -885,20 +916,32 @@ $$
 \dfrac{\partial f_2}{\partial x_1} & \dfrac{\partial f_2}{\partial x_2} &  \cdots & \dfrac{\partial f_2}{\partial x_m} \\
 \vdots & \vdots &  \ddots & \vdots \\
 \dfrac{\partial f_n}{\partial x_1} & \dfrac{\partial f_n}{\partial x_2} &  \cdots & \dfrac{\partial f_n}{\partial x_m}
-\end{bmatrix}
+\end{bmatrix}^{m\times n}
+$$ {#eq-vec-by-vec}
+
+* We can think of @eq-vec-by-vec as a stack of transposed gradient vectors (c.f., @eq-gradient)
+
+$$
+\frac{\partial \mathbf{f}}{\partial \mathbf{x}}
+=
+\begin{bmatrix}
+\dfrac{\partial f_1}{\partial x_1} & \dfrac{\partial f_1}{\partial x_2} & \cdots & \dfrac{\partial f_1}{\partial x_m} \\
+\dfrac{\partial f_2}{\partial x_1} & \dfrac{\partial f_2}{\partial x_2} &  \cdots & \dfrac{\partial f_2}{\partial x_m} \\
+\vdots & \vdots &  \ddots & \vdots \\
+\dfrac{\partial f_n}{\partial x_1} & \dfrac{\partial f_n}{\partial x_2} &  \cdots & \dfrac{\partial f_n}{\partial x_m}
+\end{bmatrix}^{m\times n}
 =
 \begin{bmatrix} 
 - \nabla f_1(\mathbf{x})^T - \\ 
 - \nabla f_2(\mathbf{x})^T - \\ 
-\vdots \\ 
+\\
+\vdots \\
+\\ 
 - \nabla f_n(\mathbf{x})^T - 
-\end{bmatrix}
-$$
+\end{bmatrix}^{m\times n}
+$$ 
 
-* Compare the first column of the matrix with the vector on the left
 
-::: 
-:::
 
 
 
@@ -917,7 +960,7 @@ $$
 \vdots & \vdots &  \ddots & \vdots \\
 \frac{\partial f}{\partial x_{1m}} & \frac{\partial f}{\partial x_{2m}} & \cdots \frac{\partial f}{\partial x_{nm}} \\
 \end{bmatrix}
-$$
+$$ {#eq-scalar-by-matrix}
 
 
 
@@ -1171,7 +1214,7 @@ more detailed treatment of backpropagation and gradient descent algorithms.
 :::
 
 ::: {.column  width="33%"}
-### Lecture 3
+### Part 3
 **Gradient descent**
 
 * Mathematics
@@ -1352,8 +1395,280 @@ $$
 
 
 
+## FFN in Python
 
-## Gradient descent: Homework
+::: {.callout-note icon=false, title="Toy FFN"}
 
-* Momentum approaches can improve the performance of SGD in many cases, especially where there are many local minima
-* We will experiment with adding momentum and more sophisticated related approaches in the Homework
+To help illustrate the concepts in this lecture, we close with the demonstration of a toy Python implementation we will use to predict 
+the identity of hand-written digits
+
+:::
+
+- Let's begin with the encoding of our activation function (sigmoid; See @eq-sigmoid). We want the function to accept an $n\times 1$ vector as input and to return a vector of the same size
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: false
+def sigmoid(x: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
+    """Computes the sigmoid of x (our activation function)."""
+    return 1.0 / (1.0 + np.exp(-x))
+```
+
+
+
+- The datatype of the argument is NumPy (`np.float64`). Therefore, the function is __vectorized__. If the argument is a scalar (single number), it returns a single number; if the argument is a vector, it returns a vector of the same dimension and applies the same function to each element of the vector.
+
+- [HOMEWORK]{.hw-badge} Write similar functions for `sigmoid_prime` (the first derivative), `mse` (mean-squared error), and `mse_prime`(first derivative of the mse)
+
+
+## FFN in Python (2)
+
+- We use a class called `Network` to keep track of everything
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: false
+Layer = typing.Union[FullyConnectedLayer, ActivationLayer]
+ArrayOfFloats = npt.NDArray[np.float64]
+
+class Network:
+    def __init__(self, verbose=True):
+        self.verbose = verbose
+        self.layers = []
+
+    def add(self, layer: Layer) -> None:
+        self.layers.append(layer)
+
+    def predict(self, input_data: ArrayOfFloats) -> typing.List[ArrayOfFloats]:
+        result = []
+        for i in range(input_data.shape[0]):
+            output = input_data[i]
+            for layer in self.layers:
+                output = layer.forward(output)
+            result.append(output)
+        return result
+        
+    def fit(self, 
+        x_train: ArrayOfFloats, 
+        y_train: npt.NDArray[np.float64], 
+        minibatches: int, 
+        learning_rate: float, 
+        batch_size: int=64) -> None:
+        # SEE BELOW
+
+```
+
+- Let's start by examining the `predict` method. It takes an array of floats (in our case, this is a vector with dimension $64\times 1$ that represents one image), and it returns an array of float (this is a vector with dimension $10\times 1$ that represents the predicted probabilities for the class of the image)
+
+## The classification task
+
+- Let's understand what we are trying to predict
+- We are using the sklearn digits dataset
+- Images of handwritten digits $0,\ldots, 9$
+- Our task is to predict which digit is represented by an image
+
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: true
+import numpy as np
+import numpy.typing as npt
+from sklearn import datasets
+import typing
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+
+digits = datasets.load_digits()
+first_digit = digits.data[0] # type: ignore
+first_digit
+```
+
+## Digits dataset
+
+- The original images look like this:
+
+```{python}
+#| fig-align: center
+#| echo: false
+#| eval: true
+plt.imshow(first_digit.reshape(8,8), cmap='gray')
+plt.axis('off')
+plt.show()
+```
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: true
+target0 = digits.target[0] # type: ignore
+print(f"Class of the first image: '{target0}'")
+```
+
+
+
+## Preparing the dataset
+
+- We need to reshape the input data to conform to Python conventions.
+- Let us first examine the shape of the original data from sklearn
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: true
+
+print(f"Shape of digits: '{digits.data.shape}'")
+print(f"Shape of an element: '{digits.data[0].shape}'")
+```
+
+
+- We have 1797 examples of input data points that have a dimension of 64
+- In Python `(64,)` is	a 1D	A flat vector of 64 elements.
+- `(64, 1)` is a 2D	A column vector (64 rows, 1 column, i.e., $64\times 1$).
+- These are logically similar, but we require the second form to satisfy numpy
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: true
+X = digits.data.reshape(-1, 1, 64)
+print(f"Shape of X: '{X.shape}'")
+print(f"Shape of an element: '{X[0].shape}'")
+```
+
+- elements of X are now row vectors with dimension $1\times 64$.
+
+
+## Preparing the dataset
+
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: true
+
+y = digits.target # type: ignore
+print(f"Shape of y: '{y.shape}'")
+print("First ten values of y:")
+print(y[:10])
+```
+
+- Currently, the vector y contains the actual digit we are trying to predict.
+- The output of our network will be a ten-element vector with probabilities for $0,\ldots, 9$
+- It is convenient to code the predicted values using one-hot encode to simplify the calculation of loss
+-  One-Hot Encoded (e.g., 3 becomes [0,0,0,1,0,0,0,0,0,0] and 0 becomes [1,0,0,0,0,0,0,0,0,0])
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: true
+from sklearn.preprocessing import OneHotEncoder
+enc = OneHotEncoder()
+y_reshaped = enc.fit_transform(y.reshape(-1, 1)).toarray()
+print("first element of y_reshaped")
+print(y_reshaped[0])
+```
+
+## Test/Training split
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: true
+X_train, X_test, y_train, y_test = train_test_split(X, y_reshaped, test_size=0.2, random_state=42)
+
+print(f"Training set size: {X_train.shape[0]}")
+print(f"Testing set size: {X_test.shape[0]}")
+```
+
+- Setting up the network. [HOMEWORK]{.hw-badge} Examine the code, explore effects of different network configurations.
+- We will return to the fit method subsequently, but we will start by examine the predict method (which runs the trained network on a new example)
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: false
+network = Network()
+network.add(FullyConnectedLayer(64, 128))
+network.add(ActivationLayer())
+network.add(FullyConnectedLayer(128, 64))
+network.add(ActivationLayer())
+network.add(FullyConnectedLayer(64, 10))
+network.add(ActivationLayer())
+
+network.fit(X_train, y_train, minibatches=40000, learning_rate=0.5)
+```
+
+## Predict
+
+If we run the following code to predict the class of a single example
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: false
+xt = X_test[0]
+out = network.predict(xt)
+print(out)
+print(y_test[0])
+```
+
+We obtain
+```text
+[array([[1.07617827e-03, 9.50165598e-04, 6.77312110e-04, 2.18282629e-04,
+        3.00226634e-03, 5.60243267e-04, 9.97963158e-01, 9.64276212e-05,
+        1.48108902e-03, 6.76962776e-07]])]
+[0. 0. 0. 0. 0. 0. 1. 0. 0. 0.]
+```
+- The output is thus a list of ten numbers, the highest of which is at index 7, $9.98\times 10^{-1}$.
+- Thus, we predict the number 7, which is correct
+
+
+## Predict
+
+- Let's carefully examine the predict method
+
+- [Todo: check the dimensions, the below is not correct)]{.neon-todo}
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: false
+ def predict(self, input_data: ArrayOfFloats) -> typing.List[ArrayOfFloats]:
+    result = []
+    for i in range(input_data.shape[0]):
+        output = input_data[i]
+        for layer in self.layers:
+            output = layer.forward(output)
+        result.append(output)
+    return result
+```
+
+- input_data.shape[0]: `(64,)` which gets treated like `(64,1)` (row vector)
+- output = input_data[i]: Output of layer $i$ is input to layer $i+1$
+- We iterate through the layers.
+- For instance, the first layer was created by `FullyConnectedLayer(64, 128)`
+- In code we have the following method from `FullyConnectedLayer`
+
+```{python}
+#| fig-align: center
+#| echo: true
+#| eval: false
+def forward(self, input_data: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
+    self.input = input_data
+    return np.dot(self.input, self.weights) + self.bias
+```
+
+- Here, `self.input` has shape `(64,)`,   `self.weights` has shape `(64, 128)` and `self.bias` has shape `(128,1)`. 
+- The call to `np.dot` returns a vector with shape `(1,128)``
+
+$$
+\mathbf{z}^{128\times 1} = \mathbf{x}^{64,1} W^{64, 128}  + \mathbf{b}^{128\times 1}
+$$
+
+- output = input_data[i]
