@@ -22,6 +22,13 @@ pip install --upgrade pip
 pip install numpy matplotlib pandas jupyter ikernel
 ```
 
+## Add quarto libraries
+
+```bash
+quarto add parmsam/quarto-pseudo-code
+```
+
+
 I have had some trouble setting up the preview within VS Code, but a workaround was to start quarto in some shell
 
 ```bash
