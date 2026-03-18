@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Bioontologies"
+title: "Introduction to bio-ontologies: OBO, RDF, RDFS, and OWL"
 subtitle: "Algorithms and Human Phenotype Ontology"
 author: "Peter N Robinson"
 jupyter: python3

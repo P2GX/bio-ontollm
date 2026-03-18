@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Bioontologies"
+title: "Bioontologies: MGSA: GOing Bayesian"
 subtitle: "MGSA: GOing Bayesian"
 author: "Peter N Robinson"
 jupyter: python3

@@ -1,5 +1,6 @@
 ---
-title: "Transformer Architecture: Encoder"
+title: "Transformer Architecture: Encoders"
+author: "Peter N Robinson"
 jupyter: python3
 format: 
   revealjs:

@@ -1,0 +1,9 @@
+---
+title: "Course Overview"
+listing:
+  contents: lectures # points to a folder named 'lectures'
+  type: table
+  sort: "date desc"
+---
+
+Welcome to the course! Below you will find all the lecture notes and slides.

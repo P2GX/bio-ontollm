@@ -1,6 +1,26 @@
-format:
-  revealjs:
-    footer: '<img src="img/bih.png" class="footer-logo">'
-    show-slide-number: all   # This shows n/m
-    slide-number: true
-    css: style/styles.css
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - lectures/
+
+website:
+  title: "Approaches to biomedical knowledge: Ontologies and LLMs"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+  # Sidebar MUST be at the same indentation level as navbar
+  sidebar:
+    style: "docked"
+    contents:
+      - section: "Lectures"
+        contents:
+          - lectures/ontology1.qmd
+          - lectures/ontology2.qmd
+          - lectures/ontology3.qmd
+          - lectures/ontology4.qmd
+          - lectures/neural.qmd
+          - lectures/encoder.qmd
+

@@ -1,5 +1,6 @@
 ---
 title: "Neural networks"
+author: "Peter N Robinson"
 jupyter: python3
 format: 
   revealjs:
