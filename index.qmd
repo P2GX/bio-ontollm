@@ -6,4 +6,4 @@ listing:
   sort: "date desc"
 ---
 
-Welcome to the course! Below you will find all the lecture notes and slides.
+Work in progress! This will be the website for a series of lectures on ontologies and LLMs for biomedical research.
