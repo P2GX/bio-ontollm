@@ -1,5 +1,8 @@
-# llmintro
-Large Language Model Introduction Lectures
+# bio-ontollm
+Approaches to biomedical knowledge: Ontologies and Large Language Models
+
+
+Lecture series.
 
 ## Quarto
 
