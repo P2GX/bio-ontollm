@@ -1,7 +1,7 @@
 # lectures/_metadata.yml
 format:
   revealjs:
-    footer: '<img src="../img/bih.png" class="footer-logo">'
+    footer: '<img src="./img/bih.png" class="footer-logo">'
     show-slide-number: all  
     slide-number: true
     css: ../style/styles.css
@@ -15,6 +15,6 @@ format:
           content: |
             <ul class="slide-menu-items">
               <li class="slide-menu-item">
-                <a href="../index.html">Back to Course Home</a>
+                <a href="./index.html">Back to Course Home</a>
               </li>
             </ul>

@@ -9,7 +9,6 @@ format:
     html-math-method: mathjax
     margin: 0.05
     embed-resources: true
-    css: style/styles.css
 ---
 
 ## Gene Ontology
@@ -32,8 +31,7 @@ The Gene Ontology (GO) is being developed with the goal of providing a set of st
 
 ## GO: A Structured Hierarchy
 
-![DNA Metabolism Hierarchy](./img/dnametabolism.png){fig-align="center" height="75%"}
-
+![DNA Metabolism Hierarchy](./img/dnametabolism.png){fig-align="center" height="50%"}
 
 
 ## DNA Ligation: GO:0006266
@@ -170,9 +168,7 @@ Each entry (*term*) in the Gene Ontology contains these standardized metadata fi
 :::
 
 
-
-
-## GO Annotations: Current Status
+## GO Annotations
 
 ::: {layout-ncol=1}
 ![](img/goannot.png){fig-align="center" height="550px"}
@@ -262,7 +258,9 @@ To calculate the number of unique ways to arrange $k$ "heads" and $n-k$ "tails,"
     * Similarly, there are $(n-k)!$ ways to reorder the "tails" without changing the sequence.
 * **The Formula:** To find the number of *distinct* orderings, we divide the total by the redundancies:
 
-$$\binom{n}{k} = \dfrac{n!}{(n-k)! k!}$$
+$$
+\binom{n}{k} = \dfrac{n!}{(n-k)! k!}
+$$ {eq-binomial-coefficient}
 
 ::: {.callout-note}
 This value, $\binom{n}{k}$, represents the number of different ways of choosing $k$ items from a set of $n$ items where the order of selection does not matter.
@@ -277,7 +275,9 @@ To obtain the probability of any one particular order of trials with $k$ success
 
 In order to find the total probability of obtaining $k$ successes, we simply multiply the probability of one particular trial order with $k$ successes by the number of trial orders resulting in $k$ successes, which is given by the binomial coefficient. This probability distribution is called the **binomial distribution**:
 
-$$P(k,n,p) = \binom{n}{k} p^k(1-p)^{n-k}$$
+$$
+P(k,n,p) = \binom{n}{k} p^k(1-p)^{n-k}
+$$ {eq-binomial-distribution}
 
 
 # Binomial Coefficient
@@ -539,11 +539,8 @@ by $X_t$, therefore follows the \index{hypergeometric distribution}
 hypergeometric distribution, i.e.,
 
 $$
-X_t \sim h(k|m;m_t;n) := P(X_t=k) = \frac{\displaystyle{m_t \choose
-    k}\displaystyle{{m - m_t} 
-\choose {n - k}}}{\displaystyle{m \choose n}}.
-\label{eq:hypergeometric-term-for-term}
-$$
+X_t \sim h(k|m;m_t;n) := P(X_t=k) = \frac{\binom{m-m_t}{n-k}}{\binom{m}{n}}
+$$ {#eq-hypergeometric-term-for-term}
 
 * That is, $P(X_t=k)$ gives the probability of observing exactly $k$ annotated genes in a study set of size $n$ if the population set of size $m$ contains $m_t$ genes that are annotated to term $t$.
 
