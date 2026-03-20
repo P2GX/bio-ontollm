@@ -5,3 +5,4 @@ scipy
 jupyter
 pyyaml
 scikit-learn
+pandas
