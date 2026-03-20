@@ -2,3 +2,5 @@ matplotlib
 numpy
 networkx
 scipy
+jupyter
+pyyaml
