@@ -1,6 +1,6 @@
 ---
-title: "Bioontologies: Semantic Similarity and HPO"
-subtitle: "4. Semantic Similarity and HPO"
+title: "Bioontologies: Semantic Similarity"
+subtitle: "Human Phenotype Ontology: Phenomizer"
 author: "Peter N Robinson"
 jupyter: python3
 format: 
@@ -14,7 +14,52 @@ filters:
   - pseudocode
 ---
 
-## Semantic Similarity: The Resnik Method
+
+## Overview: Semantic similarity
+
+::: {.callout-note title="Game plan"}
+This lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.
+:::
+
+:::: {.columns}
+
+::: {.column width="48%"}
+### [Part 1: Information content](#part-1)
+* Information content
+* Entropy
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 2: Semantic similarity](#part-2)
+* Definition of ontologies (review)
+* Ontologies and biomedical research
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 3: Human Phenotype Ontology](#part-3)
+* Phenotype and phenotypic feature
+* HPO
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 4: Phenomizer](#part-4)
+* Phenomizer algorithm
+:::
+
+::::
+
+
+## Semantic Similarity: The Resnik Method {#part-1}
 
 In 1995, Resnik introduced a method for evaluating the semantic similarity between two concepts in an ontology with `is_a` relations.^[Resnik P (1995) Using Information Content to Evaluate Semantic Similarity in a Taxonomy. arXiv cmp-lg/9511007]
 
@@ -111,7 +156,51 @@ $$
 :::
 
 
+
 ## Entropy
+
+::: {.callout-note title="Game plan"}
+This lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.
+:::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 1: Information content](#part-1)
+* Information content
+* Entropy
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" }
+### [Part 2: Semantic similarity](#part-2)
+* Definition of ontologies (review)
+* Ontologies and biomedical research
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 3: Human Phenotype Ontology](#part-3)
+* Phenotype and phenotypic feature
+* HPO
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 4: Phenomizer](#part-4)
+* Phenomizer algorithm
+:::
+
+::::
+
+## Entropy {#part-2}
 
 * Let us assume we are
 analyzing a random variable $X$, which can take on one of a finite
@@ -136,7 +225,7 @@ $$ {#eq-appdx-IC}
 ## Entropy (2)
  
 Note that because of the properties of logarithms, 
-$ \log_2\frac{1}{p(x)} = -\log_2 p(x)$, which is the definition of
+$\log_2 \frac{1}{p(x)} = -\log_2 p(x)$, which is the definition of
 information content. The
 \textit{entropy} of the random variable $X$, written as $H(X)$, was defined by Shannon as
 the average information content of all of the possible outcomes of
@@ -165,25 +254,20 @@ $$
 H(X) = p(x')\log_2\dfrac{1}{p(x')} = 1\times (-1)\times\log_2 1 = 0
 $$
 
+
 ## Entropy (4)
 
- It can easily be shown that the entropy of $X$ is maximized if there
+It can easily be shown that the entropy of $X$ is maximized if there
 is maximal uncertainty about the outcome -- this is the case if no
 outcome is more likely than the others, or stated differently, if
 $X$ follows a uniform distribution.
 
 
-![](./img/entropyCoinToss.svg){fig-align="center" width="50%"}
+![Entropy of a random variable $X=\left\{\mathtt{0, 1}\right\}$ representing  Bernoulli process such as a coin toss for different values of $p(X=1)$. Maximum entropy is achieved if $p(\mathtt{0}) = p(\mathtt{1}) = 0.5$, i.e., for a uniform distribution. The minimum entropy of zero occurs if the probability of one of the two outcomes is 1.](img/entropyCoinToss.svg){fig-align="center" width="10%"}
 
-__Entropy__. The figure shows the entropy of a
- random variable $X=\left\{\mathtt{0, 1}\right\}$ representing
- Bernoulli process such as a coin toss for different values of
- $p(X=1)$. Maximum entropy is achieved if $p(\mathtt{0}) =
- p(\mathtt{1}) = 0.5$, i.e., for a uniform distribution. The minimum
- entropy of zero occurs if the probability of one of the two outcomes
- is 1.
 
- ## Entropy
+
+## Entropy (5)
  The function $IC(x) = -\log p(x)$ is a natural one for measuring information
 content, for several reasons. 
 
@@ -230,7 +314,7 @@ A proof of this theorem can be found in Khinchin's book^[Khinchin - Mathematical
 $\log_2$ is used.
 
 ::: {.callout-note icon=false}
-  Thus, we conclude that Equation~(\ref{eqn:appdx:IC})
+  Thus, we conclude that @eq-appdx-entropy
 provides a definition of information content that
 satisfies several important intuitions about the properties that a
 mathematical definition of information content should have.
@@ -354,7 +438,51 @@ them to rank lists
 :::
 :::
 
-## Bioinformatics for Medicine?
+
+## HPO
+
+::: {.callout-note title="Game plan"}
+This lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.
+:::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 1: Information content](#part-1)
+* Information content
+* Entropy
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 2: Semantic similarity](#part-2)
+* Definition of ontologies (review)
+* Ontologies and biomedical research
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" }
+### [Part 3: Human Phenotype Ontology](#part-3)
+* Phenotype and phenotypic feature
+* HPO
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 4: Phenomizer](#part-4)
+* Phenomizer algorithm
+:::
+
+::::
+
+## Bioinformatics for Medicine? {#part-3}
 
 * How exactly do we calculate the similarity between diseases, symptoms, patients, and more?
 
@@ -377,8 +505,12 @@ them to rank lists
 * The following descriptions mean the same thing to you: `generalized amyotrophy`, 
 `generalized muscle atrophy`, `muscular atrophy, generalized`,
 (etc)
-* Many publications have little^[or none at all] information about the actual phenotypic features seen in patients with particular diseases and variants
 * Databases cannot talk to one another about phenotypes
+* Many publications have little^[or none at all] information about the actual phenotypic features seen in patients with particular diseases and variants
+
+
+<br>
+
 
 # A tale of two footballs
 $$
@@ -614,8 +746,6 @@ Ontologies are used for myriad applications in biomedical research and translati
 
 ::::
 
-**Today**: I will present some of the methods we have developed to use HPO to empower genomic diagnostics.
-
 ## Ontology-Driven Representation of Biomedical Data
 
 ![](./img/nejm-fanconi.png){fig-align="center" width="75%"}
@@ -674,46 +804,119 @@ Gargano Nucleic Acids Res 2024
 :::
 
 
-## Phenotypic Similarity Algorithms
+
+## HPO
+
+::: {.callout-note title="Game plan"}
+This lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.
+:::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 1: Information content](#part-1)
+* Information content
+* Entropy
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 2: Semantic similarity](#part-2)
+* Definition of ontologies (review)
+* Ontologies and biomedical research
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 3: Human Phenotype Ontology](#part-3)
+* Phenotype and phenotypic feature
+* HPO
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" }
+### [Part 4: Phenomizer](#part-4)
+* Phenomizer algorithm
+:::
+
+::::
+
+## Phenotypic Similarity Algorithms {#part-4}
 
 ::: {.callout-note appearance="simple"}
 **Goal**: Calculate a similarity between a set of query terms and computational disease models.
 :::
 
-:::: {.columns}
+::::: {.columns}
 
-::: {.column width="33%"}
+:::: {.column width="33%"}
+
 ![](img/ontological_search.png){width="100%"}
-**Phenomizer** ::: {style="font-size: 0.35em;"}
-Köhler et al. (2009)  
-*Am J Hum Genet* **85**:457-64
-:::
-:::
-
-::: {.column width="33%"}
-![](./img/ExactDist-F3.jpg){width="100%"}
-**Exact Score Distribution** ::: {style="font-size: 0.35em;"}
-Schulz MH et al (2011)  
-*BMC Bioinformatics* **12**:441
-:::
-:::
-
-::: {.column width="33%"}
-![](./img/BOQA-F2.jpg){width="100%"}
-**BOQA** ::: {style="font-size: 0.35em;"}
-Bauer et al. (2012)  
-*Bioinformatics* **28**:2502-8
-:::
-:::
 
 ::::
+
+
+
+:::: {.column width="33%"}
+
+![](./img/ExactDist-F3.jpg){width="100%"}
+
+::::
+
+
+:::: {.column width="33%"}
+
+![](./img/BOQA-F2.jpg){width="100%"}
+
+::::
+:::::
+
+::::: {.columns}
+
+:::: {.column width="33%"}
+
+::: {style="font-size: 0.8em;"}
+
+**Phenomizer**  
+Köhler et al. (2009)  *Am J Hum Genet* **85**:457-64
+
+:::
+::::
+
+:::: {.column width="33%"}
+::: {style="font-size: 0.8em;"}
+
+**Exact Score Distribution** 
+
+Schulz MH et al (2011)  *BMC Bioinformatics* **12**:441
+
+:::
+::::
+
+:::: {.column width="33%"}
+::: {style="font-size: 0.8em;"}
+
+**BOQA** 
+
+Bauer et al. (2012) *Bioinformatics* **28**:2502-8
+
+:::
+::::
+
+:::::
 
 ::: {.small}
 * I will not go into detail on the computational methods today.
 * Instead, I will explain the intuition behind the Phenomizer and then show how to use these algorithms for translational genomics.
 :::
 
----
 
 ## Ontological Diagnostics
 
