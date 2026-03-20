@@ -1,6 +1,6 @@
 ---
 title: "Bioontologies: MGSA: GOing Bayesian"
-subtitle: "MGSA: GOing Bayesian"
+subtitle: "Model-based gene-set analysis"
 author: "Peter N Robinson"
 jupyter: python3
 format: 
@@ -9,10 +9,13 @@ format:
     html-math-method: mathjax
     margin: 0.05
     embed-resources: true
-    css: style/styles.css
 filters:
   - pseudocode
 ---
+
+
+
+## Problems with the term-for-term approach
 
 ::: {.hidden}
 $$
@@ -20,21 +23,23 @@ $$
 $$
 :::
 
-## Model based gene-set analysis
+:::: {.columns}
 
-::: {.callout-note appearance="simple"}
-Today I will present a Bayesian algorithm for GO analysis that improves upon the "term-for-term" approach we saw last week.
-:::
-
-![](./img/GOingBayesian-title.png){fig-align="center" width="40%"}
-
-## Problems with the term-for-term approach
+::: {.column width="50%"}
 
 ::: {.callout-important appearance="simple"}
 We have seen in the previous chapter that a major difficulty of the standard approach to GO overrepresentation analysis is that each term is analyzed in isolation.
 :::
 
 * Because of the statistical dependencies between terms that are close to one another in the ontology graph, if one term is called significant then commonly one or more related terms are also called significant.
+* Today, we will discuss a Bayesian algorithm for GO analysis that improves upon the "term-for-term" approach we saw last week.
+
+:::
+::: {.column width="50%"}
+
+![](./img/GOingBayesian-title.png){fig-align="center" width="100%"}
+:::
+::::
 
 
 
@@ -155,15 +160,13 @@ maximized if $|A_g|>|S_g|$ (because  $a>1-a$) and if $|S_n|>|A_n|$
 that more often than not annotate the `ON` genes ($|A_g|>|S_g|$). On the other hand, the `inactive` GO terms would more often than not annotate `OFF` genes
 ($|S_n|>|A_n|$).
 
+::: {.callout-note appearance="simple"}
+ 
+The final term in @eq-gengo, $- \alpha |C|$ reduces the score linearly in the number of `active` GO terms. The authors of genGO state that a value of $\alpha=3$ tends to produce good results. The genGO algorithm seeks to optimize the score for the current set of `active` GO terms $C$. 
+
+:::
+ 
 ## GenGO (5)
- 
- The final term in @eq-gengo, $- \alpha |C|$ reduces the
-score linearly in the number of `active` GO terms. The authors
-of genGO state that a value of $\alpha=3$ tends to produce good
-results. The genGO algorithm seeks to optimize the score for the
-current set of `active` GO terms $C$. 
- 
-## GenGO (6)
 
 ::: {.callout-note appearance="simple"}
 
@@ -176,8 +179,7 @@ GenGO performs iterations where all
 
 :::
 
-
-
+- [Todo:  pseudocode not showing - debug quarto code)]{.neon-todo}
 
 
 ```pseudocode
@@ -248,19 +250,20 @@ correspond to a lack of differential expression of a gene. Our model hence
 assumes that differential expression is the consequence of the
 annotation to some terms that are `active`.
 
-## MGSA (3)
+::: {.callout-note appearance="simple"}
+
  An additional parameter $p$ represents the prior probability of a term being
 in the `active` state. The probability $p$ is typically low (less
 than 0.5), which has the effect of introducing a penalization for
 increasing the number of active terms. This favors results that
 identify a relatively low number of `active` terms.
 
+:::
 
 
 ## Structure of the MGSA Network
 
-  Gene
-categories, or terms ($T_i$) that constitute the first layer can be either
+Gene categories, or terms ($T_i$) that constitute the first layer can be either
 `active` or `inactive`. Terms that are `active` activate the hidden state
 ($H_j$) of all genes annotated to them, with the other genes remaining `OFF`. The
 observed states ($O_j$) of the genes are noisy observations of
@@ -281,7 +284,7 @@ layers that is augmented with a set of parameters.
 
 * A *term layer* $T=\{T_1,\ldots,T_m\}$ that consists of Boolean nodes
  corresponding to $m$ terms of the ontology. 
- * There is a Boolean variable
+* There is a Boolean variable
  associated with each node that can have the state values `active` (1) or `inactive` 
 (0). 
 
