@@ -4,4 +4,4 @@ networkx
 scipy
 jupyter
 pyyaml
-sklearn
+scikit-learn
