@@ -90,10 +90,171 @@ Sentiment analysis uses natural language processing (NLP) and machine learning t
 
 ## Our data
 
+
+
+$$
+training set: {(x^{(1)}, y^{(1)}),(x^{(2)}, y^{(2)}),\ldots,(x^{(m)}, y^{(m)})}
+$$
+
+
 ::: {.callout-note appearance="simple" title="Example"}
-With a cast like this, you wonder whether or not the actors and actresses knew exactly what they were getting into. 
+- $x^{(42)}$: A very cheesy and dull road movie, with the intention to be hip and modern. ($\ldots$)
+- $y^{(42)}$: 👎
+- $x^{(13242)}$: where else could you find someone who needs a drink so bad that he's as dry as a dead dingoes donger?
+- $y^{(13242)}$: 👍
+:::
+
+-  goal: learn a classifier from the training set to map an arbitrary new input $x$ to its correct class $y \in Y$.
+- LogReg is a  **Probabilistic classifier** that produces both a classificaton (here, Y={👍, 👎}) and the probability of the observation being in the class.
+
+
+## The four components of Logistic Regression
+
+::: {.callout-note appearance="simple"}
+### 1. Feature Representation
+For each input $x$, we have a vector: $\mathbf{x} = [x_1, x_2, \ldots, x_n]$
+:::
+
+::: {.callout-tip appearance="simple"}
+### 2. Classification Function
+Computes the estimated class using the **Sigmoid function**: $\sigma(z) = \frac{1}{1 + e^{-z}}$
+:::
+
+::: {.callout-important appearance="simple"}
+### 3. Objective Function
+A **Loss function** (Cross-Entropy) to measure how well the model is performing ( cross-entropy loss function).
+:::
+
+::: {.callout-warning appearance="simple"}
+### 4. Optimization
+**Gradient Descent**: The method used to minimize the loss and find the best weights.
+:::
+
+## LogReg: Features
+
+For each input $x$, we create a vector of features: $\mathbf{x} = [x_1, x_2, \ldots, x_n]$.
+
+::: {.callout-note appearance="simple" title="Example"}
+There are many different ways of generating a feature vector
+:::
+
+- Raw numerical data: If the input data is numerical with $n$ dimensions, each of the dimensions can act as a feature
+- Polynomial & interaction features: We can add interaction terms ($x_ix_j$) or polynomial features (e.g., $x_i^7$) if this makes sense for the classification task
+- Images: Flatten pixel values (e.g., an $8\times 8$ image would have 64 features)
+- Text to vector: e.g.,  count word occurrences across a vocabulary
+- Domain-specific feature engineering
+
+::: {.callout-note appearance="simple" title="Example"}
+In the Python exercise for this lecture, we will develop a naive feature extraction script for sentiment analysis of movie reviews based on key word counts
+:::
+
+
+## Weights and bias
+
+::: {.callout-note appearance="simple" title="Weights"}
+LogReg learns a vector of a vector of
+weights and a bias term to solve the classification task
 :::
 
 $$
-training set: {(x^{(1)}, y(1)),(x(2), y(2)),\ldots,(x(m), y(m))}
+z = \sum_{i=1}^n w_ix_x + b
 $$
+
+This sum can be represented identically using dot product notation (where the bold font indicates a vector of weights ($\mathbf{w}$) and inputs ($\mathbf{x}$))
+
+
+$$
+z = \mathbf{w}\cdot \mathbf{x} + b
+$$
+
+- This is identical to the sums we will see at individual neurons in neural networks
+- In principle, $z$ could be any real number
+
+
+## Sigmoid
+
+::: {.callout-note appearance="simple" title="Sigmoid function"}
+To create a probability, we transform z through the sigmoid function, $\sigma(z)$
+:::
+To map the real-valued $z$ into a probability $P \in (0,1)$, we use:
+
+$$
+\sigma(z) = \frac{1}{1+e^{-z}} = \frac{1}{1+\exp(-z)}
+$$
+
+
+- **Output:** Always between 0 and 1.
+- **Interpretation:** $P(y=1 | x)$, i.e., a probability for classification
+
+
+
+## Sigmoid: $1−\sigma(x) = \sigma(−x)$
+
+$$
+\begin{eqnarray*}
+1−\sigma(x) &=& 1- \frac{1}{1+e^{-x}}\\
+&=& \frac{1+e^{-x} - 1}{1+e^{-x}} \\
+&=& \frac{e^{-x}}{1+e^{-x}} \cdot \frac{e^{x}}{e^{x}}\\
+&=& \frac{1}{1+e^{x}} \\
+&=& \sigma(-x) \\
+\end{eqnarray*}
+$$
+
+
+## Sigmoid:
+
+- The sigmoid function is locally symmetric around the point $(0, 0.5)$
+- Usually we take a value $>0.5$ as predicting the positive class
+- The sigmoid function is nearly linear near 0 
+- Outlier values get flattened towards 0 or 1.
+
+```{python}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from logreg import sigmoid_plot
+sigmoid_plot(figsize=(6,5))
+plt.show()
+``` 
+
+## Logit
+
+- Odds: The ratio of success to failure -- $p / (1-p)$.
+- Logit: The natural logarithm of those odds  -- $\ln (\frac{p}{1-p})$.
+- The logit is the inverse of the sigmoid function
+
+$$
+\begin{eqnarray*}
+z &=& \ln \left( \frac{p}{1-p} \right)\quad\quad \text{Log odds}\\
+e^z &=&  \frac{p}{1-p} \quad\quad \text{exponentiate to get odds}\\
+p &=& \frac{e^z}{1 + e^z} \quad\quad \text{rearrange}\\
+p &=& \frac{1}{1 + e^{-z}} \quad\quad \text{divide the numerator and the denominator by }e^z\\
+\end{eqnarray*}
+$$
+
+- Thus, we have shown that $\ln \left( \frac{\sigma(z)}{1-\sigma(z)} \right) = z$
+- the Logit of the Sigmoid thus leaves us with the original variable (inverse)
+
+## Classification rule 
+
+We then have the rule:
+
+$$
+\mathrm{classification}(x) = 
+\begin{cases}
+1 & \text{if }P(y = 1|x) > 0.5 \\
+0 & \text{otherwise}
+\end{cases}
+$$
+
+
+
+
+
+
+
