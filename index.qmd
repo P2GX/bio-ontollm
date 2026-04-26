@@ -1,9 +1,0 @@
----
-title: "Course Overview"
-listing:
-  contents: lectures # points to a folder named 'lectures'
-  type: table
-  sort: "date desc"
----
-
-Work in progress! This will be the website for a series of lectures on ontologies and LLMs for biomedical research.

@@ -6,15 +6,10 @@ Plan
 2. Gene Ontology and Overrepresentation Analysis (lecture \#2)
 3. Model-based Gene Set Analysis (lecture \#3)
 4. Human Phenotype Ontology (HPO), semantic similarity, and Phenomizer (lecture \#4)
-
-Note: Lectures 1--4 are available from 2016, need to be updated
-5. HPO: Exomiser,Phrank, 
-6. HPO:  LIRICAL
-
-New material
-7. Deep learning: mathematics of neural networks, backprop
-8. Recurrent NNs, LSTM
-9. Transformer: Intro
+5. HPO: Exomiser,Phrank,  LIRICAL
+6. Deep learning: mathematics of neural networks, backprop
+7. Recurrent NNs, LSTM
+8. Transformer: Intro
 9. Transformer: BERT, SBERT
 10. Transformer: Decoder
 11. Transformer: Reinforcement learning

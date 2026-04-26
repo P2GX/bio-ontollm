@@ -1,0 +1,106 @@
+---
+title: "Logistic regression"
+subtitle: "sigmoid functions, gradient descent, Python"
+author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
+jupyter: python3
+format: 
+  revealjs:
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.05
+    embed-resources: true
+    css: ../style/styles.css
+---
+
+
+
+## Overview: Logistic regression 
+
+::: {.callout-note title="Game plan"}
+Logistic regression takes a weighted sum of input features and passes it through a sigmoid function to output a probability between 0 and 1, which is then used to classify inputs into discrete categories. Despite its name, it's a classification algorithm, not a regression one. We are starting with it because in neural networks, a single neuron **is** logistic regression — the same weighted sum, activation function, and gradient-descent training loop. 
+:::
+
+:::: {.columns}
+
+::: {.column width="48%"}
+### [Part 1: Review](#part-1)
+* What is an ANN?
+* Forward vs. Reverse pass
+* Biomed applications
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 2: Architecture and Backprop](#part-2)
+* Chain rule & Jacobians
+* Vectorized derivatives
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 3: Gradients](#part-3)
+* Loss functions (MSE)
+* Momentum & Adam
+* Learning rates
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 4: Python](#part-4)
+* Full implementation of ANN
+* Classify handwritten digits
+:::
+
+::::
+
+## Logistic Regression
+
+Logistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.
+
+- Email analysis (Is an email spam or not?)
+- Sentiment analysis (is a movie review positive or negative?)
+- Medical diagnostics (is a given diagnosis present or absent?)
+
+::: {.callout-note appearance="simple"}
+We will go over the algorithm in detail, because it is an excellent preparation for understanding neural networks.
+:::
+
+![](./img/logistic_regression.png){fig-align="center"}
+
+## Sentiment analysis
+
+::: {.callout-note appearance="simple"}
+Sentiment analysis uses natural language processing (NLP) and machine learning to identify, extract, and quantify emotional tones—positive, negative, or neutral—within text data.
+:::
+
+- We will use sentiment analysis on movie reviews
+- The Internet Movie Database is a standard data set for prototyping such algorithms
+
+![](./img/imdb.png){fig-align="center" width="20%"}
+
+
+## Our data
+
+
+training set: {(x
+(1)
+, y
+(1)
+),(x
+(2)
+, y
+(2)
+),...,(x
+(m)
+, y
+(m)
+)}

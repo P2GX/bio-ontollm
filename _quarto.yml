@@ -17,10 +17,12 @@ website:
     contents:
       - section: "Lectures"
         contents:
+          - lectures/overview.qmd
           - lectures/ontology1.qmd
           - lectures/ontology2.qmd
           - lectures/ontology3.qmd
           - lectures/ontology4.qmd
+          - lectures/logreg.qmd
           - lectures/neural.qmd
           - lectures/encoder.qmd
 

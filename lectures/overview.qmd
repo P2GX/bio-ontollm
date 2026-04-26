@@ -1,0 +1,71 @@
+---
+title: "Introduction to Bio-ontologies"
+subtitle: "OBO, RDF, RDFS, and OWL"
+author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
+jupyter: python3
+format: 
+  revealjs:
+    theme: [default] 
+    css: style/styles.css
+    logo: images/fu_berlin_logo.png # Add your department logo
+    footer: "Master Bioinformatics | Peter N Robinson"
+    slide-number: true
+    show-slide-number: all
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.1
+    embed-resources: true
+    transition: fade
+    background-transition: convex
+    controls: true
+---
+
+## Course Overview
+
+This course is held as a part of the [Master Curriculum](https://www.mi.fu-berlin.de/bioinf/stud/master/index.html) in Bioinformatics of the Free University Berlin.
+
+## Course Overview
+
+::: {.columns}
+
+::: {.column width="60%"}
+This course is part of the [Master Curriculum](https://link-to-fu.de) in Bioinformatics.
+
+* **Target:** Graduate Students
+* **Focus:** Knowledge representation
+* **University:** Free University Berlin
+:::
+
+::: {.column width="40%"}
+![](img/BioinfoStudiengang.png)
+:::
+
+:::
+
+---
+
+## Topics
+
+The course explores the synergy between two paradigms:
+
+::: {.grid}
+
+::: {.g-col-6}
+### 🕸️ Ontologies
+*Structured Knowledge*
+- Formal Semantics (OWL/RDF)
+- Logical Consistency
+- Interoperability (OBO)
+:::
+
+::: {.g-col-6}
+### 🧠 LLMs
+*Probabilistic Knowledge*
+- Pattern Recognition
+- Natural Language Interface
+- Reasoning via Inference
+:::
+
+:::
