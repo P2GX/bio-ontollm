@@ -9,6 +9,6 @@ We will usually transform these files into png files
 
 ```bash
 pdflatex myfile.tex
-pdftoppm -png -singlefile myfile.pdf -o myfile
+pdftoppm -png -singlefile -rx 300 -ry 300 myfile.pdf -o myfile
 ``` 
 

@@ -47,3 +47,8 @@ lsof -i :7783
 kill -9 <pid>
 ```
 where `pid` is the process id revealed by the lsof command.
+
+## Reset
+
+rm -rf .quarto/
+rm -rf _site/  
