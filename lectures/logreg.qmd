@@ -176,6 +176,7 @@ $$
 ::: {.callout-note appearance="simple" title="Sigmoid function"}
 To create a probability, we transform z through the sigmoid function, $\sigma(z)$
 :::
+
 To map the real-valued $z$ into a probability $P \in (0,1)$, we use:
 
 $$
@@ -253,8 +254,318 @@ $$
 $$
 
 
+## Vectorized representation
 
 
 
 
 
+
+::: {.callout-note appearance="simple" title="Sigmoid function"}
+It is convenient to stack many examples into a matrix
+:::
+
+
+$$
+\mathbf{\hat{y}} = \sigma(\mathbf{Xw} + b)
+$$
+
+
+- Dimensions
+
+$$
+\underbrace{\hat{\mathbf{y}}}_{m \times 1} = \sigma \left( 
+\underbrace{\mathbf{X}}_{m \times n} \cdot 
+\underbrace{\mathbf{w}}_{n \times 1} + b 
+\right)
+$$
+
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- Rows of $X$ = Observations (e.g., $m$ Patients)
+- Columns of $X$: Features ($n$ items in this example)
+
+:::
+::: {.column width="60%"}
+
+$$
+\mathbf{X} = 
+\begin{pmatrix}
+x_{1,1} & x_{1,2} & \cdots & x_{1,n} \\
+x_{2,1} & x_{2,2} & \cdots & x_{2,n} \\
+\vdots  & \vdots  & \ddots & \vdots  \\
+x_{m,1} & x_{m,2} & \cdots & x_{m,n}
+\end{pmatrix}
+$$
+
+:::
+::::
+
+## Learning
+
+-  We need to learn the parameters of the model, the weights $\mathbf{w}$ and bias $b$
+- Binary logistic regression is an instance of supervised classification in which we know the correct label $y\in \left\{ 0, 1\right\}$ for each observation x.
+- A good model will minimize the difference between our prediction $\hat{y}$ and the ground truth $y$
+- this distance is defined by the **loss function** (also known as the **cost function**).
+- The same loss function is commonly used for logistic regression and  for neural networks, the **cross-entropy loss**.
+- Recall that our classififer output is
+
+$$
+\hat{y} = \sigma(\mathbf{w}\cdot\mathbf{x} + b)
+$$
+
+- For logistic regression with binary classification, $y$ can be either 0 or 1, but $\hat{y}$ is a probability that ranges from 0 to 1.
+- We measure the difference with the loss function $\mathcal{L}(\hat{y}, y)$
+
+## Loss function
+
+
+- conditional maximum likelihood estimation: we choose the parameters w,b that maximize the log probability of the true y labels in the training data given the observations x. 
+- The resulting loss function is the negative log likelihood loss, which is known as the **cross-entropy loss**
+
+- The weights should maximize the probability of the correct label $p(y|x)$.
+- It is convenient to write this as
+$$
+\log p(y|x) = \log[\hat{y}^y(1-\hat{y})^{1-y}] = y\log\hat{y} + (1-y)\log(1-\hat{y})
+$$
+- Note this simplifies to either $\log\hat{y}$ or $\log(1-\hat{y})$ depending on whether $y$ is 0 or 1.
+- Since it is convenient to minimize the function, we multiply by -1, and take this to be be cross-entropy loss
+$$
+\mathcal{L}_{CE}(\hat{y}, y)
+= - y\log\hat{y} - (1-y)\log(1-\hat{y})
+$$
+
+- Since we have $\mathbf{\hat{y}} = \sigma(\mathbf{w}\cdot \mathbf{x} + b)$, this is equivalent to
+
+$$
+\mathcal{L}_{CE}(\hat{y}, y)
+= - y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\sigma(\mathbf{w}\cdot \mathbf{x} + b))
+$$
+
+
+## Loss function (sanity check)
+
+$$
+\mathcal{L}_{CE}(\hat{y}, y)
+= - y\log\sigma(\mathbf{Xw} + b) - (1-y)\log(1-\sigma(\mathbf{Xw} + b))
+$$
+
+- Note that if we predict (correctly) for a true example that $\hat{y}=1$, then the second term drops out and we have
+
+$$
+\mathcal{L}_{CE}(\hat{y}, y)
+= - 1\log 1  = 0
+$$
+
+- Similar things apply for a correct prediction of a negative example as  $\hat{y}=0$
+- The loss for one example ranges from 0 to infinity ($-\log 0$)
+
+## Optimizing the loss
+
+::: {.callout-note appearance="simple" title="Optimization Goal"}
+To create a high-performing classifier, we minimize the **Cost Function** $J(\theta)$, which is the average loss over the entire training set of $m$ examples.
+:::
+
+- If we symbolize the parameters (weights, bias) of the logistic regression as $\theta$, our objective function is:
+
+$$
+J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
+$$
+
+- We seek $\hat{\theta}$, the parameters that minimize the loss
+
+$$
+\hat{\theta} = \arg\min_{\theta} J(\theta)
+$$
+
+- We can show that the logistic regression loss function is convex (which enables us to reliably find its minimum)
+- Neural networks are not convex and gradient descent may not find the global minimum
+
+##  gradient descent
+
+ 
+::: {.callout-note appearance="simple" title="Gradient"}
+The gradient descent algorithm finds the gradient
+of the loss function at the current point and moving in the opposite direction.
+:::
+
+
+Another commonly encountered notation is the __gradient__, which by convention is represented as a column vector
+
+$$
+\nabla f(\mathbf{x}) = 
+\begin{bmatrix} \dfrac{\partial f}{\partial \mathbf{x}} \end{bmatrix}^T
+=
+\begin{bmatrix} \dfrac{\partial f}{\partial x_1}\\ \dfrac{\partial f}{\partial x_2} \\ \cdots \\ \dfrac{\partial f}{\partial x_n} \end{bmatrix}  
+$$ {#eq-gradient}
+
+
+## Gradient descent
+
+```{python}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from logreg import gdexample
+gdexample(figsize=(8,6))
+plt.show()
+``` 
+
+- We iteratively take steps towards the minimum
+- But how do we calculate the slope?
+
+## Calculating derivatives
+
+To calculate the gradient of the loss function, $\nabla (\Theta; \mathbf{x};y)$, we need all the partial derivatives -- for all weights and biases. Let's do this step by step
+
+- derivative of the sigmoid activation function
+$$
+\begin{eqnarray*}
+\dfrac{d\sigma(x)}{dx} =\dfrac{d}{dx} \dfrac{1}{1+e^{-x}} &=& \hspace{1cm} \dfrac{-1}{(1+e^{-x})^2}\cdot (-e^{-x})&& \text{chain rule} \\
+&=&\dfrac{e^{-x}}{(1+e^{-x})^2} && \hspace{1cm} \text{simplify}\\
+&=&\dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{rearrange}\\
+&=&\sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{definition of $\sigma(x)$}\\
+&=&\sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}}&& \hspace{1cm} \text{add and substract 1}\\
+&=&\sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right)&& \hspace{1cm} \text{rearrange}\\
+&=&\sigma(x) \cdot \left( 1 -\sigma(x) \right)&& \hspace{1cm} \text{simplify using definition of $\sigma(x)$}\\
+\end{eqnarray*}
+$$
+
+
+
+
+## Calculating the first derivative of the sigmoid activation function
+
+- Thus we get the fascinating result that
+
+$$
+\frac{d\sigma(x)}{dx} = \sigma(x)(1-\sigma(x))
+$$
+
+- This means that if we have $\sigma(x)$ it is trivial to calculate $\frac{d\sigma(x)}{dx}$.
+
+
+## The Gradient Vector
+
+- Assuming we are performing a gradient descent with two weights and one bias, the Gradient Vector is:
+
+$$
+\nabla J(\theta) = \begin{bmatrix}
+\frac{\partial J}{\partial w_1} \\
+\frac{\partial J}{\partial w_2} \\
+\frac{\partial J}{\partial b}
+\end{bmatrix}
+$$
+
+For Logistic Regression, the partial derivative for any specific weight $w_j$ over $m$ examples is:
+
+$$
+\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}
+$$
+- Remember that $\hat{y}$ (the prediction) is equal to $\sigma(x)$, and thus $\sigma(x)(1-\sigma(x)) = \hat{y}(1-\hat{y})$
+
+
+## Derivation and chain rule
+
+
+- To derive the above expression (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule
+
+:::: {.columns}
+
+::: {.column width="50%"}
+- If $f$ and $g$ are differentiable functions, then
+$$
+\left(f(g(x))\right)^{\prime} = f^{\prime}(g(x))\cdot g^{\prime}(x)
+$$
+
+- The chain rule can also be written as follows. If $y=f(u)$ and $u=g(x)$, then 
+$$
+\dfrac{dy}{dx} =\dfrac{dy}{du}\dfrac{du}{dx}
+$$
+
+:::
+::: {.column width="50%"}
+Examples
+
+- **Power Rule**: $y = (5+3x)^5$
+  - Let $u = 5+3x$, so $y = u^5$
+  - $\frac{dy}{du} = 5u^4$ and $\frac{du}{dx} = 3$
+  $$\frac{dy}{dx} = 5(5+3x)^4 \cdot 3 = 15(5+3x)^4$$
+
+- **Trig**: $y = \sin(4x+3)$
+  - Let $u = 4x+3$, so $y = \sin(u)$
+  - $\frac{dy}{du} = \cos(u)$ and $\frac{du}{dx} = 4$
+  $$\frac{dy}{dx} = \cos(4x+3) \cdot 4 = 4\cos(4x+3)$$
+ 
+
+:::
+::::
+
+## Chain rule and logistic regression
+
+We are differentiating the loss with respect to a weight $w_j$. 
+
+::: {.callout-note appearance="simple" title="The chain"}
+Loss ($\mathcal{L}$) depends on Prediction ($\hat{y}$), which depends on Logit ($z$), which depends on Weight ($w_j$).
+:::
+
+$$
+\frac{\partial \mathcal{L}}{\partial w_j} = \frac{\partial \mathcal{L}}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w_j}
+$$
+
+- So we will calculate this in three steps
+- [HOMEWORK]{.hw-badge} We will review the chain rule in the practical 
+
+## Chain rule $\mathcal{L}$ w.r.t. $\hat{y}$($w_j$)
+
+- $\mathcal{L} = -(y \ln \hat{y} + (1-y) \ln(1-\hat{y}))$, recalling that $\frac{d \log x}{dx} = \frac{1}{x}$
+
+
+$$
+$$\begin{eqnarray*}
+\frac{\partial \mathcal{L}}{\partial \hat{y}} &=& -\frac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})] \\
+&=& -\frac{y}{ \hat{y}}  +   (1-y)  \frac{-1}{1-\hat{y}} = -\left( \frac{y}{\hat{y}} - \frac{1-y}{1-\hat{y}} \right) \\
+&=&  \frac{-y}{\hat{y}} + \frac{1-y}{1-\hat{y}}  = \frac{-y}{\hat{y}}\cdot \frac{1-\hat{y}}{1-\hat{y}}  + \frac{1-y}{1-\hat{y}}  \cdot \frac{\hat{y}}{\hat{y}} \\
+&=& \frac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})}  \\
+&=& \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})} \\
+&=& \frac{\hat{y} - y}{\hat{y}(1-\hat{y})}
+\end{eqnarray*}$$
+$$
+
+## Chain rule:  Sigmoid $\hat{y}$ w.r.t. the Logit $z$O
+
+$$
+\frac{d\sigma(x)}{dx} = \sigma(x)(1-\sigma(x))
+$$
+
+
+## Chain rule: Logit $z$ w.r.t. the Weight $w_j$
+ The Since $z = w_1x_1 + w_2x_2 + \dots + b$, the derivative with respect to $w_j$ is simply the feature it is multiplied by:
+ $$
+ \frac{\partial z}{\partial w_j} = x_j
+ $$
+
+ ## Chain rule: Putting it all together
+
+ $$
+ \frac{\partial \mathcal{L}}{\partial w_j} = \underbrace{\left[ \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} \right]}_{\text{Part A}} \cdot \underbrace{\left[ \hat{y}(1-\hat{y}) \right]}_{\text{Part B}} \cdot \underbrace{x_j}_{\text{Part C}}
+ $$
+ 
+ - Thanks to cancelations, we are left with
+ 
+$$
+\frac{\partial \mathcal{L}}{\partial w_j} = (\hat{y} - y)x_j
+$$
+
+Since the total Cost $J$ is the average of all individual losses ($\frac{1}{m} \sum \mathcal{L}$), the derivative of the total cost is simply the average of the individual derivatives:$$\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}$$
+
+Intuitively,
+The Error ($\hat{y} - y$): How wrong were we?The Input ($x_j$): How much did this specific feature contribute to that wrong prediction?
