@@ -1060,7 +1060,103 @@
     "href": "lectures/logreg.html#our-data",
     "title": "Logistic regression",
     "section": "Our data",
-    "text": "Our data\n\n\n\n\n\n\n\nExample\n\n\nWith a cast like this, you wonder whether or not the actors and actresses knew exactly what they were getting into.\n\n\n\n\n\\[\ntraining set: {(x^{(1)}, y(1)),(x(2), y(2)),\\ldots,(x(m), y(m))}\n\\]",
+    "text": "Our data\n\\[\ntraining set: {(x^{(1)}, y^{(1)}),(x^{(2)}, y^{(2)}),\\ldots,(x^{(m)}, y^{(m)})}\n\\]\n\n\n\n\n\n\n\nExample\n\n\n\n\\(x^{(42)}\\): A very cheesy and dull road movie, with the intention to be hip and modern. (\\(\\ldots\\))\n\\(y^{(42)}\\): 👎\n\\(x^{(13242)}\\): where else could you find someone who needs a drink so bad that he’s as dry as a dead dingoes donger?\n\\(y^{(13242)}\\): 👍\n\n\n\n\n\n\ngoal: learn a classifier from the training set to map an arbitrary new input \\(x\\) to its correct class \\(y \\in Y\\).\nLogReg is a Probabilistic classifier that produces both a classificaton (here, Y={👍, 👎}) and the probability of the observation being in the class.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#the-four-components-of-logistic-regression",
+    "href": "lectures/logreg.html#the-four-components-of-logistic-regression",
+    "title": "Logistic regression",
+    "section": "The four components of Logistic Regression",
+    "text": "The four components of Logistic Regression\n\n\n\n\n\n\n1. Feature Representation\n\n\nFor each input \\(x\\), we have a vector: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\)\n\n\n\n\n\n\n\n\n\n2. Classification Function\n\n\nComputes the estimated class using the Sigmoid function: \\(\\sigma(z) = \\frac{1}{1 + e^{-z}}\\)\n\n\n\n\n\n\n\n\n\n3. Objective Function\n\n\nA Loss function (Cross-Entropy) to measure how well the model is performing ( cross-entropy loss function).\n\n\n\n\n\n\n\n\n\n4. Optimization\n\n\nGradient Descent: The method used to minimize the loss and find the best weights.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#logreg-features",
+    "href": "lectures/logreg.html#logreg-features",
+    "title": "Logistic regression",
+    "section": "LogReg: Features",
+    "text": "LogReg: Features\nFor each input \\(x\\), we create a vector of features: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\).\n\n\n\n\n\n\n\nExample\n\n\nThere are many different ways of generating a feature vector\n\n\n\n\n\nRaw numerical data: If the input data is numerical with \\(n\\) dimensions, each of the dimensions can act as a feature\nPolynomial & interaction features: We can add interaction terms (\\(x_ix_j\\)) or polynomial features (e.g., \\(x_i^7\\)) if this makes sense for the classification task\nImages: Flatten pixel values (e.g., an \\(8\\times 8\\) image would have 64 features)\nText to vector: e.g., count word occurrences across a vocabulary\nDomain-specific feature engineering\n\n\n\n\n\n\n\n\nExample\n\n\nIn the Python exercise for this lecture, we will develop a naive feature extraction script for sentiment analysis of movie reviews based on key word counts",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#weights-and-bias",
+    "href": "lectures/logreg.html#weights-and-bias",
+    "title": "Logistic regression",
+    "section": "Weights and bias",
+    "text": "Weights and bias\n\n\n\n\n\n\n\nWeights\n\n\nLogReg learns a vector of a vector of weights and a bias term to solve the classification task\n\n\n\n\n\\[\nz = \\sum_{i=1}^n w_ix_x + b\n\\]\nThis sum can be represented identically using dot product notation (where the bold font indicates a vector of weights (\\(\\mathbf{w}\\)) and inputs (\\(\\mathbf{x}\\)))\n\\[\nz = \\mathbf{w}\\cdot \\mathbf{x} + b\n\\]\n\nThis is identical to the sums we will see at individual neurons in neural networks\nIn principle, \\(z\\) could be any real number",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#sigmoid",
+    "href": "lectures/logreg.html#sigmoid",
+    "title": "Logistic regression",
+    "section": "Sigmoid",
+    "text": "Sigmoid\n\n\n\n\n\n\n\nSigmoid function\n\n\nTo create a probability, we transform z through the sigmoid function, \\(\\sigma(z)\\)\n\n\n\n\nTo map the real-valued \\(z\\) into a probability \\(P \\in (0,1)\\), we use:\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\n\nOutput: Always between 0 and 1.\nInterpretation: \\(P(y=1 | x)\\), i.e., a probability for classification",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#sigmoid-1sigmax-sigmax",
+    "href": "lectures/logreg.html#sigmoid-1sigmax-sigmax",
+    "title": "Logistic regression",
+    "section": "Sigmoid: \\(1−\\sigma(x) = \\sigma(−x)\\)",
+    "text": "Sigmoid: \\(1−\\sigma(x) = \\sigma(−x)\\)\n\\[\n\\begin{eqnarray*}\n1−\\sigma(x) &=& 1- \\frac{1}{1+e^{-x}}\\\\\n&=& \\frac{1+e^{-x} - 1}{1+e^{-x}} \\\\\n&=& \\frac{e^{-x}}{1+e^{-x}} \\cdot \\frac{e^{x}}{e^{x}}\\\\\n&=& \\frac{1}{1+e^{x}} \\\\\n&=& \\sigma(-x) \\\\\n\\end{eqnarray*}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#sigmoid-1",
+    "href": "lectures/logreg.html#sigmoid-1",
+    "title": "Logistic regression",
+    "section": "Sigmoid:",
+    "text": "Sigmoid:\n\nThe sigmoid function is locally symmetric around the point \\((0, 0.5)\\)\nUsually we take a value \\(&gt;0.5\\) as predicting the positive class\nThe sigmoid function is nearly linear near 0\nOutlier values get flattened towards 0 or 1.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#logit",
+    "href": "lectures/logreg.html#logit",
+    "title": "Logistic regression",
+    "section": "Logit",
+    "text": "Logit\n\nOdds: The ratio of success to failure – \\(p / (1-p)\\).\nLogit: The natural logarithm of those odds – \\(\\ln (\\frac{p}{1-p})\\).\nThe logit is the inverse of the sigmoid function\n\n\\[\n\\begin{eqnarray*}\nz &=& \\ln \\left( \\frac{p}{1-p} \\right)\\quad\\quad \\text{Log odds}\\\\\ne^z &=&  \\frac{p}{1-p} \\quad\\quad \\text{exponentiate to get odds}\\\\\np &=& \\frac{e^z}{1 + e^z} \\quad\\quad \\text{rearrange}\\\\\np &=& \\frac{1}{1 + e^{-z}} \\quad\\quad \\text{divide the numerator and the denominator by }e^z\\\\\n\\end{eqnarray*}\n\\]\n\nThus, we have shown that \\(\\ln \\left( \\frac{\\sigma(z)}{1-\\sigma(z)} \\right) = z\\)\nthe Logit of the Sigmoid thus leaves us with the original variable (inverse)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#classification-rule",
+    "href": "lectures/logreg.html#classification-rule",
+    "title": "Logistic regression",
+    "section": "Classification rule",
+    "text": "Classification rule\nWe then have the rule:\n\\[\n\\mathrm{classification}(x) =\n\\begin{cases}\n1 & \\text{if }P(y = 1|x) &gt; 0.5 \\\\\n0 & \\text{otherwise}\n\\end{cases}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
