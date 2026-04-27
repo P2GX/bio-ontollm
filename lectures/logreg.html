@@ -1202,33 +1202,32 @@ Peter N Robinson
 <p><strong>Game plan</strong></p>
 </div>
 <div class="callout-content">
-<p>Logistic regression takes a weighted sum of input features and passes it through a sigmoid function to output a probability between 0 and 1, which is then used to classify inputs into discrete categories. Despite its name, it’s a classification algorithm, not a regression one. We are starting with it because in neural networks, a single neuron <strong>is</strong> logistic regression — the same weighted sum, activation function, and gradient-descent training loop.</p>
+<p>Logistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="columns">
 <div class="column" style="width:48%;">
-<h3 id="part-1-review"><a href="#/part-1">Part 1: Review</a></h3>
+<h3 id="part-1-introduction"><a href="#/part-1">Part 1: Introduction</a></h3>
 <ul>
-<li>What is an ANN?</li>
-<li>Forward vs. Reverse pass</li>
-<li>Biomed applications</li>
+<li>Components of logistic regression</li>
+<li>Sentiment analysis</li>
 </ul>
 </div><div class="column" style="width:4%;">
 
 </div><div class="column dimmed" style="width:48%;">
-<h3 id="part-2-architecture-and-backprop"><a href="#/part-2">Part 2: Architecture and Backprop</a></h3>
+<h3 id="part-2-sigmoid-function"><a href="#/part-2">Part 2: Sigmoid function</a></h3>
 <ul>
-<li>Chain rule &amp; Jacobians</li>
-<li>Vectorized derivatives</li>
+<li>Definition</li>
+<li>First derivative</li>
 </ul>
 </div></div>
 <div class="columns">
 <div class="column dimmed" style="width:48%;">
-<h3 id="part-3-gradients"><a href="#/part-3">Part 3: Gradients</a></h3>
+<h3 id="part-3-gradient-descent"><a href="#/part-3">Part 3: Gradient descent</a></h3>
 <ul>
-<li>Loss functions (MSE)</li>
+<li>Learning</li>
 <li>Momentum &amp; Adam</li>
 <li>Learning rates</li>
 </ul>
@@ -1242,7 +1241,7 @@ Peter N Robinson
 </ul>
 </div></div>
 </section>
-<section id="logistic-regression" class="slide level2">
+<section id="part-1" class="slide level2">
 <h2>Logistic Regression</h2>
 <p>Logistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.</p>
 <ul>
@@ -1435,7 +1434,7 @@ z = \mathbf{w}\cdot \mathbf{x} + b
 <li>In principle, <span class="math inline">\(z\)</span> could be any real number</li>
 </ul>
 </section>
-<section id="sigmoid" class="slide level2">
+<section id="part-2" class="slide level2">
 <h2>Sigmoid</h2>
 <div title="Sigmoid function">
 <div class="callout callout-note callout-titled callout-style-simple">
@@ -1473,15 +1472,15 @@ z = \mathbf{w}\cdot \mathbf{x} + b
 \end{eqnarray*}
 \]</span></p>
 </section>
-<section id="sigmoid-1" class="slide level2">
+<section id="sigmoid" class="slide level2">
 <h2>Sigmoid:</h2>
 <ul>
 <li>The sigmoid function is locally symmetric around the point <span class="math inline">\((0, 0.5)\)</span></li>
-<li>Usually we take a value <span class="math inline">\(&gt;0.5\)</span> as predicting the positive class</li>
+<li>A value <span class="math inline">\(&gt;0.5\)</span> predicts the positive class</li>
 <li>The sigmoid function is nearly linear near 0</li>
 <li>Outlier values get flattened towards 0 or 1.</li>
 </ul>
-<div id="e8256020" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="1">
+<div id="4a5d3406" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1494,25 +1493,45 @@ z = \mathbf{w}\cdot \mathbf{x} + b
 <section id="logit" class="slide level2">
 <h2>Logit</h2>
 <ul>
-<li>Odds: The ratio of success to failure – <span class="math inline">\(p / (1-p)\)</span>.</li>
-<li>Logit: The natural logarithm of those odds – <span class="math inline">\(\ln (\frac{p}{1-p})\)</span>.</li>
-<li>The logit is the inverse of the sigmoid function</li>
+<li>Odds: The ratio of success to failure: <span class="math inline">\(p / (1-p)\)</span>.</li>
+<li>Logit: The natural logarithm of those odds: <span class="math inline">\(\ln (\frac{p}{1-p})\)</span>.</li>
+<li>The logit is the inverse of the sigmoid function:</li>
 </ul>
 <p><span class="math display">\[
 \begin{eqnarray*}
 z &amp;=&amp; \ln \left( \frac{p}{1-p} \right)\quad\quad \text{Log odds}\\
-e^z &amp;=&amp;  \frac{p}{1-p} \quad\quad \text{exponentiate to get odds}\\
-p &amp;=&amp; \frac{e^z}{1 + e^z} \quad\quad \text{rearrange}\\
-p &amp;=&amp; \frac{1}{1 + e^{-z}} \quad\quad \text{divide the numerator and the denominator by }e^z\\
 \end{eqnarray*}
 \]</span></p>
 <ul>
-<li>Thus, we have shown that <span class="math inline">\(\ln \left( \frac{\sigma(z)}{1-\sigma(z)} \right) = z\)</span></li>
-<li>the Logit of the Sigmoid thus leaves us with the original variable (inverse)</li>
+<li><span class="math inline">\(z=\sigma(\mathbf{w}\cdot\mathbf{x}+b)\)</span> can be any real number <span class="math inline">\((-\infty, \infty)\)</span></li>
+<li><span class="math inline">\(p\in [0, 1]\)</span> represents a probability</li>
+<li><span class="math display">\[z = \text{logit}(p) = \ln \left( \frac{p}{1-p} \right)\]</span></li>
+<li><span class="math display">\[p = \sigma(z) = \frac{1}{1 + e^{-z}}\]</span></li>
+<li>These functions are inverses of each other because <span class="math inline">\(\sigma(\text{logit}(p)) = p\)</span></li>
 </ul>
 </section>
-<section id="classification-rule" class="slide level2">
-<h2>Classification rule</h2>
+<section id="proof" class="slide level2">
+<h2>Proof</h2>
+<p><span class="math display">\[
+\]</span><span class="math display">\[\begin{eqnarray*}
+\sigma(\text{logit}(p)) &amp;=&amp; \frac{1}{1 + e^{-\left[ \ln \left( \frac{p}{1-p} \right) \right]}} &amp;&amp; \text{Substitute Logit into Sigmoid } z \\
+&amp;=&amp;\frac{1}{1 + e^{\left[ \ln \left( \frac{1-p}{p} \right) \right]}} &amp;&amp; \text{Apply } -\ln(A) = \ln(1/A) \\
+&amp;=&amp;\frac{1}{1 + \frac{1-p}{p}} &amp;&amp; \text{Identity: } e^{\ln(x)} = x \\
+&amp;=&amp;\frac{1}{\frac{p + 1 - p}{p}}  \\
+&amp;=&amp;\frac{1}{1/p} &amp;&amp; \text{Simplify} \\
+&amp;=&amp; p
+\end{eqnarray*}\]</span><span class="math display">\[
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\blacksquare\)</span> The logit is the inverse of the sigmoid function.</li>
+</ul>
+</section>
+<section id="learning-a-classification-rule" class="slide level2">
+<h2>Learning a classification rule</h2>
+<ul>
+<li>We need to learn the parameters of the model, the weights <span class="math inline">\(\mathbf{w}\)</span> and bias <span class="math inline">\(b\)</span></li>
+<li>Binary logistic regression is an instance of supervised classification in which we know the correct label <span class="math inline">\(y\in \left\{ 0, 1\right\}\)</span> for each observation x.</li>
+</ul>
 <p>We then have the rule:</p>
 <p><span class="math display">\[
 \mathrm{classification}(x) =
@@ -1660,8 +1679,8 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 <li>Neural networks are not convex and gradient descent may not find the global minimum</li>
 </ul>
 </section>
-<section id="gradient-descent" class="slide level2">
-<h2>gradient descent</h2>
+<section id="part-3" class="slide level2">
+<h2>Gradient descent</h2>
 <div title="Gradient">
 <div class="callout callout-note callout-titled callout-style-simple">
 <div class="callout-body">
@@ -1685,9 +1704,9 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 \begin{bmatrix} \dfrac{\partial f}{\partial x_1}\\ \dfrac{\partial f}{\partial x_2} \\ \cdots \\ \dfrac{\partial f}{\partial x_n} \end{bmatrix}  
 \tag{1}\]</span></span></p>
 </section>
-<section id="gradient-descent-1" class="slide level2">
+<section id="gradient-descent" class="slide level2">
 <h2>Gradient descent</h2>
-<div id="59189edb" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="2">
+<div id="32eb7489" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1750,7 +1769,7 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 <section id="derivation-and-chain-rule" class="slide level2">
 <h2>Derivation and chain rule</h2>
 <ul>
-<li>To derive the above expression (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule</li>
+<li><span class="hw-badge">HOMEWORK</span> To derive the above expression (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule</li>
 </ul>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -1804,34 +1823,46 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 <li><span class="hw-badge">HOMEWORK</span> We will review the chain rule in the practical</li>
 </ul>
 </section>
-<section id="chain-rule-mathcall-w.r.t.-hatyw_j" class="slide level2">
-<h2>Chain rule <span class="math inline">\(\mathcal{L}\)</span> w.r.t. <span class="math inline">\(\hat{y}\)</span>(<span class="math inline">\(w_j\)</span>)</h2>
+<section id="fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction" class="slide level2">
+<h2><span class="math inline">\(\frac{\partial \mathcal{L}}{\partial \hat{y}}\)</span>: Gradient of the Loss with respect to Prediction</h2>
 <ul>
-<li><span class="math inline">\(\mathcal{L} = -(y \ln \hat{y} + (1-y) \ln(1-\hat{y}))\)</span>, recalling that <span class="math inline">\(\frac{d \log x}{dx} = \frac{1}{x}\)</span></li>
+<li>The loss: <span class="math inline">\(\mathcal{L} = -(y \ln \hat{y} + (1-y) \ln(1-\hat{y}))\)</span></li>
 </ul>
 <p><span class="math display">\[
-\]</span><span class="math display">\[\begin{eqnarray*}
-\frac{\partial \mathcal{L}}{\partial \hat{y}} &amp;=&amp; -\frac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})] \\
-&amp;=&amp; -\frac{y}{ \hat{y}}  +   (1-y)  \frac{-1}{1-\hat{y}} = -\left( \frac{y}{\hat{y}} - \frac{1-y}{1-\hat{y}} \right) \\
-&amp;=&amp;  \frac{-y}{\hat{y}} + \frac{1-y}{1-\hat{y}}  = \frac{-y}{\hat{y}}\cdot \frac{1-\hat{y}}{1-\hat{y}}  + \frac{1-y}{1-\hat{y}}  \cdot \frac{\hat{y}}{\hat{y}} \\
-&amp;=&amp; \frac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})}  \\
-&amp;=&amp; \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})} \\
-&amp;=&amp; \frac{\hat{y} - y}{\hat{y}(1-\hat{y})}
-\end{eqnarray*}\]</span><span class="math display">\[
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial \hat{y}} &amp;= -\frac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})] \\
+&amp;= -y \frac{\partial }{\partial \hat{y}}\ln \hat{y} - (1-y)\frac{\partial }{\partial \hat{y}}\ln(1-\hat{y}) \\
+&amp;= -\frac{y}{ \hat{y}} - (1-y) \frac{-1}{1-\hat{y}} &amp;&amp; \text{recall } \frac{d \ln x}{dx} = \frac{1}{x} \\
+&amp;= -\frac{y}{\hat{y}} + \frac{1-y}{1-\hat{y}} &amp;&amp;  \\
+&amp;= \frac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})} &amp;&amp; \text{common denominator} \\
+&amp;= \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})} &amp;&amp;  \\
+&amp;= \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} &amp;&amp; \text{final result}
+\end{align*}
 \]</span></p>
 </section>
-<section id="chain-rule-sigmoid-haty-w.r.t.-the-logit-zo" class="slide level2">
-<h2>Chain rule: Sigmoid <span class="math inline">\(\hat{y}\)</span> w.r.t. the Logit <span class="math inline">\(z\)</span>O</h2>
-<p><span class="math display">\[
+<section id="fracpartial-hatypartial-z-gradient-of-the-sigmoid-haty-with-respect-to-the-logit-z" class="slide level2">
+<h2><span class="math inline">\(\frac{\partial \hat{y}}{\partial z}\)</span>: gradient of the Sigmoid (<span class="math inline">\(\hat{y}\)</span>) with respect to the Logit (<span class="math inline">\(z\)</span>)</h2>
+<ul>
+<li><p>Recalling this result <span class="math display">\[
 \frac{d\sigma(x)}{dx} = \sigma(x)(1-\sigma(x))
+\]</span></p></li>
+<li><p>and remembering that we define <span class="math display">\[
+\hat{y} = \sigma(\mathbf{w}\cdot\mathbf{x} + b)
+\]</span></p></li>
+<li><p>We have that</p></li>
+</ul>
+<p><span class="math display">\[
+\frac{\partial \hat{y}}{\partial z} = \hat{y}(1-\hat{y})
 \]</span></p>
 </section>
-<section id="chain-rule-logit-z-w.r.t.-the-weight-w_j" class="slide level2">
-<h2>Chain rule: Logit <span class="math inline">\(z\)</span> w.r.t. the Weight <span class="math inline">\(w_j\)</span></h2>
+<section id="fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j" class="slide level2">
+<h2><span class="math inline">\(\frac{\partial z}{\partial w_j}\)</span>: Gradient of the <span class="math inline">\(z\)</span> with respect to the Weight <span class="math inline">\(w_j\)</span></h2>
 <p>The Since <span class="math inline">\(z = w_1x_1 + w_2x_2 + \dots + b\)</span>, the derivative with respect to <span class="math inline">\(w_j\)</span> is simply the feature it is multiplied by: <span class="math display">\[
 \frac{\partial z}{\partial w_j} = x_j
 \]</span></p>
-<p>## Chain rule: Putting it all together</p>
+</section>
+<section id="putting-it-all-together" class="slide level2">
+<h2>Putting it all together</h2>
 <p><span class="math display">\[
 \frac{\partial \mathcal{L}}{\partial w_j} = \underbrace{\left[ \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} \right]}_{\text{Part A}} \cdot \underbrace{\left[ \hat{y}(1-\hat{y}) \right]}_{\text{Part B}} \cdot \underbrace{x_j}_{\text{Part C}}
 \]</span></p>
@@ -1841,8 +1872,29 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 <p><span class="math display">\[
 \frac{\partial \mathcal{L}}{\partial w_j} = (\hat{y} - y)x_j
 \]</span></p>
+<div title="Intuition">
+<div class="callout callout-note callout-titled callout-style-simple">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Intuition</strong></p>
+</div>
+<div class="callout-content">
+<p>The gradient is a product of the error and the magnitude of the input.</p>
+<ul>
+<li>The Error (<span class="math inline">\(\hat{y} - y\)</span>): How wrong were we?</li>
+<li>The Input (<span class="math inline">\(x_j\)</span>): How much did this specific feature contribute to that wrong prediction?</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="extra" class="slide level2">
+<h2>extra</h2>
 <p>Since the total Cost <span class="math inline">\(J\)</span> is the average of all individual losses (<span class="math inline">\(\frac{1}{m} \sum \mathcal{L}\)</span>), the derivative of the total cost is simply the average of the individual derivatives:<span class="math display">\[\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}\]</span></p>
-<p>Intuitively, The Error (<span class="math inline">\(\hat{y} - y\)</span>): How wrong were we?The Input (<span class="math inline">\(x_j\)</span>): How much did this specific feature contribute to that wrong prediction?</p>
 
 
 </section>
