@@ -19,25 +19,24 @@ format:
 ## Overview: Logistic regression 
 
 ::: {.callout-note title="Game plan"}
-Logistic regression takes a weighted sum of input features and passes it through a sigmoid function to output a probability between 0 and 1, which is then used to classify inputs into discrete categories. Despite its name, it's a classification algorithm, not a regression one. We are starting with it because in neural networks, a single neuron **is** logistic regression — the same weighted sum, activation function, and gradient-descent training loop. 
+Logistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks. 
 :::
 
 :::: {.columns}
 
 ::: {.column width="48%"}
-### [Part 1: Review](#part-1)
-* What is an ANN?
-* Forward vs. Reverse pass
-* Biomed applications
+### [Part 1: Introduction](#part-1)
+* Components of logistic regression
+* Sentiment analysis
 :::
 
 ::: {.column width="4%"}
 :::
 
 ::: {.column width="48%" .dimmed}
-### [Part 2: Architecture and Backprop](#part-2)
-* Chain rule & Jacobians
-* Vectorized derivatives
+### [Part 2: Sigmoid function](#part-2)
+* Definition
+* First derivative
 :::
 
 ::::
@@ -45,8 +44,8 @@ Logistic regression takes a weighted sum of input features and passes it through
 :::: {.columns}
 
 ::: {.column width="48%" .dimmed}
-### [Part 3: Gradients](#part-3)
-* Loss functions (MSE)
+### [Part 3: Gradient descent](#part-3)
+* Learning
 * Momentum & Adam
 * Learning rates
 :::
@@ -62,7 +61,7 @@ Logistic regression takes a weighted sum of input features and passes it through
 
 ::::
 
-## Logistic Regression
+## Logistic Regression {#part-1}
 
 Logistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.
 
@@ -171,7 +170,7 @@ $$
 - In principle, $z$ could be any real number
 
 
-## Sigmoid
+## Sigmoid {#part-2}
 
 ::: {.callout-note appearance="simple" title="Sigmoid function"}
 To create a probability, we transform z through the sigmoid function, $\sigma(z)$
@@ -205,7 +204,7 @@ $$
 ## Sigmoid:
 
 - The sigmoid function is locally symmetric around the point $(0, 0.5)$
-- Usually we take a value $>0.5$ as predicting the positive class
+- A value $>0.5$ predicts the positive class
 - The sigmoid function is nearly linear near 0 
 - Outlier values get flattened towards 0 or 1.
 
@@ -225,23 +224,44 @@ plt.show()
 
 ## Logit
 
-- Odds: The ratio of success to failure -- $p / (1-p)$.
-- Logit: The natural logarithm of those odds  -- $\ln (\frac{p}{1-p})$.
-- The logit is the inverse of the sigmoid function
+- Odds: The ratio of success to failure: $p / (1-p)$.
+- Logit: The natural logarithm of those odds: $\ln (\frac{p}{1-p})$.
+- The logit is the inverse of the sigmoid function:
 
 $$
 \begin{eqnarray*}
 z &=& \ln \left( \frac{p}{1-p} \right)\quad\quad \text{Log odds}\\
-e^z &=&  \frac{p}{1-p} \quad\quad \text{exponentiate to get odds}\\
-p &=& \frac{e^z}{1 + e^z} \quad\quad \text{rearrange}\\
-p &=& \frac{1}{1 + e^{-z}} \quad\quad \text{divide the numerator and the denominator by }e^z\\
 \end{eqnarray*}
 $$
 
-- Thus, we have shown that $\ln \left( \frac{\sigma(z)}{1-\sigma(z)} \right) = z$
-- the Logit of the Sigmoid thus leaves us with the original variable (inverse)
+- $z=\sigma(\mathbf{w}\cdot\mathbf{x}+b)$ can be any real number $(-\infty, \infty)$
+- $p\in [0, 1]$ represents a probability
+- $$z = \text{logit}(p) = \ln \left( \frac{p}{1-p} \right)$$
+- $$p = \sigma(z) = \frac{1}{1 + e^{-z}}$$
+- These functions are inverses of each other because $\sigma(\text{logit}(p)) = p$
 
-## Classification rule 
+## Proof
+
+$$
+$$\begin{eqnarray*}
+\sigma(\text{logit}(p)) &=& \frac{1}{1 + e^{-\left[ \ln \left( \frac{p}{1-p} \right) \right]}} && \text{Substitute Logit into Sigmoid } z \\
+&=&\frac{1}{1 + e^{\left[ \ln \left( \frac{1-p}{p} \right) \right]}} && \text{Apply } -\ln(A) = \ln(1/A) \\
+&=&\frac{1}{1 + \frac{1-p}{p}} && \text{Identity: } e^{\ln(x)} = x \\
+&=&\frac{1}{\frac{p + 1 - p}{p}}  \\
+&=&\frac{1}{1/p} && \text{Simplify} \\
+&=& p 
+\end{eqnarray*}$$
+$$
+
+- $\blacksquare$ The logit is the inverse of the sigmoid function.
+
+
+
+
+## Learning a classification rule 
+
+-  We need to learn the parameters of the model, the weights $\mathbf{w}$ and bias $b$
+- Binary logistic regression is an instance of supervised classification in which we know the correct label $y\in \left\{ 0, 1\right\}$ for each observation x.
 
 We then have the rule:
 
@@ -255,10 +275,6 @@ $$
 
 
 ## Vectorized representation
-
-
-
-
 
 
 ::: {.callout-note appearance="simple" title="Sigmoid function"}
@@ -384,7 +400,7 @@ $$
 - We can show that the logistic regression loss function is convex (which enables us to reliably find its minimum)
 - Neural networks are not convex and gradient descent may not find the global minimum
 
-##  gradient descent
+##  Gradient descent {#part-3}
 
  
 ::: {.callout-note appearance="simple" title="Gradient"}
@@ -476,7 +492,7 @@ $$
 ## Derivation and chain rule
 
 
-- To derive the above expression (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule
+-  [HOMEWORK]{.hw-badge}  To derive the above expression (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule
 
 :::: {.columns}
 
@@ -524,36 +540,55 @@ $$
 - So we will calculate this in three steps
 - [HOMEWORK]{.hw-badge} We will review the chain rule in the practical 
 
-## Chain rule $\mathcal{L}$ w.r.t. $\hat{y}$($w_j$)
+## $\frac{\partial \mathcal{L}}{\partial \hat{y}}$: Gradient of the Loss with respect to Prediction
 
-- $\mathcal{L} = -(y \ln \hat{y} + (1-y) \ln(1-\hat{y}))$, recalling that $\frac{d \log x}{dx} = \frac{1}{x}$
+- The loss: $\mathcal{L} = -(y \ln \hat{y} + (1-y) \ln(1-\hat{y}))$
 
 
 $$
-$$\begin{eqnarray*}
-\frac{\partial \mathcal{L}}{\partial \hat{y}} &=& -\frac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})] \\
-&=& -\frac{y}{ \hat{y}}  +   (1-y)  \frac{-1}{1-\hat{y}} = -\left( \frac{y}{\hat{y}} - \frac{1-y}{1-\hat{y}} \right) \\
-&=&  \frac{-y}{\hat{y}} + \frac{1-y}{1-\hat{y}}  = \frac{-y}{\hat{y}}\cdot \frac{1-\hat{y}}{1-\hat{y}}  + \frac{1-y}{1-\hat{y}}  \cdot \frac{\hat{y}}{\hat{y}} \\
-&=& \frac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})}  \\
-&=& \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})} \\
-&=& \frac{\hat{y} - y}{\hat{y}(1-\hat{y})}
-\end{eqnarray*}$$
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial \hat{y}} &= -\frac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})] \\
+&= -y \frac{\partial }{\partial \hat{y}}\ln \hat{y} - (1-y)\frac{\partial }{\partial \hat{y}}\ln(1-\hat{y}) \\
+&= -\frac{y}{ \hat{y}} - (1-y) \frac{-1}{1-\hat{y}} && \text{recall } \frac{d \ln x}{dx} = \frac{1}{x} \\
+&= -\frac{y}{\hat{y}} + \frac{1-y}{1-\hat{y}} &&  \\
+&= \frac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})} && \text{common denominator} \\
+&= \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})} &&  \\
+&= \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} && \text{final result}
+\end{align*}
 $$
 
-## Chain rule:  Sigmoid $\hat{y}$ w.r.t. the Logit $z$O
 
+
+
+## $\frac{\partial \hat{y}}{\partial z}$: gradient of the Sigmoid ($\hat{y}$) with respect to the Logit ($z$)
+
+- Recalling this result
 $$
 \frac{d\sigma(x)}{dx} = \sigma(x)(1-\sigma(x))
 $$
 
+- and remembering that we define
+$$
+\hat{y} = \sigma(\mathbf{w}\cdot\mathbf{x} + b)
+$$
 
-## Chain rule: Logit $z$ w.r.t. the Weight $w_j$
+- We have that
+
+$$
+\frac{\partial \hat{y}}{\partial z} = \hat{y}(1-\hat{y}) 
+$$ 
+
+
+## $\frac{\partial z}{\partial w_j}$: Gradient of the $z$ with respect to the Weight $w_j$
  The Since $z = w_1x_1 + w_2x_2 + \dots + b$, the derivative with respect to $w_j$ is simply the feature it is multiplied by:
  $$
  \frac{\partial z}{\partial w_j} = x_j
  $$
 
- ## Chain rule: Putting it all together
+
+
+## Putting it all together
+
 
  $$
  \frac{\partial \mathcal{L}}{\partial w_j} = \underbrace{\left[ \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} \right]}_{\text{Part A}} \cdot \underbrace{\left[ \hat{y}(1-\hat{y}) \right]}_{\text{Part B}} \cdot \underbrace{x_j}_{\text{Part C}}
@@ -565,7 +600,18 @@ $$
 \frac{\partial \mathcal{L}}{\partial w_j} = (\hat{y} - y)x_j
 $$
 
-Since the total Cost $J$ is the average of all individual losses ($\frac{1}{m} \sum \mathcal{L}$), the derivative of the total cost is simply the average of the individual derivatives:$$\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}$$
 
-Intuitively,
-The Error ($\hat{y} - y$): How wrong were we?The Input ($x_j$): How much did this specific feature contribute to that wrong prediction?
+::: {.callout-note appearance="simple" title="Intuition"}
+The gradient is a product of the error and the magnitude of the input.
+
+- The Error ($\hat{y} - y$): How wrong were we?
+- The Input ($x_j$): How much did this specific feature contribute to that wrong prediction?
+:::
+
+
+
+
+
+## extra
+
+Since the total Cost $J$ is the average of all individual losses ($\frac{1}{m} \sum \mathcal{L}$), the derivative of the total cost is simply the average of the individual derivatives:$$\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}$$
