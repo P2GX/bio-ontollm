@@ -1,8 +1,10 @@
 project:
   type: website
   output-dir: _site
-  ignore:
-    - sandbox/*
+  render:
+    - "index.qmd"
+    - "lectures/*.qmd"
+    - "!sandbox/*"
 
 website:
   title: "Approaches to biomedical knowledge: Ontologies and LLMs"
