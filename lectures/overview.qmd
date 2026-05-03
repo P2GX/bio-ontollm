@@ -8,7 +8,7 @@ jupyter: python3
 format: 
   revealjs:
     theme: [default] 
-    css: style/styles.css
+    css: /style/styles.css
     logo: images/fu_berlin_logo.png 
     footer: "bioonto-llm"
     slide-number: true

@@ -8,7 +8,7 @@ format:
     html-math-method: mathjax
     margin: 0.05
     embed-resources: true
-    css: style/styles.css
+    css: /style/styles.css
 ---
 
 ## Overview: Lecture 1

@@ -188,7 +188,9 @@ $$
 
 
 
-## Sigmoid: $1−\sigma(x) = \sigma(−x)$
+## Sigmoid: A convenient identity
+
+- $1−\sigma(x) = \sigma(−x)$
 
 $$
 \begin{eqnarray*}
@@ -274,52 +276,6 @@ $$
 $$
 
 
-## Vectorized representation
-
-
-::: {.callout-note appearance="simple" title="Sigmoid function"}
-It is convenient to stack many examples into a matrix
-:::
-
-
-$$
-\mathbf{\hat{y}} = \sigma(\mathbf{Xw} + b)
-$$
-
-
-- Dimensions
-
-$$
-\underbrace{\hat{\mathbf{y}}}_{m \times 1} = \sigma \left( 
-\underbrace{\mathbf{X}}_{m \times n} \cdot 
-\underbrace{\mathbf{w}}_{n \times 1} + b 
-\right)
-$$
-
-
-:::: {.columns}
-
-::: {.column width="40%"}
-
-- Rows of $X$ = Observations (e.g., $m$ Patients)
-- Columns of $X$: Features ($n$ items in this example)
-
-:::
-::: {.column width="60%"}
-
-$$
-\mathbf{X} = 
-\begin{pmatrix}
-x_{1,1} & x_{1,2} & \cdots & x_{1,n} \\
-x_{2,1} & x_{2,2} & \cdots & x_{2,n} \\
-\vdots  & \vdots  & \ddots & \vdots  \\
-x_{m,1} & x_{m,2} & \cdots & x_{m,n}
-\end{pmatrix}
-$$
-
-:::
-::::
-
 ## Learning
 
 -  We need to learn the parameters of the model, the weights $\mathbf{w}$ and bias $b$
@@ -347,8 +303,10 @@ $$
 $$
 \log p(y|x) = \log[\hat{y}^y(1-\hat{y})^{1-y}] = y\log\hat{y} + (1-y)\log(1-\hat{y})
 $$
+
 - Note this simplifies to either $\log\hat{y}$ or $\log(1-\hat{y})$ depending on whether $y$ is 0 or 1.
-- Since it is convenient to minimize the function, we multiply by -1, and take this to be be cross-entropy loss
+- Since it is convenient to minimize the function, we multiply it by -1: The result is known as the cross-entropy loss
+
 $$
 \mathcal{L}_{CE}(\hat{y}, y)
 = - y\log\hat{y} - (1-y)\log(1-\hat{y})
@@ -486,7 +444,7 @@ For Logistic Regression, the partial derivative for any specific weight $w_j$ ov
 $$
 \frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}
 $$
-- Remember that $\hat{y}$ (the prediction) is equal to $\sigma(x)$, and thus $\sigma(x)(1-\sigma(x)) = \hat{y}(1-\hat{y})$
+- Remember that $\hat{y}$ is the prediction, and that  $\hat{y}=\sigma(x)$, and thus $\sigma(x)(1-\sigma(x)) = \hat{y}(1-\hat{y})$
 
 
 ## Derivation and chain rule
@@ -540,10 +498,13 @@ $$
 - So we will calculate this in three steps
 - [HOMEWORK]{.hw-badge} We will review the chain rule in the practical 
 
-## $\frac{\partial \mathcal{L}}{\partial \hat{y}}$: Gradient of the Loss with respect to Prediction
+## cross-entropy loss
 
 - The loss: $\mathcal{L} = -(y \ln \hat{y} + (1-y) \ln(1-\hat{y}))$
+- This is the **cross-entropy loss function** for logistic regression
 
+
+## $\frac{\partial \mathcal{L}}{\partial \hat{y}}$: Gradient of the Loss with respect to Prediction
 
 $$
 \begin{align*}
@@ -618,7 +579,7 @@ $$
 
 
 
-# Gradient descent {#part-3}
+# Gradient descent
 
 ```{python}
 #| echo: false
@@ -784,6 +745,96 @@ $$
 \end{array}
 $$
 
-## extra
+## Batch and Mini-batch training
 
-Since the total Cost $J$ is the average of all individual losses ($\frac{1}{m} \sum \mathcal{L}$), the derivative of the total cost is simply the average of the individual derivatives:$$\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}$$
+- Stochastic gradient descent is called stochastic because it chooses a single random
+example at a time
+- Batch training trains over all examples before adjusting parenters
+- Since the total Cost $J$ is the average of all individual losses ($\frac{1}{m} \sum \mathcal{L}$), the derivative of the total cost is simply the average of the individual derivatives:$$\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}$$
+- In **Mini-batch** training, we train on a group of examples at a time, and take the average loss of these examples.
+- Modern hardware lets mini-batch training be vectorized for efficiency 
+
+
+## Vectorized representation
+
+
+::: {.callout-note appearance="simple" title="Sigmoid function"}
+It is convenient to stack many examples into a matrix
+:::
+
+
+$$
+\mathbf{\hat{y}} = \sigma(\mathbf{Xw} + b)
+$$
+
+
+- Dimensions
+
+$$
+\underbrace{\hat{\mathbf{y}}}_{m \times 1} = \sigma \left( 
+\underbrace{\mathbf{X}}_{m \times n} \cdot 
+\underbrace{\mathbf{w}}_{n \times 1} + b 
+\right)
+$$
+
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- Rows of $X$ = Observations (e.g., $m$ Patients)
+- Columns of $X$: Features ($n$ items in this example)
+
+:::
+::: {.column width="60%"}
+
+$$
+\mathbf{X} = 
+\begin{pmatrix}
+x_{1,1} & x_{1,2} & \cdots & x_{1,n} \\
+x_{2,1} & x_{2,2} & \cdots & x_{2,n} \\
+\vdots  & \vdots  & \ddots & \vdots  \\
+x_{m,1} & x_{m,2} & \cdots & x_{m,n}
+\end{pmatrix}
+$$
+
+:::
+::::
+
+
+## Softmax
+
+- The softmax is a generalization of the sigmoid
+
+
+:::: {.columns}
+
+::: {.column width="48%"}
+
+$$
+\sigma(z) = \frac{1}{1+e^{-z}}
+$$
+
+
+:::
+::: {.column width="48%"}
+
+$$
+\mathrm{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^K e^{-z_j}} \quad\quad 1\leq  i \leq K
+$$
+
+
+:::
+
+::::
+
+- The softmax function takes a vector $z = [z_1, z_2,\ldots, z_K]$ of $K$ arbitrary values and maps them to a probability distribution, with each value in the range [0,1], and all the values summing to 1.
+- $z$, the vector of scores that is the input to the softmax are called **logits** (as with sigmoid)
+- This allows us to perform logistic regression for $>2$ outcomes
+
+
+## Python example
+
+
+
+## Need for non-linearity: XOR
