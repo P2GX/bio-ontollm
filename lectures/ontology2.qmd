@@ -1,5 +1,5 @@
 ---
-title: "Bioontologies: Gene Ontology and Overrepresentation Analysis"
+title: "Gene Ontology and Overrepresentation Analysis"
 subtitle: "Session #2: Gene Ontology and Overrepresentation Analysis"
 author: "Peter N Robinson"
 jupyter: python3

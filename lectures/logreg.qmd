@@ -608,9 +608,181 @@ The gradient is a product of the error and the magnitude of the input.
 - The Input ($x_j$): How much did this specific feature contribute to that wrong prediction?
 :::
 
+## Bias term
+
+- The term for the partial derivative of the bias can be determined analogously to be
+
+$$
+\frac{\partial \mathcal{L}}{\partial b} = (\hat{y} - y)
+$$
 
 
 
+# Gradient descent {#part-3}
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from ann_plots import plot_gd
+plot_gd()
+plt.show()
+``` 
+
+## Basic idea of gradient descent
+
+* Update the weights and biases of each layer
+$$
+\begin{eqnarray*}
+\mathbf{W} &\leftarrow &\mathbf{W} - \eta\Delta \mathbf{W} \\
+\mathbf{b} &\leftarrow &\mathbf{b} - \eta\Delta \mathbf{b}
+\end{eqnarray*}
+$$
+
+* Gradient descent is used in a variety of settings outside of back prop. Let's do one simple example -- finding the minimum of a function
+
+$$
+f(x) = 7x^2 + 3x-9
+$$
+
+* It is straightforward to find the minimum analytically by setting the derivative to zero
+
+$$
+\begin{eqnarray*}
+\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &=& 0 \\
+x &=& - \dfrac{3}{14}
+\end{eqnarray*}
+$$
+
+* To use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size $\eta$ ("eta").
+
+$$
+x \leftarrow x-\eta (14x +3 )
+$$
+
+## Gradient descent example
+
+```{python}
+#| echo: true
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "25%"
+import numpy as np
+import matplotlib.pylab as plt
+
+def f(x):
+  return 7*x**2 + 3*x - 9
+
+def d(x):
+  return 14*x + 3
+
+# first guess
+
+eta = 0.03
+# plot
+x = np.linspace(-1, 1.5, 1000)
+plt.figure(figsize=(3, 3))
+plt.plot(x, f(x))
+t = 1
+for i in range(15):
+  plt.plot(t, f(t), marker='o', color='r')
+  t = t - eta*d(t)
+print(f"Solution: {t:.4f} (-3/14={-3/14:.4f})")
+plt.axvline(x=t, color='blue', linestyle='--', linewidth=0.8)
+```
+
+
+
+## Gradient descent: Overshoot
+
+```{python}
+#| echo: false
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "25%"
+import numpy as np
+import matplotlib.pylab as plt
+
+def f(x): 
+    return 7*x**2 + 3*x - 9
+
+def d(x): 
+    return 14*x + 3
+
+# High learning rate to cause overshooting
+eta = 0.13  
+
+# Plotting the parabola
+x = np.linspace(-1.5, 1.5, 1000)
+plt.figure(figsize=(5, 5))
+plt.plot(x, f(x), 'k', alpha=0.3, label='f(x)')
+
+t = 1.2 # Starting point
+history_x = [t]
+history_y = [f(t)]
+
+for i in range(10):
+    # Calculate gradient descent step
+    t = t - eta * d(t)
+    
+    # Store history for dotted lines
+    history_x.append(t)
+    history_y.append(f(t))
+
+# Plot the path with dotted lines and markers
+plt.plot(history_x, history_y, linestyle='--', color='r', marker='o', label=f'Path ($\eta$={eta})')
+
+plt.axvline(-3/14, color='g', linestyle=':', label='Minimum')
+plt.legend()
+plt.show()
+
+print(f"Final Solution: {t:.4f} (Target: {-3/14:.4f})")
+```
+
+* Same code as in the previous example, but learning rate increased from $\eta = 0.03$ to $\eta=0.13$
+
+## Stochastic gradient descent
+
+* If we write the loss as
+
+$$
+\mathcal{L} = L(\Theta; \mathbf{x},y)
+$$
+
+* This means that we are including __all__ training data ($\mathbf{x},y$)
+* Gradient descent needs $\frac{\partial L}{\partial \Theta}$, which is obtained by backprop
+* __batch training__ refers to averaging over all training data
+* As the volume of training data increased, it became less sensible to pass all data to the model for each gradient descent step.
+* __minibatch training__ refers to using a subset of all data for each gradient descent step.
+* Because this procedure is noisy compared to full batch training, we refer to it as __stochastic gradient descent__ (SGD).
+* The noisiness may even be an advantage because it may help avoid falling into local minima
+* minibatch size is a hyperparameter, but typically the order of examples is randomized and chunks of data are chosen until all samples have been used.
+
+
+## Stochastic gradient descent
+
+- We will usually possess multiple labeled examples to train the logistic regression
+- **Stochastic** gradient descent means that we calculate the gradient after each training example and adjust the parameters ($\theta$) by adjusting $\theta$ in the direction opposite the gradient
+
+
+$$
+\begin{array}{ll}
+\hline
+\mathbf{Algorithm:} & \text{Gradient Descent Update} \\
+\hline
+1: & \text{Initialize } \mathbf{w} \in \mathbb{R}^d, b \in \mathbb{R} \\
+2: & \textbf{for } i \leftarrow 1 \text{ to } \text{iterations } \textbf{do} \\
+3: & \quad \hat{\mathbf{y}} \leftarrow \sigma(\mathbf{Xw} + b) \\
+4: & \quad \mathbf{w} \leftarrow \mathbf{w} - \eta \frac{1}{m} \mathbf{X}^T(\hat{\mathbf{y}} - \mathbf{y}) \\
+5: & \textbf{end for} \\
+\hline
+\end{array}
+$$
 
 ## extra
 

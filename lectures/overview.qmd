@@ -1,6 +1,6 @@
 ---
-title: "Introduction to Bio-ontologies"
-subtitle: "OBO, RDF, RDFS, and OWL"
+title: "Approaches to biomedical knowledge"
+subtitle: "Ontologies and Large Language Models"
 author: "Peter N Robinson"
 institute: "Free University Berlin"
 date: 2026-04-26
@@ -9,8 +9,8 @@ format:
   revealjs:
     theme: [default] 
     css: style/styles.css
-    logo: images/fu_berlin_logo.png # Add your department logo
-    footer: "Master Bioinformatics | Peter N Robinson"
+    logo: images/fu_berlin_logo.png 
+    footer: "bioonto-llm"
     slide-number: true
     show-slide-number: all
     incremental: false 
@@ -25,6 +25,15 @@ format:
 ## Course Overview
 
 This course is held as a part of the [Master Curriculum](https://www.mi.fu-berlin.de/bioinf/stud/master/index.html) in Bioinformatics of the Free University Berlin.
+
+::: {.callout-note appearance="simple"}
+Will LLMs replace computer scientists, software developers, and bioinformaticians?
+:::
+
+- Currently, the best appears appears to be: "Some of them"
+- This course enables students to master two essential frameworks for managing human knowledge in bioinformatics: **Ontologies** and **Language Models**
+- We will go into detail and implement simplfiied versions of some of the algorithms in Python
+- Prerequisites: Some knowledge of probability, calculate, algorithms (We will explain everything as we go along)
 
 ## Course Overview
 

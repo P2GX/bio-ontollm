@@ -1,0 +1,53 @@
+---
+title: "Approaches to biomedical knowledge"
+subtitle: "Ontologies and Large Language Models"
+author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
+jupyter: python3
+format: 
+  html:
+    theme: [default] 
+    css: style/styles.css
+    logo: images/fu_berlin_logo.png 
+    footer: "bioonto-llm"
+    slide-number: true
+    show-slide-number: all
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.1
+    embed-resources: true
+    transition: fade
+    background-transition: convex
+    controls: true
+---
+
+
+
+This course is held as a part of the [Master Curriculum](https://www.mi.fu-berlin.de/bioinf/stud/master/index.html) in Bioinformatics of the Free University Berlin.
+
+::: {.callout-note appearance="simple"}
+This course enables students to master two essential frameworks for managing human knowledge in bioinformatics: **Ontologies** and **Language Models**
+:::
+
+### Lecture Schedule
+
+*   [What to expect from this course](overview.qmd)
+*   [Lecture 1: Ontologies: OBO, RDF, RDFS, and OWL](ontology1.qmd)
+*   [Lecture 2: Gene Ontology (GO) and Overrepresentation Analysis](ontology2.qmd)
+*   [Lecture 3: Bayesian algorithms for GO: Model-based gene-set analysis](ontology3.qmd)
+*   [Lecture 4: Human Phenotype Ontology: Semantic similarity algorithms](ontology4.qmd)
+*   [Lecture 5: From Logistic Regression to Neural Foundations](logreg.qmd)
+*   [Lecture 6: Neural networks](neural.qmd)
+*   Lecture 7: RNNs and LSTM (to do)
+*   Lecture 8: Embeddings and Word2Vec (partially finisheed)
+*   [Lecture 9: Encoders](encoder.qmd)
+*   Lecture 10: Decoder architecture (to do)
+*.  Lecture 11: BERT and Sentence BERT (to do)
+*   Lecture 12: Reinforcement learning and LLMs (to do)
+*   Lecture 13: RAG, Fine tuning, Structured Outputs  (to do)
+*   Lecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)
+
+### Homework
+
+* Each lecture will be accompanied by a practical session to go over background material and review the homework.
