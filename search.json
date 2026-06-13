@@ -1120,7 +1120,7 @@
     "href": "lectures/logreg.html#sigmoid-a-convenient-identity",
     "title": "Logistic regression",
     "section": "Sigmoid: A convenient identity",
-    "text": "Sigmoid: A convenient identity\n\n\\(1−\\sigma(x) = \\sigma(−x)\\)\n\n\\[\n\\begin{eqnarray*}\n1−\\sigma(x) &=& 1- \\frac{1}{1+e^{-x}}\\\\\n&=& \\frac{1+e^{-x} - 1}{1+e^{-x}} \\\\\n&=& \\frac{e^{-x}}{1+e^{-x}} \\cdot \\frac{e^{x}}{e^{x}}\\\\\n&=& \\frac{1}{1+e^{x}} \\\\\n&=& \\sigma(-x) \\\\\n\\end{eqnarray*}\n\\]",
+    "text": "Sigmoid: A convenient identity\n\n\\(1−\\sigma(x) = \\sigma(−x)\\)\n\n\\[\n\\begin{align*}\n1−\\sigma(x) &=& 1- \\frac{1}{1+e^{-x}}\\\\\n&=& \\frac{1+e^{-x} - 1}{1+e^{-x}} \\\\\n&=& \\frac{e^{-x}}{1+e^{-x}} \\cdot \\frac{e^{x}}{e^{x}}\\\\\n&=& \\frac{1}{1+e^{x}} \\\\\n&=& \\sigma(-x) \\\\\n\\end{align*}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1144,7 +1144,7 @@
     "href": "lectures/logreg.html#proof",
     "title": "Logistic regression",
     "section": "Proof",
-    "text": "Proof\n\\[\n\\]\\[\\begin{eqnarray*}\n\\sigma(\\text{logit}(p)) &=& \\frac{1}{1 + e^{-\\left[ \\ln \\left( \\frac{p}{1-p} \\right) \\right]}} && \\text{Substitute Logit into Sigmoid } z \\\\\n&=&\\frac{1}{1 + e^{\\left[ \\ln \\left( \\frac{1-p}{p} \\right) \\right]}} && \\text{Apply } -\\ln(A) = \\ln(1/A) \\\\\n&=&\\frac{1}{1 + \\frac{1-p}{p}} && \\text{Identity: } e^{\\ln(x)} = x \\\\\n&=&\\frac{1}{\\frac{p + 1 - p}{p}}  \\\\\n&=&\\frac{1}{1/p} && \\text{Simplify} \\\\\n&=& p\n\\end{eqnarray*}\\]\\[\n\\]\n\nTherefore :The logit is the inverse of the sigmoid function.",
+    "text": "Proof\n\\[\n\\begin{align*}\n\\sigma(\\text{logit}(p)) &= \\frac{1}{1 + e^{-\\left[ \\ln \\left( \\frac{p}{1-p} \\right) \\right]}} &&\\bullet \\text{Substitute Logit into Sigmoid } z \\\\\n&= \\frac{1}{1 + e^{\\left[ \\ln \\left( \\frac{1-p}{p} \\right) \\right]}} && \\bullet\\text{Apply } -\\ln(A) = \\ln(1/A) \\\\\n&= \\frac{1}{1 + \\frac{1-p}{p}} && \\bullet\\text{Identity: } e^{\\ln(x)} = x \\\\\n&= \\frac{1}{\\frac{p + 1 - p}{p}} && \\\\\n&= \\frac{1}{1/p} && \\bullet\\text{Simplify} \\\\\n&= p &&\n\\end{align*}\n\\]\n\nTherefore :The logit is the inverse of the sigmoid function.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1156,7 +1156,7 @@
     "href": "lectures/logreg.html#learning-a-classification-rule",
     "title": "Logistic regression",
     "section": "Learning a classification rule",
-    "text": "Learning a classification rule\n\nWe need to learn the parameters of the model \\(\\mathbf{w}\\) and \\(b\\):\n\n\\[\n\\begin{array}{c c c c c}\n\\mathbf{x}& \\longrightarrow & \\sigma(z)=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b) & \\longrightarrow & \\hat{y}\\\\\n\\text{\\small Input features} & & \\text{\\small Output probability} & & \\text{\\small Prediction of class label}\n\\end{array}\n\\] - Prediction rule: \\[\n\\mathrm{classification}(x) =\n\\begin{cases}\n1 & \\text{if }P(y = 1|x) &gt; 0.5 \\\\\n0 & \\text{otherwise}\n\\end{cases}\n\\]",
+    "text": "Learning a classification rule\n\nWe need to learn the parameters of the model \\(\\mathbf{w}\\) and \\(b\\):\n\n\\[\n\\begin{array}{c c c c c}\n\\mathbf{x}& \\longrightarrow & \\sigma(z)=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b) & \\longrightarrow & \\hat{y}\\\\\n\\text{\\small Input features} & & \\text{\\small Output probability} & & \\text{\\small Prediction of class label}\n\\end{array}\n\\]\n\n\n\n\n\n\nClassification Decision Rule\n\n\n\\[\n\\mathrm{classification}(x) =\n\\begin{cases}\n1 & \\text{if }P(y = 1|x) &gt; 0.5 \\\\\n0 & \\text{otherwise}\n\\end{cases}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1180,7 +1180,7 @@
     "href": "lectures/logreg.html#loss-function-1",
     "title": "Logistic regression",
     "section": "Loss function",
-    "text": "Loss function\n\nConsider the following piecewise loss function \\[\nmathcal{L}(\\sigma(z), y) = \\begin{cases}\n-\\log \\sigma(z) & \\text{if } y_i = 1 \\\\\n-\\log 1- \\sigma(z) & \\text{if } y_i = 0 \\\\\n\\end{cases}\n\\]\n\nAs \\(log \\sigma(z) \\rightarrow 1\\), the loss approaches zero",
+    "text": "Loss function\n\nConsider the following piecewise loss function \\[\n\\mathcal{L}(\\sigma(z), y) = \\begin{cases}\n-\\log \\sigma(z) & \\text{if } y_i = 1 \\\\\n-\\log 1- \\sigma(z) & \\text{if } y_i = 0 \\\\\n\\end{cases}\n\\]\n\nAs \\(\\log \\sigma(z) \\rightarrow 1\\), the loss approaches zero",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1192,7 +1192,7 @@
     "href": "lectures/logreg.html#loss-function-2",
     "title": "Logistic regression",
     "section": "Loss function",
-    "text": "Loss function\n\nconditional maximum likelihood estimation: we choose the parameters w,b that maximize the log probability of the true y labels in the training data given the observations x.\nThe resulting loss function is the negative log likelihood loss, which is known as the cross-entropy loss\nThe weights should maximize the probability of the correct label \\(p(y|x)\\).\nIt is convenient to write this as \\[\n\\log p(y|x) = \\log[\\hat{y}^y(1-\\hat{y})^{1-y}] = y\\log\\hat{y} + (1-y)\\log(1-\\hat{y})\n\\]\nNote this simplifies to either \\(\\log\\hat{y}\\) or \\(\\log(1-\\hat{y})\\) depending on whether \\(y\\) is 0 or 1.\nSince it is convenient to minimize the function, we multiply it by -1: The result is known as the cross-entropy loss\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\hat{y} - (1-y)\\log(1-\\hat{y})\n\\]\n\nSince we have \\(\\mathbf{\\hat{y}} = \\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b)\\), this is equivalent to\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b))\n\\]",
+    "text": "Loss function\n\nUsing \\(\\hat{y}=\\sigma(z)\\), we can concisely write the loss function as: \\[\n\\log p(y|x) = \\log[\\hat{y}^y(1-\\hat{y})^{1-y}] = y\\log\\hat{y} + (1-y)\\log(1-\\hat{y})\n\\]\nNote this simplifies to either \\(\\log\\hat{y}\\) or \\(\\log(1-\\hat{y})\\) depending on whether \\(y\\) is 0 or 1.\nSince it is convenient to minimize the function, we multiply it by -1: The result is known as the cross-entropy loss\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\hat{y} - (1-y)\\log(1-\\hat{y})\n\\]\n\nSince we have \\(\\mathbf{\\hat{y}} = \\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b)\\), this is equivalent to\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b))\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1216,7 +1216,7 @@
     "href": "lectures/logreg.html#optimizing-the-loss",
     "title": "Logistic regression",
     "section": "Optimizing the loss",
-    "text": "Optimizing the loss\n\n\n\n\n\n\n\nOptimization Goal\n\n\nTo create a high-performing classifier, we minimize the Cost Function \\(J(\\theta)\\), which is the average loss over the entire training set of \\(m\\) examples.\n\n\n\n\n\nIf we symbolize the parameters (weights, bias) of the logistic regression as \\(\\theta\\), our objective function is:\n\n\\[\nJ(\\theta) = \\frac{1}{m} \\sum_{i=1}^{m} \\mathcal{L}(\\hat{y}^{(i)}, y^{(i)})\n\\]\n\nWe seek \\(\\hat{\\theta}\\), the parameters that minimize the loss\n\n\\[\n\\hat{\\theta} = \\arg\\min_{\\theta} J(\\theta)\n\\]\n\nWe can show that the logistic regression loss function is convex (which enables us to reliably find its minimum)\nNeural networks are not convex and gradient descent may not find the global minimum",
+    "text": "Optimizing the loss\n\n\n\n\n\n\n\nOptimization Goal\n\n\nTo create a high-performing classifier, we minimize the Cost Function \\(J(\\theta)\\), which is the average loss over the entire training set of \\(m\\) examples.\n\n\n\n\n\nIf we symbolize the parameters (weights, bias) of the logistic regression as \\(\\theta\\), our objective function is:\n\n\\[\nJ(\\theta) = \\frac{1}{m} \\sum_{i=1}^{m} \\mathcal{L}(\\hat{y}^{(i)}, y^{(i)})\n\\]\n\nWe seek \\(\\hat{\\theta}\\), the parameters that minimize the loss\n\n\\[\n\\hat{\\theta} = \\arg\\min_{\\theta} J(\\theta)\n\\]\n\nIt can be shown that the logistic regression loss function is convex (which enables us to reliably find its minimum)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1228,7 +1228,19 @@
     "href": "lectures/logreg.html#part-3",
     "title": "Logistic regression",
     "section": "Gradient descent",
-    "text": "Gradient descent\n\n\n\n\n\n\n\nGradient\n\n\nThe gradient descent algorithm finds the gradient of the loss function at the current point and moving in the opposite direction.\n\n\n\n\nAnother commonly encountered notation is the gradient, which by convention is represented as a column vector\n\\[\n\\nabla f(\\mathbf{x}) =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial \\mathbf{x}} \\end{bmatrix}^T\n=\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1}\\\\ \\dfrac{\\partial f}{\\partial x_2} \\\\ \\cdots \\\\ \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}  \n\\tag{2}\\]",
+    "text": "Gradient descent\n\n\n\n\n\n\n\nBasic idea of gradient descent\n\n\nThe gradient descent algorithm finds the gradient of the loss function at the current point and moves the parameters in the opposite direction.\n\n\n\n\n\nGiven a learning rate \\(\\eta\\) and the gradient of the weights and biases:\nEach iteration of the GD processes Updates the weights and biases of each layer \\[\n\\begin{eqnarray*}\n\\mathbf{W} &\\leftarrow &\\mathbf{W} - \\eta\\Delta \\mathbf{W} \\\\\n\\mathbf{b} &\\leftarrow &\\mathbf{b} - \\eta\\Delta \\mathbf{b}\n\\end{eqnarray*}\n\\]\nWe will explain how the gradient is calculated and then return to the mechanics of the gradient descent algorithm.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#the-gradient",
+    "href": "lectures/logreg.html#the-gradient",
+    "title": "Logistic regression",
+    "section": "The Gradient",
+    "text": "The Gradient\nAnother commonly encountered notation is the gradient, which by convention is represented as a column vector\n\\[\n\\nabla f(\\mathbf{x}) =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial \\mathbf{x}} \\end{bmatrix}^T\n=\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1}\\\\ \\dfrac{\\partial f}{\\partial x_2} \\\\ \\cdots \\\\ \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}  \n\\tag{2}\\]\n\n\n\n\n\n\nNote\n\n\n\n\\(f(x)\\) is a scalar\nWe take the first derivative of \\(f(x)\\) with respect to each of the \\(n\\) components of \\(\\mathbf{w}\\)\nWe will have more to say about matrix calculus in a future lecture.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1240,7 +1252,7 @@
     "href": "lectures/logreg.html#gradient-descent",
     "title": "Logistic regression",
     "section": "Gradient descent",
-    "text": "Gradient descent\n\n\n\n\n\n\n\n\n\n\nWe iteratively take steps towards the minimum\nBut how do we calculate the slope?",
+    "text": "Gradient descent\n\n\n\n\n\n\n\n\n\n\nWe iteratively take steps towards the minimum along the slope of the function\nBut how do we calculate the slope?",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1252,31 +1264,7 @@
     "href": "lectures/logreg.html#calculating-derivatives",
     "title": "Logistic regression",
     "section": "Calculating derivatives",
-    "text": "Calculating derivatives\nTo calculate the gradient of the loss function, \\(\\nabla (\\Theta; \\mathbf{x};y)\\), we need all the partial derivatives – for all weights and biases. Let’s do this step by step\n\nderivative of the sigmoid activation function \\[\n\\begin{eqnarray*}\n\\dfrac{d\\sigma(x)}{dx} =\\dfrac{d}{dx} \\dfrac{1}{1+e^{-x}} &=& \\hspace{1cm} \\dfrac{-1}{(1+e^{-x})^2}\\cdot (-e^{-x})&& \\text{chain rule} \\\\\n&=&\\dfrac{e^{-x}}{(1+e^{-x})^2} && \\hspace{1cm} \\text{simplify}\\\\\n&=&\\dfrac{1}{1+e^{-x}} \\cdot \\dfrac{e^{-x}}{1+e^{-x}}&& \\hspace{1cm} \\text{rearrange}\\\\\n&=&\\sigma(x) \\cdot \\dfrac{e^{-x}}{1+e^{-x}}&& \\hspace{1cm} \\text{definition of $\\sigma(x)$}\\\\\n&=&\\sigma(x) \\cdot \\dfrac{1 + e^{-x} - 1}{1+e^{-x}}&& \\hspace{1cm} \\text{add and substract 1}\\\\\n&=&\\sigma(x) \\cdot \\left( \\dfrac{1 + e^{-x} }{1+e^{-x}} -\\dfrac{1}{1+e^{-x}} \\right)&& \\hspace{1cm} \\text{rearrange}\\\\\n&=&\\sigma(x) \\cdot \\left( 1 -\\sigma(x) \\right)&& \\hspace{1cm} \\text{simplify using definition of $\\sigma(x)$}\\\\\n\\end{eqnarray*}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Logistic regression"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#calculating-the-first-derivative-of-the-sigmoid-activation-function",
-    "href": "lectures/logreg.html#calculating-the-first-derivative-of-the-sigmoid-activation-function",
-    "title": "Logistic regression",
-    "section": "Calculating the first derivative of the sigmoid activation function",
-    "text": "Calculating the first derivative of the sigmoid activation function\n\nThus we get the fascinating result that\n\n\\[\n\\frac{d\\sigma(x)}{dx} = \\sigma(x)(1-\\sigma(x))\n\\]\n\nThis means that if we have \\(\\sigma(x)\\) it is trivial to calculate \\(\\frac{d\\sigma(x)}{dx}\\).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Logistic regression"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#the-gradient-vector",
-    "href": "lectures/logreg.html#the-gradient-vector",
-    "title": "Logistic regression",
-    "section": "The Gradient Vector",
-    "text": "The Gradient Vector\n\nAssuming we are performing a gradient descent with two weights and one bias, the Gradient Vector is:\n\n\\[\n\\nabla J(\\theta) = \\begin{bmatrix}\n\\frac{\\partial J}{\\partial w_1} \\\\\n\\frac{\\partial J}{\\partial w_2} \\\\\n\\frac{\\partial J}{\\partial b}\n\\end{bmatrix}\n\\]\nFor Logistic Regression, the partial derivative for any specific weight \\(w_j\\) over \\(m\\) examples is:\n\\[\n\\frac{\\partial J}{\\partial w_j} = \\frac{1}{m} \\sum_{i=1}^{m} (\\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}\n\\] - Remember that \\(\\hat{y}\\) is the prediction, and that \\(\\hat{y}=\\sigma(x)\\), and thus \\(\\sigma(x)(1-\\sigma(x)) = \\hat{y}(1-\\hat{y})\\)",
+    "text": "Calculating derivatives\nWe need to update each component of the weight vector \\(\\mathbf{w}\\), e.g., \\(w_j\\) based on the firstderivative of the loss \\(\\mathcal{L}=\\mathcal{L}_{CE}(\\hat{y}, y)\\) with respect to the component.\n\nApply the chain rule twice\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}\n\\cdot \\frac{\\partial  \\sigma_i}{\\partial w_j} =\n\\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}\n\\cdot \\frac{\\partial  \\sigma_i}{\\partial z_i}\n\\cdot \\frac{\\partial  z_i}{\\partial w_j}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1288,7 +1276,7 @@
     "href": "lectures/logreg.html#derivation-and-chain-rule",
     "title": "Logistic regression",
     "section": "Derivation and chain rule",
-    "text": "Derivation and chain rule\n\nHOMEWORK To derive the above expression (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule\n\n\n\n\nIf \\(f\\) and \\(g\\) are differentiable functions, then \\[\n\\left(f(g(x))\\right)^{\\prime} = f^{\\prime}(g(x))\\cdot g^{\\prime}(x)\n\\]\nThe chain rule can also be written as follows. If \\(y=f(u)\\) and \\(u=g(x)\\), then \\[\n\\dfrac{dy}{dx} =\\dfrac{dy}{du}\\dfrac{du}{dx}\n\\]\n\n\nExamples\n\nPower Rule: \\(y = (5+3x)^5\\)\n\nLet \\(u = 5+3x\\), so \\(y = u^5\\)\n\\(\\frac{dy}{du} = 5u^4\\) and \\(\\frac{du}{dx} = 3\\) \\[\\frac{dy}{dx} = 5(5+3x)^4 \\cdot 3 = 15(5+3x)^4\\]\n\nTrig: \\(y = \\sin(4x+3)\\)\n\nLet \\(u = 4x+3\\), so \\(y = \\sin(u)\\)\n\\(\\frac{dy}{du} = \\cos(u)\\) and \\(\\frac{du}{dx} = 4\\) \\[\\frac{dy}{dx} = \\cos(4x+3) \\cdot 4 = 4\\cos(4x+3)\\]",
+    "text": "Derivation and chain rule\n\nHOMEWORK To understand the derivations (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule. We will practice in the practical.\n\n\n\n\nIf \\(f\\) and \\(g\\) are differentiable functions, then \\[\n\\left(f(g(x))\\right)^{\\prime} = f^{\\prime}(g(x))\\cdot g^{\\prime}(x)\n\\]\nThe chain rule can also be written as follows. If \\(y=f(u)\\) and \\(u=g(x)\\), then \\[\n\\dfrac{dy}{dx} =\\dfrac{dy}{du}\\dfrac{du}{dx}\n\\]\n\n\nExamples\n\nPower Rule: \\(y = (5+3x)^5\\)\n\nLet \\(u = 5+3x\\), so \\(y = u^5\\)\n\\(\\frac{dy}{du} = 5u^4\\) and \\(\\frac{du}{dx} = 3\\) \\[\\frac{dy}{dx} = 5(5+3x)^4 \\cdot 3 = 15(5+3x)^4\\]\n\nTrig: \\(y = \\sin(4x+3)\\)\n\nLet \\(u = 4x+3\\), so \\(y = \\sin(u)\\)\n\\(\\frac{dy}{du} = \\cos(u)\\) and \\(\\frac{du}{dx} = 4\\) \\[\\frac{dy}{dx} = \\cos(4x+3) \\cdot 4 = 4\\cos(4x+3)\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1296,11 +1284,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#chain-rule-and-logistic-regression",
-    "href": "lectures/logreg.html#chain-rule-and-logistic-regression",
+    "objectID": "lectures/logreg.html#calculating-derivatives-1",
+    "href": "lectures/logreg.html#calculating-derivatives-1",
     "title": "Logistic regression",
-    "section": "Chain rule and logistic regression",
-    "text": "Chain rule and logistic regression\nWe are differentiating the loss with respect to a weight \\(w_j\\).\n\n\n\n\n\n\n\nThe chain\n\n\nLoss (\\(\\mathcal{L}\\)) depends on Prediction (\\(\\hat{y}\\)), which depends on Logit (\\(z\\)), which depends on Weight (\\(w_j\\)).\n\n\n\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}} \\cdot \\frac{\\partial \\hat{y}}{\\partial z} \\cdot \\frac{\\partial z}{\\partial w_j}\n\\]\n\nSo we will calculate this in three steps\nHOMEWORK We will review the chain rule in the practical",
+    "section": "Calculating derivatives",
+    "text": "Calculating derivatives\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} =\n\\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}}_{\\text{Part A}}\n\\cdot \\underbrace{\\frac{\\partial  \\sigma_i}{\\partial z_i}}_{\\text{Part B}}\n\\cdot \\underbrace{\\frac{\\partial  z_i}{\\partial w_j}}_{\\text{Part C}}\n\\]\n\nIn the following slides, we will calculate the three parts separately.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1308,11 +1296,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#cross-entropy-loss",
-    "href": "lectures/logreg.html#cross-entropy-loss",
+    "objectID": "lectures/logreg.html#part-a-fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction",
+    "href": "lectures/logreg.html#part-a-fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction",
     "title": "Logistic regression",
-    "section": "cross-entropy loss",
-    "text": "cross-entropy loss\n\nThe loss: \\(\\mathcal{L} = -(y \\ln \\hat{y} + (1-y) \\ln(1-\\hat{y}))\\)\nThis is the cross-entropy loss function for logistic regression",
+    "section": "Part A: \\(\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\\): Gradient of the Loss with respect to Prediction",
+    "text": "Part A: \\(\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\\): Gradient of the Loss with respect to Prediction\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\n& = -\\frac{\\partial }{\\partial \\hat{y}} [y \\ln \\hat{y} + (1-y) \\ln(1-\\hat{y})] && \\bullet \\text{Using } \\hat{y}=\\sigma(wx+b) \\\\\n& = -y \\frac{\\partial }{\\partial \\hat{y}}\\ln \\hat{y} - (1-y)\\frac{\\partial }{\\partial \\hat{y}}\\ln(1-\\hat{y}) && \\bullet \\text{Move constants out of derivative}\\\\\n& = -\\frac{y}{\\hat{y}} - (1-y) \\frac{-1}{1-\\hat{y}} && \\bullet \\text{Recall } \\frac{d \\ln x}{dx} = \\frac{1}{x} \\\\\n& = -\\frac{y}{\\hat{y}} + \\frac{1-y}{1-\\hat{y}} && \\bullet \\text{Simplify signs} \\\\\n& = \\frac{-y(1-\\hat{y}) + \\hat{y}(1-y)}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Common denominator} \\\\\n& = \\frac{-y + y\\hat{y} + \\hat{y} - y\\hat{y}}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Expand numerator} \\\\\n& = \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Final result}\n\\end{align*}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1320,11 +1308,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction",
-    "href": "lectures/logreg.html#fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction",
+    "objectID": "lectures/logreg.html#part-b-derivative-of-the-sigmoid-activation-function",
+    "href": "lectures/logreg.html#part-b-derivative-of-the-sigmoid-activation-function",
     "title": "Logistic regression",
-    "section": "\\(\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\\): Gradient of the Loss with respect to Prediction",
-    "text": "\\(\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\\): Gradient of the Loss with respect to Prediction\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}} &= -\\frac{\\partial }{\\partial \\hat{y}} [y \\ln \\hat{y} + (1-y) \\ln(1-\\hat{y})] \\\\\n&= -y \\frac{\\partial }{\\partial \\hat{y}}\\ln \\hat{y} - (1-y)\\frac{\\partial }{\\partial \\hat{y}}\\ln(1-\\hat{y}) \\\\\n&= -\\frac{y}{ \\hat{y}} - (1-y) \\frac{-1}{1-\\hat{y}} && \\text{recall } \\frac{d \\ln x}{dx} = \\frac{1}{x} \\\\\n&= -\\frac{y}{\\hat{y}} + \\frac{1-y}{1-\\hat{y}} &&  \\\\\n&= \\frac{-y(1-\\hat{y}) + \\hat{y}(1-y)}{\\hat{y}(1-\\hat{y})} && \\text{common denominator} \\\\\n&= \\frac{-y + y\\hat{y} + \\hat{y} - y\\hat{y}}{\\hat{y}(1-\\hat{y})} &&  \\\\\n&= \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} && \\text{final result}\n\\end{align*}\n\\]",
+    "section": "Part B: derivative of the sigmoid activation function",
+    "text": "Part B: derivative of the sigmoid activation function\n\\[\n\\begin{align*}\n\\dfrac{d\\sigma(x)}{dx} & = \\dfrac{d}{dx} \\dfrac{1}{1+e^{-x}} \\\\\n& = \\dfrac{-1}{(1+e^{-x})^2}\\cdot (-e^{-x}) && \\bullet \\text{chain rule} \\\\\n& = \\dfrac{e^{-x}}{(1+e^{-x})^2} && \\bullet \\text{simplify}\\\\\n& = \\dfrac{1}{1+e^{-x}} \\cdot \\dfrac{e^{-x}}{1+e^{-x}} && \\bullet \\text{rearrange}\\\\\n& = \\sigma(x) \\cdot \\dfrac{e^{-x}}{1+e^{-x}} && \\bullet \\text{definition of } \\sigma(x)\\\\\n& = \\sigma(x) \\cdot \\dfrac{1 + e^{-x} - 1}{1+e^{-x}} && \\bullet \\text{add and subtract 1}\\\\\n& = \\sigma(x) \\cdot \\left( \\dfrac{1 + e^{-x} }{1+e^{-x}} -\\dfrac{1}{1+e^{-x}} \\right) && \\bullet \\text{rearrange}\\\\\n& = \\sigma(x) \\cdot \\left( 1 -\\sigma(x) \\right) && \\bullet \\text{simplify using definition of } \\sigma(x)\n\\end{align*}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1332,11 +1320,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#fracpartial-hatypartial-z-gradient-of-the-sigmoid-haty-with-respect-to-the-logit-z",
-    "href": "lectures/logreg.html#fracpartial-hatypartial-z-gradient-of-the-sigmoid-haty-with-respect-to-the-logit-z",
+    "objectID": "lectures/logreg.html#derivative-of-the-sigmoid-activation-function",
+    "href": "lectures/logreg.html#derivative-of-the-sigmoid-activation-function",
     "title": "Logistic regression",
-    "section": "\\(\\frac{\\partial \\hat{y}}{\\partial z}\\): gradient of the Sigmoid (\\(\\hat{y}\\)) with respect to the Logit (\\(z\\))",
-    "text": "\\(\\frac{\\partial \\hat{y}}{\\partial z}\\): gradient of the Sigmoid (\\(\\hat{y}\\)) with respect to the Logit (\\(z\\))\n\nRecalling this result \\[\n\\frac{d\\sigma(x)}{dx} = \\sigma(x)(1-\\sigma(x))\n\\]\nand remembering that we define \\[\n\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\n\\]\nWe have that\n\n\\[\n\\frac{\\partial \\hat{y}}{\\partial z} = \\hat{y}(1-\\hat{y})\n\\]",
+    "section": "derivative of the sigmoid activation function",
+    "text": "derivative of the sigmoid activation function\n\nThus we get the fascinating result that\n\n\\[\n\\frac{d\\sigma(x)}{dx} = \\sigma(x)(1-\\sigma(x))\n\\]\n\nSubstituing and remembering that we define \\[\n\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\n\\] we get \\[\n\\underbrace{\\frac{\\partial  \\sigma_i}{\\partial z_i}}_{\\text{Part B}} = \\hat{y}(1- \\hat{y})\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1344,11 +1332,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j",
-    "href": "lectures/logreg.html#fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j",
+    "objectID": "lectures/logreg.html#part-c-fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j",
+    "href": "lectures/logreg.html#part-c-fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j",
     "title": "Logistic regression",
-    "section": "\\(\\frac{\\partial z}{\\partial w_j}\\): Gradient of the \\(z\\) with respect to the Weight \\(w_j\\)",
-    "text": "\\(\\frac{\\partial z}{\\partial w_j}\\): Gradient of the \\(z\\) with respect to the Weight \\(w_j\\)\nThe Since \\(z = w_1x_1 + w_2x_2 + \\dots + b\\), the derivative with respect to \\(w_j\\) is simply the feature it is multiplied by: \\[\n\\frac{\\partial z}{\\partial w_j} = x_j\n\\]",
+    "section": "Part C: \\(\\frac{\\partial z}{\\partial w_j}\\): Gradient of the \\(z\\) with respect to the Weight \\(w_j\\)",
+    "text": "Part C: \\(\\frac{\\partial z}{\\partial w_j}\\): Gradient of the \\(z\\) with respect to the Weight \\(w_j\\)\nThe Since \\(z = w_1x_1 + w_2x_2 + \\dots + b\\), the derivative with respect to \\(w_j\\) is simply the feature it is multiplied by: \\[\n\\frac{\\partial z}{\\partial w_j} = x_j\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1360,7 +1348,7 @@
     "href": "lectures/logreg.html#putting-it-all-together",
     "title": "Logistic regression",
     "section": "Putting it all together",
-    "text": "Putting it all together\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\underbrace{\\left[ \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} \\right]}_{\\text{Part A}} \\cdot \\underbrace{\\left[ \\hat{y}(1-\\hat{y}) \\right]}_{\\text{Part B}} \\cdot \\underbrace{x_j}_{\\text{Part C}}\n\\]\n\nThanks to cancelations, we are left with\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = (\\hat{y} - y)x_j\n\\]\n\n\n\n\n\n\n\nIntuition\n\n\nThe gradient is a product of the error and the magnitude of the input.\n\nThe Error (\\(\\hat{y} - y\\)): How wrong were we?\nThe Input (\\(x_j\\)): How much did this specific feature contribute to that wrong prediction?",
+    "text": "Putting it all together\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\underbrace{\\left[ \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} \\right]}_{\\text{Part A}} \\cdot \\underbrace{\\left[ \\hat{y}(1-\\hat{y}) \\right]}_{\\text{Part B}} \\cdot \\underbrace{x_j}_{\\text{Part C}}\n\\]\n\nThanks to cancelations, we are left with\n\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} &= (\\hat{y} - y)x_j\n\\end{align*}\n\\]\n\n\n\n\n\n\n\nIntuition\n\n\nThe gradient is a product of the error and the magnitude of the input.\n\nThe Error (\\(\\hat{y} - y\\)): How wrong were we?\nThe Input (\\(x_j\\)): How much did this specific feature contribute to that wrong prediction?",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1372,7 +1360,7 @@
     "href": "lectures/logreg.html#bias-term",
     "title": "Logistic regression",
     "section": "Bias term",
-    "text": "Bias term\n\nThe term for the partial derivative of the bias can be determined analogously to be\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial b} = (\\hat{y} - y)\n\\]",
+    "text": "Bias term\n\nHOMEWORK You will adapt this example The term for the partial derivative of the bias can be determined analogously to be\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial b} = (\\hat{y} - y)\n\\]\n\nIn the homework, you will be asked to derive this formally.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1428,6 +1416,18 @@
     ]
   },
   {
+    "objectID": "lectures/logreg.html#updates",
+    "href": "lectures/logreg.html#updates",
+    "title": "Logistic regression",
+    "section": "Updates",
+    "text": "Updates\nIf the following is the derivative rule for one example \\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = (\\sigma(z_i)  - y_i)x_{i,j}\n\\] then the following is the cost across a batch with m examples \\[\n\\frac{\\partial C}{\\partial w_j} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)x_{i,j}\n\\] - The update rule for \\(w_j\\) is thus \\[\nw_j \\leftarrow w_j - \\eta \\frac{\\partial C}{\\partial w_j}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
     "objectID": "lectures/logreg.html#stochastic-gradient-descent-1",
     "href": "lectures/logreg.html#stochastic-gradient-descent-1",
     "title": "Logistic regression",
@@ -1468,7 +1468,7 @@
     "href": "lectures/logreg.html#softmax",
     "title": "Logistic regression",
     "section": "Softmax",
-    "text": "Softmax\n\nThe softmax is a generalization of the sigmoid\n\n\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}}\n\\]\n\n\\[\n\\mathrm{softmax}(z_i) = \\frac{e^{z_i}}{\\sum_{j=1}^K e^{-z_j}} \\quad\\quad 1\\leq  i \\leq K\n\\]\n\n\nThe softmax function takes a vector \\(z = [z_1, z_2,\\ldots, z_K]\\) of \\(K\\) arbitrary values and maps them to a probability distribution, with each value in the range [0,1], and all the values summing to 1.\n\\(z\\), the vector of scores that is the input to the softmax are called logits (as with sigmoid)\nThis allows us to perform logistic regression for \\(&gt;2\\) outcomes",
+    "text": "Softmax\n\nThe softmax is a generalization of the sigmoid\n\n\\[\n\\begin{align*}\n\\sigma(z) & = \\frac{1}{1+e^{-z}} \\\\\n\\mathrm{softmax}(z_i) & = \\frac{e^{z_i}}{\\sum_{j=1}^K e^{-z_j}}\n\\end{align*}\n\\]\n\nThe softmax function takes a vector \\(z = [z_1, z_2,\\ldots, z_K]\\) of \\(K\\) arbitrary values and maps them to a probability distribution, with each value in the range [0,1], and all the values summing to 1.\n\\(z\\), the vector of scores that is the input to the softmax are called logits (as with sigmoid)\nThis allows us to perform logistic regression for \\(&gt;2\\) outcomes\nSoftmax will be important for neural networks and transformers, we will discuss more later.",
     "crumbs": [
       "Home",
       "Lectures",
