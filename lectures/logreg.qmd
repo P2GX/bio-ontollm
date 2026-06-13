@@ -19,7 +19,10 @@ format:
 ## Overview: Logistic regression 
 
 ::: {.callout-note title="Game plan"}
-Logistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks. 
+Logistic regression shares some characteristics with neural networks including 
+the weighted sum and activation function (for single neurons) and gradient-descent 
+training loop. Studying logistic regression therefore serves as 
+a [good preparation for understanding neural networks]{style="color: green; font-weight: bold;"}. 
 :::
 
 :::: {.columns}
@@ -75,39 +78,7 @@ We will go over the algorithm in detail, because it is an excellent preparation 
 
 ![](./img/logistic_regression.png){fig-align="center"}
 
-## Sentiment analysis
-
-::: {.callout-note appearance="simple"}
-Sentiment analysis uses natural language processing (NLP) and machine learning to identify, extract, and quantify emotional tones—positive, negative, or neutral—within text data.
-:::
-
-- We will use sentiment analysis on movie reviews
-- The Internet Movie Database is a standard data set for prototyping such algorithms
-
-![](./img/imdb.png){fig-align="center" width="20%"}
-
-
-## Our data
-
-
-
-$$
-training set: {(x^{(1)}, y^{(1)}),(x^{(2)}, y^{(2)}),\ldots,(x^{(m)}, y^{(m)})}
-$$
-
-
-::: {.callout-note appearance="simple" title="Example"}
-- $x^{(42)}$: A very cheesy and dull road movie, with the intention to be hip and modern. ($\ldots$)
-- $y^{(42)}$: 👎
-- $x^{(13242)}$: where else could you find someone who needs a drink so bad that he's as dry as a dead dingoes donger?
-- $y^{(13242)}$: 👍
-:::
-
--  goal: learn a classifier from the training set to map an arbitrary new input $x$ to its correct class $y \in Y$.
-- LogReg is a  **Probabilistic classifier** that produces both a classificaton (here, Y={👍, 👎}) and the probability of the observation being in the class.
-
-
-## The four components of Logistic Regression
+## The five components of Logistic Regression
 
 ::: {.callout-note appearance="simple"}
 ### 1. Feature Representation
@@ -129,13 +100,17 @@ A **Loss function** (Cross-Entropy) to measure how well the model is performing 
 **Gradient Descent**: The method used to minimize the loss and find the best weights.
 :::
 
+::: {.callout-warning appearance="simple"}
+### 5. Prediction
+The **learned model** can be used to classify new data points.
+:::
+
 ## LogReg: Features
 
 For each input $x$, we create a vector of features: $\mathbf{x} = [x_1, x_2, \ldots, x_n]$.
 
-::: {.callout-note appearance="simple" title="Example"}
-There are many different ways of generating a feature vector
-:::
+#### There are many different ways of generating a feature vector
+
 
 - Raw numerical data: If the input data is numerical with $n$ dimensions, each of the dimensions can act as a feature
 - Polynomial & interaction features: We can add interaction terms ($x_ix_j$) or polynomial features (e.g., $x_i^7$) if this makes sense for the classification task
@@ -144,7 +119,9 @@ There are many different ways of generating a feature vector
 - Domain-specific feature engineering
 
 ::: {.callout-note appearance="simple" title="Example"}
-In the Python exercise for this lecture, we will develop a naive feature extraction script for sentiment analysis of movie reviews based on key word counts
+In the Python exercise for this lecture, we will 
+generate two dimensional points with overlapping Gaussian distributions, but in general, the 
+features can also be created (e.g., by counting positive and negative words for sentiment analysis).
 :::
 
 
@@ -155,20 +132,21 @@ LogReg learns a vector of a vector of
 weights and a bias term to solve the classification task
 :::
 
+- [Linear combination of input features]{style="color: green; font-weight: bold;"}
+- Each data point is multiplied by weights and a bias is added
+- Here, $x_{i,j}$ refers to the $j^{th}$ component of the $i^{th}$ data point.
 $$
-z = \sum_{i=1}^n w_ix_x + b
+z_i = \sum_{j=1}^n w_ix_{i,j} + b
+$${#eq-lrweights}
+
+@eq-lrweights can be represented identically using dot product notation (where the bold font indicates a vector of weights ($\mathbf{w}$) and inputs ($\mathbf{x}$))
+
+
+$$
+z_i = \mathbf{w}\cdot \mathbf{x}_i + b
 $$
 
-This sum can be represented identically using dot product notation (where the bold font indicates a vector of weights ($\mathbf{w}$) and inputs ($\mathbf{x}$))
-
-
-$$
-z = \mathbf{w}\cdot \mathbf{x} + b
-$$
-
-- This is identical to the sums we will see at individual neurons in neural networks
-- In principle, $z$ could be any real number
-
+This is identical to the sums we will see at individual neurons in neural networks
 
 ## Sigmoid {#part-2}
 
@@ -176,17 +154,39 @@ $$
 To create a probability, we transform z through the sigmoid function, $\sigma(z)$
 :::
 
-To map the real-valued $z$ into a probability $P \in (0,1)$, we use:
+- The sigmoid $\sigma(z)$ takes a real-valued number $z\in [-\infty, \infty]$ and effectively [squashes]{style="color: green; font-weight: bold;"} 
+it to lie in the range $[0,1]$: $0<\sigma(z) < 1$.
 
 $$
 \sigma(z) = \frac{1}{1+e^{-z}} = \frac{1}{1+\exp(-z)}
 $$
 
+:::: {.columns}
 
-- **Output:** Always between 0 and 1.
-- **Interpretation:** $P(y=1 | x)$, i.e., a probability for classification
+::: {.column width="50%"}
+
+- **Interpretation:** $P(y=1 | x, w, b)$, i.e., a probability for classification
+- $\sigma(z) > 0.5 \Leftrightarrow z > 0$ 
+- i.e., whenever $z = \mathrm{w}\cdot \mathrm{x} + b$ is over zero, the model predicts the positive class ($\hat{y}=1$).
 
 
+:::
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| fig-width: 2
+#| fig-height: 1.5
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from logreg import sigmoid_plot
+sigmoid_plot(figsize=(3,2))
+plt.show()
+``` 
+:::
+::::
 
 ## Sigmoid: A convenient identity
 
@@ -203,43 +203,13 @@ $$
 $$
 
 
-## Sigmoid:
-
-- The sigmoid function is locally symmetric around the point $(0, 0.5)$
-- A value $>0.5$ predicts the positive class
-- The sigmoid function is nearly linear near 0 
-- Outlier values get flattened towards 0 or 1.
-
-```{python}
-#| echo: false
-#| fig-width: 6
-#| fig-height: 5
-#| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from logreg import sigmoid_plot
-sigmoid_plot(figsize=(6,5))
-plt.show()
-``` 
-
 ## Logit
 
-- Odds: The ratio of success to failure: $p / (1-p)$.
-- Logit: The natural logarithm of those odds: $\ln (\frac{p}{1-p})$.
+- [Odds]{style="color: green; font-weight: bold;"}: The ratio of success to failure: $p / (1-p)$.
+- [Logit]{style="color: green; font-weight: bold;"}: The natural logarithm of those odds (log odds): $\ln (\frac{p}{1-p})$.
 - The logit is the inverse of the sigmoid function:
-
-$$
-\begin{eqnarray*}
-z &=& \ln \left( \frac{p}{1-p} \right)\quad\quad \text{Log odds}\\
-\end{eqnarray*}
-$$
-
 - $z=\sigma(\mathbf{w}\cdot\mathbf{x}+b)$ can be any real number $(-\infty, \infty)$
 - $p\in [0, 1]$ represents a probability
-- $$z = \text{logit}(p) = \ln \left( \frac{p}{1-p} \right)$$
-- $$p = \sigma(z) = \frac{1}{1 + e^{-z}}$$
 - These functions are inverses of each other because $\sigma(\text{logit}(p)) = p$
 
 ## Proof
@@ -255,18 +225,21 @@ $$\begin{eqnarray*}
 \end{eqnarray*}$$
 $$
 
-- $\blacksquare$ The logit is the inverse of the sigmoid function.
-
+- [Therefore]{style="color: green; font-weight: bold;"} :The logit is the inverse of the sigmoid function.
 
 
 
 ## Learning a classification rule 
 
--  We need to learn the parameters of the model, the weights $\mathbf{w}$ and bias $b$
-- Binary logistic regression is an instance of supervised classification in which we know the correct label $y\in \left\{ 0, 1\right\}$ for each observation x.
+-  We need to learn the parameters of the model $\mathbf{w}$ and $b$:
 
-We then have the rule:
-
+$$
+\begin{array}{c c c c c}
+\mathbf{x}& \longrightarrow & \sigma(z)=\sigma(\mathbf{w}\cdot\mathbf{x}+b) & \longrightarrow & \hat{y}\\
+\text{\small Input features} & & \text{\small Output probability} & & \text{\small Prediction of class label}
+\end{array}
+$$
+- Prediction rule:
 $$
 \mathrm{classification}(x) = 
 \begin{cases}
@@ -276,21 +249,40 @@ $$
 $$
 
 
-## Learning
-
--  We need to learn the parameters of the model, the weights $\mathbf{w}$ and bias $b$
-- Binary logistic regression is an instance of supervised classification in which we know the correct label $y\in \left\{ 0, 1\right\}$ for each observation x.
+## Loss function
 - A good model will minimize the difference between our prediction $\hat{y}$ and the ground truth $y$
 - this distance is defined by the **loss function** (also known as the **cost function**).
 - The same loss function is commonly used for logistic regression and  for neural networks, the **cross-entropy loss**.
-- Recall that our classififer output is
-
-$$
-\hat{y} = \sigma(\mathbf{w}\cdot\mathbf{x} + b)
-$$
+- Recall that our classifier output is $\hat{y} = \sigma(\mathbf{w}\cdot\mathbf{x} + b)$
 
 - For logistic regression with binary classification, $y$ can be either 0 or 1, but $\hat{y}$ is a probability that ranges from 0 to 1.
 - We measure the difference with the loss function $\mathcal{L}(\hat{y}, y)$
+
+## Loss function
+- Consider the following piecewise loss function
+$$
+mathcal{L}(\sigma(z), y) = \begin{cases}
+-\log \sigma(z) & \text{if } y_i = 1 \\
+-\log 1- \sigma(z) & \text{if } y_i = 0 \\
+\end{cases}
+$$
+
+As $log \sigma(z) \rightarrow 1$, the loss approaches zero
+
+```{python}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from logreg import plot_loss
+plot_loss(figsize=(4,3))
+plt.show()
+``` 
+
 
 ## Loss function
 
@@ -835,6 +827,21 @@ $$
 
 ## Python example
 
+:::: {.columns}
+:::{.column width="48%"}
+
+- We will show how to perform LR "from scratch" to promote understanding
+- Usually, it is recommendable to use library code (scikit-learn etc.) for actual analysis
+-  [HOMEWORK]{.hw-badge}  You will adapt this example 
+- Here we have created points two classes and want to learn LR parameters for classification
+
+:::
+:::{.column width="48%"}
+
+![](img/lr-classes.svg)
+
+:::
+::::
 
 
 ## Need for non-linearity: XOR

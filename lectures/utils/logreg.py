@@ -4,6 +4,7 @@ import numpy as np
 
 
 
+
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
@@ -11,7 +12,7 @@ def sigmoid(z):
 def sigmoid_plot(figsize=(4, 3)):
     z = np.linspace(-10, 10, 100)
     phi_z = sigmoid(z)
-    plt.figure(figsize=(8, 4))
+    plt.figure(figsize=figsize)
     plt.plot(z, phi_z, color='#003366', linewidth=3) # FU Berlin Blue
     plt.axvline(0.0, color='k', linewidth=1, alpha=0.5)
     plt.axhline(y=0.5, color='k', linestyle='--', linewidth=1, alpha=0.5)
@@ -83,3 +84,48 @@ def gdexample(figsize=(8,6)):
     ax.spines['top'].set_color('none')
 
     plt.tight_layout()
+
+
+def plot_loss(figsize=(7, 4.5)):
+    p = np.linspace(0.001, 1.0, 500)
+    loss = -np.log(p)
+
+    # 2. Define our target point at sigma(z) = 0.95
+    target_p = 0.95
+    target_loss = -np.log(target_p) # approx 0.0513
+
+    # 3. Create the plot
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.plot(p, loss, color='#2c3e50', linewidth=2, label=r'$-\log \sigma(z)$')
+
+    # 4. Add the highlight box (rectangle) around our target point
+    # Rectangle arguments: (xmin, ymin), width, height
+    box_width = 0.06
+    box_height = 0.3
+    '''
+    rect = patches.Rectangle(
+        (target_p - 0.03, target_loss - 0.15), 
+        box_width, box_height, 
+        linewidth=1.5, edgecolor='#e74c3c', facecolor='#e74c3c', alpha=0.2
+    )
+    ax.add_patch(rect)
+
+    # 5. Add a text label pointing to the box
+    ax.text(
+        target_p - 0.05, target_loss + 0.4, 
+        f"$\sigma(z) = {target_p}$\nLoss = {target_loss:.4f}", 
+        color='#c0392b', fontsize=10, weight='bold', ha='right'
+    )
+    '''
+
+    # 6. Styling and Polish for your presentation
+    ax.set_xlabel(r"Output: $\sigma(z)$", fontsize=11)
+    ax.set_ylabel(r"Loss: $-\log \sigma(z)$", fontsize=11)
+
+    # Clean up axes and grid
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.grid(axis='both', linestyle='--', alpha=0.5)
+
+    plt.tight_layout()
+    

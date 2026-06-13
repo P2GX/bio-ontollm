@@ -28,7 +28,7 @@ pip install numpy matplotlib pandas jupyter ikernel
 ## Add quarto libraries
 
 ```bash
-quarto add parmsam/quarto-pseudo-code
+quarto add leovan/quarto-pseudocode
 ```
 
 
