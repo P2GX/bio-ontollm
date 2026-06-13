@@ -1068,35 +1068,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#sentiment-analysis",
-    "href": "lectures/logreg.html#sentiment-analysis",
+    "objectID": "lectures/logreg.html#the-five-components-of-logistic-regression",
+    "href": "lectures/logreg.html#the-five-components-of-logistic-regression",
     "title": "Logistic regression",
-    "section": "Sentiment analysis",
-    "text": "Sentiment analysis\n\n\n\n\n\n\nSentiment analysis uses natural language processing (NLP) and machine learning to identify, extract, and quantify emotional tones—positive, negative, or neutral—within text data.\n\n\n\n\nWe will use sentiment analysis on movie reviews\nThe Internet Movie Database is a standard data set for prototyping such algorithms",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Logistic regression"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#our-data",
-    "href": "lectures/logreg.html#our-data",
-    "title": "Logistic regression",
-    "section": "Our data",
-    "text": "Our data\n\\[\ntraining set: {(x^{(1)}, y^{(1)}),(x^{(2)}, y^{(2)}),\\ldots,(x^{(m)}, y^{(m)})}\n\\]\n\n\n\n\n\n\n\nExample\n\n\n\n\\(x^{(42)}\\): A very cheesy and dull road movie, with the intention to be hip and modern. (\\(\\ldots\\))\n\\(y^{(42)}\\): 👎\n\\(x^{(13242)}\\): where else could you find someone who needs a drink so bad that he’s as dry as a dead dingoes donger?\n\\(y^{(13242)}\\): 👍\n\n\n\n\n\n\ngoal: learn a classifier from the training set to map an arbitrary new input \\(x\\) to its correct class \\(y \\in Y\\).\nLogReg is a Probabilistic classifier that produces both a classificaton (here, Y={👍, 👎}) and the probability of the observation being in the class.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Logistic regression"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#the-four-components-of-logistic-regression",
-    "href": "lectures/logreg.html#the-four-components-of-logistic-regression",
-    "title": "Logistic regression",
-    "section": "The four components of Logistic Regression",
-    "text": "The four components of Logistic Regression\n\n\n\n\n\n\n1. Feature Representation\n\n\nFor each input \\(x\\), we have a vector: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\)\n\n\n\n\n\n\n\n\n\n2. Classification Function\n\n\nComputes the estimated class using the Sigmoid function: \\(\\sigma(z) = \\frac{1}{1 + e^{-z}}\\)\n\n\n\n\n\n\n\n\n\n3. Objective Function\n\n\nA Loss function (Cross-Entropy) to measure how well the model is performing ( cross-entropy loss function).\n\n\n\n\n\n\n\n\n\n4. Optimization\n\n\nGradient Descent: The method used to minimize the loss and find the best weights.",
+    "section": "The five components of Logistic Regression",
+    "text": "The five components of Logistic Regression\n\n\n\n\n\n\n1. Feature Representation\n\n\nFor each input \\(x\\), we have a vector: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\)\n\n\n\n\n\n\n\n\n\n2. Classification Function\n\n\nComputes the estimated class using the Sigmoid function: \\(\\sigma(z) = \\frac{1}{1 + e^{-z}}\\)\n\n\n\n\n\n\n\n\n\n3. Objective Function\n\n\nA Loss function (Cross-Entropy) to measure how well the model is performing ( cross-entropy loss function).\n\n\n\n\n\n\n\n\n\n4. Optimization\n\n\nGradient Descent: The method used to minimize the loss and find the best weights.\n\n\n\n\n\n\n\n\n\n5. Prediction\n\n\nThe learned model can be used to classify new data points.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1108,7 +1084,7 @@
     "href": "lectures/logreg.html#logreg-features",
     "title": "Logistic regression",
     "section": "LogReg: Features",
-    "text": "LogReg: Features\nFor each input \\(x\\), we create a vector of features: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\).\n\n\n\n\n\n\n\nExample\n\n\nThere are many different ways of generating a feature vector\n\n\n\n\n\nRaw numerical data: If the input data is numerical with \\(n\\) dimensions, each of the dimensions can act as a feature\nPolynomial & interaction features: We can add interaction terms (\\(x_ix_j\\)) or polynomial features (e.g., \\(x_i^7\\)) if this makes sense for the classification task\nImages: Flatten pixel values (e.g., an \\(8\\times 8\\) image would have 64 features)\nText to vector: e.g., count word occurrences across a vocabulary\nDomain-specific feature engineering\n\n\n\n\n\n\n\n\nExample\n\n\nIn the Python exercise for this lecture, we will develop a naive feature extraction script for sentiment analysis of movie reviews based on key word counts",
+    "text": "LogReg: Features\nFor each input \\(x\\), we create a vector of features: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\).\nThere are many different ways of generating a feature vector\n\nRaw numerical data: If the input data is numerical with \\(n\\) dimensions, each of the dimensions can act as a feature\nPolynomial & interaction features: We can add interaction terms (\\(x_ix_j\\)) or polynomial features (e.g., \\(x_i^7\\)) if this makes sense for the classification task\nImages: Flatten pixel values (e.g., an \\(8\\times 8\\) image would have 64 features)\nText to vector: e.g., count word occurrences across a vocabulary\nDomain-specific feature engineering\n\n\n\n\n\n\n\n\nExample\n\n\nIn the Python exercise for this lecture, we will generate two dimensional points with overlapping Gaussian distributions, but in general, the features can also be created (e.g., by counting positive and negative words for sentiment analysis).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1120,7 +1096,7 @@
     "href": "lectures/logreg.html#weights-and-bias",
     "title": "Logistic regression",
     "section": "Weights and bias",
-    "text": "Weights and bias\n\n\n\n\n\n\n\nWeights\n\n\nLogReg learns a vector of a vector of weights and a bias term to solve the classification task\n\n\n\n\n\\[\nz = \\sum_{i=1}^n w_ix_x + b\n\\]\nThis sum can be represented identically using dot product notation (where the bold font indicates a vector of weights (\\(\\mathbf{w}\\)) and inputs (\\(\\mathbf{x}\\)))\n\\[\nz = \\mathbf{w}\\cdot \\mathbf{x} + b\n\\]\n\nThis is identical to the sums we will see at individual neurons in neural networks\nIn principle, \\(z\\) could be any real number",
+    "text": "Weights and bias\n\n\n\n\n\n\n\nWeights\n\n\nLogReg learns a vector of a vector of weights and a bias term to solve the classification task\n\n\n\n\n\nLinear combination of input features\nEach data point is multiplied by weights and a bias is added\nHere, \\(x_{i,j}\\) refers to the \\(j^{th}\\) component of the \\(i^{th}\\) data point. \\[\nz_i = \\sum_{j=1}^n w_ix_{i,j} + b\n\\tag{1}\\]\n\nEquation 1 can be represented identically using dot product notation (where the bold font indicates a vector of weights (\\(\\mathbf{w}\\)) and inputs (\\(\\mathbf{x}\\)))\n\\[\nz_i = \\mathbf{w}\\cdot \\mathbf{x}_i + b\n\\]\nThis is identical to the sums we will see at individual neurons in neural networks",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1132,7 +1108,7 @@
     "href": "lectures/logreg.html#part-2",
     "title": "Logistic regression",
     "section": "Sigmoid",
-    "text": "Sigmoid\n\n\n\n\n\n\n\nSigmoid function\n\n\nTo create a probability, we transform z through the sigmoid function, \\(\\sigma(z)\\)\n\n\n\n\nTo map the real-valued \\(z\\) into a probability \\(P \\in (0,1)\\), we use:\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\n\nOutput: Always between 0 and 1.\nInterpretation: \\(P(y=1 | x)\\), i.e., a probability for classification",
+    "text": "Sigmoid\n\n\n\n\n\n\n\nSigmoid function\n\n\nTo create a probability, we transform z through the sigmoid function, \\(\\sigma(z)\\)\n\n\n\n\n\nThe sigmoid \\(\\sigma(z)\\) takes a real-valued number \\(z\\in [-\\infty, \\infty]\\) and effectively squashes it to lie in the range \\([0,1]\\): \\(0&lt;\\sigma(z) &lt; 1\\).\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\n\n\n\nInterpretation: \\(P(y=1 | x, w, b)\\), i.e., a probability for classification\n\\(\\sigma(z) &gt; 0.5 \\Leftrightarrow z &gt; 0\\)\ni.e., whenever \\(z = \\mathrm{w}\\cdot \\mathrm{x} + b\\) is over zero, the model predicts the positive class (\\(\\hat{y}=1\\)).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1152,23 +1128,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#sigmoid",
-    "href": "lectures/logreg.html#sigmoid",
-    "title": "Logistic regression",
-    "section": "Sigmoid:",
-    "text": "Sigmoid:\n\nThe sigmoid function is locally symmetric around the point \\((0, 0.5)\\)\nA value \\(&gt;0.5\\) predicts the positive class\nThe sigmoid function is nearly linear near 0\nOutlier values get flattened towards 0 or 1.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Logistic regression"
-    ]
-  },
-  {
     "objectID": "lectures/logreg.html#logit",
     "href": "lectures/logreg.html#logit",
     "title": "Logistic regression",
     "section": "Logit",
-    "text": "Logit\n\nOdds: The ratio of success to failure: \\(p / (1-p)\\).\nLogit: The natural logarithm of those odds: \\(\\ln (\\frac{p}{1-p})\\).\nThe logit is the inverse of the sigmoid function:\n\n\\[\n\\begin{eqnarray*}\nz &=& \\ln \\left( \\frac{p}{1-p} \\right)\\quad\\quad \\text{Log odds}\\\\\n\\end{eqnarray*}\n\\]\n\n\\(z=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b)\\) can be any real number \\((-\\infty, \\infty)\\)\n\\(p\\in [0, 1]\\) represents a probability\n\\[z = \\text{logit}(p) = \\ln \\left( \\frac{p}{1-p} \\right)\\]\n\\[p = \\sigma(z) = \\frac{1}{1 + e^{-z}}\\]\nThese functions are inverses of each other because \\(\\sigma(\\text{logit}(p)) = p\\)",
+    "text": "Logit\n\nOdds: The ratio of success to failure: \\(p / (1-p)\\).\nLogit: The natural logarithm of those odds (log odds): \\(\\ln (\\frac{p}{1-p})\\).\nThe logit is the inverse of the sigmoid function:\n\\(z=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b)\\) can be any real number \\((-\\infty, \\infty)\\)\n\\(p\\in [0, 1]\\) represents a probability\nThese functions are inverses of each other because \\(\\sigma(\\text{logit}(p)) = p\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1180,7 +1144,7 @@
     "href": "lectures/logreg.html#proof",
     "title": "Logistic regression",
     "section": "Proof",
-    "text": "Proof\n\\[\n\\]\\[\\begin{eqnarray*}\n\\sigma(\\text{logit}(p)) &=& \\frac{1}{1 + e^{-\\left[ \\ln \\left( \\frac{p}{1-p} \\right) \\right]}} && \\text{Substitute Logit into Sigmoid } z \\\\\n&=&\\frac{1}{1 + e^{\\left[ \\ln \\left( \\frac{1-p}{p} \\right) \\right]}} && \\text{Apply } -\\ln(A) = \\ln(1/A) \\\\\n&=&\\frac{1}{1 + \\frac{1-p}{p}} && \\text{Identity: } e^{\\ln(x)} = x \\\\\n&=&\\frac{1}{\\frac{p + 1 - p}{p}}  \\\\\n&=&\\frac{1}{1/p} && \\text{Simplify} \\\\\n&=& p\n\\end{eqnarray*}\\]\\[\n\\]\n\n\\(\\blacksquare\\) The logit is the inverse of the sigmoid function.",
+    "text": "Proof\n\\[\n\\]\\[\\begin{eqnarray*}\n\\sigma(\\text{logit}(p)) &=& \\frac{1}{1 + e^{-\\left[ \\ln \\left( \\frac{p}{1-p} \\right) \\right]}} && \\text{Substitute Logit into Sigmoid } z \\\\\n&=&\\frac{1}{1 + e^{\\left[ \\ln \\left( \\frac{1-p}{p} \\right) \\right]}} && \\text{Apply } -\\ln(A) = \\ln(1/A) \\\\\n&=&\\frac{1}{1 + \\frac{1-p}{p}} && \\text{Identity: } e^{\\ln(x)} = x \\\\\n&=&\\frac{1}{\\frac{p + 1 - p}{p}}  \\\\\n&=&\\frac{1}{1/p} && \\text{Simplify} \\\\\n&=& p\n\\end{eqnarray*}\\]\\[\n\\]\n\nTherefore :The logit is the inverse of the sigmoid function.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1192,19 +1156,7 @@
     "href": "lectures/logreg.html#learning-a-classification-rule",
     "title": "Logistic regression",
     "section": "Learning a classification rule",
-    "text": "Learning a classification rule\n\nWe need to learn the parameters of the model, the weights \\(\\mathbf{w}\\) and bias \\(b\\)\nBinary logistic regression is an instance of supervised classification in which we know the correct label \\(y\\in \\left\\{ 0, 1\\right\\}\\) for each observation x.\n\nWe then have the rule:\n\\[\n\\mathrm{classification}(x) =\n\\begin{cases}\n1 & \\text{if }P(y = 1|x) &gt; 0.5 \\\\\n0 & \\text{otherwise}\n\\end{cases}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Logistic regression"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#learning",
-    "href": "lectures/logreg.html#learning",
-    "title": "Logistic regression",
-    "section": "Learning",
-    "text": "Learning\n\nWe need to learn the parameters of the model, the weights \\(\\mathbf{w}\\) and bias \\(b\\)\nBinary logistic regression is an instance of supervised classification in which we know the correct label \\(y\\in \\left\\{ 0, 1\\right\\}\\) for each observation x.\nA good model will minimize the difference between our prediction \\(\\hat{y}\\) and the ground truth \\(y\\)\nthis distance is defined by the loss function (also known as the cost function).\nThe same loss function is commonly used for logistic regression and for neural networks, the cross-entropy loss.\nRecall that our classififer output is\n\n\\[\n\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\n\\]\n\nFor logistic regression with binary classification, \\(y\\) can be either 0 or 1, but \\(\\hat{y}\\) is a probability that ranges from 0 to 1.\nWe measure the difference with the loss function \\(\\mathcal{L}(\\hat{y}, y)\\)",
+    "text": "Learning a classification rule\n\nWe need to learn the parameters of the model \\(\\mathbf{w}\\) and \\(b\\):\n\n\\[\n\\begin{array}{c c c c c}\n\\mathbf{x}& \\longrightarrow & \\sigma(z)=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b) & \\longrightarrow & \\hat{y}\\\\\n\\text{\\small Input features} & & \\text{\\small Output probability} & & \\text{\\small Prediction of class label}\n\\end{array}\n\\] - Prediction rule: \\[\n\\mathrm{classification}(x) =\n\\begin{cases}\n1 & \\text{if }P(y = 1|x) &gt; 0.5 \\\\\n0 & \\text{otherwise}\n\\end{cases}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1214,6 +1166,30 @@
   {
     "objectID": "lectures/logreg.html#loss-function",
     "href": "lectures/logreg.html#loss-function",
+    "title": "Logistic regression",
+    "section": "Loss function",
+    "text": "Loss function\n\nA good model will minimize the difference between our prediction \\(\\hat{y}\\) and the ground truth \\(y\\)\nthis distance is defined by the loss function (also known as the cost function).\nThe same loss function is commonly used for logistic regression and for neural networks, the cross-entropy loss.\nRecall that our classifier output is \\(\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\\)\nFor logistic regression with binary classification, \\(y\\) can be either 0 or 1, but \\(\\hat{y}\\) is a probability that ranges from 0 to 1.\nWe measure the difference with the loss function \\(\\mathcal{L}(\\hat{y}, y)\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#loss-function-1",
+    "href": "lectures/logreg.html#loss-function-1",
+    "title": "Logistic regression",
+    "section": "Loss function",
+    "text": "Loss function\n\nConsider the following piecewise loss function \\[\nmathcal{L}(\\sigma(z), y) = \\begin{cases}\n-\\log \\sigma(z) & \\text{if } y_i = 1 \\\\\n-\\log 1- \\sigma(z) & \\text{if } y_i = 0 \\\\\n\\end{cases}\n\\]\n\nAs \\(log \\sigma(z) \\rightarrow 1\\), the loss approaches zero",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#loss-function-2",
+    "href": "lectures/logreg.html#loss-function-2",
     "title": "Logistic regression",
     "section": "Loss function",
     "text": "Loss function\n\nconditional maximum likelihood estimation: we choose the parameters w,b that maximize the log probability of the true y labels in the training data given the observations x.\nThe resulting loss function is the negative log likelihood loss, which is known as the cross-entropy loss\nThe weights should maximize the probability of the correct label \\(p(y|x)\\).\nIt is convenient to write this as \\[\n\\log p(y|x) = \\log[\\hat{y}^y(1-\\hat{y})^{1-y}] = y\\log\\hat{y} + (1-y)\\log(1-\\hat{y})\n\\]\nNote this simplifies to either \\(\\log\\hat{y}\\) or \\(\\log(1-\\hat{y})\\) depending on whether \\(y\\) is 0 or 1.\nSince it is convenient to minimize the function, we multiply it by -1: The result is known as the cross-entropy loss\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\hat{y} - (1-y)\\log(1-\\hat{y})\n\\]\n\nSince we have \\(\\mathbf{\\hat{y}} = \\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b)\\), this is equivalent to\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b))\n\\]",
@@ -1252,7 +1228,7 @@
     "href": "lectures/logreg.html#part-3",
     "title": "Logistic regression",
     "section": "Gradient descent",
-    "text": "Gradient descent\n\n\n\n\n\n\n\nGradient\n\n\nThe gradient descent algorithm finds the gradient of the loss function at the current point and moving in the opposite direction.\n\n\n\n\nAnother commonly encountered notation is the gradient, which by convention is represented as a column vector\n\\[\n\\nabla f(\\mathbf{x}) =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial \\mathbf{x}} \\end{bmatrix}^T\n=\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1}\\\\ \\dfrac{\\partial f}{\\partial x_2} \\\\ \\cdots \\\\ \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}  \n\\tag{1}\\]",
+    "text": "Gradient descent\n\n\n\n\n\n\n\nGradient\n\n\nThe gradient descent algorithm finds the gradient of the loss function at the current point and moving in the opposite direction.\n\n\n\n\nAnother commonly encountered notation is the gradient, which by convention is represented as a column vector\n\\[\n\\nabla f(\\mathbf{x}) =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial \\mathbf{x}} \\end{bmatrix}^T\n=\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1}\\\\ \\dfrac{\\partial f}{\\partial x_2} \\\\ \\cdots \\\\ \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}  \n\\tag{2}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1504,7 +1480,7 @@
     "href": "lectures/logreg.html#python-example",
     "title": "Logistic regression",
     "section": "Python example",
-    "text": "Python example",
+    "text": "Python example\n\n\n\nWe will show how to perform LR “from scratch” to promote understanding\nUsually, it is recommendable to use library code (scikit-learn etc.) for actual analysis\nHOMEWORK You will adapt this example\nHere we have created points two classes and want to learn LR parameters for classification",
     "crumbs": [
       "Home",
       "Lectures",
