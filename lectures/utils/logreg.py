@@ -37,7 +37,7 @@ def gdexample(figsize=(8,6)):
     loss_vals = J(w_range)
 
     # Setup the plot
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=figsize)
 
     # Plot the main loss curve
     ax.plot(w_range, loss_vals, color='#003366', lw=3, label='Loss Function')
@@ -62,7 +62,7 @@ def gdexample(figsize=(8,6)):
                                 color='red', lw=2))
 
     # Annotations
-    ax.annotate('slope of loss at $w^1$\nis negative', xy=(w1, y1), xytext=(w1-1.2, y1+2),
+    ax.annotate('slope of loss', xy=(w1, y1), xytext=(w1-1.2, y1+2),
                 arrowprops=dict(arrowstyle='->', color='green'),
                 color='green', fontweight='bold', ha='center')
 

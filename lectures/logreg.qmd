@@ -193,13 +193,13 @@ plt.show()
 - $1−\sigma(x) = \sigma(−x)$
 
 $$
-\begin{eqnarray*}
+\begin{align*}
 1−\sigma(x) &=& 1- \frac{1}{1+e^{-x}}\\
 &=& \frac{1+e^{-x} - 1}{1+e^{-x}} \\
 &=& \frac{e^{-x}}{1+e^{-x}} \cdot \frac{e^{x}}{e^{x}}\\
 &=& \frac{1}{1+e^{x}} \\
 &=& \sigma(-x) \\
-\end{eqnarray*}
+\end{align*}
 $$
 
 
@@ -215,14 +215,14 @@ $$
 ## Proof
 
 $$
-$$\begin{eqnarray*}
-\sigma(\text{logit}(p)) &=& \frac{1}{1 + e^{-\left[ \ln \left( \frac{p}{1-p} \right) \right]}} && \text{Substitute Logit into Sigmoid } z \\
-&=&\frac{1}{1 + e^{\left[ \ln \left( \frac{1-p}{p} \right) \right]}} && \text{Apply } -\ln(A) = \ln(1/A) \\
-&=&\frac{1}{1 + \frac{1-p}{p}} && \text{Identity: } e^{\ln(x)} = x \\
-&=&\frac{1}{\frac{p + 1 - p}{p}}  \\
-&=&\frac{1}{1/p} && \text{Simplify} \\
-&=& p 
-\end{eqnarray*}$$
+\begin{align*}
+\sigma(\text{logit}(p)) &= \frac{1}{1 + e^{-\left[ \ln \left( \frac{p}{1-p} \right) \right]}} &&\bullet \text{Substitute Logit into Sigmoid } z \\
+&= \frac{1}{1 + e^{\left[ \ln \left( \frac{1-p}{p} \right) \right]}} && \bullet\text{Apply } -\ln(A) = \ln(1/A) \\
+&= \frac{1}{1 + \frac{1-p}{p}} && \bullet\text{Identity: } e^{\ln(x)} = x \\
+&= \frac{1}{\frac{p + 1 - p}{p}} && \\
+&= \frac{1}{1/p} && \bullet\text{Simplify} \\
+&= p && 
+\end{align*}
 $$
 
 - [Therefore]{style="color: green; font-weight: bold;"} :The logit is the inverse of the sigmoid function.
@@ -239,7 +239,9 @@ $$
 \text{\small Input features} & & \text{\small Output probability} & & \text{\small Prediction of class label}
 \end{array}
 $$
-- Prediction rule:
+
+::: {.callout-note}
+## Classification Decision Rule
 $$
 \mathrm{classification}(x) = 
 \begin{cases}
@@ -247,7 +249,7 @@ $$
 0 & \text{otherwise}
 \end{cases}
 $$
-
+:::
 
 ## Loss function
 - A good model will minimize the difference between our prediction $\hat{y}$ and the ground truth $y$
@@ -261,13 +263,13 @@ $$
 ## Loss function
 - Consider the following piecewise loss function
 $$
-mathcal{L}(\sigma(z), y) = \begin{cases}
+\mathcal{L}(\sigma(z), y) = \begin{cases}
 -\log \sigma(z) & \text{if } y_i = 1 \\
 -\log 1- \sigma(z) & \text{if } y_i = 0 \\
 \end{cases}
 $$
 
-As $log \sigma(z) \rightarrow 1$, the loss approaches zero
+As $\log \sigma(z) \rightarrow 1$, the loss approaches zero
 
 ```{python}
 #| echo: false
@@ -287,11 +289,7 @@ plt.show()
 ## Loss function
 
 
-- conditional maximum likelihood estimation: we choose the parameters w,b that maximize the log probability of the true y labels in the training data given the observations x. 
-- The resulting loss function is the negative log likelihood loss, which is known as the **cross-entropy loss**
-
-- The weights should maximize the probability of the correct label $p(y|x)$.
-- It is convenient to write this as
+- Using $\hat{y}=\sigma(z)$, we can concisely write the loss function as:
 $$
 \log p(y|x) = \log[\hat{y}^y(1-\hat{y})^{1-y}] = y\log\hat{y} + (1-y)\log(1-\hat{y})
 $$
@@ -347,19 +345,31 @@ $$
 \hat{\theta} = \arg\min_{\theta} J(\theta)
 $$
 
-- We can show that the logistic regression loss function is convex (which enables us to reliably find its minimum)
-- Neural networks are not convex and gradient descent may not find the global minimum
+- It can be shown that the logistic regression loss function is convex (which enables us to reliably find its minimum)
 
 ##  Gradient descent {#part-3}
 
- 
-::: {.callout-note appearance="simple" title="Gradient"}
+
+::: {.callout-note appearance="simple" title="Basic idea of gradient descent"}
 The gradient descent algorithm finds the gradient
-of the loss function at the current point and moving in the opposite direction.
+of the loss function at the current point and moves the parameters in the opposite direction.
 :::
 
+- Given a learning rate $\eta$ and the gradient of the weights and biases:
+- Each iteration of the GD processes Updates the weights and biases of each layer
+$$
+\begin{eqnarray*}
+\mathbf{W} &\leftarrow &\mathbf{W} - \eta\Delta \mathbf{W} \\
+\mathbf{b} &\leftarrow &\mathbf{b} - \eta\Delta \mathbf{b}
+\end{eqnarray*}
+$$
 
-Another commonly encountered notation is the __gradient__, which by convention is represented as a column vector
+- We will explain how the gradient is calculated and then return to the mechanics of the gradient descent algorithm.
+
+## The Gradient
+
+Another commonly encountered notation is the [gradient]{style="color: green; font-weight: bold;"}, 
+which by convention is represented as a column vector
 
 $$
 \nabla f(\mathbf{x}) = 
@@ -367,6 +377,13 @@ $$
 =
 \begin{bmatrix} \dfrac{\partial f}{\partial x_1}\\ \dfrac{\partial f}{\partial x_2} \\ \cdots \\ \dfrac{\partial f}{\partial x_n} \end{bmatrix}  
 $$ {#eq-gradient}
+
+
+::: {.callout-note}
+- $f(x)$ is a scalar
+- We take the first derivative of $f(x)$ with respect to each of the $n$ components of $\mathbf{w}$
+- We will have more to say about matrix calculus in a future lecture.
+:::
 
 
 ## Gradient descent
@@ -381,68 +398,37 @@ import matplotlib.pyplot as plt
 
 sys.path.append('utils') 
 from logreg import gdexample
-gdexample(figsize=(8,6))
+gdexample(figsize=(5,4))
 plt.show()
 ``` 
 
-- We iteratively take steps towards the minimum
+- We iteratively take steps towards the minimum along the slope of the function
 - But how do we calculate the slope?
+
 
 ## Calculating derivatives
 
-To calculate the gradient of the loss function, $\nabla (\Theta; \mathbf{x};y)$, we need all the partial derivatives -- for all weights and biases. Let's do this step by step
+We need to update each component of the weight vector $\mathbf{w}$, e.g., $w_j$ based on the firstderivative of the loss 
+$\mathcal{L}=\mathcal{L}_{CE}(\hat{y}, y)$ with respect to the component.
 
-- derivative of the sigmoid activation function
+- Apply the chain rule twice
+
 $$
-\begin{eqnarray*}
-\dfrac{d\sigma(x)}{dx} =\dfrac{d}{dx} \dfrac{1}{1+e^{-x}} &=& \hspace{1cm} \dfrac{-1}{(1+e^{-x})^2}\cdot (-e^{-x})&& \text{chain rule} \\
-&=&\dfrac{e^{-x}}{(1+e^{-x})^2} && \hspace{1cm} \text{simplify}\\
-&=&\dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{rearrange}\\
-&=&\sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}}&& \hspace{1cm} \text{definition of $\sigma(x)$}\\
-&=&\sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}}&& \hspace{1cm} \text{add and substract 1}\\
-&=&\sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right)&& \hspace{1cm} \text{rearrange}\\
-&=&\sigma(x) \cdot \left( 1 -\sigma(x) \right)&& \hspace{1cm} \text{simplify using definition of $\sigma(x)$}\\
-\end{eqnarray*}
+\frac{\partial \mathcal{L}}{\partial w_j} = \frac{\partial \mathcal{L}}{\partial \sigma_i} 
+\cdot \frac{\partial  \sigma_i}{\partial w_j} =
+\frac{\partial \mathcal{L}}{\partial \sigma_i} 
+\cdot \frac{\partial  \sigma_i}{\partial z_i}
+\cdot \frac{\partial  z_i}{\partial w_j}
 $$
 
 
 
-
-## Calculating the first derivative of the sigmoid activation function
-
-- Thus we get the fascinating result that
-
-$$
-\frac{d\sigma(x)}{dx} = \sigma(x)(1-\sigma(x))
-$$
-
-- This means that if we have $\sigma(x)$ it is trivial to calculate $\frac{d\sigma(x)}{dx}$.
-
-
-## The Gradient Vector
-
-- Assuming we are performing a gradient descent with two weights and one bias, the Gradient Vector is:
-
-$$
-\nabla J(\theta) = \begin{bmatrix}
-\frac{\partial J}{\partial w_1} \\
-\frac{\partial J}{\partial w_2} \\
-\frac{\partial J}{\partial b}
-\end{bmatrix}
-$$
-
-For Logistic Regression, the partial derivative for any specific weight $w_j$ over $m$ examples is:
-
-$$
-\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}
-$$
-- Remember that $\hat{y}$ is the prediction, and that  $\hat{y}=\sigma(x)$, and thus $\sigma(x)(1-\sigma(x)) = \hat{y}(1-\hat{y})$
 
 
 ## Derivation and chain rule
 
 
--  [HOMEWORK]{.hw-badge}  To derive the above expression (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule
+-  [HOMEWORK]{.hw-badge}  To understand the derivations (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule. We will practice in the practical.
 
 :::: {.columns}
 
@@ -475,64 +461,77 @@ Examples
 :::
 ::::
 
-## Chain rule and logistic regression
-
-We are differentiating the loss with respect to a weight $w_j$. 
-
-::: {.callout-note appearance="simple" title="The chain"}
-Loss ($\mathcal{L}$) depends on Prediction ($\hat{y}$), which depends on Logit ($z$), which depends on Weight ($w_j$).
-:::
+## Calculating derivatives
 
 $$
-\frac{\partial \mathcal{L}}{\partial w_j} = \frac{\partial \mathcal{L}}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w_j}
+\frac{\partial \mathcal{L}}{\partial w_j} =
+\underbrace{\frac{\partial \mathcal{L}}{\partial \sigma_i}}_{\text{Part A}}
+\cdot \underbrace{\frac{\partial  \sigma_i}{\partial z_i}}_{\text{Part B}}
+\cdot \underbrace{\frac{\partial  z_i}{\partial w_j}}_{\text{Part C}}
 $$
 
-- So we will calculate this in three steps
-- [HOMEWORK]{.hw-badge} We will review the chain rule in the practical 
-
-## cross-entropy loss
-
-- The loss: $\mathcal{L} = -(y \ln \hat{y} + (1-y) \ln(1-\hat{y}))$
-- This is the **cross-entropy loss function** for logistic regression
+- In the following slides, we will calculate the three parts separately.
 
 
-## $\frac{\partial \mathcal{L}}{\partial \hat{y}}$: Gradient of the Loss with respect to Prediction
+
+## Part A: $\frac{\partial \mathcal{L}}{\partial \hat{y}}$: Gradient of the Loss with respect to Prediction
 
 $$
 \begin{align*}
-\frac{\partial \mathcal{L}}{\partial \hat{y}} &= -\frac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})] \\
-&= -y \frac{\partial }{\partial \hat{y}}\ln \hat{y} - (1-y)\frac{\partial }{\partial \hat{y}}\ln(1-\hat{y}) \\
-&= -\frac{y}{ \hat{y}} - (1-y) \frac{-1}{1-\hat{y}} && \text{recall } \frac{d \ln x}{dx} = \frac{1}{x} \\
-&= -\frac{y}{\hat{y}} + \frac{1-y}{1-\hat{y}} &&  \\
-&= \frac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})} && \text{common denominator} \\
-&= \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})} &&  \\
-&= \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} && \text{final result}
+\frac{\partial \mathcal{L}}{\partial \hat{y}} 
+& = -\frac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})] && \bullet \text{Using } \hat{y}=\sigma(wx+b) \\
+& = -y \frac{\partial }{\partial \hat{y}}\ln \hat{y} - (1-y)\frac{\partial }{\partial \hat{y}}\ln(1-\hat{y}) && \bullet \text{Move constants out of derivative}\\
+& = -\frac{y}{\hat{y}} - (1-y) \frac{-1}{1-\hat{y}} && \bullet \text{Recall } \frac{d \ln x}{dx} = \frac{1}{x} \\
+& = -\frac{y}{\hat{y}} + \frac{1-y}{1-\hat{y}} && \bullet \text{Simplify signs} \\
+& = \frac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})} && \bullet \text{Common denominator} \\
+& = \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})} && \bullet \text{Expand numerator} \\
+& = \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} && \bullet \text{Final result}
 \end{align*}
 $$
 
 
 
 
-## $\frac{\partial \hat{y}}{\partial z}$: gradient of the Sigmoid ($\hat{y}$) with respect to the Logit ($z$)
+## Part B: derivative of the sigmoid activation function
 
-- Recalling this result
+ 
+$$
+\begin{align*}
+\dfrac{d\sigma(x)}{dx} & = \dfrac{d}{dx} \dfrac{1}{1+e^{-x}} \\
+& = \dfrac{-1}{(1+e^{-x})^2}\cdot (-e^{-x}) && \bullet \text{chain rule} \\
+& = \dfrac{e^{-x}}{(1+e^{-x})^2} && \bullet \text{simplify}\\
+& = \dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}} && \bullet \text{rearrange}\\
+& = \sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}} && \bullet \text{definition of } \sigma(x)\\
+& = \sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}} && \bullet \text{add and subtract 1}\\
+& = \sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right) && \bullet \text{rearrange}\\
+& = \sigma(x) \cdot \left( 1 -\sigma(x) \right) && \bullet \text{simplify using definition of } \sigma(x)
+\end{align*}
+$$
+
+
+
+
+##  derivative of the sigmoid activation function
+
+- Thus we get the fascinating result that
+
 $$
 \frac{d\sigma(x)}{dx} = \sigma(x)(1-\sigma(x))
 $$
 
-- and remembering that we define
+- Substituing and remembering that we define
 $$
 \hat{y} = \sigma(\mathbf{w}\cdot\mathbf{x} + b)
 $$
-
-- We have that
-
+we get
 $$
-\frac{\partial \hat{y}}{\partial z} = \hat{y}(1-\hat{y}) 
-$$ 
+\underbrace{\frac{\partial  \sigma_i}{\partial z_i}}_{\text{Part B}} = \hat{y}(1- \hat{y})
+$$
 
 
-## $\frac{\partial z}{\partial w_j}$: Gradient of the $z$ with respect to the Weight $w_j$
+
+
+## Part C: $\frac{\partial z}{\partial w_j}$: Gradient of the $z$ with respect to the Weight $w_j$
  The Since $z = w_1x_1 + w_2x_2 + \dots + b$, the derivative with respect to $w_j$ is simply the feature it is multiplied by:
  $$
  \frac{\partial z}{\partial w_j} = x_j
@@ -550,7 +549,9 @@ $$
  - Thanks to cancelations, we are left with
  
 $$
-\frac{\partial \mathcal{L}}{\partial w_j} = (\hat{y} - y)x_j
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial w_j} &= (\hat{y} - y)x_j
+\end{align*}
 $$
 
 
@@ -563,13 +564,13 @@ The gradient is a product of the error and the magnitude of the input.
 
 ## Bias term
 
-- The term for the partial derivative of the bias can be determined analogously to be
+-  [HOMEWORK]{.hw-badge}  You will adapt this example  The term for the partial derivative of the bias can be determined analogously to be
 
 $$
 \frac{\partial \mathcal{L}}{\partial b} = (\hat{y} - y)
 $$
 
-
+- In the homework, you will be asked to derive this formally.
 
 # Gradient descent
 
@@ -716,6 +717,19 @@ $$
 * The noisiness may even be an advantage because it may help avoid falling into local minima
 * minibatch size is a hyperparameter, but typically the order of examples is randomized and chunks of data are chosen until all samples have been used.
 
+## Updates
+If the following is the derivative rule for one example
+$$
+\frac{\partial \mathcal{L}}{\partial w_j} = (\sigma(z_i)  - y_i)x_{i,j}
+$$
+then the following is the cost across a batch with m examples
+$$
+\frac{\partial C}{\partial w_j} = \frac{1}{m}\sum_{i=1}^m(\sigma(z_i)  - y_i)x_{i,j}
+$$
+- The update rule for $w_j$ is thus
+$$
+w_j \leftarrow w_j - \eta \frac{\partial C}{\partial w_j} 
+$$
 
 ## Stochastic gradient descent
 
@@ -798,31 +812,20 @@ $$
 
 - The softmax is a generalization of the sigmoid
 
-
-:::: {.columns}
-
-::: {.column width="48%"}
-
 $$
-\sigma(z) = \frac{1}{1+e^{-z}}
+\begin{align*}
+\sigma(z) & = \frac{1}{1+e^{-z}} \\
+\mathrm{softmax}(z_i) & = \frac{e^{z_i}}{\sum_{j=1}^K e^{-z_j}} 
+\end{align*}
 $$
 
 
-:::
-::: {.column width="48%"}
 
-$$
-\mathrm{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^K e^{-z_j}} \quad\quad 1\leq  i \leq K
-$$
-
-
-:::
-
-::::
 
 - The softmax function takes a vector $z = [z_1, z_2,\ldots, z_K]$ of $K$ arbitrary values and maps them to a probability distribution, with each value in the range [0,1], and all the values summing to 1.
 - $z$, the vector of scores that is the input to the softmax are called **logits** (as with sigmoid)
 - This allows us to perform logistic regression for $>2$ outcomes
+- Softmax will be important for neural networks and transformers, we will discuss more later.
 
 
 ## Python example

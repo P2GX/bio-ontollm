@@ -146,3 +146,5 @@ sandbox/TMP.py
 .DS_Store
 img/.DS_Store
 _site/
+
+*.quarto_ipynb_*
