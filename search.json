@@ -1476,11 +1476,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#python-example",
-    "href": "lectures/logreg.html#python-example",
+    "objectID": "lectures/logreg.html#part-4-python-implementation-from-scratch",
+    "href": "lectures/logreg.html#part-4-python-implementation-from-scratch",
     "title": "Logistic regression",
-    "section": "Python example",
-    "text": "Python example\n\n\n\nWe will show how to perform LR “from scratch” to promote understanding\nUsually, it is recommendable to use library code (scikit-learn etc.) for actual analysis\nHOMEWORK You will adapt this example\nHere we have created points two classes and want to learn LR parameters for classification",
+    "section": "Part 4: Python implementation from scratch",
+    "text": "Part 4: Python implementation from scratch\n\n\n\nWe will show how to perform LR “from scratch” to promote understanding\nUsually, it is recommendable to use library code (scikit-learn etc.) for actual analysis\nHOMEWORK You will adapt this example\nHere we have created points two classes and want to learn LR parameters for classification",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1488,11 +1488,119 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#need-for-non-linearity-xor",
-    "href": "lectures/logreg.html#need-for-non-linearity-xor",
+    "objectID": "lectures/logreg.html#sigmoid",
+    "href": "lectures/logreg.html#sigmoid",
     "title": "Logistic regression",
-    "section": "Need for non-linearity: XOR",
-    "text": "Need for non-linearity: XOR",
+    "section": "Sigmoid",
+    "text": "Sigmoid\n\nTo code up a simple version of logistic regression from scratch, we will need five main items. The sigmoid is the simplest.\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\nimport numpy as np\nimport numpy.typing as npt\n\ndef sigmoid(z: npt.NDArray) -&gt; npt.NDArray:\n    return 1 / (1 + np.exp(-z))\n\nNumPy N-Dimensional Array: the function takes an array and returns an array\nThe function takes the data (X,y) and the current values of the parameters w and b",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#cost-function",
+    "href": "lectures/logreg.html#cost-function",
+    "title": "Logistic regression",
+    "section": "Cost function",
+    "text": "Cost function\ndef cost_function(\n    X: npt.NDArray, \n    y: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; float:\n    m = len(y)  # Define m based on the number of labels\n    cost_sum = 0.0\n\n    for i in range(m):\n        # np.dot between vectors returns a scalar, b is a float\n        z = float(np.dot(w, X[i]) + b)\n        g = sigmoid(z)\n\n        cost_sum += -y[i] * np.log(g) - (1 - y[i]) * np.log(1 - g)\n\n    return (1 / m) * cost_sum\n\ni.e., we calculate the Binary Cross-Entropy Cost Function \\[\nC(w,b) = \\frac{1}{m} \\mathcal{L}(\\sigma(z_i), y_i)\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-function",
+    "href": "lectures/logreg.html#gradient-function",
+    "title": "Logistic regression",
+    "section": "Gradient Function",
+    "text": "Gradient Function\n\ncompute derivatives of the cost function\n\ndef gradient_function(\n    X: npt.NDArray, \n    y: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; typing.Tuple[float, npt.NDArray]:\n    m, n = X.shape  # m = examples, n = features\n    grad_w = np.zeros(n)\n    grad_b = 0.0\n\n    for i in range(m):\n        # Calculate prediction error for the i-th example\n        z = float(np.dot(w, X[i]) + b)\n        g = sigmoid(z)\n        error = g - y[i]\n\n        # Accumulate bias gradient\n        grad_b += error\n        \n        # Accumulate weight gradients for each feature j\n        for j in range(n):\n            grad_w[j] += error * X[i, j]\n\n    # Average the gradients over all examples\n    grad_b = (1 / m) * grad_b\n    grad_w = (1 / m) * grad_w\n\n    return grad_b, grad_w\n\\[\n\\frac{\\partial C}{\\partial w_j} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)x_{i,j} \\quad\\text{ and }\\quad\n\\frac{\\partial C}{\\partial b} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-descent-2",
+    "href": "lectures/logreg.html#gradient-descent-2",
+    "title": "Logistic regression",
+    "section": "Gradient descent",
+    "text": "Gradient descent\ndef gradient_descent(X: npt.NDArray, \n    y: npt.NDArray, \n    alpha: float, \n    iterations: int\n) -&gt; typing.Tuple[npt.NDArray, float]:\n    w = np.zeros(n)\n    b = 0\n\n    for i in range(iterations):\n        grad_b, grad_w = gradient_function(X, y, w, b)\n\n        w = w - alpha * grad_w\n        b = b - alpha * grad_b\n\n        if i % 1000 == 0:\n            print(f\"Iteration {i}: Cost {cost_function(X, y, w, b)}\")\n    \n    return w, b\n\\[\nw_j \\leftarrow w_j - \\eta \\frac{\\partial C}{\\partial w_j}  \\quad\\text{ and }\\quad\nb \\leftarrow b - \\eta \\frac{\\partial C}{\\partial b}  \n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#prediction-1",
+    "href": "lectures/logreg.html#prediction-1",
+    "title": "Logistic regression",
+    "section": "Prediction",
+    "text": "Prediction\ndef predict(\n    X: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; npt.NDArray:\n    preds = np.zeros(m)\n\n    for i in range(m):\n        z = np.dot(w, X[i]) + b\n        g = sigmoid(z)\n\n        preds[i] = 1 if g &gt;= 0.5 else 0\n    \n    return preds\n\\[\npred(i) = \\begin{cases}\n1& \\text{if }\\sigma(z_i) &gt;= 0.5 \\\\\n0& \\text{if }\\sigma(z_i) &lt; 0.5 \\\\\n\\end{cases}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#running",
+    "href": "lectures/logreg.html#running",
+    "title": "Logistic regression",
+    "section": "Running",
+    "text": "Running\nlearning_rate = 0.01\niterations = 10000\n\nfinal_w, final_b = gradient_descent(X_train, y_train, learning_rate, iterations)\n\npredictions = predict(X_train, final_w, final_b)\naccuracy = np.mean(predictions == y_train) * 100\nprint(f\"training accuracy: {accuracy:.2f}%\")\nIteration 0: Cost 0.6863856844505929\nIteration 1000: Cost 0.24893304312617473\nIteration 2000: Cost 0.19455725857907238\nIteration 3000: Cost 0.17109379033874833\nIteration 4000: Cost 0.15808906650231236\nIteration 5000: Cost 0.1498628871067555\nIteration 6000: Cost 0.14421883627612167\nIteration 7000: Cost 0.14012775640570907\nIteration 8000: Cost 0.13704269179323025\nIteration 9000: Cost 0.13464584006217875\ntraining accuracy: 95.60%",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#decision-decision_boundary",
+    "href": "lectures/logreg.html#decision-decision_boundary",
+    "title": "Logistic regression",
+    "section": "Decision decision_boundary",
+    "text": "Decision decision_boundary\n\nAs mentioned above, the decision boundary for the output of the sigmoid function is typically taken to be 0.5: \\[\n\\begin{align*}\n\\sigma(z) = \\sigma(w_1x_{1} + w_2x_2 + b) &= 0.5 \\\\\nw_1x_{1} + w_2x_2 + b &= 0\\\\\nx_2 &= -\\frac{w_1}{w_2}x_1 - \\frac{b}{w_2}\\\\\n\\end{align*}\n\\] Therefore, the slope of the decision boundary is \\(-\\frac{w_1}{w_2}\\) and the intercept is \\(-\\frac{b}{w_2}\\).\n\nPlotting this, we get",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#overfitting",
+    "href": "lectures/logreg.html#overfitting",
+    "title": "Logistic regression",
+    "section": "Overfitting",
+    "text": "Overfitting\n\nHere we generate data from two classes with a somewhat more complex decision boundary\n\n\n\nUnderfitting: Logistic regression with x,y values (same as above)\nOverfitting: 15th-degree polynomial features as input to the logistic regression model\nBalanced fit: Applying L2 regularization to second model",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#overfitting-1",
+    "href": "lectures/logreg.html#overfitting-1",
+    "title": "Logistic regression",
+    "section": "Overfitting",
+    "text": "Overfitting\n\n“With four parameters I can fit an elephant and with five I can make him wiggle his trunk.” — John von Neumann\n\nMeasuring Model Performance\nModel fit can be assessed using the difference between predictions and reality:\n\nPrediction Error: Difference between the model’s predictions and new data.\nEstimation Error: Difference between the estimated and true parameter values.\nBoth types of error are driven by two competing forces, which are heavily dictated by model complexity1:\n\nLever J, et al. (2016) Model selection and overfitting. Nature Methods 13:703–704.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#the-bias-variance-tradeoff",
+    "href": "lectures/logreg.html#the-bias-variance-tradeoff",
+    "title": "Logistic regression",
+    "section": "The Bias-Variance Tradeoff",
+    "text": "The Bias-Variance Tradeoff\n\n\nBias\n\nError introduced by using a predictive model that is incapable of capturing the underlying structure.\nUnderfitting: Models that are too simple have high bias and low variance.\n\n\nVariance\n\nError due to excessive sensitivity to small fluctuations and noise in the training data.\nOverfitting: Overly complex models typically have low bias and high variance.",
     "crumbs": [
       "Home",
       "Lectures",
