@@ -1028,3 +1028,55 @@ Plotting this, we get
 
 ![](img/lr-decision_boundary.svg)
 
+## Overfitting
+
+- Here we generate data from two classes with a somewhat more complex decision boundary
+
+![](img/lr-overfit.svg)
+
+
+
+- Underfitting: Logistic regression with x,y values (same as above)
+- Overfitting: 15th-degree polynomial features as input to the logistic regression model
+- Balanced fit: Applying L2 regularization to second model
+
+
+## Overfitting
+
+::: {.callout-quote appearance="simple"}
+"With four parameters I can fit an elephant and with five I can make him wiggle his trunk."
+--- *John von Neumann*
+:::
+
+### Measuring Model Performance
+Model fit can be assessed using the difference between predictions and reality:
+
+* **Prediction Error:** Difference between the model's predictions and *new* data.
+* **Estimation Error:** Difference between the estimated and *true* parameter values.
+* Both types of error are driven by two competing forces, which are heavily dictated by **model complexity**[^1]:
+
+[^1]: Lever J, et al. (2016) Model selection and overfitting. *Nature Methods* 13:703–704.
+
+## The Bias-Variance Tradeoff
+
+
+::: {.columns}
+
+::: {.column width="50%"}
+#### [Bias]{#bias-text style="color: #2ca02c; font-weight: bold;"}
+* Error introduced by using a predictive model that is incapable of capturing the underlying structure.
+* **Underfitting:** Models that are too simple have **high bias** and low variance.
+:::
+
+::: {.column width="50%"}
+#### [Variance]{#variance-text style="color: #d62728; font-weight: bold;"}
+* Error due to excessive sensitivity to small fluctuations and noise in the training data.
+* **Overfitting:** Overly complex models typically have low bias and **high variance**.
+:::
+
+:::
+
+![](img/over-under.png)
+
+
+
