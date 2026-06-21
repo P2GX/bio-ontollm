@@ -563,6 +563,8 @@ The gradient is a product of the error and the magnitude of the input.
 - The Input ($x_j$): How much did this specific feature contribute to that wrong prediction?
 :::
 
+
+
 ## Bias term
 
 -  [HOMEWORK]{.hw-badge}  You will adapt this example  The term for the partial derivative of the bias can be determined analogously to be
@@ -1056,6 +1058,11 @@ Model fit can be assessed using the difference between predictions and reality:
 * **Estimation Error:** Difference between the estimated and *true* parameter values.
 * Both types of error are driven by two competing forces, which are heavily dictated by **model complexity**[^1]:
 
+
+![](./img/elephant.png){fig-align="center" width="25%"}
+
+
+
 [^1]: Lever J, et al. (2016) Model selection and overfitting. *Nature Methods* 13:703–704.
 
 ## The Bias-Variance Tradeoff
@@ -1122,3 +1129,65 @@ Shrinkage (also known as
 
 
 
+## 🧮 The Regularized Cost Function
+We add an L2 penalty term to the standard cross-entropy loss function:
+
+$$
+J(\mathbf{w}) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(a^{(i)}) + (1 - y^{(i)}) \log(1 - a^{(i)}) \right] + \frac{\lambda}{2m} \|\mathbf{w}\|_2^2
+$$ {#eq-l2-logistic}
+
+Where the L2 norm penalty is defined as:
+$$
+\|\mathbf{w}\|_2^2 = \sum_{j=1}^{n} w_j^2
+$$
+
+
+
+::: {.callout-note appearance="simple" icon=false style="background-color: #f8f9fa; border-left: 4px solid #2c3e50;"}
+### 🔑 Key Parameters
+
+* **$\lambda$ (Lambda):** The regularization strength hyperparameter.
+* **If $\lambda = 0$:** Standard logistic regression (potential overfitting).
+* **If $\lambda \to \infty$:** Weights are driven toward zero (underfitting).
+:::
+
+
+
+## Gradient of Log-Loss with L2 Regularization
+
+To train our regularized model, we need the gradient of the objective function $J(\mathbf{w})$, which combines our standard cross-entropy loss $\mathcal{L}$ and the L2 penalty.
+
+Using the sum rule for differentiation, we take the derivative of both parts with respect to weight $w_j$:
+
+$$
+\frac{\partial J(\mathbf{w})}{\partial w_j} = \underbrace{\frac{\partial \mathcal{L}}{\partial w_j}}_{\text{Standard Gradient}} + \underbrace{\frac{\partial}{\partial w_j} \left( \frac{\lambda}{2m} \sum_{k=1}^{n} w_k^2 \right)}_{\text{L2 Derivative}}
+$$ {#eq-l2-gradient-split}
+
+Evaluating the derivative of the penalty term (where $\frac{\partial}{\partial w_j}(w_j^2) = 2w_j$), we get:
+
+$$
+\frac{\partial J(\mathbf{w})}{\partial w_j} = \underbrace{(\hat{y} - y)x_j}_{\text{Prediction Error}} + \underbrace{\frac{\lambda}{m} w_j}_{\text{Weight Penalty}}
+$$ {#eq-l2-gradient-final}
+
+<br>
+
+## 💡 Intuition for Gradient Descent Updates
+
+When we update our weights ($w_j \leftarrow w_j - \alpha \frac{\partial J}{\partial w_j}$)
+ using @eq-l2-gradient-final, the L2 term (i.e., weight penalty) alters the step:
+
+* **The Core Error $(\hat{y} - y)x_j$:** Same as above!
+* **The Weight Penalty $\frac{\lambda}{m} w_j$:**  The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.
+
+<br>
+
+- The Sum of Convex Functions is Convex
+- The above  total cost function $J(\mathbf{w})$ is composed of two distinct components
+$$J(\mathbf{w}) = \mathcal{L}_{\text{cross-entropy}}(\mathbf{w}) + \mathcal{L}_{\text{L2}}(\mathbf{w})$$
+- THe Standard  negative log-likelihood (cross-entropy loss) for logistic regression is  convex.
+- L2 Penalty ($\frac{\lambda}{2m}\|\mathbf{w}\|_2^2$) is a quadratic function ("bowl shaped"), which is strictly convex.
+- Thus logistic regression with L2 penalty has a unique solution
+- We still need to decide which value to use for $\lambda$, which is a [hyperparameter]{style="color: green; font-weight: bold;"}.
+- The optimal value of $\lambda$ can be estimated with $k$-Fold Cross-Validation
+
+-  [HOMEWORK]{.hw-badge} You will receive code for "do-it-yourself" logisitic regression in Python and be askeed to add L2 regularization.

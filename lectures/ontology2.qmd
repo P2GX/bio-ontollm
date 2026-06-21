@@ -1,26 +1,38 @@
 ---
-title: "Gene Ontology and Overrepresentation Analysis"
+title: "Approaches to biomedical knowledge"
 subtitle: "Session #2: Gene Ontology and Overrepresentation Analysis"
 author: "Peter N Robinson"
 jupyter: python3
 format: 
   revealjs:
+    theme: [default] 
+    css: ../style/styles.css              
+    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    slide-number: true
+    show-slide-number: all
     incremental: false 
     html-math-method: mathjax
-    margin: 0.05
+    margin: 0.1
     embed-resources: true
-    css: /style/styles.css
+    transition: fade
+    background-transition: convex
+    controls: true
 ---
-
 
 
 ## Gene Ontology
 
 ::: {.callout-note appearance="simple"}
-The Gene Ontology (GO) is being developed with the goal of providing a set of structured vocabularies for the annotation of genes and their products. Since the publication of the original paper in *Nature Genetics* in 2000, GO has become one of the most widely used and mature bio-ontologies, although it is still very much a work in progress.
+The Gene Ontology (GO) is being developed with the goal of providing a set of 
+structured vocabularies for the annotation of genes and their products. 
+Since the publication of the original paper in *Nature Genetics* in 2000[^1], 
+GO has become one of the most widely used and mature bio-ontologies, although it is still very much a work in progress.
 :::
 
 ![](./img/GOlogo.png){fig-align="center" width="25%"}
+
+
+[^1]: Ashburner M, et al (2000) Gene ontology: tool for the unification of biology. The Gene Ontology Consortium. Nat Genet. 25(1):25-9
 
 ## Why do we need GO?
 
@@ -34,7 +46,8 @@ The Gene Ontology (GO) is being developed with the goal of providing a set of st
 
 ## GO: A Structured Hierarchy
 
-![DNA Metabolism Hierarchy](./img/dnametabolism.png){fig-align="center" height="50%"}
+![](./img/dnametabolism.png){fig-align="center" height="30%"}
+
 
 
 ## DNA Ligation: GO:0006266
@@ -263,10 +276,10 @@ To calculate the number of unique ways to arrange $k$ "heads" and $n-k$ "tails,"
 
 $$
 \binom{n}{k} = \dfrac{n!}{(n-k)! k!}
-$$ {eq-binomial-coefficient}
+$$ {#eq-binomial-coefficient}
 
 ::: {.callout-note}
-This value, $\binom{n}{k}$, represents the number of different ways of choosing $k$ items from a set of $n$ items where the order of selection does not matter.
+This value $\binom{n}{k}$, represents the number of different ways of choosing $k$ items from a set of $n$ items where the order of selection does not matter.
 :::
 
 
@@ -577,7 +590,7 @@ $$
  \choose {n - k}}}{\displaystyle{m \choose n}}.
 $$
 
-##  Interpretation of ``significant'' GO terms
+##  Interpretation of [significant]{style="color: green; font-weight: bold;"} GO terms
 
 * if $P(X_t\geq n_t|H_0) < \alpha$, the null hypothesis is rejected, and we declare the term $t$ to be \textit{significantly overrepresented} in the study set.
 * The biological interpretation of significant overrepresentation is usually taken to be that the term
@@ -593,6 +606,7 @@ set.
   We would now like to analyze whether term $t$ is significantly
   overrepresented in the study set and thus can be interpreted to
   represent an important result of the experiment:
+  
 $$
 P(X_t\geq 3|H_0) = \frac{\displaystyle{5 \choose 3}\displaystyle{{13} \choose {2}}}{\displaystyle{18 
 \choose 5}} + \frac{\displaystyle{5 \choose 4}\displaystyle{{13} \choose {1}}}{\displaystyle{18 

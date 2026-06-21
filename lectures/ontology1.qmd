@@ -1,17 +1,23 @@
 ---
-title: "Ontologies: OBO, RDF, RDFS, and OWL"
-subtitle: "Algorithms and Human Phenotype Ontology"
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #1: Ontologies: OBO, RDF, RDFS, and OWL"
 author: "Peter N Robinson"
 jupyter: python3
 format: 
   revealjs:
+    theme: [default] 
+    css: ../style/styles.css              
+    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    slide-number: true
+    show-slide-number: all
     incremental: false 
     html-math-method: mathjax
-    margin: 0.05
+    margin: 0.1
     embed-resources: true
-    css: /style/styles.css
+    transition: fade
+    background-transition: convex
+    controls: true
 ---
-
 
 ## Bio-Ontologies
 
