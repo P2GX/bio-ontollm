@@ -675,192 +675,6 @@ vertical-align: middle;
 margin-left: 10px;
 }
 </style>
-  <style type="text/css">
-
-:root {
---r-main-font-size: 28px; 
---r-heading-margin: 20px;
-}
-
-.reveal .slides section {
-font-size: 0.85em; 
-}
-
-.reveal h1, .reveal h2, .reveal h3 {
-margin-bottom: 30px;
-font-size: 1.6em; 
-}
-
-.small-table table {
-font-size: 0.55em !important; line-height: 1.1 !important;
-width: 95% !important;
-margin-left: auto;
-margin-right: auto;
-border-collapse: collapse;
-}
-
-.small-table td, .small-table th {
-padding: 4px 8px !important;
-border: 1px solid #ddd !important;
-}
-
-.small-table th {
-background-color: #f2f2f2 !important;
-font-weight: bold !important;
-letter-spacing: 1px;
-}
-
-.small-table td:first-child {
-background-color: #ffffff !important;
-font-weight: bold;
-color: #333;
-}
-
-.pe-result {
-color: #a52a2a;
-font-size: 0.9em;
-font-weight: bold;
-}
-
-.slide-footer {
-position: absolute;
-bottom: 0;
-width: 100%;
-font-size: 0.5em !important;
-color: #666;
-border-top: 1px solid #eee;
-padding-top: 5px;
-}
-
-video {
-width: 90% !important;
-height: auto !important;
-display: block;
-margin: 0 auto;
-border: 1px solid #ddd;
-border-radius: 8px;
-box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.callout {
-font-size: 0.75em !important; 
-border-left: 5px solid #1f77b4 !important; 
-background-color: #f8f9fa;
-margin: 10px 0;
-}
-.callout-title {
-font-weight: bold;
-text-transform: uppercase;
-color: #1f77b4;
-}
-
-
-.reveal .footer {
-display: flex !important;
-justify-content: space-between; 
-align-items: center;
-width: 100%;
-padding: 0 20px;
-font-size: 0.4em; 
-}
-
-.footer-logo {
-height: 35px !important; margin-left: 50px !important;
-margin-right: auto; 
-vertical-align: middle;
-}
-
-.reveal .slide-number {
-bottom: 8px !important;
-right: 20px !important;
-background: transparent !important;
-font-size: 0.4em !important;
-}
-
-.hl-container {
-position: relative;
-display: inline-block;
-}
-.hl-box {
-position: absolute;
-border: 4px solid #1D9A73; 
-border-radius: 8px;
-box-shadow: 0 0 15px #1D9A73;
-pointer-events: none; 
-z-index: 10;
-
-animation: pulse 2s infinite;
-}
-@keyframes pulse {
-0% { opacity: 0.6; }
-50% { opacity: 1; }
-100% { opacity: 0.6; }
-}
-
-.toc-list {
-list-style: none !important;
-margin-left: 0 !important;
-font-family: 'Arial', sans-serif;
-}
-.toc-item {
-font-size: 1.2em;
-color: #ccc; 
-margin-bottom: 20px;
-padding-left: 15px;
-border-left: 5px solid transparent;
-transition: all 0.4s ease;
-}
-.toc-active {
-color: #1D9A73 !important; 
-border-left: 5px solid #1D9A73 !important;
-font-weight: bold;
-transform: translateX(20px); 
-}
-.dimmed {
-opacity: 0.3;
-filter: grayscale(100%);
-}
-
-.neon-todo {
-color: #ff0000;
-font-weight: bold;
-text-shadow: 0 0 2px #ff0000, 0 0 4px #ff0000;
-animation: pulse-red 1.5s infinite alternate;
-}
-@keyframes pulse-red {
-from {
-text-shadow: 0 0 2px #ff0000, 0 0 5px #ff0000;
-transform: scale(1);
-}
-to {
-text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
-transform: scale(1.02);
-}
-}
-.tiny-credit {
-font-size: 0.4em; 
-color: #777;
-line-height: 1.2;
-display: block;
-margin-top: 5px;
-}
-
-.tiny-credit a {
-color: inherit;
-text-decoration: underline;
-}
-.hw-badge {
-background-color: #6f42c1; 
-color: white;
-padding: 4px 8px;
-text-align: center;
-border-radius: 5px;
-font-weight: bold;
-font-size: 0.8em;
-vertical-align: middle;
-margin-left: 10px;
-}
-</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1390,14 +1204,14 @@ Peter N Robinson
 </div>
 </div>
 <ul>
-<li>Currently, the best appears appears to be: “Some of them”</li>
-<li>This course enables students to master two essential frameworks for managing human knowledge in bioinformatics: <strong>Ontologies</strong> and <strong>Language Models</strong></li>
-<li>We will go into detail and implement simplfiied versions of some of the algorithms in Python</li>
-<li>Prerequisites: Some knowledge of probability, calculate, algorithms (We will explain everything as we go along)</li>
+<li>Currently, the best answer appears to be: <span style="color: green; font-weight: bold;">“Some of them, but it will make others more productive”</span>.</li>
+<li>This course enables students to master two essential frameworks for managing human knowledge in bioinformatics: <strong>Ontologies</strong> and <strong>Language Models</strong>.</li>
+<li>We will go into detail and implement simplified versions of some of the algorithms in Python.</li>
+<li>Prerequisites: Some knowledge of probability, calculus, and algorithms (We will explain everything as we go along).</li>
 </ul>
 </section>
-<section id="course-overview-1" class="slide level2">
-<h2>Course Overview</h2>
+<section id="course-logistics" class="slide level2">
+<h2>Course Logistics</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
 <p>This course is part of the <a href="https://link-to-fu.de">Master Curriculum</a> in Bioinformatics.</p>
@@ -1413,24 +1227,58 @@ Peter N Robinson
 <section id="topics" class="slide level2">
 <h2>Topics</h2>
 <p>The course explores the synergy between two paradigms:</p>
-<div class="grid">
-<section id="ontologies" class="g-col-6">
-<h3>🕸️ Ontologies</h3>
-<p><em>Structured Knowledge</em> - Formal Semantics (OWL/RDF) - Logical Consistency - Interoperability (OBO)</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="ontologies">🕸️ Ontologies</h3>
+<p><em>Structured Knowledge</em></p>
+<ul>
+<li>Formal Semantics (OWL/RDF)</li>
+<li>Logical Consistency</li>
+<li>Interoperability (OBO)</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<h3 id="llms">🧠 LLMs</h3>
+<p><em>Probabilistic Knowledge</em></p>
+<ul>
+<li>Pattern Recognition</li>
+<li>Natural Language Interface</li>
+<li>Reasoning via Inference</li>
+</ul>
+</div></div>
 </section>
-<section id="llms" class="g-col-6">
-<h3>🧠 LLMs</h3>
-<p><em>Probabilistic Knowledge</em> - Pattern Recognition - Natural Language Interface - Reasoning via Inference</p>
-</section>
+<section id="is-ai-ruining-our-skills" class="slide level2">
+<h2>Is AI ruining our skills?</h2>
+<div class="callout callout-note callout-style-simple">
+<div class="callout-body">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
+<div class="callout-content">
+<p>There is an increasing amount of evidence that reliance on artificial-intelligence tools degrades the abilities of software engineers</p>
+</div>
+</div>
+</div>
+<h3 id="advice">Advice</h3>
+<ul>
+<li>Do not use LLMs to do homework assignments!</li>
+<li>It is probably OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.</li>
+<li>Vibe coding is not to be recommended but LLMs can be quite helpful with targeted questions (e.g., what CSS class makes a rounded box that looks like an orange parakeet?) or to get advice on how to optimize code (e.g., using iterators instead of traditional forloops in Languages such as Rust and Java).</li>
+</ul>
+<blockquote>
+<p><strong>Further Reading:</strong></p>
+<ul>
+<li>Pearson, H. (2025). <a href="https://www.nature.com/articles/d41586-025-00292-z">Are the Internet and AI affecting our memory? What the science says</a>. <em>Nature</em>.</li>
+<li>Lenharo, M. (2026). <a href="https://www.nature.com/articles/d41586-026-01947-1">Is AI ruining our skills? Early results are in — and they’re not good</a>. <em>Nature</em>.</li>
+</ul>
+</blockquote>
 
 
 </section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
-<p><img role="img" src="images/fu_berlin_logo.png" class="slide-logo"></p>
+<p><img role="img" src="../images/fu_berlin_logo.png" class="slide-logo"></p>
 <div class="footer footer-default">
-<p>bioonto-llm</p>
+<p><span style="margin-left: 3rem;"><a href="../index.html">🏠 Home</a> | bioonto-llm</span></p>
 </div>
 </div></div>
 

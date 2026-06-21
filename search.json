@@ -4,7 +4,7 @@
     "href": "lectures/overview.html#course-overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Course Overview",
-    "text": "Course Overview\nThis course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nWill LLMs replace computer scientists, software developers, and bioinformaticians?\n\n\n\n\nCurrently, the best appears appears to be: “Some of them”\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models\nWe will go into detail and implement simplfiied versions of some of the algorithms in Python\nPrerequisites: Some knowledge of probability, calculate, algorithms (We will explain everything as we go along)",
+    "text": "Course Overview\nThis course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nWill LLMs replace computer scientists, software developers, and bioinformaticians?\n\n\n\n\nCurrently, the best answer appears to be: “Some of them, but it will make others more productive”.\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models.\nWe will go into detail and implement simplified versions of some of the algorithms in Python.\nPrerequisites: Some knowledge of probability, calculus, and algorithms (We will explain everything as we go along).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -12,11 +12,11 @@
     ]
   },
   {
-    "objectID": "lectures/overview.html#course-overview-1",
-    "href": "lectures/overview.html#course-overview-1",
+    "objectID": "lectures/overview.html#course-logistics",
+    "href": "lectures/overview.html#course-logistics",
     "title": "Approaches to biomedical knowledge",
-    "section": "Course Overview",
-    "text": "Course Overview\n\n\nThis course is part of the Master Curriculum in Bioinformatics.\n\nTarget: Graduate Students\nFocus: Knowledge representation\nUniversity: Free University Berlin",
+    "section": "Course Logistics",
+    "text": "Course Logistics\n\n\nThis course is part of the Master Curriculum in Bioinformatics.\n\nTarget: Graduate Students\nFocus: Knowledge representation\nUniversity: Free University Berlin",
     "crumbs": [
       "Home",
       "Lectures",
@@ -28,7 +28,19 @@
     "href": "lectures/overview.html#topics",
     "title": "Approaches to biomedical knowledge",
     "section": "Topics",
-    "text": "Topics\nThe course explores the synergy between two paradigms:\n\n\n🕸️ Ontologies\nStructured Knowledge - Formal Semantics (OWL/RDF) - Logical Consistency - Interoperability (OBO)\n\n\n🧠 LLMs\nProbabilistic Knowledge - Pattern Recognition - Natural Language Interface - Reasoning via Inference",
+    "text": "Topics\nThe course explores the synergy between two paradigms:\n\n\n🕸️ Ontologies\nStructured Knowledge\n\nFormal Semantics (OWL/RDF)\nLogical Consistency\nInteroperability (OBO)\n\n\n🧠 LLMs\nProbabilistic Knowledge\n\nPattern Recognition\nNatural Language Interface\nReasoning via Inference",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/overview.html#is-ai-ruining-our-skills",
+    "href": "lectures/overview.html#is-ai-ruining-our-skills",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Is AI ruining our skills?",
+    "text": "Is AI ruining our skills?\n\n\n\n\n\n\nThere is an increasing amount of evidence that reliance on artificial-intelligence tools degrades the abilities of software engineers\n\n\n\nAdvice\n\nDo not use LLMs to do homework assignments!\nIt is probably OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.\nVibe coding is not to be recommended but LLMs can be quite helpful with targeted questions (e.g., what CSS class makes a rounded box that looks like an orange parakeet?) or to get advice on how to optimize code (e.g., using iterators instead of traditional forloops in Languages such as Rust and Java).\n\n\nFurther Reading:\n\nPearson, H. (2025). Are the Internet and AI affecting our memory? What the science says. Nature.\nLenharo, M. (2026). Is AI ruining our skills? Early results are in — and they’re not good. Nature.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -504,11 +516,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology1.html#obo",
-    "href": "lectures/ontology1.html#obo",
+    "objectID": "lectures/ontology1.html#obo-open-bio-ontologies",
+    "href": "lectures/ontology1.html#obo-open-bio-ontologies",
     "title": "Ontologies: OBO, RDF, RDFS, and OWL",
-    "section": "OBO",
-    "text": "OBO\n\n\n\nOpen Bio-Ontology (OBO)\nThe OBO Foundry is a collective of ontology developers committed to collaboration and adherence to shared principles.\nDevelop a family of interoperable ontologies that are both logically well-formed and scientifically accurate.\nOpen use, collaborative development, non-overlapping content, and common syntax based on models like the Gene Ontology (GO).\n\n\n\n\nhttp://www.obofoundry.org/",
+    "section": "OBO: Open Bio-Ontologies",
+    "text": "OBO: Open Bio-Ontologies\n\n\n\nOpen Bio-Ontology (OBO)\nThe OBO Foundry is a collective of ontology developers committed to collaboration and adherence to shared principles.\nDevelop a family of interoperable ontologies that are both logically well-formed and scientifically accurate.\nOpen use, collaborative development, non-overlapping content, and common syntax based on models like the Gene Ontology (GO).\n\n\n\n\nhttp://www.obofoundry.org/",
     "crumbs": [
       "Home",
       "Lectures",
@@ -556,7 +568,7 @@
     "href": "lectures/ontology1.html#rdf-serialization",
     "title": "Ontologies: OBO, RDF, RDFS, and OWL",
     "section": "RDF: Serialization",
-    "text": "RDF: Serialization\n\n\n\n\n\n\nRDF is an abstract data model. The process of representing it as a computer file is called serialization.\n\n\n\n\nMany RDF files are written in RDF/XML.\nThe following example is modified from an RDF file created by the Uniprot consortium.",
+    "text": "RDF: Serialization\n\n\n\n\n\n\nRDF is an abstract data model. The process of representing it as a computer file is called serialization.\n\n\n\n\nMany RDF files are written in RDF/XML.\nThe following example is modified from an RDF file created by the Uniprot consortium.\nprocollagen-proline 4-dioxygenase\nEnzyme Commission EC 1.14.11.2",
     "crumbs": [
       "Home",
       "Lectures",
@@ -604,7 +616,7 @@
     "href": "lectures/ontology1.html#rdf-structural-metadata-what-something-is-vs-descriptive-data-what-something-is-called-or-does.",
     "title": "Ontologies: OBO, RDF, RDFS, and OWL",
     "section": "RDF: structural metadata (what something is) vs descriptive data (what something is called or does).",
-    "text": "RDF: structural metadata (what something is) vs descriptive data (what something is called or does).\n&lt;?xml version='1.0' encoding='UTF-8'?&gt;\n&lt;rdf:RDF xmlns=\"http://purl.uniprot.org/core/\" \n         xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"&gt;\n \n  &lt;rdf:Description \n       rdf:about=\"http://purl.uniprot.org/enzyme/1.14.11.2\"&gt;\n    &lt;rdf:type rdf:resource=\"http://purl.uniprot.org/core/Enzyme\"/&gt;\n    &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n    &lt;name&gt;Procollagen-proline 4-dioxygenase&lt;/name&gt;\n    &lt;name&gt;Prolyl 4-hydroxylase&lt;/name&gt;\n    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2)\n              = trans-4-hydroxy-L-proline-[procollagen] + \n              succinate + CO(2).\n    &lt;/activity&gt;\n    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n    &lt;cofactor&gt;L-ascorbic acid&lt;/cofactor&gt;\n  &lt;/rdf:Description&gt;\n&lt;/rdf:RDF&gt;\n\nLine 7 contains an rdf:type predicate stating that :1.14.11.2 is an instance of Enzyme\nLine 8 contains a user-defined predicate stating that a name of :1.14.11.2 is Procollagen-proline dioxygenase",
+    "text": "RDF: structural metadata (what something is) vs descriptive data (what something is called or does).\n&lt;?xml version='1.0' encoding='UTF-8'?&gt;\n&lt;rdf:RDF xmlns=\"http://purl.uniprot.org/core/\" \n         xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"&gt;\n \n  &lt;rdf:Description \n       rdf:about=\"http://purl.uniprot.org/enzyme/1.14.11.2\"&gt;\n    &lt;rdf:type rdf:resource=\"http://purl.uniprot.org/core/Enzyme\"/&gt;\n    &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n    &lt;name&gt;Procollagen-proline 4-dioxygenase&lt;/name&gt;\n    &lt;name&gt;Prolyl 4-hydroxylase&lt;/name&gt;\n    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2)\n              = trans-4-hydroxy-L-proline-[procollagen] + \n              succinate + CO(2).\n    &lt;/activity&gt;\n    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n    &lt;cofactor&gt;L-ascorbic acid&lt;/cofactor&gt;\n  &lt;/rdf:Description&gt;\n&lt;/rdf:RDF&gt;\n\nLine 8 contains a user-defined predicate stating that a name of :1.14.11.2 is Procollagen-proline dioxygenase",
     "crumbs": [
       "Home",
       "Lectures",
@@ -736,7 +748,7 @@
     "href": "lectures/ontology1.html#rdfs-is-a-inference-rule-1",
     "title": "Ontologies: OBO, RDF, RDFS, and OWL",
     "section": "RDFS: is a (Inference Rule 1)",
-    "text": "RDFS: is a (Inference Rule 1)\nOne of the RDFS inference rules states that if there are asserted triples of the form:\nX rdfs:subClassOf Y .\nb rdf:type X .\nthen the following triple can be inferred:\nb rdf:type Y .\n\nThus, we can infer that Mickey is an instance of the class !",
+    "text": "RDFS: is a (Inference Rule 1)\nOne of the RDFS inference rules states that if there are asserted triples of the form:\nX rdfs:subClassOf Y .\nb rdf:type X .\nthen the following triple can be inferred:\nb rdf:type Y .\n\nThus, if we know that Mickey is an instance of we can infer that Mickey is an instance of the class !",
     "crumbs": [
       "Home",
       "Lectures",
@@ -868,7 +880,7 @@
     "href": "lectures/ontology1.html#rdfs-intersections-and-unions-union",
     "title": "Ontologies: OBO, RDF, RDFS, and OWL",
     "section": "RDFS: Intersections and Unions (Union)",
-    "text": "RDFS: Intersections and Unions (Union)\n\n\n\n\n\n\nIt is also possible to express something similar to set union in RDFS.\n\n\n\nIf we assert the following triples:\nX rdfs:subClassOf Z .\nY rdfs:subClassOf Z .\nThen, if either b rdf:type X . or b rdf:type Y . is asserted, it can be inferred that:\nb rdf:type Z .",
+    "text": "RDFS: Intersections and Unions (Union)\n\n\n\n\n\n\nIt is also possible to express something similar to set union in RDFS.\n\n\n\nIf we assert the following triples:\nX rdfs:subClassOf Z .\nY rdfs:subClassOf Z .\nThen, if either of the two following statements are asserted\nb rdf:type X .\nb rdf:type Y .\n…then, it can be inferred that:\nb rdf:type Z .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -952,19 +964,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-property-restriction-value-constraints",
     "title": "Ontologies: OBO, RDF, RDFS, and OWL",
     "section": "Classes in OWL: Property Restriction (Value Constraints)",
-    "text": "Classes in OWL: Property Restriction (Value Constraints)\nOWL distinguishes two kinds of property restrictions: Value Constraints and Cardinality Constraints. A value restriction on some property \\(P\\) has the following general form:\n&lt;rdfs:subClassOf&gt;\n  &lt;owl:Restriction&gt;\n    &lt;owl:onProperty rdf:resource=\"P\" /&gt;\n    &lt;owl:allValuesFrom rdf:resource=\"#V\"/&gt;\n  &lt;/owl:Restriction&gt;\n&lt;/rdfs:subClassOf&gt;",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology1.html#classes-in-owl-property-restriction-universal",
-    "href": "lectures/ontology1.html#classes-in-owl-property-restriction-universal",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
-    "section": "Classes in OWL: Property Restriction (Universal)",
-    "text": "Classes in OWL: Property Restriction (Universal)\n\n\n\n\n\n\nowl:allValuesFrom states that for each instance of the class being described, every value for \\(P\\) must fulfill the constraint.\n\n\n\n\nConfusing Caveat: owl:allValuesFrom does not necessarily mean that an instance of the class must have the property \\(P\\). It merely states that if an instance does have \\(P\\), then the value must be from class \\(V\\).\nThe Universal Quantifier: This is analogous to the logic of \\(\\forall\\) in predicate calculus.\nFormal Logic: Recall that the formula \\((\\forall x) P(x)\\) essentially means “for all \\(x\\), if \\(x\\) exists in this context, then it must satisfy \\(P\\).”",
+    "text": "Classes in OWL: Property Restriction (Value Constraints)\nOWL distinguishes two kinds of property restrictions: Value Constraints and Cardinality Constraints. A value restriction \\(V\\) on some property \\(P\\) has the following general form:\n&lt;rdfs:subClassOf&gt;\n  &lt;owl:Restriction&gt;\n    &lt;owl:onProperty rdf:resource=\"P\" /&gt;\n    &lt;owl:allValuesFrom rdf:resource=\"#V\"/&gt;\n  &lt;/owl:Restriction&gt;\n&lt;/rdfs:subClassOf&gt;\n\n\n\n\n\n\n\nowl:allValuesFrom states that for each instance of the class being described, every value for \\(P\\) must fulfill the constraint.\n\n\n\n\nConfusing Caveat: owl:allValuesFrom does not necessarily mean that an instance of the class must have the property \\(P\\). It merely states that if an instance does have \\(P\\), then the value must be from class \\(V\\).\nThe Universal Quantifier: This is analogous to the logic of \\(\\forall\\) in predicate calculus.\nFormal Logic: Recall that the formula \\((\\forall x) P(x)\\) essentially means “for all \\(x\\), if \\(x\\) exists in this context, then it must satisfy \\(P\\).”1\n\nAccording to this logic it is true that “All Martians are green” (because there are no Martians!)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1036,7 +1036,19 @@
     "href": "lectures/ontology1.html#owl-conclusion-and-next-steps",
     "title": "Ontologies: OBO, RDF, RDFS, and OWL",
     "section": "OWL: Conclusion and Next Steps",
-    "text": "OWL: Conclusion and Next Steps\n\nThe Tip of the Iceberg: We have barely scratched the surface of OWL’s logical capabilities in this lecture.\nHands-on Learning: You will create your own ontology in the upcoming Exercise, where you will have the chance to explore these constructs (and more) in a practical setting.\nOfficial Resources: The W3C Website provides comprehensive documentation and technical specifications for the OWL family of languages.\n\n\n\n\nSemantic Web Layer Cake",
+    "text": "OWL: Conclusion and Next Steps\n\nThe Tip of the Iceberg: We have barely scratched the surface of OWL’s logical capabilities in this lecture.\nHands-on Learning: You will create your own ontology in the upcoming Exercise, where you will have the chance to explore these constructs (and more) in a practical setting.\nOfficial Resources: The W3C Website provides comprehensive documentation and technical specifications for the OWL family of languages.\n\n\nSemantic Web Layer Cake",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Ontologies: OBO, RDF, RDFS, and OWL"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#homework",
+    "href": "lectures/ontology1.html#homework",
+    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "section": "Homework",
+    "text": "Homework\nHOMEWORK You will create an Indian food ontology and infer whether certain dishes are vegetarian or non-veg.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1048,7 +1060,7 @@
     "href": "lectures/logreg.html#overview-logistic-regression",
     "title": "Logistic regression",
     "section": "Overview: Logistic regression",
-    "text": "Overview: Logistic regression\n\n\n\n\n\n\n\nGame plan\n\n\nLogistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks.\n\n\n\n\n\n\nPart 1: Introduction\n\nComponents of logistic regression\nSentiment analysis\n\n\n\n\nPart 2: Sigmoid function\n\nDefinition\nFirst derivative\n\n\n\n\nPart 3: Gradient descent\n\nLearning\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits",
+    "text": "Overview: Logistic regression\n\n\n\n\n\n\n\nGame plan\n\n\nLogistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks.\n\n\n\n\n\n\nPart 1: Introduction\n\nComponents of logistic regression\nSentiment analysis\n\n\n\n\nPart 2: Sigmoid function\n\nDefinition\nFirst derivative\n\n\n\n\nPart 3: Gradient descent\n\nLearning\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation\n\nPart 5: Overfitting",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1584,11 +1596,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#overfitting-1",
-    "href": "lectures/logreg.html#overfitting-1",
+    "objectID": "lectures/logreg.html#part-5",
+    "href": "lectures/logreg.html#part-5",
     "title": "Logistic regression",
-    "section": "Overfitting",
-    "text": "Overfitting\n\n“With four parameters I can fit an elephant and with five I can make him wiggle his trunk.” — John von Neumann\n\nMeasuring Model Performance\nModel fit can be assessed using the difference between predictions and reality:\n\nPrediction Error: Difference between the model’s predictions and new data.\nEstimation Error: Difference between the estimated and true parameter values.\nBoth types of error are driven by two competing forces, which are heavily dictated by model complexity1:\n\nLever J, et al. (2016) Model selection and overfitting. Nature Methods 13:703–704.",
+    "section": "Part 5: Overfitting",
+    "text": "Part 5: Overfitting\n\n“With four parameters I can fit an elephant and with five I can make him wiggle his trunk.” — John von Neumann\n\nMeasuring Model Performance\nModel fit can be assessed using the difference between predictions and reality:\n\nPrediction Error: Difference between the model’s predictions and new data.\nEstimation Error: Difference between the estimated and true parameter values.\nBoth types of error are driven by two competing forces, which are heavily dictated by model complexity1:\n\nLever J, et al. (2016) Model selection and overfitting. Nature Methods 13:703–704.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1608,11 +1620,23 @@
     ]
   },
   {
+    "objectID": "lectures/logreg.html#regularization",
+    "href": "lectures/logreg.html#regularization",
+    "title": "Logistic regression",
+    "section": "Regularization",
+    "text": "Regularization\n\na technique used to enhance the generalization ability of machine learning models by adding a penalty term to the loss function.\n\n\nWe will focus on L2 regularization here (but see also Lasso and Elastic Net)\nFor simplicity, let’s focus for now on linear regression with a standard linear model1:\n\n\\[\nY = \\beta_0 + \\beta_1X_1 + \\ldots + \\beta_pX_p\n\\]\n\nIf the true relationship between the response and the predictors is approximately linear, the least squares estimates will have low bias.\nIf \\(n \\gg p\\) — that is, if \\(n\\), the number of observations, is much larger than \\(p\\), the number of variables—then the least squares estimates tend to also have low variance, and hence will perform well on test observations.\nif \\(n\\) is not much larger than \\(p\\), then there can be a lot of variability in the least squares fit, resulting in overfitting and consequently poor predictions on future observations not used in model training.\nIf \\(p&gt;n\\), here is no longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error on the training data, but typically very poor test set performance due to extremely high variance\n\nMaterial adapted from James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (1st ed.) [PDF]. Springer.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Approaches to biomedical knowledge",
     "section": "",
-    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTM (to do)\nLecture 8: Embeddings and Word2Vec (partially finisheed)\nLecture 9: Encoders\nLecture 10: Decoder architecture (to do) *. Lecture 11: BERT and Sentence BERT (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
+    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTM (to do)\nLecture 8: Embeddings and Word2Vec (partially finisheed)\nLecture 9: Encoders\nLecture 10: BERT and Sentence BERT (to do)\nLecture 11: Decoder architecture (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
   },
   {
     "objectID": "lectures/encoder.html#overview-lecture-1",
