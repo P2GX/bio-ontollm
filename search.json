@@ -1056,623 +1056,60 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#overview-logistic-regression",
-    "href": "lectures/logreg.html#overview-logistic-regression",
+    "objectID": "lectures/lstm.html#overview-rnns-and-lstms",
+    "href": "lectures/lstm.html#overview-rnns-and-lstms",
     "title": "Approaches to biomedical knowledge",
-    "section": "Overview: Logistic regression",
-    "text": "Overview: Logistic regression\n\n\n\n\n\n\n\nGame plan\n\n\nLogistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks.\n\n\n\n\n\n\nPart 1: Introduction\n\nComponents of logistic regression\nSentiment analysis\n\n\n\n\nPart 2: Sigmoid function\n\nDefinition\nFirst derivative\n\n\n\n\nPart 3: Gradient descent\n\nLearning\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation\n\nPart 5: Overfitting",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
+    "section": "Overview: RNNs and LSTMs",
+    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\n\nPart 1: Review\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Architecture and Backprop\n\nChain rule & Jacobians\nVectorized derivatives\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits"
   },
   {
-    "objectID": "lectures/logreg.html#part-1",
-    "href": "lectures/logreg.html#part-1",
+    "objectID": "lectures/lstm.html#part-1",
+    "href": "lectures/lstm.html#part-1",
     "title": "Approaches to biomedical knowledge",
-    "section": "Logistic Regression",
-    "text": "Logistic Regression\nLogistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.\n\nEmail analysis (Is an email spam or not?)\nSentiment analysis (is a movie review positive or negative?)\nMedical diagnostics (is a given diagnosis present or absent?)\n\n\n\n\n\n\n\nWe will go over the algorithm in detail, because it is an excellent preparation for understanding neural networks.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
+    "section": "RNNs: Overview",
+    "text": "RNNs: Overview\n\n\n\n\n\n\n\nRecurrent Neural Networks\n\n\nUnlike standard feed-forward networks, Recurrent Neural Networks (RNNs) introduce a hidden state (\\(\\mathbf{h}_t\\)) that acts as a “memory,” carrying information from time step \\(t-1\\) to time step \\(t\\).\n\npossess both current and past features of the temporal sequences\nadapt to the long-term historical changes in the data\nstore the past information to solve context-dependent tasks\nmake predictions simultaneously with existing observations.\n\n\n\n\n\n\n\n\n\nMienye ID et al (2024) Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517."
   },
   {
-    "objectID": "lectures/logreg.html#the-five-components-of-logistic-regression",
-    "href": "lectures/logreg.html#the-five-components-of-logistic-regression",
+    "objectID": "lectures/lstm.html#rnn-architecture-hidden-layer",
+    "href": "lectures/lstm.html#rnn-architecture-hidden-layer",
     "title": "Approaches to biomedical knowledge",
-    "section": "The five components of Logistic Regression",
-    "text": "The five components of Logistic Regression\n\n\n\n\n\n\n1. Feature Representation\n\n\nFor each input \\(x\\), we have a vector: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\)\n\n\n\n\n\n\n\n\n\n2. Classification Function\n\n\nComputes the estimated class using the Sigmoid function: \\(\\sigma(z) = \\frac{1}{1 + e^{-z}}\\)\n\n\n\n\n\n\n\n\n\n3. Objective Function\n\n\nA Loss function (Cross-Entropy) to measure how well the model is performing ( cross-entropy loss function).\n\n\n\n\n\n\n\n\n\n4. Optimization\n\n\nGradient Descent: The method used to minimize the loss and find the best weights.\n\n\n\n\n\n\n\n\n\n5. Prediction\n\n\nThe learned model can be used to classify new data points.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
+    "section": "RNN Architecture: hidden layer",
+    "text": "RNN Architecture: hidden layer\n\nRNNs are designed to process sequential data by maintaining a hidden state that captures information about previous inputs.\n\nThe basic architecture consists of an input layer, a hidden layer, and an output layer.\n\nUnlike feedforward neural networks, RNNs have recurrent connections, allowing information to cycle within the networks. At each time step, \\(t\\), the RNN takes an input vector, \\(x_t\\) , and updates its hidden state, \\(h_t\\) using the following equation:\n\n\\[\n\\mathbf{h}_i = \\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{b}_h)\n\\tag{1}\\]\nwhere\n\n\\(\\mathbf{x}_t\\): Input at time \\(t\\)\n\\(\\mathbf{W}_{xh}\\): is the weight matrix between the input and hidden layer\n\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection\n\\(\\mathbf{b}_h\\): the bias vector\n\\(\\sigma_h\\): the activation function, typically the hyperbolic tangent function (tanh) or the rectified linear unit"
   },
   {
-    "objectID": "lectures/logreg.html#logreg-features",
-    "href": "lectures/logreg.html#logreg-features",
+    "objectID": "lectures/lstm.html#rnn-architecture-output",
+    "href": "lectures/lstm.html#rnn-architecture-output",
     "title": "Approaches to biomedical knowledge",
-    "section": "LogReg: Features",
-    "text": "LogReg: Features\nFor each input \\(x\\), we create a vector of features: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\).\nThere are many different ways of generating a feature vector\n\nRaw numerical data: If the input data is numerical with \\(n\\) dimensions, each of the dimensions can act as a feature\nPolynomial & interaction features: We can add interaction terms (\\(x_ix_j\\)) or polynomial features (e.g., \\(x_i^7\\)) if this makes sense for the classification task\nImages: Flatten pixel values (e.g., an \\(8\\times 8\\) image would have 64 features)\nText to vector: e.g., count word occurrences across a vocabulary\nDomain-specific feature engineering\n\n\n\n\n\n\n\n\nExample\n\n\nIn the Python exercise for this lecture, we will generate two dimensional points with overlapping Gaussian distributions, but in general, the features can also be created (e.g., by counting positive and negative words for sentiment analysis).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
+    "section": "RNN Architecture: output",
+    "text": "RNN Architecture: output\nThe output at each time step, \\(t\\), is given by the following: \\[\n\\mathbf{y}_i = \\sigma_y(\\mathbf{W}_{hy}\\mathbf{h}_t +  \\mathbf{b}_y)\n\\tag{2}\\]\nwhere\n\n\\(\\mathbf{W}_{hy}\\): the weight matrix between the hidden and output layers,\n\\(\\mathbf{b}_y\\): the bias vector,\n\\(\\sigma_y\\) the activation function for the output layer."
   },
   {
-    "objectID": "lectures/logreg.html#weights-and-bias",
-    "href": "lectures/logreg.html#weights-and-bias",
+    "objectID": "lectures/lstm.html#recursivity",
+    "href": "lectures/lstm.html#recursivity",
     "title": "Approaches to biomedical knowledge",
-    "section": "Weights and bias",
-    "text": "Weights and bias\n\n\n\n\n\n\n\nWeights\n\n\nLogReg learns a vector of a vector of weights and a bias term to solve the classification task\n\n\n\n\n\nLinear combination of input features\nEach data point is multiplied by weights and a bias is added\nHere, \\(x_{i,j}\\) refers to the \\(j^{th}\\) component of the \\(i^{th}\\) data point. \\[\nz_i = \\sum_{j=1}^n w_ix_{i,j} + b\n\\tag{1}\\]\n\nEquation 1 can be represented identically using dot product notation (where the bold font indicates a vector of weights (\\(\\mathbf{w}\\)) and inputs (\\(\\mathbf{x}\\)))\n\\[\nz_i = \\mathbf{w}\\cdot \\mathbf{x}_i + b\n\\]\nThis is identical to the sums we will see at individual neurons in neural networks",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
+    "section": "Recursivity",
+    "text": "Recursivity\n\nRNNs can be portrayed as (equivalent) folded or unfolded networks\n\n\n\n\n\n\n\n\n\n\n\n\nThe hidden layer from the previous time step provides a form of memory, or context, that encodes earlier processing and informs the decisions to be made at later points in time.\nThis approach does not impose a fixed-length limit on this prior context; the context embodied in the previous hidden layer can include information extending back to the beginning of the sequence.\n\n\n\nAdapted from Jurafsky D and Martin JH (2026) Speech and Language Processing (3rd ed. draft)\n\n::: ::::"
   },
   {
-    "objectID": "lectures/logreg.html#part-2",
-    "href": "lectures/logreg.html#part-2",
+    "objectID": "lectures/lstm.html#activation-functions",
+    "href": "lectures/lstm.html#activation-functions",
     "title": "Approaches to biomedical knowledge",
-    "section": "Sigmoid",
-    "text": "Sigmoid\n\n\n\n\n\n\n\nSigmoid function\n\n\nTo create a probability, we transform z through the sigmoid function, \\(\\sigma(z)\\)\n\n\n\n\n\nThe sigmoid \\(\\sigma(z)\\) takes a real-valued number \\(z\\in [-\\infty, \\infty]\\) and effectively squashes it to lie in the range \\([0,1]\\): \\(0&lt;\\sigma(z) &lt; 1\\).\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\n\n\n\nInterpretation: \\(P(y=1 | x, w, b)\\), i.e., a probability for classification\n\\(\\sigma(z) &gt; 0.5 \\Leftrightarrow z &gt; 0\\)\ni.e., whenever \\(z = \\mathrm{w}\\cdot \\mathrm{x} + b\\) is over zero, the model predicts the positive class (\\(\\hat{y}=1\\)).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
+    "section": "Activation Functions",
+    "text": "Activation Functions\n\nAs we discussed in previous lectures, the activation function plays a crucial role by introducing non-linearity that enables the network to learn and represent complex patterns.\nOne commonly used activation function in RNNs is the hyperbolic tangent (tanh).\n\n\n\ntanh\nThe tanh function squashes any real-valued input down to a symmetric, zero-centered range of \\([-1, 1]\\).\n\\[\n\\tanh(z) = \\frac{e^z - e^{-z}}{e^z + e^{-z}}\n\\tag{3}\\]"
   },
   {
-    "objectID": "lectures/logreg.html#sigmoid-a-convenient-identity",
-    "href": "lectures/logreg.html#sigmoid-a-convenient-identity",
+    "objectID": "lectures/lstm.html#rnn-architecture",
+    "href": "lectures/lstm.html#rnn-architecture",
     "title": "Approaches to biomedical knowledge",
-    "section": "Sigmoid: A convenient identity",
-    "text": "Sigmoid: A convenient identity\n\n\\(1−\\sigma(x) = \\sigma(−x)\\)\n\n\\[\n\\begin{align*}\n1−\\sigma(x) &=& 1- \\frac{1}{1+e^{-x}}\\\\\n&=& \\frac{1+e^{-x} - 1}{1+e^{-x}} \\\\\n&=& \\frac{e^{-x}}{1+e^{-x}} \\cdot \\frac{e^{x}}{e^{x}}\\\\\n&=& \\frac{1}{1+e^{x}} \\\\\n&=& \\sigma(-x) \\\\\n\\end{align*}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
+    "section": "RNN Architecture",
+    "text": "RNN Architecture\n\nCompared to ANNs, the significant change for RNNs is the new set of weights that connect the hidden layer from the previous time step to the current hidden layer (\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection ).\n\\(\\mathbf{W}_{hh}\\) determines how the network makes use of past context in calculating the output for the current input.\nThese weights are also trained by backpropagation\nThe activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function for categorical classfication)."
   },
   {
-    "objectID": "lectures/logreg.html#logit",
-    "href": "lectures/logreg.html#logit",
+    "objectID": "lectures/lstm.html#the-rnn-forward-pass-algorithm",
+    "href": "lectures/lstm.html#the-rnn-forward-pass-algorithm",
     "title": "Approaches to biomedical knowledge",
-    "section": "Logit",
-    "text": "Logit\n\nOdds: The ratio of success to failure: \\(p / (1-p)\\).\nLogit: The natural logarithm of those odds (log odds): \\(\\ln (\\frac{p}{1-p})\\).\nThe logit is the inverse of the sigmoid function:\n\\(z=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b)\\) can be any real number \\((-\\infty, \\infty)\\)\n\\(p\\in [0, 1]\\) represents a probability\nThese functions are inverses of each other because \\(\\sigma(\\text{logit}(p)) = p\\)",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#proof",
-    "href": "lectures/logreg.html#proof",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Proof",
-    "text": "Proof\n\\[\n\\begin{align*}\n\\sigma(\\text{logit}(p)) &= \\frac{1}{1 + e^{-\\left[ \\ln \\left( \\frac{p}{1-p} \\right) \\right]}} &&\\bullet \\text{Substitute Logit into Sigmoid } z \\\\\n&= \\frac{1}{1 + e^{\\left[ \\ln \\left( \\frac{1-p}{p} \\right) \\right]}} && \\bullet\\text{Apply } -\\ln(A) = \\ln(1/A) \\\\\n&= \\frac{1}{1 + \\frac{1-p}{p}} && \\bullet\\text{Identity: } e^{\\ln(x)} = x \\\\\n&= \\frac{1}{\\frac{p + 1 - p}{p}} && \\\\\n&= \\frac{1}{1/p} && \\bullet\\text{Simplify} \\\\\n&= p &&\n\\end{align*}\n\\]\n\nTherefore :The logit is the inverse of the sigmoid function.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#learning-a-classification-rule",
-    "href": "lectures/logreg.html#learning-a-classification-rule",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Learning a classification rule",
-    "text": "Learning a classification rule\n\nWe need to learn the parameters of the model \\(\\mathbf{w}\\) and \\(b\\):\n\n\\[\n\\begin{array}{c c c c c}\n\\mathbf{x}& \\longrightarrow & \\sigma(z)=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b) & \\longrightarrow & \\hat{y}\\\\\n\\text{\\small Input features} & & \\text{\\small Output probability} & & \\text{\\small Prediction of class label}\n\\end{array}\n\\]\n\n\n\n\n\n\nClassification Decision Rule\n\n\n\\[\n\\mathrm{classification}(x) =\n\\begin{cases}\n1 & \\text{if }P(y = 1|x) &gt; 0.5 \\\\\n0 & \\text{otherwise}\n\\end{cases}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#loss-function",
-    "href": "lectures/logreg.html#loss-function",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Loss function",
-    "text": "Loss function\n\nA good model will minimize the difference between our prediction \\(\\hat{y}\\) and the ground truth \\(y\\)\nthis distance is defined by the loss function (also known as the cost function).\nThe same loss function is commonly used for logistic regression and for neural networks, the cross-entropy loss.\nRecall that our classifier output is \\(\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\\)\nFor logistic regression with binary classification, \\(y\\) can be either 0 or 1, but \\(\\hat{y}\\) is a probability that ranges from 0 to 1.\nWe measure the difference with the loss function \\(\\mathcal{L}(\\hat{y}, y)\\)",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#loss-function-1",
-    "href": "lectures/logreg.html#loss-function-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Loss function",
-    "text": "Loss function\n\nConsider the following piecewise loss function \\[\n\\mathcal{L}(\\sigma(z), y) = \\begin{cases}\n-\\log \\sigma(z) & \\text{if } y_i = 1 \\\\\n-\\log 1- \\sigma(z) & \\text{if } y_i = 0 \\\\\n\\end{cases}\n\\]\n\nAs \\(\\log \\sigma(z) \\rightarrow 1\\), the loss approaches zero",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#loss-function-2",
-    "href": "lectures/logreg.html#loss-function-2",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Loss function",
-    "text": "Loss function\n\nUsing \\(\\hat{y}=\\sigma(z)\\), we can concisely write the loss function as: \\[\n\\log p(y|x) = \\log[\\hat{y}^y(1-\\hat{y})^{1-y}] = y\\log\\hat{y} + (1-y)\\log(1-\\hat{y})\n\\]\nNote this simplifies to either \\(\\log\\hat{y}\\) or \\(\\log(1-\\hat{y})\\) depending on whether \\(y\\) is 0 or 1.\nSince it is convenient to minimize the function, we multiply it by -1: The result is known as the cross-entropy loss\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\hat{y} - (1-y)\\log(1-\\hat{y})\n\\]\n\nSince we have \\(\\mathbf{\\hat{y}} = \\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b)\\), this is equivalent to\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b))\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#loss-function-sanity-check",
-    "href": "lectures/logreg.html#loss-function-sanity-check",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Loss function (sanity check)",
-    "text": "Loss function (sanity check)\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{Xw} + b) - (1-y)\\log(1-\\sigma(\\mathbf{Xw} + b))\n\\]\n\nNote that if we predict (correctly) for a true example that \\(\\hat{y}=1\\), then the second term drops out and we have\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - 1\\log 1  = 0\n\\]\n\nSimilar things apply for a correct prediction of a negative example as \\(\\hat{y}=0\\)\nThe loss for one example ranges from 0 to infinity (\\(-\\log 0\\))",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#optimizing-the-loss",
-    "href": "lectures/logreg.html#optimizing-the-loss",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Optimizing the loss",
-    "text": "Optimizing the loss\n\n\n\n\n\n\n\nOptimization Goal\n\n\nTo create a high-performing classifier, we minimize the Cost Function \\(J(\\theta)\\), which is the average loss over the entire training set of \\(m\\) examples.\n\n\n\n\n\nIf we symbolize the parameters (weights, bias) of the logistic regression as \\(\\theta\\), our objective function is:\n\n\\[\nJ(\\theta) = \\frac{1}{m} \\sum_{i=1}^{m} \\mathcal{L}(\\hat{y}^{(i)}, y^{(i)})\n\\]\n\nWe seek \\(\\hat{\\theta}\\), the parameters that minimize the loss\n\n\\[\n\\hat{\\theta} = \\arg\\min_{\\theta} J(\\theta)\n\\]\n\nIt can be shown that the logistic regression loss function is convex (which enables us to reliably find its minimum)",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#part-3",
-    "href": "lectures/logreg.html#part-3",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Gradient descent",
-    "text": "Gradient descent\n\n\n\n\n\n\n\nBasic idea of gradient descent\n\n\nThe gradient descent algorithm finds the gradient of the loss function at the current point and moves the parameters in the opposite direction.\n\n\n\n\n\nGiven a learning rate \\(\\eta\\) and the gradient of the weights and biases:\nEach iteration of the GD processes Updates the weights and biases of each layer \\[\n\\begin{eqnarray*}\n\\mathbf{W} &\\leftarrow &\\mathbf{W} - \\eta\\Delta \\mathbf{W} \\\\\n\\mathbf{b} &\\leftarrow &\\mathbf{b} - \\eta\\Delta \\mathbf{b}\n\\end{eqnarray*}\n\\]\nWe will explain how the gradient is calculated and then return to the mechanics of the gradient descent algorithm.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#the-gradient",
-    "href": "lectures/logreg.html#the-gradient",
-    "title": "Approaches to biomedical knowledge",
-    "section": "The Gradient",
-    "text": "The Gradient\nAnother commonly encountered notation is the gradient, which by convention is represented as a column vector\n\\[\n\\nabla f(\\mathbf{x}) =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial \\mathbf{x}} \\end{bmatrix}^T\n=\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1}\\\\ \\dfrac{\\partial f}{\\partial x_2} \\\\ \\cdots \\\\ \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}  \n\\tag{2}\\]\n\n\n\n\n\n\nNote\n\n\n\n\\(f(x)\\) is a scalar\nWe take the first derivative of \\(f(x)\\) with respect to each of the \\(n\\) components of \\(\\mathbf{w}\\)\nWe will have more to say about matrix calculus in a future lecture.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#gradient-descent",
-    "href": "lectures/logreg.html#gradient-descent",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Gradient descent",
-    "text": "Gradient descent\n\n\n\n\n\n\n\n\n\n\nWe iteratively take steps towards the minimum along the slope of the function\nBut how do we calculate the slope?",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#calculating-derivatives",
-    "href": "lectures/logreg.html#calculating-derivatives",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Calculating derivatives",
-    "text": "Calculating derivatives\nWe need to update each component of the weight vector \\(\\mathbf{w}\\), e.g., \\(w_j\\) based on the firstderivative of the loss \\(\\mathcal{L}=\\mathcal{L}_{CE}(\\hat{y}, y)\\) with respect to the component.\n\nApply the chain rule twice\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}\n\\cdot \\frac{\\partial  \\sigma_i}{\\partial w_j} =\n\\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}\n\\cdot \\frac{\\partial  \\sigma_i}{\\partial z_i}\n\\cdot \\frac{\\partial  z_i}{\\partial w_j}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#derivation-and-chain-rule",
-    "href": "lectures/logreg.html#derivation-and-chain-rule",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Derivation and chain rule",
-    "text": "Derivation and chain rule\n\nHOMEWORK To understand the derivations (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule. We will practice in the practical.\n\n\n\n\nIf \\(f\\) and \\(g\\) are differentiable functions, then \\[\n\\left(f(g(x))\\right)^{\\prime} = f^{\\prime}(g(x))\\cdot g^{\\prime}(x)\n\\]\nThe chain rule can also be written as follows. If \\(y=f(u)\\) and \\(u=g(x)\\), then \\[\n\\dfrac{dy}{dx} =\\dfrac{dy}{du}\\dfrac{du}{dx}\n\\]\n\n\nExamples\n\nPower Rule: \\(y = (5+3x)^5\\)\n\nLet \\(u = 5+3x\\), so \\(y = u^5\\)\n\\(\\frac{dy}{du} = 5u^4\\) and \\(\\frac{du}{dx} = 3\\) \\[\\frac{dy}{dx} = 5(5+3x)^4 \\cdot 3 = 15(5+3x)^4\\]\n\nTrig: \\(y = \\sin(4x+3)\\)\n\nLet \\(u = 4x+3\\), so \\(y = \\sin(u)\\)\n\\(\\frac{dy}{du} = \\cos(u)\\) and \\(\\frac{du}{dx} = 4\\) \\[\\frac{dy}{dx} = \\cos(4x+3) \\cdot 4 = 4\\cos(4x+3)\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#calculating-derivatives-1",
-    "href": "lectures/logreg.html#calculating-derivatives-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Calculating derivatives",
-    "text": "Calculating derivatives\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} =\n\\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}}_{\\text{Part A}}\n\\cdot \\underbrace{\\frac{\\partial  \\sigma_i}{\\partial z_i}}_{\\text{Part B}}\n\\cdot \\underbrace{\\frac{\\partial  z_i}{\\partial w_j}}_{\\text{Part C}}\n\\]\n\nIn the following slides, we will calculate the three parts separately.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#part-a-fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction",
-    "href": "lectures/logreg.html#part-a-fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Part A: \\(\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\\): Gradient of the Loss with respect to Prediction",
-    "text": "Part A: \\(\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\\): Gradient of the Loss with respect to Prediction\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\n& = -\\frac{\\partial }{\\partial \\hat{y}} [y \\ln \\hat{y} + (1-y) \\ln(1-\\hat{y})] && \\bullet \\text{Using } \\hat{y}=\\sigma(wx+b) \\\\\n& = -y \\frac{\\partial }{\\partial \\hat{y}}\\ln \\hat{y} - (1-y)\\frac{\\partial }{\\partial \\hat{y}}\\ln(1-\\hat{y}) && \\bullet \\text{Move constants out of derivative}\\\\\n& = -\\frac{y}{\\hat{y}} - (1-y) \\frac{-1}{1-\\hat{y}} && \\bullet \\text{Recall } \\frac{d \\ln x}{dx} = \\frac{1}{x} \\\\\n& = -\\frac{y}{\\hat{y}} + \\frac{1-y}{1-\\hat{y}} && \\bullet \\text{Simplify signs} \\\\\n& = \\frac{-y(1-\\hat{y}) + \\hat{y}(1-y)}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Common denominator} \\\\\n& = \\frac{-y + y\\hat{y} + \\hat{y} - y\\hat{y}}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Expand numerator} \\\\\n& = \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Final result}\n\\end{align*}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#part-b-derivative-of-the-sigmoid-activation-function",
-    "href": "lectures/logreg.html#part-b-derivative-of-the-sigmoid-activation-function",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Part B: derivative of the sigmoid activation function",
-    "text": "Part B: derivative of the sigmoid activation function\n\\[\n\\begin{align*}\n\\dfrac{d\\sigma(x)}{dx} & = \\dfrac{d}{dx} \\dfrac{1}{1+e^{-x}} \\\\\n& = \\dfrac{-1}{(1+e^{-x})^2}\\cdot (-e^{-x}) && \\bullet \\text{chain rule} \\\\\n& = \\dfrac{e^{-x}}{(1+e^{-x})^2} && \\bullet \\text{simplify}\\\\\n& = \\dfrac{1}{1+e^{-x}} \\cdot \\dfrac{e^{-x}}{1+e^{-x}} && \\bullet \\text{rearrange}\\\\\n& = \\sigma(x) \\cdot \\dfrac{e^{-x}}{1+e^{-x}} && \\bullet \\text{definition of } \\sigma(x)\\\\\n& = \\sigma(x) \\cdot \\dfrac{1 + e^{-x} - 1}{1+e^{-x}} && \\bullet \\text{add and subtract 1}\\\\\n& = \\sigma(x) \\cdot \\left( \\dfrac{1 + e^{-x} }{1+e^{-x}} -\\dfrac{1}{1+e^{-x}} \\right) && \\bullet \\text{rearrange}\\\\\n& = \\sigma(x) \\cdot \\left( 1 -\\sigma(x) \\right) && \\bullet \\text{simplify using definition of } \\sigma(x)\n\\end{align*}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#derivative-of-the-sigmoid-activation-function",
-    "href": "lectures/logreg.html#derivative-of-the-sigmoid-activation-function",
-    "title": "Approaches to biomedical knowledge",
-    "section": "derivative of the sigmoid activation function",
-    "text": "derivative of the sigmoid activation function\n\nThus we get the fascinating result that\n\n\\[\n\\frac{d\\sigma(x)}{dx} = \\sigma(x)(1-\\sigma(x))\n\\]\n\nSubstituing and remembering that we define \\[\n\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\n\\] we get \\[\n\\underbrace{\\frac{\\partial  \\sigma_i}{\\partial z_i}}_{\\text{Part B}} = \\hat{y}(1- \\hat{y})\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#part-c-fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j",
-    "href": "lectures/logreg.html#part-c-fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Part C: \\(\\frac{\\partial z}{\\partial w_j}\\): Gradient of the \\(z\\) with respect to the Weight \\(w_j\\)",
-    "text": "Part C: \\(\\frac{\\partial z}{\\partial w_j}\\): Gradient of the \\(z\\) with respect to the Weight \\(w_j\\)\nThe Since \\(z = w_1x_1 + w_2x_2 + \\dots + b\\), the derivative with respect to \\(w_j\\) is simply the feature it is multiplied by: \\[\n\\frac{\\partial z}{\\partial w_j} = x_j\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#putting-it-all-together",
-    "href": "lectures/logreg.html#putting-it-all-together",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Putting it all together",
-    "text": "Putting it all together\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\underbrace{\\left[ \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} \\right]}_{\\text{Part A}} \\cdot \\underbrace{\\left[ \\hat{y}(1-\\hat{y}) \\right]}_{\\text{Part B}} \\cdot \\underbrace{x_j}_{\\text{Part C}}\n\\]\n\nThanks to cancelations, we are left with\n\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} &= (\\hat{y} - y)x_j\n\\end{align*}\n\\]\n\n\n\n\n\n\n\nIntuition\n\n\nThe gradient is a product of the error and the magnitude of the input.\n\nThe Error (\\(\\hat{y} - y\\)): How wrong were we?\nThe Input (\\(x_j\\)): How much did this specific feature contribute to that wrong prediction?",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#bias-term",
-    "href": "lectures/logreg.html#bias-term",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Bias term",
-    "text": "Bias term\n\nHOMEWORK You will adapt this example The term for the partial derivative of the bias can be determined analogously to be\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial b} = (\\hat{y} - y)\n\\]\n\nIn the homework, you will be asked to derive this formally.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#basic-idea-of-gradient-descent",
-    "href": "lectures/logreg.html#basic-idea-of-gradient-descent",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Basic idea of gradient descent",
-    "text": "Basic idea of gradient descent\n\nUpdate the weights and biases of each layer \\[\n\\begin{eqnarray*}\n\\mathbf{W} &\\leftarrow &\\mathbf{W} - \\eta\\Delta \\mathbf{W} \\\\\n\\mathbf{b} &\\leftarrow &\\mathbf{b} - \\eta\\Delta \\mathbf{b}\n\\end{eqnarray*}\n\\]\nGradient descent is used in a variety of settings outside of back prop. Let’s do one simple example – finding the minimum of a function\n\n\\[\nf(x) = 7x^2 + 3x-9\n\\]\n\nIt is straightforward to find the minimum analytically by setting the derivative to zero\n\n\\[\n\\begin{eqnarray*}\n\\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &=& 0 \\\\\nx &=& - \\dfrac{3}{14}\n\\end{eqnarray*}\n\\]\n\nTo use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size \\(\\eta\\) (“eta”).\n\n\\[\nx \\leftarrow x-\\eta (14x +3 )\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#gradient-descent-example",
-    "href": "lectures/logreg.html#gradient-descent-example",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Gradient descent example",
-    "text": "Gradient descent example\n\nimport numpy as np\nimport matplotlib.pylab as plt\n\ndef f(x):\n  return 7*x**2 + 3*x - 9\n\ndef d(x):\n  return 14*x + 3\n\n# first guess\n\neta = 0.03\n# plot\nx = np.linspace(-1, 1.5, 1000)\nplt.figure(figsize=(3, 3))\nplt.plot(x, f(x))\nt = 1\nfor i in range(15):\n  plt.plot(t, f(t), marker='o', color='r')\n  t = t - eta*d(t)\nprint(f\"Solution: {t:.4f} (-3/14={-3/14:.4f})\")\nplt.axvline(x=t, color='blue', linestyle='--', linewidth=0.8)\n\nSolution: -0.2139 (-3/14=-0.2143)",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#gradient-descent-overshoot",
-    "href": "lectures/logreg.html#gradient-descent-overshoot",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Gradient descent: Overshoot",
-    "text": "Gradient descent: Overshoot\n\n\n\n\n\n\n\n\n\nFinal Solution: -0.0199 (Target: -0.2143)\n\n\n\nSame code as in the previous example, but learning rate increased from \\(\\eta = 0.03\\) to \\(\\eta=0.13\\)",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#stochastic-gradient-descent",
-    "href": "lectures/logreg.html#stochastic-gradient-descent",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Stochastic gradient descent",
-    "text": "Stochastic gradient descent\n\nIf we write the loss as\n\n\\[\n\\mathcal{L} = L(\\Theta; \\mathbf{x},y)\n\\]\n\nThis means that we are including all training data (\\(\\mathbf{x},y\\))\nGradient descent needs \\(\\frac{\\partial L}{\\partial \\Theta}\\), which is obtained by backprop\nbatch training refers to averaging over all training data\nAs the volume of training data increased, it became less sensible to pass all data to the model for each gradient descent step.\nminibatch training refers to using a subset of all data for each gradient descent step.\nBecause this procedure is noisy compared to full batch training, we refer to it as stochastic gradient descent (SGD).\nThe noisiness may even be an advantage because it may help avoid falling into local minima\nminibatch size is a hyperparameter, but typically the order of examples is randomized and chunks of data are chosen until all samples have been used.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#updates",
-    "href": "lectures/logreg.html#updates",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Updates",
-    "text": "Updates\nIf the following is the derivative rule for one example \\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = (\\sigma(z_i)  - y_i)x_{i,j}\n\\] then the following is the cost across a batch with m examples \\[\n\\frac{\\partial C}{\\partial w_j} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)x_{i,j}\n\\] - The update rule for \\(w_j\\) is thus \\[\nw_j \\leftarrow w_j - \\eta \\frac{\\partial C}{\\partial w_j}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#stochastic-gradient-descent-1",
-    "href": "lectures/logreg.html#stochastic-gradient-descent-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Stochastic gradient descent",
-    "text": "Stochastic gradient descent\n\nWe will usually possess multiple labeled examples to train the logistic regression\nStochastic gradient descent means that we calculate the gradient after each training example and adjust the parameters (\\(\\theta\\)) by adjusting \\(\\theta\\) in the direction opposite the gradient\n\n\\[\n\\begin{array}{ll}\n\\hline\n\\mathbf{Algorithm:} & \\text{Gradient Descent Update} \\\\\n\\hline\n1: & \\text{Initialize } \\mathbf{w} \\in \\mathbb{R}^d, b \\in \\mathbb{R} \\\\\n2: & \\textbf{for } i \\leftarrow 1 \\text{ to } \\text{iterations } \\textbf{do} \\\\\n3: & \\quad \\hat{\\mathbf{y}} \\leftarrow \\sigma(\\mathbf{Xw} + b) \\\\\n4: & \\quad \\mathbf{w} \\leftarrow \\mathbf{w} - \\eta \\frac{1}{m} \\mathbf{X}^T(\\hat{\\mathbf{y}} - \\mathbf{y}) \\\\\n5: & \\textbf{end for} \\\\\n\\hline\n\\end{array}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#batch-and-mini-batch-training",
-    "href": "lectures/logreg.html#batch-and-mini-batch-training",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Batch and Mini-batch training",
-    "text": "Batch and Mini-batch training\n\nStochastic gradient descent is called stochastic because it chooses a single random example at a time\nBatch training trains over all examples before adjusting parenters\nSince the total Cost \\(J\\) is the average of all individual losses (\\(\\frac{1}{m} \\sum \\mathcal{L}\\)), the derivative of the total cost is simply the average of the individual derivatives:\\[\\frac{\\partial J}{\\partial w_j} = \\frac{1}{m} \\sum_{i=1}^{m} (\\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}\\]\nIn Mini-batch training, we train on a group of examples at a time, and take the average loss of these examples.\nModern hardware lets mini-batch training be vectorized for efficiency",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#vectorized-representation",
-    "href": "lectures/logreg.html#vectorized-representation",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Vectorized representation",
-    "text": "Vectorized representation\n\n\n\n\n\n\n\nSigmoid function\n\n\nIt is convenient to stack many examples into a matrix\n\n\n\n\n\\[\n\\mathbf{\\hat{y}} = \\sigma(\\mathbf{Xw} + b)\n\\]\n\nDimensions\n\n\\[\n\\underbrace{\\hat{\\mathbf{y}}}_{m \\times 1} = \\sigma \\left(\n\\underbrace{\\mathbf{X}}_{m \\times n} \\cdot\n\\underbrace{\\mathbf{w}}_{n \\times 1} + b\n\\right)\n\\]\n\n\n\nRows of \\(X\\) = Observations (e.g., \\(m\\) Patients)\nColumns of \\(X\\): Features (\\(n\\) items in this example)\n\n\n\\[\n\\mathbf{X} =\n\\begin{pmatrix}\nx_{1,1} & x_{1,2} & \\cdots & x_{1,n} \\\\\nx_{2,1} & x_{2,2} & \\cdots & x_{2,n} \\\\\n\\vdots  & \\vdots  & \\ddots & \\vdots  \\\\\nx_{m,1} & x_{m,2} & \\cdots & x_{m,n}\n\\end{pmatrix}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#softmax",
-    "href": "lectures/logreg.html#softmax",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Softmax",
-    "text": "Softmax\n\nThe softmax is a generalization of the sigmoid\n\n\\[\n\\begin{align*}\n\\sigma(z) & = \\frac{1}{1+e^{-z}} \\\\\n\\mathrm{softmax}(z_i) & = \\frac{e^{z_i}}{\\sum_{j=1}^K e^{-z_j}}\n\\end{align*}\n\\]\n\nThe softmax function takes a vector \\(z = [z_1, z_2,\\ldots, z_K]\\) of \\(K\\) arbitrary values and maps them to a probability distribution, with each value in the range [0,1], and all the values summing to 1.\n\\(z\\), the vector of scores that is the input to the softmax are called logits (as with sigmoid)\nThis allows us to perform logistic regression for \\(&gt;2\\) outcomes\nSoftmax will be important for neural networks and transformers, we will discuss more later.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#part-4-python-implementation-from-scratch",
-    "href": "lectures/logreg.html#part-4-python-implementation-from-scratch",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Part 4: Python implementation from scratch",
-    "text": "Part 4: Python implementation from scratch\n\n\n\nWe will show how to perform LR “from scratch” to promote understanding\nUsually, it is recommendable to use library code (scikit-learn etc.) for actual analysis\nHOMEWORK You will adapt this example\nHere we have created points two classes and want to learn LR parameters for classification",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#sigmoid",
-    "href": "lectures/logreg.html#sigmoid",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Sigmoid",
-    "text": "Sigmoid\n\nTo code up a simple version of logistic regression from scratch, we will need five main items. The sigmoid is the simplest.\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\nimport numpy as np\nimport numpy.typing as npt\n\ndef sigmoid(z: npt.NDArray) -&gt; npt.NDArray:\n    return 1 / (1 + np.exp(-z))\n\nNumPy N-Dimensional Array: the function takes an array and returns an array\nThe function takes the data (X,y) and the current values of the parameters w and b",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#cost-function",
-    "href": "lectures/logreg.html#cost-function",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Cost function",
-    "text": "Cost function\ndef cost_function(\n    X: npt.NDArray, \n    y: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; float:\n    m = len(y)  # Define m based on the number of labels\n    cost_sum = 0.0\n\n    for i in range(m):\n        # np.dot between vectors returns a scalar, b is a float\n        z = float(np.dot(w, X[i]) + b)\n        g = sigmoid(z)\n\n        cost_sum += -y[i] * np.log(g) - (1 - y[i]) * np.log(1 - g)\n\n    return (1 / m) * cost_sum\n\ni.e., we calculate the Binary Cross-Entropy Cost Function \\[\nC(w,b) = \\frac{1}{m} \\mathcal{L}(\\sigma(z_i), y_i)\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#gradient-function",
-    "href": "lectures/logreg.html#gradient-function",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Gradient Function",
-    "text": "Gradient Function\n\ncompute derivatives of the cost function\n\ndef gradient_function(\n    X: npt.NDArray, \n    y: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; typing.Tuple[float, npt.NDArray]:\n    m, n = X.shape  # m = examples, n = features\n    grad_w = np.zeros(n)\n    grad_b = 0.0\n\n    for i in range(m):\n        # Calculate prediction error for the i-th example\n        z = float(np.dot(w, X[i]) + b)\n        g = sigmoid(z)\n        error = g - y[i]\n\n        # Accumulate bias gradient\n        grad_b += error\n        \n        # Accumulate weight gradients for each feature j\n        for j in range(n):\n            grad_w[j] += error * X[i, j]\n\n    # Average the gradients over all examples\n    grad_b = (1 / m) * grad_b\n    grad_w = (1 / m) * grad_w\n\n    return grad_b, grad_w\n\\[\n\\frac{\\partial C}{\\partial w_j} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)x_{i,j} \\quad\\text{ and }\\quad\n\\frac{\\partial C}{\\partial b} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#gradient-descent-2",
-    "href": "lectures/logreg.html#gradient-descent-2",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Gradient descent",
-    "text": "Gradient descent\ndef gradient_descent(X: npt.NDArray, \n    y: npt.NDArray, \n    alpha: float, \n    iterations: int\n) -&gt; typing.Tuple[npt.NDArray, float]:\n    w = np.zeros(n)\n    b = 0\n\n    for i in range(iterations):\n        grad_b, grad_w = gradient_function(X, y, w, b)\n\n        w = w - alpha * grad_w\n        b = b - alpha * grad_b\n\n        if i % 1000 == 0:\n            print(f\"Iteration {i}: Cost {cost_function(X, y, w, b)}\")\n    \n    return w, b\n\\[\nw_j \\leftarrow w_j - \\eta \\frac{\\partial C}{\\partial w_j}  \\quad\\text{ and }\\quad\nb \\leftarrow b - \\eta \\frac{\\partial C}{\\partial b}  \n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#prediction-1",
-    "href": "lectures/logreg.html#prediction-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Prediction",
-    "text": "Prediction\ndef predict(\n    X: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; npt.NDArray:\n    preds = np.zeros(m)\n\n    for i in range(m):\n        z = np.dot(w, X[i]) + b\n        g = sigmoid(z)\n\n        preds[i] = 1 if g &gt;= 0.5 else 0\n    \n    return preds\n\\[\npred(i) = \\begin{cases}\n1& \\text{if }\\sigma(z_i) &gt;= 0.5 \\\\\n0& \\text{if }\\sigma(z_i) &lt; 0.5 \\\\\n\\end{cases}\n\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#running",
-    "href": "lectures/logreg.html#running",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Running",
-    "text": "Running\nlearning_rate = 0.01\niterations = 10000\n\nfinal_w, final_b = gradient_descent(X_train, y_train, learning_rate, iterations)\n\npredictions = predict(X_train, final_w, final_b)\naccuracy = np.mean(predictions == y_train) * 100\nprint(f\"training accuracy: {accuracy:.2f}%\")\nIteration 0: Cost 0.6863856844505929\nIteration 1000: Cost 0.24893304312617473\nIteration 2000: Cost 0.19455725857907238\nIteration 3000: Cost 0.17109379033874833\nIteration 4000: Cost 0.15808906650231236\nIteration 5000: Cost 0.1498628871067555\nIteration 6000: Cost 0.14421883627612167\nIteration 7000: Cost 0.14012775640570907\nIteration 8000: Cost 0.13704269179323025\nIteration 9000: Cost 0.13464584006217875\ntraining accuracy: 95.60%",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#decision-decision_boundary",
-    "href": "lectures/logreg.html#decision-decision_boundary",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Decision decision_boundary",
-    "text": "Decision decision_boundary\n\nAs mentioned above, the decision boundary for the output of the sigmoid function is typically taken to be 0.5: \\[\n\\begin{align*}\n\\sigma(z) = \\sigma(w_1x_{1} + w_2x_2 + b) &= 0.5 \\\\\nw_1x_{1} + w_2x_2 + b &= 0\\\\\nx_2 &= -\\frac{w_1}{w_2}x_1 - \\frac{b}{w_2}\\\\\n\\end{align*}\n\\] Therefore, the slope of the decision boundary is \\(-\\frac{w_1}{w_2}\\) and the intercept is \\(-\\frac{b}{w_2}\\).\n\nPlotting this, we get",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#overfitting",
-    "href": "lectures/logreg.html#overfitting",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Overfitting",
-    "text": "Overfitting\n\nHere we generate data from two classes with a somewhat more complex decision boundary\n\n\n\nUnderfitting: Logistic regression with x,y values (same as above)\nOverfitting: 15th-degree polynomial features as input to the logistic regression model\nBalanced fit: Applying L2 regularization to second model",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#part-5",
-    "href": "lectures/logreg.html#part-5",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Part 5: Overfitting",
-    "text": "Part 5: Overfitting\n\n“With four parameters I can fit an elephant and with five I can make him wiggle his trunk.” — John von Neumann\n\nMeasuring Model Performance\nModel fit can be assessed using the difference between predictions and reality:\n\nPrediction Error: Difference between the model’s predictions and new data.\nEstimation Error: Difference between the estimated and true parameter values.\nBoth types of error are driven by two competing forces, which are heavily dictated by model complexity1:\n\n\n\n\n\n\nLever J, et al. (2016) Model selection and overfitting. Nature Methods 13:703–704.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#the-bias-variance-tradeoff",
-    "href": "lectures/logreg.html#the-bias-variance-tradeoff",
-    "title": "Approaches to biomedical knowledge",
-    "section": "The Bias-Variance Tradeoff",
-    "text": "The Bias-Variance Tradeoff\n\n\nBias\n\nError introduced by using a predictive model that is incapable of capturing the underlying structure.\nUnderfitting: Models that are too simple have high bias and low variance.\n\n\nVariance\n\nError due to excessive sensitivity to small fluctuations and noise in the training data.\nOverfitting: Overly complex models typically have low bias and high variance.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#regularization",
-    "href": "lectures/logreg.html#regularization",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Regularization",
-    "text": "Regularization\n\na technique used to enhance the generalization ability of machine learning models by adding a penalty term to the loss function.\n\n\nWe will focus on L2 regularization here (but see also Lasso and Elastic Net)\nFor simplicity, let’s focus for now on linear regression with a standard linear model1:\n\n\\[\nY = \\beta_0 + \\beta_1X_1 + \\ldots + \\beta_pX_p\n\\]\n\nIf the true relationship between the response and the predictors is approximately linear, the least squares estimates will have low bias.\nIf \\(n \\gg p\\) — that is, if \\(n\\), the number of observations, is much larger than \\(p\\), the number of variables—then the least squares estimates tend to also have low variance, and hence will perform well on test observations.\nif \\(n\\) is not much larger than \\(p\\), then there can be a lot of variability in the least squares fit, resulting in overfitting and consequently poor predictions on future observations not used in model training.\nIf \\(p&gt;n\\), here is no longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error on the training data, but typically very poor test set performance due to extremely high variance\n\nMaterial adapted from James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (1st ed.) [PDF]. Springer.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#the-regularized-cost-function",
-    "href": "lectures/logreg.html#the-regularized-cost-function",
-    "title": "Approaches to biomedical knowledge",
-    "section": "🧮 The Regularized Cost Function",
-    "text": "🧮 The Regularized Cost Function\nWe add an L2 penalty term to the standard cross-entropy loss function:\n\\[\nJ(\\mathbf{w}) = -\\frac{1}{m} \\sum_{i=1}^{m} \\left[ y^{(i)} \\log(a^{(i)}) + (1 - y^{(i)}) \\log(1 - a^{(i)}) \\right] + \\frac{\\lambda}{2m} \\|\\mathbf{w}\\|_2^2\n\\tag{3}\\]\nWhere the L2 norm penalty is defined as: \\[\n\\|\\mathbf{w}\\|_2^2 = \\sum_{j=1}^{n} w_j^2\n\\]\n\n\n\n\n🔑 Key Parameters\n\n\n\n\\(\\lambda\\) (Lambda): The regularization strength hyperparameter.\nIf \\(\\lambda = 0\\): Standard logistic regression (potential overfitting).\nIf \\(\\lambda \\to \\infty\\): Weights are driven toward zero (underfitting).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#gradient-of-log-loss-with-l2-regularization",
-    "href": "lectures/logreg.html#gradient-of-log-loss-with-l2-regularization",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Gradient of Log-Loss with L2 Regularization",
-    "text": "Gradient of Log-Loss with L2 Regularization\nTo train our regularized model, we need the gradient of the objective function \\(J(\\mathbf{w})\\), which combines our standard cross-entropy loss \\(\\mathcal{L}\\) and the L2 penalty.\nUsing the sum rule for differentiation, we take the derivative of both parts with respect to weight \\(w_j\\):\n\\[\n\\frac{\\partial J(\\mathbf{w})}{\\partial w_j} = \\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial w_j}}_{\\text{Standard Gradient}} + \\underbrace{\\frac{\\partial}{\\partial w_j} \\left( \\frac{\\lambda}{2m} \\sum_{k=1}^{n} w_k^2 \\right)}_{\\text{L2 Derivative}}\n\\tag{4}\\]\nEvaluating the derivative of the penalty term (where \\(\\frac{\\partial}{\\partial w_j}(w_j^2) = 2w_j\\)), we get:\n\\[\n\\frac{\\partial J(\\mathbf{w})}{\\partial w_j} = \\underbrace{(\\hat{y} - y)x_j}_{\\text{Prediction Error}} + \\underbrace{\\frac{\\lambda}{m} w_j}_{\\text{Weight Penalty}}\n\\tag{5}\\]",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/logreg.html#intuition-for-gradient-descent-updates",
-    "href": "lectures/logreg.html#intuition-for-gradient-descent-updates",
-    "title": "Approaches to biomedical knowledge",
-    "section": "💡 Intuition for Gradient Descent Updates",
-    "text": "💡 Intuition for Gradient Descent Updates\nWhen we update our weights (\\(w_j \\leftarrow w_j - \\alpha \\frac{\\partial J}{\\partial w_j}\\)) using Equation 5, the L2 term (i.e., weight penalty) alters the step:\n\nThe Core Error \\((\\hat{y} - y)x_j\\): Same as above!\nThe Weight Penalty \\(\\frac{\\lambda}{m} w_j\\): The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.\n\n\n\nThe Sum of Convex Functions is Convex\nThe above total cost function \\(J(\\mathbf{w})\\) is composed of two distinct components \\[J(\\mathbf{w}) = \\mathcal{L}_{\\text{cross-entropy}}(\\mathbf{w}) + \\mathcal{L}_{\\text{L2}}(\\mathbf{w})\\]\nTHe Standard negative log-likelihood (cross-entropy loss) for logistic regression is convex.\nL2 Penalty (\\(\\frac{\\lambda}{2m}\\|\\mathbf{w}\\|_2^2\\)) is a quadratic function (“bowl shaped”), which is strictly convex.\nThus logistic regression with L2 penalty has a unique solution\nWe still need to decide which value to use for \\(\\lambda\\), which is a hyperparameter.\nThe optimal value of \\(\\lambda\\) can be estimated with \\(k\\)-Fold Cross-Validation\nHOMEWORK You will receive code for “do-it-yourself” logisitic regression in Python and be askeed to add L2 regularization.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Approaches to biomedical knowledge",
-    "section": "",
-    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTM (to do)\nLecture 8: Embeddings and Word2Vec (partially finisheed)\nLecture 9: Encoders\nLecture 10: BERT and Sentence BERT (to do)\nLecture 11: Decoder architecture (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
+    "section": "The RNN Forward Pass Algorithm",
+    "text": "The RNN Forward Pass Algorithm\nThe complete temporal execution of a single hidden layer Recurrent Neural Network can be formalized as follows:"
   },
   {
     "objectID": "lectures/encoder.html#overview-lecture-1",
@@ -2320,6 +1757,625 @@
       "Home",
       "Lectures",
       "Transformer Architecture: Encoders"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Approaches to biomedical knowledge",
+    "section": "",
+    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Word2Vec (partially finisheed)\nLecture 9: Encoders\nLecture 10: BERT and Sentence BERT (to do)\nLecture 11: Decoder architecture (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
+  },
+  {
+    "objectID": "lectures/logreg.html#overview-logistic-regression",
+    "href": "lectures/logreg.html#overview-logistic-regression",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Overview: Logistic regression",
+    "text": "Overview: Logistic regression\n\n\n\n\n\n\n\nGame plan\n\n\nLogistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks.\n\n\n\n\n\n\nPart 1: Introduction\n\nComponents of logistic regression\nSentiment analysis\n\n\n\n\nPart 2: Sigmoid function\n\nDefinition\nFirst derivative\n\n\n\n\nPart 3: Gradient descent\n\nLearning\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation\n\nPart 5: Overfitting",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#part-1",
+    "href": "lectures/logreg.html#part-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Logistic Regression",
+    "text": "Logistic Regression\nLogistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.\n\nEmail analysis (Is an email spam or not?)\nSentiment analysis (is a movie review positive or negative?)\nMedical diagnostics (is a given diagnosis present or absent?)\n\n\n\n\n\n\n\nWe will go over the algorithm in detail, because it is an excellent preparation for understanding neural networks.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#the-five-components-of-logistic-regression",
+    "href": "lectures/logreg.html#the-five-components-of-logistic-regression",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The five components of Logistic Regression",
+    "text": "The five components of Logistic Regression\n\n\n\n\n\n\n1. Feature Representation\n\n\nFor each input \\(x\\), we have a vector: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\)\n\n\n\n\n\n\n\n\n\n2. Classification Function\n\n\nComputes the estimated class using the Sigmoid function: \\(\\sigma(z) = \\frac{1}{1 + e^{-z}}\\)\n\n\n\n\n\n\n\n\n\n3. Objective Function\n\n\nA Loss function (Cross-Entropy) to measure how well the model is performing ( cross-entropy loss function).\n\n\n\n\n\n\n\n\n\n4. Optimization\n\n\nGradient Descent: The method used to minimize the loss and find the best weights.\n\n\n\n\n\n\n\n\n\n5. Prediction\n\n\nThe learned model can be used to classify new data points.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#logreg-features",
+    "href": "lectures/logreg.html#logreg-features",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LogReg: Features",
+    "text": "LogReg: Features\nFor each input \\(x\\), we create a vector of features: \\(\\mathbf{x} = [x_1, x_2, \\ldots, x_n]\\).\nThere are many different ways of generating a feature vector\n\nRaw numerical data: If the input data is numerical with \\(n\\) dimensions, each of the dimensions can act as a feature\nPolynomial & interaction features: We can add interaction terms (\\(x_ix_j\\)) or polynomial features (e.g., \\(x_i^7\\)) if this makes sense for the classification task\nImages: Flatten pixel values (e.g., an \\(8\\times 8\\) image would have 64 features)\nText to vector: e.g., count word occurrences across a vocabulary\nDomain-specific feature engineering\n\n\n\n\n\n\n\n\nExample\n\n\nIn the Python exercise for this lecture, we will generate two dimensional points with overlapping Gaussian distributions, but in general, the features can also be created (e.g., by counting positive and negative words for sentiment analysis).",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#weights-and-bias",
+    "href": "lectures/logreg.html#weights-and-bias",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Weights and bias",
+    "text": "Weights and bias\n\n\n\n\n\n\n\nWeights\n\n\nLogReg learns a vector of a vector of weights and a bias term to solve the classification task\n\n\n\n\n\nLinear combination of input features\nEach data point is multiplied by weights and a bias is added\nHere, \\(x_{i,j}\\) refers to the \\(j^{th}\\) component of the \\(i^{th}\\) data point. \\[\nz_i = \\sum_{j=1}^n w_ix_{i,j} + b\n\\tag{1}\\]\n\nEquation 1 can be represented identically using dot product notation (where the bold font indicates a vector of weights (\\(\\mathbf{w}\\)) and inputs (\\(\\mathbf{x}\\)))\n\\[\nz_i = \\mathbf{w}\\cdot \\mathbf{x}_i + b\n\\]\nThis is identical to the sums we will see at individual neurons in neural networks",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#part-2",
+    "href": "lectures/logreg.html#part-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sigmoid",
+    "text": "Sigmoid\n\n\n\n\n\n\n\nSigmoid function\n\n\nTo create a probability, we transform z through the sigmoid function, \\(\\sigma(z)\\)\n\n\n\n\n\nThe sigmoid \\(\\sigma(z)\\) takes a real-valued number \\(z\\in [-\\infty, \\infty]\\) and effectively squashes it to lie in the range \\([0,1]\\): \\(0&lt;\\sigma(z) &lt; 1\\).\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\n\n\n\nInterpretation: \\(P(y=1 | x, w, b)\\), i.e., a probability for classification\n\\(\\sigma(z) &gt; 0.5 \\Leftrightarrow z &gt; 0\\)\ni.e., whenever \\(z = \\mathrm{w}\\cdot \\mathrm{x} + b\\) is over zero, the model predicts the positive class (\\(\\hat{y}=1\\)).",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#sigmoid-a-convenient-identity",
+    "href": "lectures/logreg.html#sigmoid-a-convenient-identity",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sigmoid: A convenient identity",
+    "text": "Sigmoid: A convenient identity\n\n\\(1−\\sigma(x) = \\sigma(−x)\\)\n\n\\[\n\\begin{align*}\n1−\\sigma(x) &=& 1- \\frac{1}{1+e^{-x}}\\\\\n&=& \\frac{1+e^{-x} - 1}{1+e^{-x}} \\\\\n&=& \\frac{e^{-x}}{1+e^{-x}} \\cdot \\frac{e^{x}}{e^{x}}\\\\\n&=& \\frac{1}{1+e^{x}} \\\\\n&=& \\sigma(-x) \\\\\n\\end{align*}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#logit",
+    "href": "lectures/logreg.html#logit",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Logit",
+    "text": "Logit\n\nOdds: The ratio of success to failure: \\(p / (1-p)\\).\nLogit: The natural logarithm of those odds (log odds): \\(\\ln (\\frac{p}{1-p})\\).\nThe logit is the inverse of the sigmoid function:\n\\(z=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b)\\) can be any real number \\((-\\infty, \\infty)\\)\n\\(p\\in [0, 1]\\) represents a probability\nThese functions are inverses of each other because \\(\\sigma(\\text{logit}(p)) = p\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#proof",
+    "href": "lectures/logreg.html#proof",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Proof",
+    "text": "Proof\n\\[\n\\begin{align*}\n\\sigma(\\text{logit}(p)) &= \\frac{1}{1 + e^{-\\left[ \\ln \\left( \\frac{p}{1-p} \\right) \\right]}} &&\\bullet \\text{Substitute Logit into Sigmoid } z \\\\\n&= \\frac{1}{1 + e^{\\left[ \\ln \\left( \\frac{1-p}{p} \\right) \\right]}} && \\bullet\\text{Apply } -\\ln(A) = \\ln(1/A) \\\\\n&= \\frac{1}{1 + \\frac{1-p}{p}} && \\bullet\\text{Identity: } e^{\\ln(x)} = x \\\\\n&= \\frac{1}{\\frac{p + 1 - p}{p}} && \\\\\n&= \\frac{1}{1/p} && \\bullet\\text{Simplify} \\\\\n&= p &&\n\\end{align*}\n\\]\n\nTherefore :The logit is the inverse of the sigmoid function.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#learning-a-classification-rule",
+    "href": "lectures/logreg.html#learning-a-classification-rule",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Learning a classification rule",
+    "text": "Learning a classification rule\n\nWe need to learn the parameters of the model \\(\\mathbf{w}\\) and \\(b\\):\n\n\\[\n\\begin{array}{c c c c c}\n\\mathbf{x}& \\longrightarrow & \\sigma(z)=\\sigma(\\mathbf{w}\\cdot\\mathbf{x}+b) & \\longrightarrow & \\hat{y}\\\\\n\\text{\\small Input features} & & \\text{\\small Output probability} & & \\text{\\small Prediction of class label}\n\\end{array}\n\\]\n\n\n\n\n\n\nClassification Decision Rule\n\n\n\\[\n\\mathrm{classification}(x) =\n\\begin{cases}\n1 & \\text{if }P(y = 1|x) &gt; 0.5 \\\\\n0 & \\text{otherwise}\n\\end{cases}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#loss-function",
+    "href": "lectures/logreg.html#loss-function",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Loss function",
+    "text": "Loss function\n\nA good model will minimize the difference between our prediction \\(\\hat{y}\\) and the ground truth \\(y\\)\nthis distance is defined by the loss function (also known as the cost function).\nThe same loss function is commonly used for logistic regression and for neural networks, the cross-entropy loss.\nRecall that our classifier output is \\(\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\\)\nFor logistic regression with binary classification, \\(y\\) can be either 0 or 1, but \\(\\hat{y}\\) is a probability that ranges from 0 to 1.\nWe measure the difference with the loss function \\(\\mathcal{L}(\\hat{y}, y)\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#loss-function-1",
+    "href": "lectures/logreg.html#loss-function-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Loss function",
+    "text": "Loss function\n\nConsider the following piecewise loss function \\[\n\\mathcal{L}(\\sigma(z), y) = \\begin{cases}\n-\\log \\sigma(z) & \\text{if } y_i = 1 \\\\\n-\\log 1- \\sigma(z) & \\text{if } y_i = 0 \\\\\n\\end{cases}\n\\]\n\nAs \\(\\log \\sigma(z) \\rightarrow 1\\), the loss approaches zero",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#loss-function-2",
+    "href": "lectures/logreg.html#loss-function-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Loss function",
+    "text": "Loss function\n\nUsing \\(\\hat{y}=\\sigma(z)\\), we can concisely write the loss function as: \\[\n\\log p(y|x) = \\log[\\hat{y}^y(1-\\hat{y})^{1-y}] = y\\log\\hat{y} + (1-y)\\log(1-\\hat{y})\n\\]\nNote this simplifies to either \\(\\log\\hat{y}\\) or \\(\\log(1-\\hat{y})\\) depending on whether \\(y\\) is 0 or 1.\nSince it is convenient to minimize the function, we multiply it by -1: The result is known as the cross-entropy loss\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\hat{y} - (1-y)\\log(1-\\hat{y})\n\\]\n\nSince we have \\(\\mathbf{\\hat{y}} = \\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b)\\), this is equivalent to\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b))\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#loss-function-sanity-check",
+    "href": "lectures/logreg.html#loss-function-sanity-check",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Loss function (sanity check)",
+    "text": "Loss function (sanity check)\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{Xw} + b) - (1-y)\\log(1-\\sigma(\\mathbf{Xw} + b))\n\\]\n\nNote that if we predict (correctly) for a true example that \\(\\hat{y}=1\\), then the second term drops out and we have\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - 1\\log 1  = 0\n\\]\n\nSimilar things apply for a correct prediction of a negative example as \\(\\hat{y}=0\\)\nThe loss for one example ranges from 0 to infinity (\\(-\\log 0\\))",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#optimizing-the-loss",
+    "href": "lectures/logreg.html#optimizing-the-loss",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Optimizing the loss",
+    "text": "Optimizing the loss\n\n\n\n\n\n\n\nOptimization Goal\n\n\nTo create a high-performing classifier, we minimize the Cost Function \\(J(\\theta)\\), which is the average loss over the entire training set of \\(m\\) examples.\n\n\n\n\n\nIf we symbolize the parameters (weights, bias) of the logistic regression as \\(\\theta\\), our objective function is:\n\n\\[\nJ(\\theta) = \\frac{1}{m} \\sum_{i=1}^{m} \\mathcal{L}(\\hat{y}^{(i)}, y^{(i)})\n\\]\n\nWe seek \\(\\hat{\\theta}\\), the parameters that minimize the loss\n\n\\[\n\\hat{\\theta} = \\arg\\min_{\\theta} J(\\theta)\n\\]\n\nIt can be shown that the logistic regression loss function is convex (which enables us to reliably find its minimum)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#part-3",
+    "href": "lectures/logreg.html#part-3",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Gradient descent",
+    "text": "Gradient descent\n\n\n\n\n\n\n\nBasic idea of gradient descent\n\n\nThe gradient descent algorithm finds the gradient of the loss function at the current point and moves the parameters in the opposite direction.\n\n\n\n\n\nGiven a learning rate \\(\\eta\\) and the gradient of the weights and biases:\nEach iteration of the GD processes Updates the weights and biases of each layer \\[\n\\begin{eqnarray*}\n\\mathbf{W} &\\leftarrow &\\mathbf{W} - \\eta\\Delta \\mathbf{W} \\\\\n\\mathbf{b} &\\leftarrow &\\mathbf{b} - \\eta\\Delta \\mathbf{b}\n\\end{eqnarray*}\n\\]\nWe will explain how the gradient is calculated and then return to the mechanics of the gradient descent algorithm.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#the-gradient",
+    "href": "lectures/logreg.html#the-gradient",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Gradient",
+    "text": "The Gradient\nAnother commonly encountered notation is the gradient, which by convention is represented as a column vector\n\\[\n\\nabla f(\\mathbf{x}) =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial \\mathbf{x}} \\end{bmatrix}^T\n=\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1}\\\\ \\dfrac{\\partial f}{\\partial x_2} \\\\ \\cdots \\\\ \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}  \n\\tag{2}\\]\n\n\n\n\n\n\nNote\n\n\n\n\\(f(x)\\) is a scalar\nWe take the first derivative of \\(f(x)\\) with respect to each of the \\(n\\) components of \\(\\mathbf{w}\\)\nWe will have more to say about matrix calculus in a future lecture.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-descent",
+    "href": "lectures/logreg.html#gradient-descent",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Gradient descent",
+    "text": "Gradient descent\n\n\n\n\n\n\n\n\n\n\nWe iteratively take steps towards the minimum along the slope of the function\nBut how do we calculate the slope?",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#calculating-derivatives",
+    "href": "lectures/logreg.html#calculating-derivatives",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Calculating derivatives",
+    "text": "Calculating derivatives\nWe need to update each component of the weight vector \\(\\mathbf{w}\\), e.g., \\(w_j\\) based on the firstderivative of the loss \\(\\mathcal{L}=\\mathcal{L}_{CE}(\\hat{y}, y)\\) with respect to the component.\n\nApply the chain rule twice\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}\n\\cdot \\frac{\\partial  \\sigma_i}{\\partial w_j} =\n\\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}\n\\cdot \\frac{\\partial  \\sigma_i}{\\partial z_i}\n\\cdot \\frac{\\partial  z_i}{\\partial w_j}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#derivation-and-chain-rule",
+    "href": "lectures/logreg.html#derivation-and-chain-rule",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Derivation and chain rule",
+    "text": "Derivation and chain rule\n\nHOMEWORK To understand the derivations (and to understand backprop in the next lecture!), it is essential to be familiar with the chain rule. We will practice in the practical.\n\n\n\n\nIf \\(f\\) and \\(g\\) are differentiable functions, then \\[\n\\left(f(g(x))\\right)^{\\prime} = f^{\\prime}(g(x))\\cdot g^{\\prime}(x)\n\\]\nThe chain rule can also be written as follows. If \\(y=f(u)\\) and \\(u=g(x)\\), then \\[\n\\dfrac{dy}{dx} =\\dfrac{dy}{du}\\dfrac{du}{dx}\n\\]\n\n\nExamples\n\nPower Rule: \\(y = (5+3x)^5\\)\n\nLet \\(u = 5+3x\\), so \\(y = u^5\\)\n\\(\\frac{dy}{du} = 5u^4\\) and \\(\\frac{du}{dx} = 3\\) \\[\\frac{dy}{dx} = 5(5+3x)^4 \\cdot 3 = 15(5+3x)^4\\]\n\nTrig: \\(y = \\sin(4x+3)\\)\n\nLet \\(u = 4x+3\\), so \\(y = \\sin(u)\\)\n\\(\\frac{dy}{du} = \\cos(u)\\) and \\(\\frac{du}{dx} = 4\\) \\[\\frac{dy}{dx} = \\cos(4x+3) \\cdot 4 = 4\\cos(4x+3)\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#calculating-derivatives-1",
+    "href": "lectures/logreg.html#calculating-derivatives-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Calculating derivatives",
+    "text": "Calculating derivatives\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} =\n\\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial \\sigma_i}}_{\\text{Part A}}\n\\cdot \\underbrace{\\frac{\\partial  \\sigma_i}{\\partial z_i}}_{\\text{Part B}}\n\\cdot \\underbrace{\\frac{\\partial  z_i}{\\partial w_j}}_{\\text{Part C}}\n\\]\n\nIn the following slides, we will calculate the three parts separately.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#part-a-fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction",
+    "href": "lectures/logreg.html#part-a-fracpartial-mathcallpartial-haty-gradient-of-the-loss-with-respect-to-prediction",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Part A: \\(\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\\): Gradient of the Loss with respect to Prediction",
+    "text": "Part A: \\(\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\\): Gradient of the Loss with respect to Prediction\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}}\n& = -\\frac{\\partial }{\\partial \\hat{y}} [y \\ln \\hat{y} + (1-y) \\ln(1-\\hat{y})] && \\bullet \\text{Using } \\hat{y}=\\sigma(wx+b) \\\\\n& = -y \\frac{\\partial }{\\partial \\hat{y}}\\ln \\hat{y} - (1-y)\\frac{\\partial }{\\partial \\hat{y}}\\ln(1-\\hat{y}) && \\bullet \\text{Move constants out of derivative}\\\\\n& = -\\frac{y}{\\hat{y}} - (1-y) \\frac{-1}{1-\\hat{y}} && \\bullet \\text{Recall } \\frac{d \\ln x}{dx} = \\frac{1}{x} \\\\\n& = -\\frac{y}{\\hat{y}} + \\frac{1-y}{1-\\hat{y}} && \\bullet \\text{Simplify signs} \\\\\n& = \\frac{-y(1-\\hat{y}) + \\hat{y}(1-y)}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Common denominator} \\\\\n& = \\frac{-y + y\\hat{y} + \\hat{y} - y\\hat{y}}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Expand numerator} \\\\\n& = \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} && \\bullet \\text{Final result}\n\\end{align*}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#part-b-derivative-of-the-sigmoid-activation-function",
+    "href": "lectures/logreg.html#part-b-derivative-of-the-sigmoid-activation-function",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Part B: derivative of the sigmoid activation function",
+    "text": "Part B: derivative of the sigmoid activation function\n\\[\n\\begin{align*}\n\\dfrac{d\\sigma(x)}{dx} & = \\dfrac{d}{dx} \\dfrac{1}{1+e^{-x}} \\\\\n& = \\dfrac{-1}{(1+e^{-x})^2}\\cdot (-e^{-x}) && \\bullet \\text{chain rule} \\\\\n& = \\dfrac{e^{-x}}{(1+e^{-x})^2} && \\bullet \\text{simplify}\\\\\n& = \\dfrac{1}{1+e^{-x}} \\cdot \\dfrac{e^{-x}}{1+e^{-x}} && \\bullet \\text{rearrange}\\\\\n& = \\sigma(x) \\cdot \\dfrac{e^{-x}}{1+e^{-x}} && \\bullet \\text{definition of } \\sigma(x)\\\\\n& = \\sigma(x) \\cdot \\dfrac{1 + e^{-x} - 1}{1+e^{-x}} && \\bullet \\text{add and subtract 1}\\\\\n& = \\sigma(x) \\cdot \\left( \\dfrac{1 + e^{-x} }{1+e^{-x}} -\\dfrac{1}{1+e^{-x}} \\right) && \\bullet \\text{rearrange}\\\\\n& = \\sigma(x) \\cdot \\left( 1 -\\sigma(x) \\right) && \\bullet \\text{simplify using definition of } \\sigma(x)\n\\end{align*}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#derivative-of-the-sigmoid-activation-function",
+    "href": "lectures/logreg.html#derivative-of-the-sigmoid-activation-function",
+    "title": "Approaches to biomedical knowledge",
+    "section": "derivative of the sigmoid activation function",
+    "text": "derivative of the sigmoid activation function\n\nThus we get the fascinating result that\n\n\\[\n\\frac{d\\sigma(x)}{dx} = \\sigma(x)(1-\\sigma(x))\n\\]\n\nSubstituing and remembering that we define \\[\n\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\n\\] we get \\[\n\\underbrace{\\frac{\\partial  \\sigma_i}{\\partial z_i}}_{\\text{Part B}} = \\hat{y}(1- \\hat{y})\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#part-c-fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j",
+    "href": "lectures/logreg.html#part-c-fracpartial-zpartial-w_j-gradient-of-the-z-with-respect-to-the-weight-w_j",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Part C: \\(\\frac{\\partial z}{\\partial w_j}\\): Gradient of the \\(z\\) with respect to the Weight \\(w_j\\)",
+    "text": "Part C: \\(\\frac{\\partial z}{\\partial w_j}\\): Gradient of the \\(z\\) with respect to the Weight \\(w_j\\)\nThe Since \\(z = w_1x_1 + w_2x_2 + \\dots + b\\), the derivative with respect to \\(w_j\\) is simply the feature it is multiplied by: \\[\n\\frac{\\partial z}{\\partial w_j} = x_j\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#putting-it-all-together",
+    "href": "lectures/logreg.html#putting-it-all-together",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Putting it all together",
+    "text": "Putting it all together\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\underbrace{\\left[ \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} \\right]}_{\\text{Part A}} \\cdot \\underbrace{\\left[ \\hat{y}(1-\\hat{y}) \\right]}_{\\text{Part B}} \\cdot \\underbrace{x_j}_{\\text{Part C}}\n\\]\n\nThanks to cancelations, we are left with\n\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} &= (\\hat{y} - y)x_j\n\\end{align*}\n\\]\n\n\n\n\n\n\n\nIntuition\n\n\nThe gradient is a product of the error and the magnitude of the input.\n\nThe Error (\\(\\hat{y} - y\\)): How wrong were we?\nThe Input (\\(x_j\\)): How much did this specific feature contribute to that wrong prediction?",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#bias-term",
+    "href": "lectures/logreg.html#bias-term",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Bias term",
+    "text": "Bias term\n\nHOMEWORK You will adapt this example The term for the partial derivative of the bias can be determined analogously to be\n\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial b} = (\\hat{y} - y)\n\\]\n\nIn the homework, you will be asked to derive this formally.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#basic-idea-of-gradient-descent",
+    "href": "lectures/logreg.html#basic-idea-of-gradient-descent",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Basic idea of gradient descent",
+    "text": "Basic idea of gradient descent\n\nUpdate the weights and biases of each layer \\[\n\\begin{eqnarray*}\n\\mathbf{W} &\\leftarrow &\\mathbf{W} - \\eta\\Delta \\mathbf{W} \\\\\n\\mathbf{b} &\\leftarrow &\\mathbf{b} - \\eta\\Delta \\mathbf{b}\n\\end{eqnarray*}\n\\]\nGradient descent is used in a variety of settings outside of back prop. Let’s do one simple example – finding the minimum of a function\n\n\\[\nf(x) = 7x^2 + 3x-9\n\\]\n\nIt is straightforward to find the minimum analytically by setting the derivative to zero\n\n\\[\n\\begin{eqnarray*}\n\\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &=& 0 \\\\\nx &=& - \\dfrac{3}{14}\n\\end{eqnarray*}\n\\]\n\nTo use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size \\(\\eta\\) (“eta”).\n\n\\[\nx \\leftarrow x-\\eta (14x +3 )\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-descent-example",
+    "href": "lectures/logreg.html#gradient-descent-example",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Gradient descent example",
+    "text": "Gradient descent example\n\nimport numpy as np\nimport matplotlib.pylab as plt\n\ndef f(x):\n  return 7*x**2 + 3*x - 9\n\ndef d(x):\n  return 14*x + 3\n\n# first guess\n\neta = 0.03\n# plot\nx = np.linspace(-1, 1.5, 1000)\nplt.figure(figsize=(3, 3))\nplt.plot(x, f(x))\nt = 1\nfor i in range(15):\n  plt.plot(t, f(t), marker='o', color='r')\n  t = t - eta*d(t)\nprint(f\"Solution: {t:.4f} (-3/14={-3/14:.4f})\")\nplt.axvline(x=t, color='blue', linestyle='--', linewidth=0.8)\n\nSolution: -0.2139 (-3/14=-0.2143)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-descent-overshoot",
+    "href": "lectures/logreg.html#gradient-descent-overshoot",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Gradient descent: Overshoot",
+    "text": "Gradient descent: Overshoot\n\n\n\n\n\n\n\n\n\nFinal Solution: -0.0199 (Target: -0.2143)\n\n\n\nSame code as in the previous example, but learning rate increased from \\(\\eta = 0.03\\) to \\(\\eta=0.13\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#stochastic-gradient-descent",
+    "href": "lectures/logreg.html#stochastic-gradient-descent",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Stochastic gradient descent",
+    "text": "Stochastic gradient descent\n\nIf we write the loss as\n\n\\[\n\\mathcal{L} = L(\\Theta; \\mathbf{x},y)\n\\]\n\nThis means that we are including all training data (\\(\\mathbf{x},y\\))\nGradient descent needs \\(\\frac{\\partial L}{\\partial \\Theta}\\), which is obtained by backprop\nbatch training refers to averaging over all training data\nAs the volume of training data increased, it became less sensible to pass all data to the model for each gradient descent step.\nminibatch training refers to using a subset of all data for each gradient descent step.\nBecause this procedure is noisy compared to full batch training, we refer to it as stochastic gradient descent (SGD).\nThe noisiness may even be an advantage because it may help avoid falling into local minima\nminibatch size is a hyperparameter, but typically the order of examples is randomized and chunks of data are chosen until all samples have been used.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#updates",
+    "href": "lectures/logreg.html#updates",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Updates",
+    "text": "Updates\nIf the following is the derivative rule for one example \\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = (\\sigma(z_i)  - y_i)x_{i,j}\n\\] then the following is the cost across a batch with m examples \\[\n\\frac{\\partial C}{\\partial w_j} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)x_{i,j}\n\\] - The update rule for \\(w_j\\) is thus \\[\nw_j \\leftarrow w_j - \\eta \\frac{\\partial C}{\\partial w_j}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#stochastic-gradient-descent-1",
+    "href": "lectures/logreg.html#stochastic-gradient-descent-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Stochastic gradient descent",
+    "text": "Stochastic gradient descent\n\nWe will usually possess multiple labeled examples to train the logistic regression\nStochastic gradient descent means that we calculate the gradient after each training example and adjust the parameters (\\(\\theta\\)) by adjusting \\(\\theta\\) in the direction opposite the gradient\n\n\\[\n\\begin{array}{ll}\n\\hline\n\\mathbf{Algorithm:} & \\text{Gradient Descent Update} \\\\\n\\hline\n1: & \\text{Initialize } \\mathbf{w} \\in \\mathbb{R}^d, b \\in \\mathbb{R} \\\\\n2: & \\textbf{for } i \\leftarrow 1 \\text{ to } \\text{iterations } \\textbf{do} \\\\\n3: & \\quad \\hat{\\mathbf{y}} \\leftarrow \\sigma(\\mathbf{Xw} + b) \\\\\n4: & \\quad \\mathbf{w} \\leftarrow \\mathbf{w} - \\eta \\frac{1}{m} \\mathbf{X}^T(\\hat{\\mathbf{y}} - \\mathbf{y}) \\\\\n5: & \\textbf{end for} \\\\\n\\hline\n\\end{array}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#batch-and-mini-batch-training",
+    "href": "lectures/logreg.html#batch-and-mini-batch-training",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Batch and Mini-batch training",
+    "text": "Batch and Mini-batch training\n\nStochastic gradient descent is called stochastic because it chooses a single random example at a time\nBatch training trains over all examples before adjusting parenters\nSince the total Cost \\(J\\) is the average of all individual losses (\\(\\frac{1}{m} \\sum \\mathcal{L}\\)), the derivative of the total cost is simply the average of the individual derivatives:\\[\\frac{\\partial J}{\\partial w_j} = \\frac{1}{m} \\sum_{i=1}^{m} (\\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}\\]\nIn Mini-batch training, we train on a group of examples at a time, and take the average loss of these examples.\nModern hardware lets mini-batch training be vectorized for efficiency",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#vectorized-representation",
+    "href": "lectures/logreg.html#vectorized-representation",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Vectorized representation",
+    "text": "Vectorized representation\n\n\n\n\n\n\n\nSigmoid function\n\n\nIt is convenient to stack many examples into a matrix\n\n\n\n\n\\[\n\\mathbf{\\hat{y}} = \\sigma(\\mathbf{Xw} + b)\n\\]\n\nDimensions\n\n\\[\n\\underbrace{\\hat{\\mathbf{y}}}_{m \\times 1} = \\sigma \\left(\n\\underbrace{\\mathbf{X}}_{m \\times n} \\cdot\n\\underbrace{\\mathbf{w}}_{n \\times 1} + b\n\\right)\n\\]\n\n\n\nRows of \\(X\\) = Observations (e.g., \\(m\\) Patients)\nColumns of \\(X\\): Features (\\(n\\) items in this example)\n\n\n\\[\n\\mathbf{X} =\n\\begin{pmatrix}\nx_{1,1} & x_{1,2} & \\cdots & x_{1,n} \\\\\nx_{2,1} & x_{2,2} & \\cdots & x_{2,n} \\\\\n\\vdots  & \\vdots  & \\ddots & \\vdots  \\\\\nx_{m,1} & x_{m,2} & \\cdots & x_{m,n}\n\\end{pmatrix}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#softmax",
+    "href": "lectures/logreg.html#softmax",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Softmax",
+    "text": "Softmax\n\nThe softmax is a generalization of the sigmoid\n\n\\[\n\\begin{align*}\n\\sigma(z) & = \\frac{1}{1+e^{-z}} \\\\\n\\mathrm{softmax}(z_i) & = \\frac{e^{z_i}}{\\sum_{j=1}^K e^{-z_j}}\n\\end{align*}\n\\]\n\nThe softmax function takes a vector \\(z = [z_1, z_2,\\ldots, z_K]\\) of \\(K\\) arbitrary values and maps them to a probability distribution, with each value in the range [0,1], and all the values summing to 1.\n\\(z\\), the vector of scores that is the input to the softmax are called logits (as with sigmoid)\nThis allows us to perform logistic regression for \\(&gt;2\\) outcomes\nSoftmax will be important for neural networks and transformers, we will discuss more later.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#part-4-python-implementation-from-scratch",
+    "href": "lectures/logreg.html#part-4-python-implementation-from-scratch",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Part 4: Python implementation from scratch",
+    "text": "Part 4: Python implementation from scratch\n\n\n\nWe will show how to perform LR “from scratch” to promote understanding\nUsually, it is recommendable to use library code (scikit-learn etc.) for actual analysis\nHOMEWORK You will adapt this example\nHere we have created points two classes and want to learn LR parameters for classification",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#sigmoid",
+    "href": "lectures/logreg.html#sigmoid",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sigmoid",
+    "text": "Sigmoid\n\nTo code up a simple version of logistic regression from scratch, we will need five main items. The sigmoid is the simplest.\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\nimport numpy as np\nimport numpy.typing as npt\n\ndef sigmoid(z: npt.NDArray) -&gt; npt.NDArray:\n    return 1 / (1 + np.exp(-z))\n\nNumPy N-Dimensional Array: the function takes an array and returns an array\nThe function takes the data (X,y) and the current values of the parameters w and b",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#cost-function",
+    "href": "lectures/logreg.html#cost-function",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Cost function",
+    "text": "Cost function\ndef cost_function(\n    X: npt.NDArray, \n    y: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; float:\n    m = len(y)  # Define m based on the number of labels\n    cost_sum = 0.0\n\n    for i in range(m):\n        # np.dot between vectors returns a scalar, b is a float\n        z = float(np.dot(w, X[i]) + b)\n        g = sigmoid(z)\n\n        cost_sum += -y[i] * np.log(g) - (1 - y[i]) * np.log(1 - g)\n\n    return (1 / m) * cost_sum\n\ni.e., we calculate the Binary Cross-Entropy Cost Function \\[\nC(w,b) = \\frac{1}{m} \\mathcal{L}(\\sigma(z_i), y_i)\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-function",
+    "href": "lectures/logreg.html#gradient-function",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Gradient Function",
+    "text": "Gradient Function\n\ncompute derivatives of the cost function\n\ndef gradient_function(\n    X: npt.NDArray, \n    y: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; typing.Tuple[float, npt.NDArray]:\n    m, n = X.shape  # m = examples, n = features\n    grad_w = np.zeros(n)\n    grad_b = 0.0\n\n    for i in range(m):\n        # Calculate prediction error for the i-th example\n        z = float(np.dot(w, X[i]) + b)\n        g = sigmoid(z)\n        error = g - y[i]\n\n        # Accumulate bias gradient\n        grad_b += error\n        \n        # Accumulate weight gradients for each feature j\n        for j in range(n):\n            grad_w[j] += error * X[i, j]\n\n    # Average the gradients over all examples\n    grad_b = (1 / m) * grad_b\n    grad_w = (1 / m) * grad_w\n\n    return grad_b, grad_w\n\\[\n\\frac{\\partial C}{\\partial w_j} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)x_{i,j} \\quad\\text{ and }\\quad\n\\frac{\\partial C}{\\partial b} = \\frac{1}{m}\\sum_{i=1}^m(\\sigma(z_i)  - y_i)\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-descent-2",
+    "href": "lectures/logreg.html#gradient-descent-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Gradient descent",
+    "text": "Gradient descent\ndef gradient_descent(X: npt.NDArray, \n    y: npt.NDArray, \n    alpha: float, \n    iterations: int\n) -&gt; typing.Tuple[npt.NDArray, float]:\n    w = np.zeros(n)\n    b = 0\n\n    for i in range(iterations):\n        grad_b, grad_w = gradient_function(X, y, w, b)\n\n        w = w - alpha * grad_w\n        b = b - alpha * grad_b\n\n        if i % 1000 == 0:\n            print(f\"Iteration {i}: Cost {cost_function(X, y, w, b)}\")\n    \n    return w, b\n\\[\nw_j \\leftarrow w_j - \\eta \\frac{\\partial C}{\\partial w_j}  \\quad\\text{ and }\\quad\nb \\leftarrow b - \\eta \\frac{\\partial C}{\\partial b}  \n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#prediction-1",
+    "href": "lectures/logreg.html#prediction-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Prediction",
+    "text": "Prediction\ndef predict(\n    X: npt.NDArray, \n    w: npt.NDArray, \n    b: float\n) -&gt; npt.NDArray:\n    preds = np.zeros(m)\n\n    for i in range(m):\n        z = np.dot(w, X[i]) + b\n        g = sigmoid(z)\n\n        preds[i] = 1 if g &gt;= 0.5 else 0\n    \n    return preds\n\\[\npred(i) = \\begin{cases}\n1& \\text{if }\\sigma(z_i) &gt;= 0.5 \\\\\n0& \\text{if }\\sigma(z_i) &lt; 0.5 \\\\\n\\end{cases}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#running",
+    "href": "lectures/logreg.html#running",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Running",
+    "text": "Running\nlearning_rate = 0.01\niterations = 10000\n\nfinal_w, final_b = gradient_descent(X_train, y_train, learning_rate, iterations)\n\npredictions = predict(X_train, final_w, final_b)\naccuracy = np.mean(predictions == y_train) * 100\nprint(f\"training accuracy: {accuracy:.2f}%\")\nIteration 0: Cost 0.6863856844505929\nIteration 1000: Cost 0.24893304312617473\nIteration 2000: Cost 0.19455725857907238\nIteration 3000: Cost 0.17109379033874833\nIteration 4000: Cost 0.15808906650231236\nIteration 5000: Cost 0.1498628871067555\nIteration 6000: Cost 0.14421883627612167\nIteration 7000: Cost 0.14012775640570907\nIteration 8000: Cost 0.13704269179323025\nIteration 9000: Cost 0.13464584006217875\ntraining accuracy: 95.60%",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#decision-decision_boundary",
+    "href": "lectures/logreg.html#decision-decision_boundary",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Decision decision_boundary",
+    "text": "Decision decision_boundary\n\nAs mentioned above, the decision boundary for the output of the sigmoid function is typically taken to be 0.5: \\[\n\\begin{align*}\n\\sigma(z) = \\sigma(w_1x_{1} + w_2x_2 + b) &= 0.5 \\\\\nw_1x_{1} + w_2x_2 + b &= 0\\\\\nx_2 &= -\\frac{w_1}{w_2}x_1 - \\frac{b}{w_2}\\\\\n\\end{align*}\n\\] Therefore, the slope of the decision boundary is \\(-\\frac{w_1}{w_2}\\) and the intercept is \\(-\\frac{b}{w_2}\\).\n\nPlotting this, we get",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#overfitting",
+    "href": "lectures/logreg.html#overfitting",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Overfitting",
+    "text": "Overfitting\n\nHere we generate data from two classes with a somewhat more complex decision boundary\n\n\n\nUnderfitting: Logistic regression with x,y values (same as above)\nOverfitting: 15th-degree polynomial features as input to the logistic regression model\nBalanced fit: Applying L2 regularization to second model",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#part-5",
+    "href": "lectures/logreg.html#part-5",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Part 5: Overfitting",
+    "text": "Part 5: Overfitting\n\n“With four parameters I can fit an elephant and with five I can make him wiggle his trunk.” — John von Neumann\n\nMeasuring Model Performance\nModel fit can be assessed using the difference between predictions and reality:\n\nPrediction Error: Difference between the model’s predictions and new data.\nEstimation Error: Difference between the estimated and true parameter values.\nBoth types of error are driven by two competing forces, which are heavily dictated by model complexity1:\n\n\n\n\n\n\nLever J, et al. (2016) Model selection and overfitting. Nature Methods 13:703–704.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#the-bias-variance-tradeoff",
+    "href": "lectures/logreg.html#the-bias-variance-tradeoff",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Bias-Variance Tradeoff",
+    "text": "The Bias-Variance Tradeoff\n\n\nBias\n\nError introduced by using a predictive model that is incapable of capturing the underlying structure.\nUnderfitting: Models that are too simple have high bias and low variance.\n\n\nVariance\n\nError due to excessive sensitivity to small fluctuations and noise in the training data.\nOverfitting: Overly complex models typically have low bias and high variance.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#regularization",
+    "href": "lectures/logreg.html#regularization",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Regularization",
+    "text": "Regularization\n\na technique used to enhance the generalization ability of machine learning models by adding a penalty term to the loss function.\n\n\nWe will focus on L2 regularization here (but see also Lasso and Elastic Net)\nFor simplicity, let’s focus for now on linear regression with a standard linear model1:\n\n\\[\nY = \\beta_0 + \\beta_1X_1 + \\ldots + \\beta_pX_p\n\\]\n\nIf the true relationship between the response and the predictors is approximately linear, the least squares estimates will have low bias.\nIf \\(n \\gg p\\) — that is, if \\(n\\), the number of observations, is much larger than \\(p\\), the number of variables—then the least squares estimates tend to also have low variance, and hence will perform well on test observations.\nif \\(n\\) is not much larger than \\(p\\), then there can be a lot of variability in the least squares fit, resulting in overfitting and consequently poor predictions on future observations not used in model training.\nIf \\(p&gt;n\\), here is no longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error on the training data, but typically very poor test set performance due to extremely high variance\n\nMaterial adapted from James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (1st ed.) [PDF]. Springer.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#the-regularized-cost-function",
+    "href": "lectures/logreg.html#the-regularized-cost-function",
+    "title": "Approaches to biomedical knowledge",
+    "section": "🧮 The Regularized Cost Function",
+    "text": "🧮 The Regularized Cost Function\nWe add an L2 penalty term to the standard cross-entropy loss function:\n\\[\nJ(\\mathbf{w}) = -\\frac{1}{m} \\sum_{i=1}^{m} \\left[ y^{(i)} \\log(a^{(i)}) + (1 - y^{(i)}) \\log(1 - a^{(i)}) \\right] + \\frac{\\lambda}{2m} \\|\\mathbf{w}\\|_2^2\n\\tag{3}\\]\nWhere the L2 norm penalty is defined as: \\[\n\\|\\mathbf{w}\\|_2^2 = \\sum_{j=1}^{n} w_j^2\n\\]\n\n\n\n\n🔑 Key Parameters\n\n\n\n\\(\\lambda\\) (Lambda): The regularization strength hyperparameter.\nIf \\(\\lambda = 0\\): Standard logistic regression (potential overfitting).\nIf \\(\\lambda \\to \\infty\\): Weights are driven toward zero (underfitting).",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-of-log-loss-with-l2-regularization",
+    "href": "lectures/logreg.html#gradient-of-log-loss-with-l2-regularization",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Gradient of Log-Loss with L2 Regularization",
+    "text": "Gradient of Log-Loss with L2 Regularization\nTo train our regularized model, we need the gradient of the objective function \\(J(\\mathbf{w})\\), which combines our standard cross-entropy loss \\(\\mathcal{L}\\) and the L2 penalty.\nUsing the sum rule for differentiation, we take the derivative of both parts with respect to weight \\(w_j\\):\n\\[\n\\frac{\\partial J(\\mathbf{w})}{\\partial w_j} = \\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial w_j}}_{\\text{Standard Gradient}} + \\underbrace{\\frac{\\partial}{\\partial w_j} \\left( \\frac{\\lambda}{2m} \\sum_{k=1}^{n} w_k^2 \\right)}_{\\text{L2 Derivative}}\n\\tag{4}\\]\nEvaluating the derivative of the penalty term (where \\(\\frac{\\partial}{\\partial w_j}(w_j^2) = 2w_j\\)), we get:\n\\[\n\\frac{\\partial J(\\mathbf{w})}{\\partial w_j} = \\underbrace{(\\hat{y} - y)x_j}_{\\text{Prediction Error}} + \\underbrace{\\frac{\\lambda}{m} w_j}_{\\text{Weight Penalty}}\n\\tag{5}\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#intuition-for-gradient-descent-updates",
+    "href": "lectures/logreg.html#intuition-for-gradient-descent-updates",
+    "title": "Approaches to biomedical knowledge",
+    "section": "💡 Intuition for Gradient Descent Updates",
+    "text": "💡 Intuition for Gradient Descent Updates\nWhen we update our weights (\\(w_j \\leftarrow w_j - \\alpha \\frac{\\partial J}{\\partial w_j}\\)) using Equation 5, the L2 term (i.e., weight penalty) alters the step:\n\nThe Core Error \\((\\hat{y} - y)x_j\\): Same as above!\nThe Weight Penalty \\(\\frac{\\lambda}{m} w_j\\): The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.\n\n\n\nThe Sum of Convex Functions is Convex\nThe above total cost function \\(J(\\mathbf{w})\\) is composed of two distinct components \\[J(\\mathbf{w}) = \\mathcal{L}_{\\text{cross-entropy}}(\\mathbf{w}) + \\mathcal{L}_{\\text{L2}}(\\mathbf{w})\\]\nTHe Standard negative log-likelihood (cross-entropy loss) for logistic regression is convex.\nL2 Penalty (\\(\\frac{\\lambda}{2m}\\|\\mathbf{w}\\|_2^2\\)) is a quadratic function (“bowl shaped”), which is strictly convex.\nThus logistic regression with L2 penalty has a unique solution\nWe still need to decide which value to use for \\(\\lambda\\), which is a hyperparameter.\nThe optimal value of \\(\\lambda\\) can be estimated with \\(k\\)-Fold Cross-Validation\nHOMEWORK You will receive code for “do-it-yourself” logisitic regression in Python and be askeed to add L2 regularization.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
     ]
   },
   {

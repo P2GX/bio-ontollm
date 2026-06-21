@@ -2,38 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/overview.html</loc>
-    <lastmod>2026-06-21T16:02:13.054Z</lastmod>
+    <lastmod>2026-06-21T17:47:03.824Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/ontology3.html</loc>
-    <lastmod>2026-06-21T16:02:13.054Z</lastmod>
+    <lastmod>2026-06-21T17:47:03.823Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/ontology1.html</loc>
-    <lastmod>2026-06-21T16:02:13.054Z</lastmod>
+    <lastmod>2026-06-21T17:47:03.823Z</lastmod>
   </url>
   <url>
-    <loc>https://P2GX.github.io/bio-ontollm/lectures/logreg.html</loc>
-    <lastmod>2026-06-21T16:02:13.053Z</lastmod>
-  </url>
-  <url>
-    <loc>https://P2GX.github.io/bio-ontollm/index.html</loc>
-    <lastmod>2026-06-21T16:02:13.003Z</lastmod>
+    <loc>https://P2GX.github.io/bio-ontollm/lectures/lstm.html</loc>
+    <lastmod>2026-06-21T17:47:03.823Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/encoder.html</loc>
-    <lastmod>2026-06-21T16:02:13.004Z</lastmod>
+    <lastmod>2026-06-21T17:47:03.767Z</lastmod>
+  </url>
+  <url>
+    <loc>https://P2GX.github.io/bio-ontollm/index.html</loc>
+    <lastmod>2026-06-21T17:47:03.767Z</lastmod>
+  </url>
+  <url>
+    <loc>https://P2GX.github.io/bio-ontollm/lectures/logreg.html</loc>
+    <lastmod>2026-06-21T17:47:03.823Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/neural.html</loc>
-    <lastmod>2026-06-21T16:02:13.054Z</lastmod>
+    <lastmod>2026-06-21T17:47:03.823Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/ontology2.html</loc>
-    <lastmod>2026-06-21T16:02:13.054Z</lastmod>
+    <lastmod>2026-06-21T17:47:03.823Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/ontology4.html</loc>
-    <lastmod>2026-06-21T16:02:13.054Z</lastmod>
+    <lastmod>2026-06-21T17:47:03.824Z</lastmod>
   </url>
 </urlset>
