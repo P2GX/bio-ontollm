@@ -494,565 +494,565 @@
   {
     "objectID": "lectures/ontology1.html#bio-ontologies",
     "href": "lectures/ontology1.html#bio-ontologies",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Bio-Ontologies",
     "text": "Bio-Ontologies\n\n\n\n\n\n\nIn this part of the course we will review ontologies and algorithms and we will present the Human Phenotype Ontology (HPO), which has been developed by our group since 2007.\n\n\n\n\n\n\n\nYou will not need a book for this course\nBut if you would like to learn more:\n\n\nIntroduction to Bio-Ontologies &gt; (Chapman & Hall/CRC Mathematical & Computational Biology)\nPeter N. Robinson and Sebastian Bauer\n2011",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#bio-ontologies-1",
     "href": "lectures/ontology1.html#bio-ontologies-1",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Bio-Ontologies",
     "text": "Bio-Ontologies\n\n\n\n\n\n\nGameplan:\n\n\n\n\nIntroduction to ontologies: OBO, RDF, RDFS, and OWL (today)\nGene Ontology and Overrepresentation Analysis (lecture #2)\nModel-based Gene Set Analysis (lecture #3)\nHuman Phenotype Ontology (HPO), semantic similarity, and Phenomizer (lecture #4)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#obo-open-bio-ontologies",
     "href": "lectures/ontology1.html#obo-open-bio-ontologies",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "OBO: Open Bio-Ontologies",
     "text": "OBO: Open Bio-Ontologies\n\n\n\nOpen Bio-Ontology (OBO)\nThe OBO Foundry is a collective of ontology developers committed to collaboration and adherence to shared principles.\nDevelop a family of interoperable ontologies that are both logically well-formed and scientifically accurate.\nOpen use, collaborative development, non-overlapping content, and common syntax based on models like the Gene Ontology (GO).\n\n\n\n\nhttp://www.obofoundry.org/",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#obo-format",
     "href": "lectures/ontology1.html#obo-format",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "OBO Format",
     "text": "OBO Format\n\n\n\n\n\n\nGene Ontology and OBO foundry members have developed a simple ontology language called OBO.\n\n\n\n\nModels a subset of the semantics available in OWL 2.\nHuman-readable flat file format.\nMost current software also supports JSON, but we will stick with OBO for a moment to introduce the basics!\nBegins with a header:\n\nformat-version: 1.2\ndate: 29:07:2010 12:36\nauto-generated-by: OBO-Edit 2.0\nsubsetdef: goslim_candida \"Candida GO slim\"\nsubsetdef: goslim_generic \"Generic GO slim\"\ndefault-namespace: gene_ontology",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf",
     "href": "lectures/ontology1.html#rdf",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF",
     "text": "RDF\n\n\n\n\n\n\nRDF is designed to make computer-processable statements in the context of the Semantic Web.\n\n\n\n\nRequires a system of machine-processable identifiers for identifying resources that are unique across the entire Web.\nRequires a computer language for representing and processing these statements.\nThe existing Web architecture provides URLs (Uniform Resource Locators) as one form of identifier.\n\nExample: For http://www.example.org, the location is www.example.org and the protocol is http.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-urls-uris-and-urns",
     "href": "lectures/ontology1.html#rdf-urls-uris-and-urns",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: URLs, URIs, and URNs",
     "text": "RDF: URLs, URIs, and URNs\n\n\n\n\n\n\nURLs are one of two specific classes of Uniform Resource Identifier (URI).\n\n\n\n\nThe other class is the Uniform Resource Name (URN).\nA URN represents a name for a resource that is unique and global throughout the Web.\nExample: urn:isbn:0691141339 (ISBN for a specific book).\nKey Difference: While this URI is unique, it cannot be used to retrieve the book from the Web directly.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-serialization",
     "href": "lectures/ontology1.html#rdf-serialization",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: Serialization",
     "text": "RDF: Serialization\n\n\n\n\n\n\nRDF is an abstract data model. The process of representing it as a computer file is called serialization.\n\n\n\n\nMany RDF files are written in RDF/XML.\nThe following example is modified from an RDF file created by the Uniprot consortium.\nprocollagen-proline 4-dioxygenase\nEnzyme Commission EC 1.14.11.2",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-serialization-1",
     "href": "lectures/ontology1.html#rdf-serialization-1",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: Serialization",
     "text": "RDF: Serialization\n1. &lt;?xml version='1.0' encoding='UTF-8'?&gt;\n2. &lt;rdf:RDF xmlns=\"[http://purl.uniprot.org/core/](http://purl.uniprot.org/core/)\" \n3.          xmlns:rdf=\"[http://www.w3.org/1999/02/22-rdf-syntax-ns#](http://www.w3.org/1999/02/22-rdf-syntax-ns#)\" \n4. &gt;\n5. \n6.   &lt;rdf:Description \n7.        rdf:about=\"[http://purl.uniprot.org/enzyme/1.14.11.2](http://purl.uniprot.org/enzyme/1.14.11.2)\"&gt;\n8.     &lt;rdf:type rdf:resource=\"[http://purl.uniprot.org/core/Enzyme](http://purl.uniprot.org/core/Enzyme)\"/&gt;\n9.     &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n10.    &lt;name&gt;Procollagen-proline 4-dioxygenase&lt;/name&gt;\n11.    &lt;name&gt;Prolyl 4-hydroxylase&lt;/name&gt;\n12.    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2)\n13.              = trans-4-hydroxy-L-proline-[procollagen] + \n14.                succinate + CO(2).\n15.    &lt;/activity&gt;\n16.    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n17.    &lt;cofactor&gt;L-ascorbic acid&lt;/cofactor&gt;\n18.   &lt;/rdf:Description&gt;\n19. &lt;/rdf:RDF&gt;\n\nLine 1: The XML declaration,\nLine 2: Opens an element, which indicates that the XML content from line 2 up to the closing tag at line 19 represents RDF.\nLine 2: The default name space for this file is http://purl.uniprot.org/core/\nLine 3: The namespace declaration (xmlns) states that the prefix is equivalent to the namespace URI , and allows the prefix to be used in place of the complete URL in the remainder of the RDF file.\nLines 6-18: Contain the specific information of the RDF file.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-rdfabout",
     "href": "lectures/ontology1.html#rdf-rdfabout",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: rdf:about",
     "text": "RDF: rdf:about\n&lt;?xml version='1.0' encoding='UTF-8'?&gt;\n&lt;rdf:RDF xmlns=\"http://purl.uniprot.org/core/\" \n         xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"&gt;\n \n  &lt;rdf:Description \n       rdf:about=\"http://purl.uniprot.org/enzyme/1.14.11.2\"&gt;\n    &lt;rdf:type rdf:resource=\"http://purl.uniprot.org/core/Enzyme\"/&gt;\n    &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n    &lt;name&gt;Procollagen-proline 4-dioxygenase&lt;/name&gt;\n    &lt;name&gt;Prolyl 4-hydroxylase&lt;/name&gt;\n    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2)\n              = trans-4-hydroxy-L-proline-[procollagen] + \n              succinate + CO(2).\n    &lt;/activity&gt;\n    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n    &lt;cofactor&gt;L-ascorbic acid&lt;/cofactor&gt;\n  &lt;/rdf:Description&gt;\n&lt;/rdf:RDF&gt;\n\nRDF statements are descriptions of resources\nrdf:about is a fundamental attribute used to identify the Subject of a description.\nLine 6: Indicates that the subject of the RDF statements contained within the Description element is http://purl.uniprot.org/enzyme/1.14.11.2.\nWe will abbreviate the subject as :1.14.11.2 in the following slides",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-rdftype",
     "href": "lectures/ontology1.html#rdf-rdftype",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: rdf:type",
     "text": "RDF: rdf:type\n&lt;?xml version='1.0' encoding='UTF-8'?&gt;\n&lt;rdf:RDF xmlns=\"http://purl.uniprot.org/core/\" \n         xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"&gt;\n \n  &lt;rdf:Description \n       rdf:about=\"http://purl.uniprot.org/enzyme/1.14.11.2\"&gt;\n    &lt;rdf:type rdf:resource=\"http://purl.uniprot.org/core/Enzyme\"/&gt;\n    &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n    &lt;name&gt;Procollagen-proline 4-dioxygenase&lt;/name&gt;\n    &lt;name&gt;Prolyl 4-hydroxylase&lt;/name&gt;\n    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2)\n              = trans-4-hydroxy-L-proline-[procollagen] + \n              succinate + CO(2).\n    &lt;/activity&gt;\n    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n    &lt;cofactor&gt;L-ascorbic acid&lt;/cofactor&gt;\n  &lt;/rdf:Description&gt;\n&lt;/rdf:RDF&gt;\n\nLine 7 contains the first of several triplets contained in the Description element.\n\nFor each triplet, the subject is 1.14.11.2.\nThe predicate rdf:type means that the subject of the triple is an instance of the class represented by the object of the triple.\n\nThus, :1.14.11.2 is an instance of Enzyme",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-structural-metadata-what-something-is-vs-descriptive-data-what-something-is-called-or-does.",
     "href": "lectures/ontology1.html#rdf-structural-metadata-what-something-is-vs-descriptive-data-what-something-is-called-or-does.",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: structural metadata (what something is) vs descriptive data (what something is called or does).",
     "text": "RDF: structural metadata (what something is) vs descriptive data (what something is called or does).\n&lt;?xml version='1.0' encoding='UTF-8'?&gt;\n&lt;rdf:RDF xmlns=\"http://purl.uniprot.org/core/\" \n         xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"&gt;\n \n  &lt;rdf:Description \n       rdf:about=\"http://purl.uniprot.org/enzyme/1.14.11.2\"&gt;\n    &lt;rdf:type rdf:resource=\"http://purl.uniprot.org/core/Enzyme\"/&gt;\n    &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n    &lt;name&gt;Procollagen-proline 4-dioxygenase&lt;/name&gt;\n    &lt;name&gt;Prolyl 4-hydroxylase&lt;/name&gt;\n    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2)\n              = trans-4-hydroxy-L-proline-[procollagen] + \n              succinate + CO(2).\n    &lt;/activity&gt;\n    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n    &lt;cofactor&gt;L-ascorbic acid&lt;/cofactor&gt;\n  &lt;/rdf:Description&gt;\n&lt;/rdf:RDF&gt;\n\nLine 8 contains a user-defined predicate stating that a name of :1.14.11.2 is Procollagen-proline dioxygenase",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-serialization-2",
     "href": "lectures/ontology1.html#rdf-serialization-2",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: Serialization",
     "text": "RDF: Serialization\n\n\nRDF triples for procollagen-proline dioxygenase.\n\n\n\n\n\n\n\nSubject\nPredicate\nObject\n\n\n\n\n:1.14.11.2\nrdf:type\n:Enzyme\n\n\n:1.14.11.2\n:name\nProcollagen-proline dioxygenase\n\n\n:1.14.11.2\n:name\nProcollagen-proline 4-dioxygenase\n\n\n:1.14.11.2\n:name\nProlyl 4-hydroxylase\n\n\n:1.14.11.2\n:activity\nL-proline-[procollagen] + 2-oxoglutarate + O(2) = trans-4-hydroxy-L-proline-[procollagen] + succinate + CO(2).\n\n\n:1.14.11.2\n:cofactor\nIron\n\n\n:1.14.11.2\n:cofactor\nL-ascorbic acid\n\n\n\nEach of the predicates indicates a different property of the enzyme 1.14.11.2. The triples with the predicate :name should be read as “:1.14.11.2 has the name Procollagen-proline dioxygenase” etc., and the triples with the predicate :cofactor should be read as “:1.14.11.2 has the cofactor Iron” etc.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-model",
     "href": "lectures/ontology1.html#rdf-model",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: Model",
     "text": "RDF: Model\n\n\n\n\n\n\nRDF models statements as nodes and edges in a graph. For any given triple, there is a node for the subject, a node for the object, and an edge for the predicate, which is directed from the subject node to the object node.\n\n\n\nFor instance, the triple :1.14.11.2 rdf:type :Enzyme can be represented as shown here:\n\n\nFigure 1: Graphical Representation of an RDF Triple. The subject, :1.14.11.2, and the object, :Enzyme, are shown as nodes, while the predicate is shown as an edge leading from the subject to the object.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-bnodes",
     "href": "lectures/ontology1.html#rdf-bnodes",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: bnodes",
     "text": "RDF: bnodes\n\n\n\n\n\n\nRDF provides several syntactic constructs for expressing more complex statements that go beyond what can be expressed by the simple subject/predicate/object form of the triples presented up to now.\n\n\n\n\nSuppose we want to represent something that does not have a URI.\nThis can be done using an RDF construct called a blank node (bnode for short).\nLet us say we want to express the statement Someone called Douglas wrote a book entitled “Hitchhiker’s Guide to the Galaxy.” Clearly, it is impossible to provide a URI for the concept Someone called Douglas.\nInstead, we use a bnode to express the statement about this “someone.”\n\n[ :firstname \"Douglas\"]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-bnodes-continued",
     "href": "lectures/ontology1.html#rdf-bnodes-continued",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: bnodes (Continued)",
     "text": "RDF: bnodes (Continued)\n\n\n\n\n\n\nThe statement in the previous slide means \\(X\\), such that there exists some \\(X\\) (i.e., somebody) such that \\(X\\) has a first name Douglas.\n\n\n\n\nIt is convention to leave a space after the opening square bracket as if to indicate the presence of the “blank” subject of these triples.\nWe can now use this statement as an rdf:subject.\n\n[ :firstname \"Douglas\"] dc:wrote \n         [ dc:title \"Hitchhiker's Guide to the Galaxy\"] .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-reification",
     "href": "lectures/ontology1.html#rdf-reification",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: reification",
     "text": "RDF: reification\n\n\n\n\n\n\n\nLet’s say we then do a search in our favorite Web search engine and find a Wikipedia article saying that Douglas Adams wrote a book entitled “Hitchhiker’s Guide to the Galaxy.” Furthermore, let’s say we are skeptical about this statement and want to use RDF to express the fact that Wikipedia claims that Douglas Adams wrote a book entitled “Hitchhiker’s Guide to the Galaxy.”\n\n\n\n\nRDF represents a reified statement as four statements using RDF properties and objects: the triplet (S, P, O), reified by resource R, is represented by:\n\nR rdf:type rdf:Statement\nR rdf:subject S\nR rdf:predicate P\nR rdf:object O\n\nEssentially, RDF “reifies” (makes) a triple into a “thing” about which other RDF statements can be made. The triple is assigned an identifier and treated as a resource.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdf-reification-example",
     "href": "lectures/ontology1.html#rdf-reification-example",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDF: reification (Example)",
     "text": "RDF: reification (Example)\nAssuming that the appropriate qname prefixes have been defined, we can express our statement about Wikipedia’s claim as follows:\n@prefix rdf: [http://www.w3.org/1999/02/22-rdf-syntax-ns#](http://www.w3.org/1999/02/22-rdf-syntax-ns#) .\n\n_:x rdf:type rdf:Statement .\n_:x rdf:subject :\"Douglas Adams\" .\n_:x rdf:predicate :wrote .\n_:x rdf:object :\"Hitchhiker's Guide to the Galaxy\" .\n\nweb:wikipedia q:says _:x",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs",
     "href": "lectures/ontology1.html#rdfs",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS",
     "text": "RDFS\n\n\n\n\n\n\nA schema is a formal definition of the syntax of a language, and a schema language is a language for expressing that definition. In SQL, the schema is the structure of the database that defines the objects in the database.\n\n\n\n\nRDF Schema (RDFS) is intended as a framework for interpreting the meaning of data expressed in RDF.\nRDFS provides additional specifications and keywords that allow many kinds of inference to be performed.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-is-a-aint-always-is-a",
     "href": "lectures/ontology1.html#rdfs-is-a-aint-always-is-a",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a ain’t always is a",
     "text": "RDFS: is a ain’t always is a\n\n\n\n\n\n\nProbably the most important concept for inference in RDFS is that of the class. Classes provide an abstraction mechanism for grouping resources with similar characteristics.\n\n\n\nIt is important to distinguish between two different usages of the phrase “is a” in the English language:\n\nMickey is a mouse: This means a particular individual called Mickey is an instance of the class Mouse.\nA mouse is a rodent: This means the class “mouse” is a subclass of the class “rodent,” implying that every being that is a mouse is also a rodent.\n\nAs we shall see, RDFS has a different syntax for expressing each relation.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-is-a",
     "href": "lectures/ontology1.html#rdfs-is-a",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a",
     "text": "RDFS: is a\n\n\n\n\n\n\nImagine we have defined an ontology and have provided definitions at http://www.my-example.org, which we assign to the qname prefix x.\n\n\n\n\nIt is already possible in RDF to express the statement Mickey is a mouse:\n\nx:Mickey rdf:type x:Mouse .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-is-a-subclasses",
     "href": "lectures/ontology1.html#rdfs-is-a-subclasses",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a (Subclasses)",
     "text": "RDFS: is a (Subclasses)\n\n\n\n\n\n\nHowever, there is no mechanism built into RDF with which we could express the statement that mouse is a subclass of rodent.\n\n\n\n\nThe RDFS keywords rdfs:Class and rdfs:subClassOf can be used for this purpose.\nWe first declare that x:Mouse and x:Rodent are RDFS classes, and then state that x:Mouse is a subclass of x:Rodent.\n\n@prefix x: [http://www.my-example.org](http://www.my-example.org) .\n\nx:Mouse rdf:type rdfs:Class .\nx:Rodent rdf:type rdfs:Class .\nx:Mouse rdfs:subClassOf x:Rodent .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-is-a-inference-rule-1",
     "href": "lectures/ontology1.html#rdfs-is-a-inference-rule-1",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a (Inference Rule 1)",
     "text": "RDFS: is a (Inference Rule 1)\nOne of the RDFS inference rules states that if there are asserted triples of the form:\nX rdfs:subClassOf Y .\nb rdf:type X .\nthen the following triple can be inferred:\nb rdf:type Y .\n\nThus, if we know that Mickey is an instance of we can infer that Mickey is an instance of the class !",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-is-a-inference-rule-2",
     "href": "lectures/ontology1.html#rdfs-is-a-inference-rule-2",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a (Inference Rule 2)",
     "text": "RDFS: is a (Inference Rule 2)\nAnother inference rule states that the subclass relation is transitive.\nThat is, if there are asserted triples about classes \\(X\\), \\(Y\\), and \\(Z\\):\nX rdfs:subClassOf Y .\nY rdfs:subClassOf Z .\nthen the following triple can be inferred:\nX rdfs:subClassOf Z .\n\nThus, we can infer that mouse is a subclass of the class rodent!",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-is-a-transitivity-example",
     "href": "lectures/ontology1.html#rdfs-is-a-transitivity-example",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a (Transitivity Example)",
     "text": "RDFS: is a (Transitivity Example)\n\nif we assert the following triples:\n\nx:Mouse rdf:type rdfs:Class .\nx:Rodent rdf:type rdfs:Class .\nx:Mammal rdf:type rdfs:Class .\n\nx:Mouse rdfs:subClassOf x:Rodent .\nx:Rodent rdfs:subClassOf x:Mammal .\nthen we can infer that mice are mammals:\nx:Mouse rdfs:subClassOf x:Mammal .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-properties-and-inference",
     "href": "lectures/ontology1.html#rdfs-properties-and-inference",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Properties and Inference",
     "text": "RDFS: Properties and Inference\nSimilar inference rules apply to properties. For instance, we can define a simple hierarchy of biochemical regulation with the following RDF statements:\n@prefix r: [http://www.regulation.org](http://www.regulation.org) .\n\nr:regulates rdf:type rdfs:Property .\nr:positively_regulates rdf:type rdfs:Property .\nr:negatively_regulates rdf:type rdfs:Property .\n\nr:positively_regulates rdfs:subPropertyOf r:regulates .\nr:negatively_regulates rdfs:subPropertyOf r:regulates .\nIf proteins A and B have been defined in a namespace pro, we can state that A positively regulates B by asserting the following triple:\npro:A  r:positively_regulates pro:B .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-properties-and-inference-1",
     "href": "lectures/ontology1.html#rdfs-properties-and-inference-1",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Properties and Inference",
     "text": "RDFS: Properties and Inference\nThere is an inference rule for RDFS properties stating that if the following triples are asserted:\nP rdfs:subPropertyOf Q .\nX P Y .\nThen the following triple can be inferred:\nX Q Y .\nExample: Using our regulation hierarchy, we can infer that Protein A regulates Protein B:\npro:A  r:regulates pro:B .\n\n\n\n\n\n\nTip\n\n\nSimilarly to the situation with classes, the subproperty relation is transitive.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-property-domains",
     "href": "lectures/ontology1.html#rdfs-property-domains",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Property Domains",
     "text": "RDFS: Property Domains\n\n\n\n\n\n\nRDFS provides a syntax for specifying the range and domain of properties. Recall that the domain of a function is the set of values for which a function is defined. The range is the set of all values the function takes for the values in the domain.\n\n\n\n\nRDFS’ use of domain and range enables inference.\nThe statement P rdfs:domain D means that the subject of any triple using predicate P must be an instance of class D.\n\nIf the following two triples are asserted:\nP rdfs:domain D .\nX P Y .\nhen the following triple is inferred:\nX rdf:type D .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-property-ranges",
     "href": "lectures/ontology1.html#rdfs-property-ranges",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Property Ranges",
     "text": "RDFS: Property Ranges\nSimilarly, the RDFS statement P rdfs:range R for an rdf:Property P and an rdf:Class R means that the resource denoted by the object of a triple whose predicate is P is an instance of the class R.\nIf the following two triples are asserted:\nP rdfs:range R .\nX P Y .\nThen the following triple can be inferred:\nY rdf:type R .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-property-domains-and-ranges-example",
     "href": "lectures/ontology1.html#rdfs-property-domains-and-ranges-example",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Property Domains and Ranges (Example)",
     "text": "RDFS: Property Domains and Ranges (Example)\n\n\n\n\n\n\nThe following highly simplified example was adapted from the National Cancer Institute (NCI) thesaurus.\n\n\n\n:drug_affects_protein rdf:type rdfs:Property .\n:Drug rdf:type rdfs:Class .\n:Protein rdf:type rdfs:Class .\n\n:drug_affects_protein rdfs:domain :Drug .\n:drug_affects_protein rdfs:range :Protein .\nIf we now additionally assert the following triple:\n:Nilotinib  :drug_affects_protein :BCR-ABL .\nThen we can infer the following two triples:\n:Nilotinib rdf:type :Drug .\n:BCR-ABL rdf:type :Protein .\n\nIn fact, Nilotinib is a selective Bcr-Abl tyrosine kinase inhibitor that is used in the treatment of chronic myeloid leukemia.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-property-domains-and-ranges-graph",
     "href": "lectures/ontology1.html#rdfs-property-domains-and-ranges-graph",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Property Domains and Ranges (Graph)",
     "text": "RDFS: Property Domains and Ranges (Graph)\nThe figure below displays the graph corresponding to these triples. The inferred triples are shown using dashed lines.\n\n\nFigure 3: Example of RDFS Inference in an RDF Graph. Because of the domain and range restrictions on the predicate :drug_affects_protein, it can be inferred that :Nilotinib is a drug and :BCR-ABL is a protein.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-intersections-and-unions",
     "href": "lectures/ontology1.html#rdfs-intersections-and-unions",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Intersections and Unions",
     "text": "RDFS: Intersections and Unions\n\n\n\n\n\n\nYet other forms of inference in RDFS resemble to a certain extent conclusions about set intersections and set unions.\n\n\n\n\nIf \\(Z\\) is a subclass of both class \\(X\\) and class \\(Y\\), and \\(b\\) is defined as an instance of \\(Z\\), then \\(b\\) can be inferred to be an instance of both \\(X\\) and \\(Y\\).\n\nIf the following triples are asserted:\nZ rdfs:subClassOf X .\nZ rdfs:subClassOf Y .\nb rdf:type Z .\nThen these two triples can be inferred:\nb rdf:type X .\nb rdf:type Y .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-intersections-and-unions-continued",
     "href": "lectures/ontology1.html#rdfs-intersections-and-unions-continued",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Intersections and Unions (Continued)",
     "text": "RDFS: Intersections and Unions (Continued)\nFor instance, if we state that:\n:Pig rdfs:subClassOf :Mammal .\n:Pig rdfs:subClassOf :FarmAnimal .\nThen we can conclude that a particular pig is both a mammal and a farm animal. The class :Pig can be considered to occupy the intersection between those two classes.On the other hand, asserting that:\nCow rdfs:subClassOf :Mammal .\n:Cow rdfs:subClassOf :FarmAnimal .\nDoes not imply that a cow is a pig!\n\n\n\n\n\n\n\nLimits of RDFS\n\n\nRDFS constructs are not designed to express an exact mathematical equality between sets, such as \\(A = B \\cap C\\). It only expresses “is a” relationships, not “is only and exactly” relationships.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#rdfs-intersections-and-unions-union",
     "href": "lectures/ontology1.html#rdfs-intersections-and-unions-union",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Intersections and Unions (Union)",
     "text": "RDFS: Intersections and Unions (Union)\n\n\n\n\n\n\nIt is also possible to express something similar to set union in RDFS.\n\n\n\nIf we assert the following triples:\nX rdfs:subClassOf Z .\nY rdfs:subClassOf Z .\nThen, if either of the two following statements are asserted\nb rdf:type X .\nb rdf:type Y .\n…then, it can be inferred that:\nb rdf:type Z .",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#the-web-ontology-language-owl",
     "href": "lectures/ontology1.html#the-web-ontology-language-owl",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "The Web Ontology Language (OWL)",
     "text": "The Web Ontology Language (OWL)\nThe acronym OWL stands for Web Ontology Language. While the most natural acronym would have been “WOL,” OWL was chosen because it is easier to pronounce.1\nIn essence, OWL is an ontology language that builds upon RDF and RDFS but provides more powerful inference rules and built-in constructs.\n\nOWL can be understood as an extension of RDFS that allows more powerful inference to be performed.\nTo a first approximation, we can say that OWL extends the inference capabilities already present in RDFS by the addition of new constructs and new rules.\n\n\n\n\n\n\nThe claim that the choice of the acronym OWL had something to do with the character Owl from Winnie the Pooh, who spelled his name WOL, is apocryphal.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#defining-classes-in-owl",
     "href": "lectures/ontology1.html#defining-classes-in-owl",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Defining Classes in OWL",
     "text": "Defining Classes in OWL\n\n\n\n\n\n\nAn important aspect of OWL is its ability to define classes with considerably more expressivity than RDFS.\n\n\n\nOWL classes can be defined in two primary ways:\n\nEnumerated Collections: Classes representing a specific, closed collection of individuals (e.g., Paul, John, and Mary).\nConceptual Definitions: Classes representing concepts that can have an indeterminate number of instances (e.g., Mitochondrion).",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#defining-classes-in-owl-1",
     "href": "lectures/ontology1.html#defining-classes-in-owl-1",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Defining Classes in OWL",
     "text": "Defining Classes in OWL\nOWL provides six different mechanisms for defining classes:\n\nNamed Classes: Indicated by a URI.\nEnumerations: A list of all specific individuals in the class.\nProperty Restrictions: Defining a class by how its members relate to other things.\nIntersection: The overlap of two or more class descriptions.\nUnion: The combination of two or more class descriptions.\nComplement: Everything that does not belong to a specific class.\n\nAside from the first type, each of these mechanisms defines classes by placing restrictions on the things that belong to the class.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#classes-in-owl-enumeration",
     "href": "lectures/ontology1.html#classes-in-owl-enumeration",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Enumeration",
     "text": "Classes in OWL: Enumeration\n\n\n\n\n\n\nPerhaps the easiest to understand is the enumeration type, which essentially just provides a list of all individuals that belong to the class.\n\n\n\nFor instance, the following class definition expressed using RDF/XML syntax creates a class containing exactly the four Beatles:\n&lt;owl:Class&gt;\n  &lt;owl:oneOf rdf:parseType=\"Collection\"&gt;\n    &lt;owl:Thing rdf:about=\"#John\"/&gt;\n    &lt;owl:Thing rdf:about=\"#Paul\"/&gt;\n    &lt;owl:Thing rdf:about=\"#George\"/&gt;\n    &lt;owl:Thing rdf:about=\"#Ringo\"/&gt;\n  &lt;/owl:oneOf&gt;\n&lt;/owl:Class&gt;",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#classes-in-owl-property-restriction",
     "href": "lectures/ontology1.html#classes-in-owl-property-restriction",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Property Restriction",
     "text": "Classes in OWL: Property Restriction\n\n\n\n\n\n\nAn A-Microtubule can be defined as “A complete cylindrical microtubule that is part of a microtubule doublet in cilia.”\n\n\n\n&lt;owl:Class rdf:about=\"#A-Microtubule\"&gt;\n  &lt;rdfs:label&gt;A-Microtubule&lt;/rdfs:label&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Cilium Microtubule\"/&gt;\n  \n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#is Physical Part of\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cytoskeleton\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n\n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#is Physical Part of\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cilium\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n&lt;/owl:Class&gt;",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#classes-in-owl-property-restriction-logic",
     "href": "lectures/ontology1.html#classes-in-owl-property-restriction-logic",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Property Restriction (Logic)",
     "text": "Classes in OWL: Property Restriction (Logic)\n\n\n\n\n\n\nA property restriction is a special kind of class description that describes an anonymous class—specifically, the class of all individuals that satisfy the restriction.\n\n\n\n\nThe previous RDF/XML code states that the class A-Microtubule is a subclass of an anonymous class defined by being a physical part of some cytoskeleton.\nIt is also a subclass of another anonymous class defined by being a physical part of some cilium.\n\n\nIn plain English: Every A-microtubule is part of a cilium and simultaneously part of a cytoskeleton.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#classes-in-owl-property-restriction-value-constraints",
     "href": "lectures/ontology1.html#classes-in-owl-property-restriction-value-constraints",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Property Restriction (Value Constraints)",
     "text": "Classes in OWL: Property Restriction (Value Constraints)\nOWL distinguishes two kinds of property restrictions: Value Constraints and Cardinality Constraints. A value restriction \\(V\\) on some property \\(P\\) has the following general form:\n&lt;rdfs:subClassOf&gt;\n  &lt;owl:Restriction&gt;\n    &lt;owl:onProperty rdf:resource=\"P\" /&gt;\n    &lt;owl:allValuesFrom rdf:resource=\"#V\"/&gt;\n  &lt;/owl:Restriction&gt;\n&lt;/rdfs:subClassOf&gt;\n\n\n\n\n\n\n\nowl:allValuesFrom states that for each instance of the class being described, every value for \\(P\\) must fulfill the constraint.\n\n\n\n\nConfusing Caveat: owl:allValuesFrom does not necessarily mean that an instance of the class must have the property \\(P\\). It merely states that if an instance does have \\(P\\), then the value must be from class \\(V\\).\nThe Universal Quantifier: This is analogous to the logic of \\(\\forall\\) in predicate calculus.\nFormal Logic: Recall that the formula \\((\\forall x) P(x)\\) essentially means “for all \\(x\\), if \\(x\\) exists in this context, then it must satisfy \\(P\\).”1\n\nAccording to this logic it is true that “All Martians are green” (because there are no Martians!)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#classes-in-owl-negation",
     "href": "lectures/ontology1.html#classes-in-owl-negation",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Negation",
     "text": "Classes in OWL: Negation\n\n\n\n\n\n\nClasses can be defined by stating what they are not.\n\n\n\n\nFor instance, the Ontology for Biomedical Investigations (OBI) describes a class of cells that do not express the CD8 receptor using the owl:complementOf keyword.\nThis is achieved by defining the intersection of the class “Cell” and the complement of the class of things that “have part CD8 receptor.”\n\n&lt;owl:intersectionOf rdf:parseType=\"Collection\"&gt;\n  &lt;owl:Class rdf:about=\"CL:cell\"/&gt;\n  \n  &lt;owl:Class&gt;\n    &lt;owl:complementOf&gt;\n      &lt;owl:Restriction&gt;\n        &lt;owl:onProperty&gt;\n          &lt;owl:TransitiveProperty rdf:about=\"#has_part\"/&gt;\n        &lt;/owl:onProperty&gt;\n        &lt;owl:someValuesFrom&gt;\n          &lt;owl:Class rdf:about=\"#CD8 receptor\"/&gt;\n        &lt;/owl:someValuesFrom&gt;\n      &lt;/owl:Restriction&gt;\n    &lt;/owl:complementOf&gt;\n  &lt;/owl:Class&gt;\n&lt;/owl:intersectionOf&gt;",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#classes-in-owl-negation-the-pitfalls",
     "href": "lectures/ontology1.html#classes-in-owl-negation-the-pitfalls",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Negation (The Pitfalls)",
     "text": "Classes in OWL: Negation (The Pitfalls)\n\n\n\n\n\n\nThe “Kitchen Sink” Problem\n\n\nUnexpected results can be obtained from the naive use of owl:complementOf.\n\n\n\n\nThe Logic: While one might be tempted to think that the complement of Man is Woman, the formal meaning of owl:complementOf Man is everything in the universe that is not a Man.\n\nThis includes the kitchen sink, the planet Neptune, and the Pacific Ocean.\n\nThe Solution: owl:complementOf is almost always combined with other restrictions (intersections) to narrow the scope.\n\n\nExample: To define Woman, you would use the Intersection of Human Being and the Complement of Man.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#classes-in-owl-union",
     "href": "lectures/ontology1.html#classes-in-owl-union",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Union",
     "text": "Classes in OWL: Union\n\n\n\n\n\n\nOWL provides a union operator that is analogous to the set union operator (\\(A \\cup B\\)).\n\n\n\n\nFor instance, we can define the class Human as the union of the classes Man and Woman:\n\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;owl:unionOf rdf:parseType=\"Collection\"&gt;\n    &lt;owl:Class rdf:about=\"#Man\" /&gt;\n    &lt;owl:Class rdf:about=\"#Woman\" /&gt;\n  &lt;/owl:unionOf&gt;\n&lt;/owl:Class&gt;",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#classes-in-owl-union-the-subclass-trap",
     "href": "lectures/ontology1.html#classes-in-owl-union-the-subclass-trap",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Union (The Subclass Trap)",
     "text": "Classes in OWL: Union (The Subclass Trap)\nContrast the owl:unionOf construct to the following incorrect attempt to define Human as a subclass of Man and Woman:\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Man\" /&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Woman\" /&gt;\n&lt;/owl:Class&gt;\nWhy this fails:\n\nThe “And” vs. “Or” Logic: By using rdfs:subClassOf twice, you are stating that every Human must be a Man AND simultaneously a Woman.\nUnsatisfiability: If Man and Woman are defined as disjoint (meaning they cannot overlap), this class becomes unsatisfiable.\nThe Empty Set: An unsatisfiable class is one that cannot contain any possible individuals.\n\nIn formal logic, this is equivalent to the empty set (\\(\\emptyset\\)).\n\n\n\n\n\n\nImportant\n\n\nThe formula \\(A = \\{ C \\cap \\neg C \\}\\) is unsatisfiable because it implies a direct contradiction.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#individuals-in-owl",
     "href": "lectures/ontology1.html#individuals-in-owl",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Individuals in OWL",
     "text": "Individuals in OWL\nIn OWL, rdf:type is the property that connects an individual to a class of which it is a member.\nIf we have a class of cities:\n&lt;owl:Class rdf:ID=\"City\"/&gt;\nWe can declare individual cities to be members of this class. The following two syntactical forms have identical meanings:\n\nOption 1: Direct Class Tag\n\nThis uses the class name as the XML element tag.\n&lt;City rdf:ID=\"Berlin\"/&gt;\n\nOption 2: Explicit Typing\n\nThis uses owl:Thing (the root class of everything) and explicitly states the type.\n&lt;owl:Thing rdf:ID=\"Berlin\"/&gt;\n\n&lt;owl:Thing rdf:about=\"#Berlin\"&gt;\n  &lt;rdf:type rdf:resource=\"#City\"/&gt;\n&lt;/owl:Thing&gt;",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#owl-conclusion-and-next-steps",
     "href": "lectures/ontology1.html#owl-conclusion-and-next-steps",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "OWL: Conclusion and Next Steps",
     "text": "OWL: Conclusion and Next Steps\n\nThe Tip of the Iceberg: We have barely scratched the surface of OWL’s logical capabilities in this lecture.\nHands-on Learning: You will create your own ontology in the upcoming Exercise, where you will have the chance to explore these constructs (and more) in a practical setting.\nOfficial Resources: The W3C Website provides comprehensive documentation and technical specifications for the OWL family of languages.\n\n\nSemantic Web Layer Cake",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology1.html#homework",
     "href": "lectures/ontology1.html#homework",
-    "title": "Ontologies: OBO, RDF, RDFS, and OWL",
+    "title": "Approaches to biomedical knowledge",
     "section": "Homework",
     "text": "Homework\nHOMEWORK You will create an Indian food ontology and infer whether certain dishes are vegetarian or non-veg.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Ontologies: OBO, RDF, RDFS, and OWL"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
@@ -1600,7 +1600,7 @@
     "href": "lectures/logreg.html#part-5",
     "title": "Logistic regression",
     "section": "Part 5: Overfitting",
-    "text": "Part 5: Overfitting\n\n“With four parameters I can fit an elephant and with five I can make him wiggle his trunk.” — John von Neumann\n\nMeasuring Model Performance\nModel fit can be assessed using the difference between predictions and reality:\n\nPrediction Error: Difference between the model’s predictions and new data.\nEstimation Error: Difference between the estimated and true parameter values.\nBoth types of error are driven by two competing forces, which are heavily dictated by model complexity1:\n\nLever J, et al. (2016) Model selection and overfitting. Nature Methods 13:703–704.",
+    "text": "Part 5: Overfitting\n\n“With four parameters I can fit an elephant and with five I can make him wiggle his trunk.” — John von Neumann\n\nMeasuring Model Performance\nModel fit can be assessed using the difference between predictions and reality:\n\nPrediction Error: Difference between the model’s predictions and new data.\nEstimation Error: Difference between the estimated and true parameter values.\nBoth types of error are driven by two competing forces, which are heavily dictated by model complexity1:\n\n\n\n\n\n\nLever J, et al. (2016) Model selection and overfitting. Nature Methods 13:703–704.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1625,6 +1625,42 @@
     "title": "Logistic regression",
     "section": "Regularization",
     "text": "Regularization\n\na technique used to enhance the generalization ability of machine learning models by adding a penalty term to the loss function.\n\n\nWe will focus on L2 regularization here (but see also Lasso and Elastic Net)\nFor simplicity, let’s focus for now on linear regression with a standard linear model1:\n\n\\[\nY = \\beta_0 + \\beta_1X_1 + \\ldots + \\beta_pX_p\n\\]\n\nIf the true relationship between the response and the predictors is approximately linear, the least squares estimates will have low bias.\nIf \\(n \\gg p\\) — that is, if \\(n\\), the number of observations, is much larger than \\(p\\), the number of variables—then the least squares estimates tend to also have low variance, and hence will perform well on test observations.\nif \\(n\\) is not much larger than \\(p\\), then there can be a lot of variability in the least squares fit, resulting in overfitting and consequently poor predictions on future observations not used in model training.\nIf \\(p&gt;n\\), here is no longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error on the training data, but typically very poor test set performance due to extremely high variance\n\nMaterial adapted from James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (1st ed.) [PDF]. Springer.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#the-regularized-cost-function",
+    "href": "lectures/logreg.html#the-regularized-cost-function",
+    "title": "Logistic regression",
+    "section": "🧮 The Regularized Cost Function",
+    "text": "🧮 The Regularized Cost Function\nWe add an L2 penalty term to the standard cross-entropy loss function:\n\\[\nJ(\\mathbf{w}) = -\\frac{1}{m} \\sum_{i=1}^{m} \\left[ y^{(i)} \\log(a^{(i)}) + (1 - y^{(i)}) \\log(1 - a^{(i)}) \\right] + \\frac{\\lambda}{2m} \\|\\mathbf{w}\\|_2^2\n\\tag{3}\\]\nWhere the L2 norm penalty is defined as: \\[\n\\|\\mathbf{w}\\|_2^2 = \\sum_{j=1}^{n} w_j^2\n\\]\n\n\n\n\n🔑 Key Parameters\n\n\n\n\\(\\lambda\\) (Lambda): The regularization strength hyperparameter.\nIf \\(\\lambda = 0\\): Standard logistic regression (potential overfitting).\nIf \\(\\lambda \\to \\infty\\): Weights are driven toward zero (underfitting).",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#gradient-of-log-loss-with-l2-regularization",
+    "href": "lectures/logreg.html#gradient-of-log-loss-with-l2-regularization",
+    "title": "Logistic regression",
+    "section": "Gradient of Log-Loss with L2 Regularization",
+    "text": "Gradient of Log-Loss with L2 Regularization\nTo train our regularized model, we need the gradient of the objective function \\(J(\\mathbf{w})\\), which combines our standard cross-entropy loss \\(\\mathcal{L}\\) and the L2 penalty.\nUsing the sum rule for differentiation, we take the derivative of both parts with respect to weight \\(w_j\\):\n\\[\n\\frac{\\partial J(\\mathbf{w})}{\\partial w_j} = \\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial w_j}}_{\\text{Standard Gradient}} + \\underbrace{\\frac{\\partial}{\\partial w_j} \\left( \\frac{\\lambda}{2m} \\sum_{k=1}^{n} w_k^2 \\right)}_{\\text{L2 Derivative}}\n\\tag{4}\\]\nEvaluating the derivative of the penalty term (where \\(\\frac{\\partial}{\\partial w_j}(w_j^2) = 2w_j\\)), we get:\n\\[\n\\frac{\\partial J(\\mathbf{w})}{\\partial w_j} = \\underbrace{(\\hat{y} - y)x_j}_{\\text{Prediction Error}} + \\underbrace{\\frac{\\lambda}{m} w_j}_{\\text{Weight Penalty}}\n\\tag{5}\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Logistic regression"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#intuition-for-gradient-descent-updates",
+    "href": "lectures/logreg.html#intuition-for-gradient-descent-updates",
+    "title": "Logistic regression",
+    "section": "💡 Intuition for Gradient Descent Updates",
+    "text": "💡 Intuition for Gradient Descent Updates\nWhen we update our weights (\\(w_j \\leftarrow w_j - \\alpha \\frac{\\partial J}{\\partial w_j}\\)) using Equation 5, the L2 term (i.e., weight penalty) alters the step:\n\nThe Core Error \\((\\hat{y} - y)x_j\\): Same as above!\nThe Weight Penalty \\(\\frac{\\lambda}{m} w_j\\): The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.\n\n\n\nThe Sum of Convex Functions is Convex\nThe above total cost function \\(J(\\mathbf{w})\\) is composed of two distinct components \\[J(\\mathbf{w}) = \\mathcal{L}_{\\text{cross-entropy}}(\\mathbf{w}) + \\mathcal{L}_{\\text{L2}}(\\mathbf{w})\\]\nTHe Standard negative log-likelihood (cross-entropy loss) for logistic regression is convex.\nL2 Penalty (\\(\\frac{\\lambda}{2m}\\|\\mathbf{w}\\|_2^2\\)) is a quadratic function (“bowl shaped”), which is strictly convex.\nThus logistic regression with L2 penalty has a unique solution\nWe still need to decide which value to use for \\(\\lambda\\), which is a hyperparameter.\nThe optimal value of \\(\\lambda\\) can be estimated with \\(k\\)-Fold Cross-Validation\nHOMEWORK You will receive code for “do-it-yourself” logisitic regression in Python and be askeed to add L2 regularization.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3213,373 +3249,373 @@
   {
     "objectID": "lectures/ontology2.html#gene-ontology",
     "href": "lectures/ontology2.html#gene-ontology",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Gene Ontology",
-    "text": "Gene Ontology\n\n\n\n\n\n\nThe Gene Ontology (GO) is being developed with the goal of providing a set of structured vocabularies for the annotation of genes and their products. Since the publication of the original paper in Nature Genetics in 2000, GO has become one of the most widely used and mature bio-ontologies, although it is still very much a work in progress.",
+    "text": "Gene Ontology\n\n\n\n\n\n\nThe Gene Ontology (GO) is being developed with the goal of providing a set of structured vocabularies for the annotation of genes and their products. Since the publication of the original paper in Nature Genetics in 20001, GO has become one of the most widely used and mature bio-ontologies, although it is still very much a work in progress.\n\n\n\n\n\n\n\n\nAshburner M, et al (2000) Gene ontology: tool for the unification of biology. The Gene Ontology Consortium. Nat Genet. 25(1):25-9",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#why-do-we-need-go",
     "href": "lectures/ontology2.html#why-do-we-need-go",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Why do we need GO?",
     "text": "Why do we need GO?\n\nExponential increase in biological data \\(\\longmapsto\\) need for databases with appropriate representation techniques.\nLag in functional description \\(\\longmapsto\\) progress in how biologists describe functions has not kept pace with large-scale sequencing. Need for efficient procedures for preliminary annotation.\nDivergent Nomenclature \\(\\longmapsto\\) names for genes and functions vary widely between databases, making cross-species comparison difficult.\nPrimary Uses:\n\nInformation extraction\nData mining\nDatabase integration",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-a-structured-hierarchy",
     "href": "lectures/ontology2.html#go-a-structured-hierarchy",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO: A Structured Hierarchy",
-    "text": "GO: A Structured Hierarchy\n\n\n\nDNA Metabolism Hierarchy",
+    "text": "GO: A Structured Hierarchy",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#dna-ligation-go0006266",
     "href": "lectures/ontology2.html#dna-ligation-go0006266",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "DNA Ligation: GO:0006266",
     "text": "DNA Ligation: GO:0006266\nThe following represents the lineage of the term DNA Ligation (number of children in parentheses):\n\nGO:0003673 : Gene_Ontology (79026)\n\nGO:0008150 : biological_process (56409)\n\nGO:0009987 : cellular process (20228)\n\nGO:0008151 : cell growth and/or maintenance (14057)\n\nGO:0008283 : cell proliferation (4030)\n\nGO:0007049 : cell cycle (3207)\n\nGO:0000067 : DNA replication and chromosome cycle (1301)\n\nGO:0006260 : DNA replication (880)\n\nGO:0006261 : DNA dependent DNA replication (366)\n\nGO:0006266 : DNA ligation (7)\n\n\n\n\n\n\n\n\n\nParent terms of DNA Ligation: A second path through the graph",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#dag-directed-acyclic-graph",
     "href": "lectures/ontology2.html#dag-directed-acyclic-graph",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "DAG: Directed Acyclic Graph",
     "text": "DAG: Directed Acyclic Graph\n\n\n\n\n\n\n\n\n\n\nA graph with directed edges\nNo cycles (closed loops whereby a path leads back to the starting node)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#quickgo-dag",
     "href": "lectures/ontology2.html#quickgo-dag",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "QuickGO: DAG",
     "text": "QuickGO: DAG\n\n\n\n\n\n\n\n\n\n\n\n\n\nSource: https://www.ebi.ac.uk/QuickGO/term/GO:0003678",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#tree",
     "href": "lectures/ontology2.html#tree",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Tree",
     "text": "Tree\n\nSimpler data structure without multiple parentage\ne.g. EC: Enzyme commision definitions of enzyme classes, subclasses and sub-subclasses",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-biological-process",
     "href": "lectures/ontology2.html#go-biological-process",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO: Biological Process",
     "text": "GO: Biological Process\n\nDefinition: The biological objective to which the gene or gene product contributes.\nComposition: A process is accomplished by one or more assemblies of molecular functions.\nCharacteristics: These processes often involve chemical or physical transformations.\nExamples:\n\nHigh Level: “Signal Transduction”, “Cell Growth and Maintenance”\nLower Level: “Pyrimidine Metabolism”, “cAMP Biosynthesis”\n\n\n\nA biological process is a series of events accomplished by one or more ordered assemblies of molecular functions. It is not equivalent to a pathway, though it is often used to describe them.\n\n\n\n\n\n\n\n\n\n\n\n\n\nfigure credit: EMBL-EBI",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-molecular-function",
     "href": "lectures/ontology2.html#go-molecular-function",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO: Molecular Function",
     "text": "GO: Molecular Function\n\nDefinition: The biochemical activity of a gene product (the specific “job”).\nThe “What”: Describes what is done, rather than why, where, or when.\nExamples:\n\nHigh Level: “Enzyme”, “Transporter”\nLower Level: “Adenylate Cyclase”, “Toll Receptor Ligand”\n\n\n\n\n\n\n\n\n\nGO Molecular function\n\n\nMolecular functions generally correspond to the individual steps in a biological process (like the activity of a single protein within a metabolic pathway).\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfigure credit: EMBL-EBI",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-cellular-component",
     "href": "lectures/ontology2.html#go-cellular-component",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO: Cellular Component",
     "text": "GO: Cellular Component\n\nDefinition: The place in the cell where a gene product is active.\nSpecific Locations:\n\nExample: “Nuclear membrane”\n\nMulti-protein Complexes: Can also refer to stable entities made up of multiple gene products.\n\nExamples: “Ribosome”, “Proteasome”\n\n\n\n\n\n\n\n\nNote\n\n\nA cellular component is not just a “where”—it can be a functional structure like a protein complex that acts as a unit.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfigure credit: EMBL-EBI",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-terms-the-anatomy-of-an-entry",
     "href": "lectures/ontology2.html#go-terms-the-anatomy-of-an-entry",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Terms: The Anatomy of an Entry",
     "text": "GO Terms: The Anatomy of an Entry\n\nAccession: GO:0003678\nName: DNA helicase activity\nDefinition: Catalysis of the hydrolysis of ATP to unwind the DNA helix at the replication fork, allowing the resulting single strands to be copied.\nLineage: Information about parent terms (this handles the “bookkeeping” of the DAG structure).\n\n\n\n\nEach entry (term) in the Gene Ontology contains these standardized metadata fields to ensure consistency across different databases.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-annotations",
     "href": "lectures/ontology2.html#go-annotations",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Annotations",
     "text": "GO Annotations\n\n\n\n\n\n\n\n\n\n\n\n\n\nSource: https://current.geneontology.org/products/pages/downloads.html",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-annotations-the-mapping-logic",
     "href": "lectures/ontology2.html#go-annotations-the-mapping-logic",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Annotations: The Mapping Logic",
     "text": "GO Annotations: The Mapping Logic\n\nGene Association Files (GAFs): Collaborating databases (like FlyBase, MGI, or UniProt) prepare and maintain these files.\nCardinality (\\(0\\) to \\(n\\)):\n\nA gene product may have zero entries if its function is entirely unknown.\nA single gene product often has multiple entries across the three domains (Cellular Component, Molecular Function, and Biological Process).\n\nGranularity: One protein can be localized to the nucleus and the cytoplasm, while acting as both a transcription factor and a dimerizing agent.\n\n\n\n\n\n\n\nThe “Annotation” vs. “Term”\n\n\nRemember: A Term is a definition in the ontology (the “dictionary”). An Annotation is the link between a specific gene and that term (the “usage”).",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-annotations-the-mapping-logic-1",
     "href": "lectures/ontology2.html#go-annotations-the-mapping-logic-1",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Annotations: The Mapping Logic",
     "text": "GO Annotations: The Mapping Logic\n\nGene Association Files (GAFs): Collaborating databases prepare and maintain these files to link genes to terms.\nCardinality (\\(0\\) to \\(n\\)):\n\nA gene product may have zero entries if nothing is known about it.\nOne gene product often has multiple entries covering its Cellular Component, Molecular Function, and Biological Process.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#example-deoxyribonuclease-ii",
     "href": "lectures/ontology2.html#example-deoxyribonuclease-ii",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Example: Deoxyribonuclease II",
     "text": "Example: Deoxyribonuclease II\nAn annotation record typically includes:\n\n\n\nField\nValue\nDescription\n\n\n\n\nAccession\nO00115\nUnique protein identifier\n\n\nDB Name\nDRN2_HUMAN\nStandardized database symbol\n\n\nGO ID\nGO:0003677\nThe GO term assigned (DNA binding)\n\n\nEvidence\nTAS\nTraceable Author Statement\n\n\n\n\n\n\n\n\n\nMetadata\n\n\nRecords also include synonyms, PubMed IDs (for literature support), Taxon (species), and the date the annotation was last updated.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-evidence-codes",
     "href": "lectures/ontology2.html#go-evidence-codes",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Evidence Codes",
     "text": "GO Evidence Codes\nNot all annotations are created equal. Evidence codes tell us how we know what we know.\n1. Manually Curated (Experimental)\n\nIDA: Inferred from Direct Assay (The “Gold Standard”)\nIMP: Inferred from Mutant Phenotype\nIGI: Inferred from Genetic Interaction\n\n2. Manually Curated (Non-Experimental)\n\nTAS: Traceable Author Statement (Found in a peer-reviewed paper)\nNAS: Non-traceable Author Statement\n\n3. Automated (Computational)\n\nIEA: Inferred from Electronic Annotation (The most common type)\nISO: Inferred from Sequence Orthology\n\n\n\n\n\n\n\nCaution\n\n\nMany high-throughput analyses filter out IEA codes because they are automated and may have a higher false-positive rate compared to experimental data.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-overrepresentation-analysis",
     "href": "lectures/ontology2.html#go-overrepresentation-analysis",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO: Overrepresentation Analysis",
     "text": "GO: Overrepresentation Analysis\n\n\n\nThe Situation\n\n\nWe have performed a high-throughput experiment (e.g., RNA-seq) and identified a list of differentially expressed genes. What are the salient characteristics of the genes in this list?\n\n\n\n\nBeyond Counting: We cannot simply count genes annotated to a term. Why? Because common biological processes are naturally common in the genome.\nThe Core Question: Is a specific GO term annotated to our gene list more often than we would expect by random chance?\nThe Method: * We use the Fisher’s Exact Test (standard procedure).\n\nToday’s demonstration will use the Ontologizer software.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#the-binomial-coefficient",
     "href": "lectures/ontology2.html#the-binomial-coefficient",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "The Binomial Coefficient",
-    "text": "The Binomial Coefficient\nTo calculate the number of unique ways to arrange \\(k\\) “heads” and \\(n-k\\) “tails,” we must account for redundant rearrangements:\n\nTotal Permutations: There are \\(n!\\) ways to rearrange \\(n\\) distinct objects.\nRedundancy Correction: * Exchanging the positions of two “heads” does not change the observable sequence. There are \\(k!\\) such internal reorderings.\n\nSimilarly, there are \\((n-k)!\\) ways to reorder the “tails” without changing the sequence.\n\nThe Formula: To find the number of distinct orderings, we divide the total by the redundancies:\n\n\\[\n\\binom{n}{k} = \\dfrac{n!}{(n-k)! k!}\n\\] {eq-binomial-coefficient}\n\n\n\n\n\n\nNote\n\n\nThis value, \\(\\binom{n}{k}\\), represents the number of different ways of choosing \\(k\\) items from a set of \\(n\\) items where the order of selection does not matter.",
+    "text": "The Binomial Coefficient\nTo calculate the number of unique ways to arrange \\(k\\) “heads” and \\(n-k\\) “tails,” we must account for redundant rearrangements:\n\nTotal Permutations: There are \\(n!\\) ways to rearrange \\(n\\) distinct objects.\nRedundancy Correction: * Exchanging the positions of two “heads” does not change the observable sequence. There are \\(k!\\) such internal reorderings.\n\nSimilarly, there are \\((n-k)!\\) ways to reorder the “tails” without changing the sequence.\n\nThe Formula: To find the number of distinct orderings, we divide the total by the redundancies:\n\n\\[\n\\binom{n}{k} = \\dfrac{n!}{(n-k)! k!}\n\\tag{1}\\]\n\n\n\n\n\n\nNote\n\n\nThis value \\(\\binom{n}{k}\\), represents the number of different ways of choosing \\(k\\) items from a set of \\(n\\) items where the order of selection does not matter.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#binomial-coefficient",
     "href": "lectures/ontology2.html#binomial-coefficient",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Binomial Coefficient",
     "text": "Binomial Coefficient\nThis quantity (read “\\(n\\) choose \\(k\\)”) is known as the binomial coefficient. We can now use this to calculate the probability of obtaining \\(k\\) successes in \\(n\\) trials, whereby the probability of success in one trial is \\(p\\), and the probability of failure is \\(q=1-p\\).\nTo obtain the probability of any one particular order of trials with \\(k\\) successes and \\(n-k\\) failures, we multiply the probabilities of the individual trials to obtain \\(p^k(1-p)^{n-k}\\).\nIn order to find the total probability of obtaining \\(k\\) successes, we simply multiply the probability of one particular trial order with \\(k\\) successes by the number of trial orders resulting in \\(k\\) successes, which is given by the binomial coefficient. This probability distribution is called the binomial distribution:\n\\[\nP(k,n,p) = \\binom{n}{k} p^k(1-p)^{n-k}\n\\] {eq-binomial-distribution}",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-overrepresentation-with-the-binomial-distribution",
     "href": "lectures/ontology2.html#go-overrepresentation-with-the-binomial-distribution",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Overrepresentation with the Binomial Distribution",
     "text": "GO Overrepresentation with the Binomial Distribution\nGO overrepresentation analysis can be modeled as a binomial distribution in which each gene in the study set is considered to be a “trial,” and “success” occurs if the gene is annotated to a GO term of interest.1\n\nThe probability of “success” is simply the frequency of the annotation to the GO term among all genes.\nFor instance, if there are 10,000 genes on a microarray chip, 600 of which are annotated to some GO term \\(t\\), then the probability of \\(t\\) is \\(p=600/10,000=0.06\\).\nIf we perform an experiment using microarray hybridizations and identify 250 differentially expressed genes (the “DE set”), 30 of which are annotated to \\(t\\), we can use the binomial distribution to find the probability of observing exactly 30 genes in the DE set annotated to \\(t\\) as:\n\n\\[\nP(30, 250, 0.06) = \\binom{250}{30} 0.06^{30} (1-0.06)^{250-30} = 1.44 \\times 10^{-4}\n\\]\nWe will see shortly that the binomial distribution only approximates the true probability in this setting.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-overrepresentation-with-the-binomial-distribution-1",
     "href": "lectures/ontology2.html#go-overrepresentation-with-the-binomial-distribution-1",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Overrepresentation with the Binomial Distribution",
     "text": "GO Overrepresentation with the Binomial Distribution\nIn order to use this for a statistical test, we now define a null hypothesis (\\(H_0\\)) to be that the biological function described by GO term \\(t\\) is not overrepresented among the differentially expressed genes.\n\nAccording to this null hypothesis, we would expect the same proportion of genes (or less) in the DE set to be annotated to \\(t\\) as in the population.\nIf we symbolize the proportion of genes in the population and study set that are annotated to the term as \\(\\pi_p\\) and \\(\\pi_s\\), then: \\[\nH_0: \\pi_{s} \\leq \\pi_p\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-overrepresentation-with-the-binomial-distribution-2",
     "href": "lectures/ontology2.html#go-overrepresentation-with-the-binomial-distribution-2",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Overrepresentation with the binomial distribution",
     "text": "GO Overrepresentation with the binomial distribution\nIn GO overrepresentation analysis, we are looking for terms that annotate a higher than expected proportion of the genes in the study set.\n\nTherefore, the alternative hypothesis is \\(H_a :\\pi_s\n&gt; \\pi_p\\).\n\nIf the probability of the observed result of our experiment (the observation of 30 genes in the DE set being annotated to \\(t\\)) is less than \\(\\alpha\\), we reject the null hypothesis in favor of the alternative hypothesis, which would imply that the GO term \\(t\\) has something to do with the observed differential expression.\nSince we have divided the set of all possible results into two classes, it is necessary to collect all outcomes that are as extreme or more so than the observed one to be part of the rejection class.\nIn our example, this means that we need to sum up the probability of observing 30 or more genes annotated to GO term \\(t\\) in the DE set of 250 genes.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#details",
     "href": "lectures/ontology2.html#details",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Details",
     "text": "Details\n\n\n\n\n\n\n\n\n\n\nThe smoothed variant of the probability mass function for the binomial distribution, with \\(p=0.06\\) and \\(n=250\\).\nValues for \\(k=0,1,\\ldots,40\\) are shown (the values for \\(k&gt;40\\) are nearly zero and are not shown).\nThe observed value for \\(k\\) of 30 lies outside of the range containing 95% of the probability mass, and we reject the null hypothesis that the genes in the study set are not enriched in genes annotated by \\(t\\).\nThe \\(p\\)-value for this observation can be calculated by Equation~(\\(\\ref{eq:dbinomial}\\)) to be \\(1.68\\times 10^{-8}\\).",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-overrepresentation-with-the-hypergeometric-distribution-1",
     "href": "lectures/ontology2.html#go-overrepresentation-with-the-hypergeometric-distribution-1",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Overrepresentation with the Hypergeometric Distribution",
     "text": "GO Overrepresentation with the Hypergeometric Distribution\nThe statistical analysis basically just counts up all the ways of getting \\(k\\) genes annotated to \\(t\\) and \\(n-k\\) remaining genes not annotated to \\(t\\), and compares this number to the number of all possible outcomes.\n\nIf we let:\\(m\\) be the number of genes on the microarray chip.\n\n\\(m_t\\) be the number of these genes that are annotated to GO term \\(t\\).\n\\(n\\) be the number of DE genes (the study set).\n\\(k\\) be the number of DE genes that are annotated to \\(t\\).\n\nWe have: \\[\nP(k,n,m,m_t) = \\dfrac{\\binom{m_t}{k}\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\]\nNumerator: \\(\\binom{m_t}{k}\\binom{m-m_t}{n-k}\\): The number of ways to choose exactly \\(k\\) annotated genes AND \\(n-k\\) non-annotated genes.\nDenominator: \\(\\binom{m}{n}\\): The total number of ways to choose any \\(n\\) genes from the population \\(m\\).",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#go-overrepresentation-with-fishers-exact-test",
     "href": "lectures/ontology2.html#go-overrepresentation-with-fishers-exact-test",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "GO Overrepresentation with Fisher’s exact test",
     "text": "GO Overrepresentation with Fisher’s exact test\nwe refer to the set of genes which are investigated in an experiment as the population set.\n\nNote that we use the term gene only for simplicity. The items annotated to the ontology terms may also be proteins or other biological entities.\nWe denote this set by the uppercase letter \\(M\\), while the cardinality of the population set is denoted by \\(m\\).\nIf, for example, a microarray experiment is conducted, the population set will comprise all genes that the microarray chip can detect. The outcome of the experiment is referred to as the study set. It is denoted by \\(N\\) and has the cardinality \\(n\\).\nIn the microarray or RNA-seq scenario the study set could consist of all genes that were detected to be differentially expressed.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#term-for-term",
     "href": "lectures/ontology2.html#term-for-term",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Term-for-Term",
     "text": "Term-for-Term\nThe standard approach to identify the most interesting terms is to perform Fisher’s exact test for each term separately. For this reason, we refer to this procedure as the term-for-term (TfT) approach\n\nFor each GO term \\(t\\), the genes in the population set \\(M\\) are either annotated to term \\(t\\) or not.\nThis divides the population set into two classes of items, comparable to an urn with white and black marbles.\nWe denote the set of all genes in the population that are annotated to GO term \\(t\\) as \\(M_t\\) and the cardinality of the set as \\(m_t\\).",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#term-for-term-1",
     "href": "lectures/ontology2.html#term-for-term-1",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Term-for-Term",
-    "text": "Term-for-Term\nThe study set is assumed to be a random sample that is obtained by drawing \\(n\\) genes without replacement from the population.\n\nThe random variable that describes the number of genes of the study set that are annotated to \\(t\\) in this random sample, denoted by \\(X_t\\), therefore follows the hypergeometric distribution, i.e.,\n\n\\[\nX_t \\sim h(k|m;m_t;n) := P(X_t=k) = \\frac{\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\tag{1}\\]\n\nThat is, \\(P(X_t=k)\\) gives the probability of observing exactly \\(k\\) annotated genes in a study set of size \\(n\\) if the population set of size \\(m\\) contains \\(m_t\\) genes that are annotated to term \\(t\\).",
+    "text": "Term-for-Term\nThe study set is assumed to be a random sample that is obtained by drawing \\(n\\) genes without replacement from the population.\n\nThe random variable that describes the number of genes of the study set that are annotated to \\(t\\) in this random sample, denoted by \\(X_t\\), therefore follows the hypergeometric distribution, i.e.,\n\n\\[\nX_t \\sim h(k|m;m_t;n) := P(X_t=k) = \\frac{\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\tag{2}\\]\n\nThat is, \\(P(X_t=k)\\) gives the probability of observing exactly \\(k\\) annotated genes in a study set of size \\(n\\) if the population set of size \\(m\\) contains \\(m_t\\) genes that are annotated to term \\(t\\).",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#term-for-term-2",
     "href": "lectures/ontology2.html#term-for-term-2",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Term-for-Term",
     "text": "Term-for-Term\n\n\n\nNote\n\n\nNull and Alternative Hypothesis\n\n\n\nThe number of genes in the study set that are annotated to \\(t\\) represents the observation. This number is denoted by \\(n_t\\).\n\nNow we want to assess whether the study set is enriched for term \\(t\\), i.e., whether the observed \\(n_t\\) is higher than one would expect.\nIn order to formulate a statistical test, we need to formulate a null hypothesis (\\(H_0\\)) and an alternative hypothesis (\\(H_1\\)).\nNull Hypothesis (\\(H_0\\)): In this case, it simply states that there is no positive association between genes annotated to the term \\(t\\) and the study set; that is, there is no overrepresentation of term \\(t\\).\nAlternative Hypothesis (\\(H_1\\)): There is overrepresentation of the term.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#term-for-term-3",
     "href": "lectures/ontology2.html#term-for-term-3",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Term-for-Term",
     "text": "Term-for-Term\nThe null hypothesis corresponds to the probability of observing a test statistic that is at least as extreme as the one that was observed given that the null hypothesis is true.\n\nTherefore, the null hypothesis corresponding to a one-sided test is rejected if the probability of observing \\(n_t\\) genes annotated to term \\(t\\) in the study set by chance is less than \\(\\alpha\\)\nBy convention, \\(\\alpha\\) is usually set to 0.05\nThis is given by:\n\n\\[\n  P(X_t\\geq n_t|H_0) = \\sum_{k=n_t}^{\\min(m_t,n)}\n\\frac{\\displaystyle{m_t \\choose k}\\displaystyle{{m - m_t}\n\\choose {n - k}}}{\\displaystyle{m \\choose n}}.\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#interpretation-of-significant-go-terms",
     "href": "lectures/ontology2.html#interpretation-of-significant-go-terms",
-    "title": "Gene Ontology and Overrepresentation Analysis",
-    "section": "Interpretation of ``significant’’ GO terms",
-    "text": "Interpretation of ``significant’’ GO terms\n\nif \\(P(X_t\\geq n_t|H_0) &lt; \\alpha\\), the null hypothesis is rejected, and we declare the term \\(t\\) to be in the study set.\nThe biological interpretation of significant overrepresentation is usually taken to be that the term \\(t\\) represents an important biological characteristic of the study set.",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Interpretation of significant GO terms",
+    "text": "Interpretation of significant GO terms\n\nif \\(P(X_t\\geq n_t|H_0) &lt; \\alpha\\), the null hypothesis is rejected, and we declare the term \\(t\\) to be in the study set.\nThe biological interpretation of significant overrepresentation is usually taken to be that the term \\(t\\) represents an important biological characteristic of the study set.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/ontology2.html#example",
     "href": "lectures/ontology2.html#example",
-    "title": "Gene Ontology and Overrepresentation Analysis",
+    "title": "Approaches to biomedical knowledge",
     "section": "Example",
-    "text": "Example\n\nSuppose that there is a population set of \\(m=18\\) genes, of which \\(m_t=4\\) genes are annotated to the term \\(t\\).\nThe outcome of an experiment conducted on all 18 genes of the population yields a set of 5 genes. This means that the study set consists of \\(n=5\\) genes.\nMoreover, we observe that a total of \\(n_t=3\\) genes from the genes of the study set are annotated to term \\(t\\)\nWe would now like to analyze whether term \\(t\\) is significantly overrepresented in the study set and thus can be interpreted to represent an important result of the experiment: \\[\nP(X_t\\geq 3|H_0) = \\frac{\\displaystyle{5 \\choose 3}\\displaystyle{{13} \\choose {2}}}{\\displaystyle{18\n\\choose 5}} + \\frac{\\displaystyle{5 \\choose 4}\\displaystyle{{13} \\choose {1}}}{\\displaystyle{18\n\\choose 5}}\n= 0.044.\n\\]\nSince \\(P(X_t\\geq 3|H_0)=0.044&lt;0.05=\\alpha\\), the null-hypotheses is rejected and the term may be interpreted as being characteristic of the experiment.",
+    "text": "Example\n\nSuppose that there is a population set of \\(m=18\\) genes, of which \\(m_t=4\\) genes are annotated to the term \\(t\\).\nThe outcome of an experiment conducted on all 18 genes of the population yields a set of 5 genes. This means that the study set consists of \\(n=5\\) genes.\nMoreover, we observe that a total of \\(n_t=3\\) genes from the genes of the study set are annotated to term \\(t\\)\nWe would now like to analyze whether term \\(t\\) is significantly overrepresented in the study set and thus can be interpreted to represent an important result of the experiment:\n\n\\[\nP(X_t\\geq 3|H_0) = \\frac{\\displaystyle{5 \\choose 3}\\displaystyle{{13} \\choose {2}}}{\\displaystyle{18\n\\choose 5}} + \\frac{\\displaystyle{5 \\choose 4}\\displaystyle{{13} \\choose {1}}}{\\displaystyle{18\n\\choose 5}}\n   = 0.044.\n\\] - Since \\(P(X_t\\geq 3|H_0)=0.044&lt;0.05=\\alpha\\), the null-hypotheses is rejected and the term may be interpreted as being characteristic of the experiment.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Gene Ontology and Overrepresentation Analysis"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
