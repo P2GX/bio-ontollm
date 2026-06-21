@@ -1112,6 +1112,27 @@
     "text": "The RNN Forward Pass Algorithm\nThe complete temporal execution of a single hidden layer Recurrent Neural Network can be formalized as follows:"
   },
   {
+    "objectID": "lectures/lstm.html#training-rnns",
+    "href": "lectures/lstm.html#training-rnns",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training RNNs",
+    "text": "Training RNNs\n\n\n\n\nTraining\n\n\nAs previously with ANNs networks, we use a training set, a loss function, and backpropagation to train the RNN.\n\n\n\n\n\nThere are now three sets of weights to update:\n\\(\\mathbf{W}_{xh}\\): is the weight matrix between the input and hidden layer\n\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection\n\\(\\mathbf{W}_{hy}\\): the weight matrix between the hidden and output layers,"
+  },
+  {
+    "objectID": "lectures/lstm.html#training-complications",
+    "href": "lectures/lstm.html#training-complications",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training: Complications",
+    "text": "Training: Complications\nFirst, to compute the loss function for the output at time t we need the hidden layer from time t − 1. Second, the hidden layer at time t influences both the output at time t and the hidden layer at time t +1 (and hence the output and loss at t +1). It follows from this that to assess the error accruing to ht , we’ll need to know its influence on both the current output as well as the ones that follow."
+  },
+  {
+    "objectID": "lectures/lstm.html#types-of-rnns",
+    "href": "lectures/lstm.html#types-of-rnns",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Types of RNNs",
+    "text": "Types of RNNs\n\n\n\nOne-to-one RNN.\n\n\nOne-to-many RNN.\n\n\nMany-to-one RNN.\n\n\nMany-to-many RNN.\n\n\nMany-to-many RNN.\n\n\n\nDas S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518."
+  },
+  {
     "objectID": "lectures/encoder.html#overview-lecture-1",
     "href": "lectures/encoder.html#overview-lecture-1",
     "title": "Transformer Architecture: Encoders",
