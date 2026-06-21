@@ -234,9 +234,42 @@ The complete temporal execution of a single hidden layer Recurrent Neural Networ
 8.  **end for**
 9.  **return** $\mathbf{Y}$
 
----
 
-::: {.callout-tip appearance="minimal" icon=false style="background-color: #fafbfc; border-left: 4px solid #34495e; font-size: 0.85em;"}
-**Lecture Note:** Point out to the students that step 3 is where the "telephone game" occurs. Because $\mathbf{h}_{t-1}$ is continually multiplied by $U$ loop after loop, any error gradient flowing backward through this step will exponentially explode or vanish.
+
+## Training RNNs
+
+::: {.callout-tip appearance="minimal" icon=false style="background-color: #fafbfc; border-left: 4px solid #34495e; font-size: 0.85em;" title="Training"}
+As previously with ANNs networks, we use a training set, a loss function, and backpropagation to
+train the RNN.
 :::
 
+- There are now three sets of weights to update: 
+- $\mathbf{W}_{xh}$:  is the weight matrix between the input and hidden layer
+- $\mathbf{W}_{hh}$ the weight matrix for the recurrent connection
+- $\mathbf{W}_{hy}$: the weight matrix between the hidden and output layers, 
+
+
+## Training: Complications
+
+First, to compute the loss function for
+the output at time t we need the hidden layer from time t − 1. Second, the hidden
+layer at time t influences both the output at time t and the hidden layer at time t +1
+(and hence the output and loss at t +1). It follows from this that to assess the error
+accruing to ht
+, we’ll need to know its influence on both the current output as well as
+the ones that follow.
+
+
+## Types of RNNs
+
+![](./img/rnn-types.png){width=50% fig-align="center"}
+
+- (a) One-to-one RNN. 
+- (b) One-to-many RNN. 
+- (c) Many-to-one RNN. 
+- (d) Many-to-many RNN. 
+- (e) Many-to-many RNN.
+
+::: {style="font-size: 0.75em;"}
+Das S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518.
+:::
