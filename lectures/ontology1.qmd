@@ -53,9 +53,9 @@ In this part of the course we will review ontologies and algorithms and we will 
 
 ---
 
-# OBO: Open Bio-Ontologies
 
-## OBO
+## OBO: Open Bio-Ontologies
+
 
 :::: {.columns}
 
@@ -186,9 +186,19 @@ OWL is built upon RDF and RDFS.
 * RDF expresses propositions using formal vocabularies.
 * Basic building block: The Triple (Subject, Predicate, Object).
 
-```text
-[http://www.example.org/](http://www.example.org/)  hasCreator  John Smith
+```turtle
+# Example of an RDF Triple
+[http://www.example.org/](http://www.example.org/) :hasCreator "John Smith" .
 ```
+
+<br>
+
+::: {.callout-note appearance="minimal" icon=false style="background-color: #f4f6f9; border-left: 4px solid #3a6073; padding: 15px;"}
+- subject: `http://www.example.org/`
+- predicate: `hasCreator`
+- object: `John Smith`
+:::
+
 
 # RDF: Serialization (XML)
 RDF is an abstract model, but often serialized as RDF/XML.
@@ -240,6 +250,11 @@ RDF is an abstract data model. The process of representing it as a computer file
 
 * Many RDF files are written in **RDF/XML**.
 * The following example is modified from an RDF file created by the Uniprot consortium.
+
+- procollagen-proline 4-dioxygenase
+- Enzyme Commission 	[EC 1.14.11.2](https://www.genome.jp/dbget-bin/www_bget?ec:1.14.11.2)
+
+
 
 ---
 
@@ -315,7 +330,6 @@ RDF is an abstract data model. The process of representing it as a computer file
 {{< include snippets/uniprot.rdf >}}
 ```
 
-* Line 7 contains an `rdf:type` predicate stating that `:1.14.11.2` is an instance of `Enzyme`
 * Line 8 contains a __user-defined__ predicate stating that a `name` of `:1.14.11.2` is Procollagen-proline dioxygenase
 
 ## RDF: Serialization {background-color="#f8f9fa"}
@@ -486,7 +500,8 @@ then the following triple can be inferred:
 b rdf:type Y .
 ```
 
-* Thus, we can infer that Mickey is an instance of the class \textit{rodent}!
+* Thus, if we know that Mickey is an instance of \textit{mouse}
+we can infer that Mickey is an instance of the class \textit{rodent}!
   
 
 
@@ -714,7 +729,14 @@ X rdfs:subClassOf Z .
 Y rdfs:subClassOf Z .
 ``` 
 
-Then, if either b rdf:type X . or b rdf:type Y . is asserted, it can be inferred that:
+Then, if either of the two following statements are asserted
+
+```{.turtle}
+b rdf:type X .
+b rdf:type Y .
+``` 
+
+...then,  it can be inferred that:
 
 ```{.turtle}
 b rdf:type Z .
@@ -726,7 +748,7 @@ b rdf:type Z .
   
 ```{.turtle}
 :HairBearingAnimal rdfs:subClassOf :Mammal .
- :AnimalWithMammaryGlands rdfs:subClassOf :Mammal .
+:AnimalWithMammaryGlands rdfs:subClassOf :Mammal .
 ``` 
 
 * then we can infer that any animal with hair is a mammal, and we can
@@ -792,6 +814,13 @@ For instance, the following class definition expressed using **RDF/XML** syntax 
 </owl:Class>
 ```
 
+
+![](./img/beatles.png){fig-align="center" width="25%"}
+
+
+
+
+
 ## Classes in OWL: Property Restriction
 
 ::: {.callout-note appearance="simple"}
@@ -832,7 +861,9 @@ A property restriction is a special kind of class description that describes an 
 
 ## Classes in OWL: Property Restriction (Value Constraints)
 
-OWL distinguishes two kinds of property restrictions: **Value Constraints** and **Cardinality Constraints**. A value restriction on some property $P$ has the following general form:
+OWL distinguishes two kinds of property restrictions: **Value Constraints** and 
+**Cardinality Constraints**. A value restriction $V$ on some property 
+$P$ has the following general form:
 
 ```{.xml}
 <rdfs:subClassOf>
@@ -842,8 +873,7 @@ OWL distinguishes two kinds of property restrictions: **Value Constraints** and 
   </owl:Restriction>
 </rdfs:subClassOf>
 ```
-
-## Classes in OWL: Property Restriction (Universal)
+<br>
 
 ::: {.callout-important appearance="simple"}
 `owl:allValuesFrom` states that for each instance of the class being described, **every** value for $P$ must fulfill the constraint. 
@@ -851,7 +881,9 @@ OWL distinguishes two kinds of property restrictions: **Value Constraints** and 
 
 * **Confusing Caveat:** `owl:allValuesFrom` does **not** necessarily mean that an instance of the class *must* have the property $P$. It merely states that **if** an instance does have $P$, then the value must be from class $V$.
 * **The Universal Quantifier:** This is analogous to the logic of $\forall$ in predicate calculus.
-* **Formal Logic:** Recall that the formula $(\forall x) P(x)$ essentially means "for all $x$, if $x$ exists in this context, then it must satisfy $P$."
+* **Formal Logic:** Recall that the formula $(\forall x) P(x)$ essentially means "for all $x$, if $x$ exists in this context, then it must satisfy $P$."[^1]
+
+[^1]: According to this logic it is true that "All Martians are green" (because there are no Martians!)
 
 
 ## Classes in OWL: Negation
@@ -978,3 +1010,8 @@ This uses owl:Thing (the root class of everything) and explicitly states the typ
 
 ![Semantic Web Layer Cake](./img/sweb-stack.png){width="40%"}
 
+## Homework
+
+[HOMEWORK]{.hw-badge} You will create an Indian food ontology and infer whether certain dishes are vegetarian or non-veg.
+
+![](./img/indian-food.png){fig-align="center" width="80%"}

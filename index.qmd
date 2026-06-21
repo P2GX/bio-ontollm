@@ -27,7 +27,9 @@ format:
 This course is held as a part of the [Master Curriculum](https://www.mi.fu-berlin.de/bioinf/stud/master/index.html) in Bioinformatics of the Free University Berlin.
 
 ::: {.callout-note appearance="simple"}
-This course enables students to master two essential frameworks for managing human knowledge in bioinformatics: **Ontologies** and **Language Models**
+This course enables students to master two essential frameworks for managing human 
+knowledge in bioinformatics: **Ontologies** and **Language Models**. We will provide an in-depth introduction to 
+both topics as well as several sessions in which we show how ontologies and LLMs can be used together.
 :::
 
 ### Lecture Schedule
@@ -42,8 +44,8 @@ This course enables students to master two essential frameworks for managing hum
 *   Lecture 7: RNNs and LSTM (to do)
 *   Lecture 8: Embeddings and Word2Vec (partially finisheed)
 *   [Lecture 9: Encoders](lectures/encoder.qmd)
-*   Lecture 10: Decoder architecture (to do)
-*.  Lecture 11: BERT and Sentence BERT (to do)
+*   Lecture 10: BERT and Sentence BERT (to do)
+*   Lecture 11: Decoder architecture (to do)
 *   Lecture 12: Reinforcement learning and LLMs (to do)
 *   Lecture 13: RAG, Fine tuning, Structured Outputs  (to do)
 *   Lecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)

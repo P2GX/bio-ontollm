@@ -8,9 +8,9 @@ jupyter: python3
 format: 
   revealjs:
     theme: [default] 
-    css: /style/styles.css
-    logo: images/fu_berlin_logo.png 
-    footer: "bioonto-llm"
+    css: ../style/styles.css            
+    logo: ../images/fu_berlin_logo.png   
+    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
     slide-number: true
     show-slide-number: all
     incremental: false 
@@ -30,12 +30,12 @@ This course is held as a part of the [Master Curriculum](https://www.mi.fu-berli
 Will LLMs replace computer scientists, software developers, and bioinformaticians?
 :::
 
-- Currently, the best appears appears to be: "Some of them"
-- This course enables students to master two essential frameworks for managing human knowledge in bioinformatics: **Ontologies** and **Language Models**
-- We will go into detail and implement simplfiied versions of some of the algorithms in Python
-- Prerequisites: Some knowledge of probability, calculate, algorithms (We will explain everything as we go along)
+- Currently, the best answer appears to be: ["Some of them, but it will make others more productive"]{style="color: green; font-weight: bold;"}. 
+- This course enables students to master two essential frameworks for managing human knowledge in bioinformatics: **Ontologies** and **Language Models**.
+- We will go into detail and implement simplified versions of some of the algorithms in Python.
+- Prerequisites: Some knowledge of probability, calculus, and algorithms (We will explain everything as we go along).
 
-## Course Overview
+## Course Logistics
 
 ::: {.columns}
 
@@ -53,28 +53,47 @@ This course is part of the [Master Curriculum](https://link-to-fu.de) in Bioinfo
 
 :::
 
----
-
 ## Topics
 
 The course explores the synergy between two paradigms:
 
-::: {.grid}
+::: {.columns}
 
-::: {.g-col-6}
+::: {.column width="50%"}
 ### 🕸️ Ontologies
 *Structured Knowledge*
+
 - Formal Semantics (OWL/RDF)
 - Logical Consistency
 - Interoperability (OBO)
 :::
 
-::: {.g-col-6}
+::: {.column width="50%"}
 ### 🧠 LLMs
 *Probabilistic Knowledge*
+
 - Pattern Recognition
 - Natural Language Interface
 - Reasoning via Inference
 :::
 
 :::
+
+## Is AI ruining our skills?
+
+::: {.callout-note appearance="simple"}
+There is an increasing amount of evidence that
+reliance on artificial-intelligence tools degrades the abilities of software engineers
+:::
+
+### Advice
+- Do not use LLMs to do homework assignments!
+- It is probably OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.
+- Vibe coding is not to be recommended but LLMs can be quite helpful with targeted questions (e.g., what CSS class makes a rounded box that looks like an orange parakeet?) or to get advice on how to optimize code (e.g., using iterators instead of traditional forloops in Languages such as Rust and Java).
+
+
+
+> **Further Reading:**
+> 
+> * Pearson, H. (2025). [Are the Internet and AI affecting our memory? What the science says](https://www.nature.com/articles/d41586-025-00292-z). *Nature*.
+> * Lenharo, M. (2026). [Is AI ruining our skills? Early results are in — and they’re not good](https://www.nature.com/articles/d41586-026-01947-1). *Nature*.

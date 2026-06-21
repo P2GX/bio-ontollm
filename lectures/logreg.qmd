@@ -58,8 +58,9 @@ a [good preparation for understanding neural networks]{style="color: green; font
 
 ::: {.column width="48%" .dimmed}
 ### [Part 4: Python](#part-4)
-* Full implementation of ANN
-* Classify handwritten digits
+* Full implementation 
+
+### [Part 5: Overfitting](#part-5)
 :::
 
 ::::
@@ -828,7 +829,7 @@ $$
 - Softmax will be important for neural networks and transformers, we will discuss more later.
 
 
-## [Part 4: Python implementation from scratch](#part-4)
+## [Part 4: Python implementation from scratch]{#part-4}
 
 :::: {.columns}
 :::{.column width="48%"}
@@ -1041,7 +1042,7 @@ Plotting this, we get
 - Balanced fit: Applying L2 regularization to second model
 
 
-## Overfitting
+## Part 5: Overfitting{#part-5}
 
 ::: {.callout-quote appearance="simple"}
 "With four parameters I can fit an elephant and with five I can make him wiggle his trunk."
@@ -1077,6 +1078,47 @@ Model fit can be assessed using the difference between predictions and reality:
 :::
 
 ![](img/over-under.png)
+
+## Regularization
+::: {.callout-quote appearance="simple" title="Regularization"}
+a technique used to enhance the generalization ability of 
+machine learning models by adding a penalty term to the loss function. 
+:::
+
+- We will focus on L2 regularization here (but see also Lasso and Elastic Net)
+- For simplicity, let's focus for now on linear regression with a standard linear model[^2]:
+
+$$
+Y = \beta_0 + \beta_1X_1 + \ldots + \beta_pX_p
+$$
+
+- If the true relationship between the
+response and the predictors is approximately linear, the least squares
+estimates will have low bias. 
+- If $n \gg p$ — that is, if $n$, the number of
+observations, is much larger than $p$, the number of variables—then the
+least squares estimates tend to also have low variance, and hence will
+perform well on test observations. 
+- if $n$ is not much larger
+than $p$, then there can be a lot of variability in the least squares fit,
+resulting in overfitting and consequently poor predictions on future
+observations not used in model training. 
+- If $p>n$, here is no
+longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error
+on the training data, but typically very poor test set performance
+due to extremely high variance
+
+[^2]: Material adapted from James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (1st ed.) [PDF]. Springer.
+
+# Shrinkage
+
+::: {.callout-note appearance="simple" title="Shrinkage"}
+Shrinkage (also known as
+**regularization**) has the effect of reducing variance. 
+:::
+
+- Today, we will focus on **L2 regularization** (Ridge regression)
+- Lasso regression and elastic net regression are also important techniques to learn about
 
 
 
