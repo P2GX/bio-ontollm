@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def plot_neural_net(figsize=(12, 7.8)):
-    fig, ax = plt.subplots(figsize=figsize)
+    _fig, ax = plt.subplots(figsize=figsize)
     left, right   = 0.06, 0.94
     bottom, top   = 0.12, 0.88
     layer_sizes = [3, 6, 4, 1]

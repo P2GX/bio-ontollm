@@ -1,17 +1,24 @@
 ---
-title: "Logistic regression"
-subtitle: "sigmoid functions, gradient descent, Python"
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #5: Logistic regression - sigmoid functions, gradient descent, Python"
 author: "Peter N Robinson"
 institute: "Free University Berlin"
 date: 2026-04-26
 jupyter: python3
 format: 
   revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    slide-number: true
+    show-slide-number: all
     incremental: false 
     html-math-method: mathjax
-    margin: 0.05
+    margin: 0.1
     embed-resources: true
-    css: ../style/styles.css
+    transition: fade
+    background-transition: convex
+    controls: true
 ---
 
 

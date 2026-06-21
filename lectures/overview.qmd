@@ -9,7 +9,6 @@ format:
   revealjs:
     theme: [default] 
     css: ../style/styles.css            
-    logo: ../images/fu_berlin_logo.png   
     footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
     slide-number: true
     show-slide-number: all
