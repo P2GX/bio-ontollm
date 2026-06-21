@@ -368,7 +368,7 @@ The activation for the first neuron of the first hidden layer is determined by t
 :::
 ::: {.column width="50%"}
 
-\tiny
+
 $$
 \begin{bmatrix}
 w_{1,1} & w_{1,2} & \cdots & w_{1,64} \\

@@ -1,0 +1,242 @@
+---
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #7: RNNs and LSTMs"
+author: "Peter N Robinson"
+jupyter: python3
+format: 
+  revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    slide-number: true
+    show-slide-number: all
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.1
+    embed-resources: true
+    transition: fade
+    background-transition: convex
+    controls: true
+---
+
+
+## Overview: RNNs and LSTMs
+
+::: {.callout-note title="Game plan"}
+Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data 
+(like clinical notes, time-series measurements, or genetic sequences).
+:::
+
+:::: {.columns}
+
+::: {.column width="48%"}
+### [Part 1: Review](#part-1)
+* What is an RNN?
+* Forward vs. Reverse pass
+* Biomed applications
+:::
+
+::: {.column width="4%"}
+<br>
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 2: Architecture and Backprop](#part-2)
+* Chain rule & Jacobians
+* Vectorized derivatives
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 3: LSTMs](#part-3)
+* Loss functions (MSE)
+* Momentum & Adam
+* Learning rates
+:::
+
+::: {.column width="4%"}
+<br>
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 4: Python](#part-4)
+* Full implementation of ANN
+* Classify handwritten digits
+:::
+
+::::
+
+
+## RNNs: Overview {#part-1}
+
+::: {.callout-important  icon=false, title="Recurrent Neural Networks"}
+
+Unlike standard feed-forward networks, Recurrent Neural Networks (RNNs) introduce a hidden state ($\mathbf{h}_t$) 
+that acts as a "memory," carrying information from time step $t-1$ to time step $t$.
+
+- possess both current and past features of the temporal sequences
+- adapt to the long-term historical changes in the data
+- store the past information to solve context-dependent tasks
+- make predictions simultaneously with existing observations.
+
+:::
+
+![](./img/rnn.png){width=40% fig-align="center"}
+
+
+
+> * Mienye ID et al (2024) [Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517](https://www.mdpi.com/2078-2489/15/9/517).
+
+
+## RNN Architecture: hidden layer
+
+> RNNs are designed to process sequential data by maintaining a hidden state that captures information about previous inputs. 
+
+
+The basic architecture consists of an input layer, a hidden layer, and an output layer. 
+
+- Unlike feedforward neural networks, RNNs have recurrent connections, allowing information to cycle within the networks. 
+At each time step, $t$, the RNN takes an input vector, $x_t$
+, and updates its hidden state, $h_t$ using the following equation:
+
+$$
+\mathbf{h}_i = \sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h)
+$$ {#eq-rnn-hidden}
+
+where
+
+- $\mathbf{x}_t$: Input at time $t$
+- $\mathbf{W}_{xh}$:  is the weight matrix between the input and hidden layer
+- $\mathbf{W}_{hh}$ the weight matrix for the recurrent connection
+- $\mathbf{b}_h$: the bias vector
+- $\sigma_h$: the activation function, typically the hyperbolic tangent function (tanh) or the rectified linear unit 
+
+![](./img/rnn.png){width=20% fig-align="center"}
+
+
+## RNN Architecture: output
+
+The output at each time step, $t$, is given by the following:
+$$
+\mathbf{y}_i = \sigma_y(\mathbf{W}_{hy}\mathbf{h}_t +  \mathbf{b}_y)
+$$ {#eq-rnn-output}
+
+
+where 
+
+- $\mathbf{W}_{hy}$: the weight matrix between the hidden and output layers, 
+- $\mathbf{b}_y$: the bias vector, 
+- $\sigma_y$ the activation function for the output layer.
+
+![](./img/rnn.png){width=20% fig-align="center"}
+
+## Recursivity
+
+- RNNs can be portrayed as (equivalent) folded or unfolded networks
+
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+from rnn_plots import basic_rnn
+
+basic_rnn(figsize=(6,4))
+plt.show()
+```
+
+::: {style="font-size: 0.75em;"}
+
+- The hidden layer from the previous time step provides a form of memory, or context, that encodes earlier processing and informs the decisions to be made at
+later points in time. 
+- This approach does not impose a fixed-length limit on this prior context; the context embodied in the previous hidden layer can include
+information extending back to the beginning of the sequence.
+:::
+
+::: {style="font-size: 0.5em;"}
+Adapted from Jurafsky D and Martin JH (2026) Speech and Language Processing (3rd ed. draft)
+:::
+
+:::
+::::
+
+## Activation Functions
+
+- As we discussed in previous lectures, the activation function plays a crucial role by introducing non-linearity that enables the network to learn and represent complex patterns. 
+- One commonly used activation function in RNNs is the [hyperbolic tangent (tanh)]{style="color: green; font-weight: bold;"}. 
+
+:::: {.columns}
+
+::: {.column width="45%"}
+### tanh
+The tanh function squashes any real-valued input down to a symmetric, zero-centered range of **$[-1, 1]$**.
+
+$$
+\tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
+$$ {#eq-tanh}
+
+<br>
+:::
+
+::: {.column width="55%"}
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+from rnn_plots import plot_tanh
+
+plot_tanh()
+plt.show()
+```
+
+:::
+::::
+
+## RNN Architecture
+
+- Compared to ANNs, the significant change for RNNs is the new set of weights that connect the hidden layer from the previous time step
+to the current hidden layer ($\mathbf{W}_{hh}$ the weight matrix for the recurrent connection ).
+- $\mathbf{W}_{hh}$ determines how the network makes use of past context in calculating the output for the current input. 
+- These weights are also trained by backpropagation
+- The activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function for categorical classfication).
+
+## The RNN Forward Pass Algorithm
+
+The complete temporal execution of a single hidden layer Recurrent Neural Network can be formalized as follows:
+
+---
+
+### **Algorithm: ForwardRNN**
+
+**Inputs:** * A sequence of input vectors $\mathbf{X} = \langle\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_T\rangle$
+* Network parameter matrices ($U, W, V$) and bias vectors ($\mathbf{b}_h, \mathbf{b}_y$)
+* Activation functions $g$ (hidden layer non-linearity, e.g., $\tanh$) and $f$ (output non-linearity)
+
+**Output:** * A sequence of predicted output vectors $\mathbf{Y} = \langle\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_T\rangle$
+
+### **Algorithm:**
+
+1.  $\mathbf{h}_0 \leftarrow \mathbf{0}$ *(Initialize the baseline context vector with zeros)*
+2.  $\mathbf{Y} \leftarrow \langle \rangle$ *(Initialize an empty sequence to store outputs)*
+3.  **for** $t \leftarrow 1$ **to** $T$ **do**
+4.  $\quad \mathbf{z}_t \leftarrow U\mathbf{h}_{t-1} + W\mathbf{x}_t + \mathbf{b}_h$  *(Linear combination of past memory and new input)*
+5.  $\quad \mathbf{h}_t \leftarrow g(\mathbf{z}_t)$ *(Compute the updated hidden state)*
+6.  $\quad \mathbf{y}_t \leftarrow f(V\mathbf{h}_t + \mathbf{b}_y)$ *(Generate the prediction for the current time step)*
+7.  $\quad \mathbf{Y} \leftarrow \mathbf{Y} \parallel \langle\mathbf{y}_t\rangle$ *(Append the current step output vector to the sequence)*
+8.  **end for**
+9.  **return** $\mathbf{Y}$
+
+---
+
+::: {.callout-tip appearance="minimal" icon=false style="background-color: #fafbfc; border-left: 4px solid #34495e; font-size: 0.85em;"}
+**Lecture Note:** Point out to the students that step 3 is where the "telephone game" occurs. Because $\mathbf{h}_{t-1}$ is continually multiplied by $U$ loop after loop, any error gradient flowing backward through this step will exponentially explode or vanish.
+:::
+

@@ -41,7 +41,7 @@ both topics as well as several sessions in which we show how ontologies and LLMs
 *   [Lecture 4: Human Phenotype Ontology: Semantic similarity algorithms](lectures/ontology4.qmd)
 *   [Lecture 5: From Logistic Regression to Neural Foundations](lectures/logreg.qmd)
 *   [Lecture 6: Neural networks](lectures/neural.qmd)
-*   Lecture 7: RNNs and LSTM (to do)
+*   [Lecture 7: RNNs and LSTMs](lectures/lstm.qmd)
 *   Lecture 8: Embeddings and Word2Vec (partially finisheed)
 *   [Lecture 9: Encoders](lectures/encoder.qmd)
 *   Lecture 10: BERT and Sentence BERT (to do)
