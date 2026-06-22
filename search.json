@@ -1105,11 +1105,11 @@
     "text": "RNN Architecture\n\nCompared to ANNs, the significant change for RNNs is the new set of weights that connect the hidden layer from the previous time step to the current hidden layer (\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection ).\n\\(\\mathbf{W}_{hh}\\) determines how the network makes use of past context in calculating the output for the current input.\nThese weights are also trained by backpropagation\nThe activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function for categorical classfication)."
   },
   {
-    "objectID": "lectures/lstm.html#the-rnn-forward-pass-algorithm",
-    "href": "lectures/lstm.html#the-rnn-forward-pass-algorithm",
+    "objectID": "lectures/lstm.html#rnn-forward-pass-algorithm",
+    "href": "lectures/lstm.html#rnn-forward-pass-algorithm",
     "title": "Approaches to biomedical knowledge",
-    "section": "The RNN Forward Pass Algorithm",
-    "text": "The RNN Forward Pass Algorithm\nThe complete temporal execution of a single hidden layer Recurrent Neural Network can be formalized as follows:"
+    "section": "RNN Forward Pass Algorithm",
+    "text": "RNN Forward Pass Algorithm\nInputs:\n\nA sequence of input vectors \\(\\mathbf{X} = \\langle\\mathbf{x}_1, \\mathbf{x}_2, \\dots, \\mathbf{x}_T\\rangle\\)\nNetwork parameter matrices (\\(U, W, V\\)) and bias vectors (\\(\\mathbf{b}_h, \\mathbf{b}_y\\))\nActivation functions \\(g\\) (hidden layer, e.g., \\(\\tanh\\)) and \\(f\\) (output, e.g. softmax)\n\nOutput: A sequence of predicted output vectors \\(\\mathbf{Y} = \\langle\\mathbf{y}_1, \\mathbf{y}_2, \\dots, \\mathbf{y}_T\\rangle\\)\nAlgorithm:\n\\[\n\\begin{aligned}\n&\\text{1. } \\mathbf{h}_0 \\leftarrow \\mathbf{0} && \\bullet \\text{Initialize the baseline context vector with zeros} \\\\\n&\\text{2. } \\mathbf{Y} \\leftarrow \\langle \\rangle && \\bullet \\text{Initialize an empty sequence to store outputs} \\\\\n&\\text{3. } \\textbf{for } t \\leftarrow 1 \\textbf{ to } T \\textbf{ do} && \\\\\n&\\text{4. } \\quad \\mathbf{z}_t \\leftarrow U\\mathbf{h}_{t-1} + W\\mathbf{x}_t + \\mathbf{b}_h && \\bullet \\text{Linear combination of past memory and new input} \\\\\n&\\text{5. } \\quad \\mathbf{h}_t \\leftarrow g(\\mathbf{z}_t) &&\\bullet \\text{Compute the updated hidden state} \\\\\n&\\text{6. } \\quad \\mathbf{y}_t \\leftarrow f(V\\mathbf{h}_t + \\mathbf{b}_y) && \\bullet \\text{Generate the prediction for the current time step} \\\\\n&\\text{7. } \\quad \\mathbf{Y} \\leftarrow \\mathbf{Y} \\parallel \\langle\\mathbf{y}_t\\rangle && \\bullet \\text{Append the current step output vector to the sequence} \\\\\n&\\text{8. } \\textbf{end for} && \\\\\n&\\text{9. } \\textbf{return } \\mathbf{Y} &&\n\\end{aligned}\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#training-rnns",
@@ -1119,18 +1119,46 @@
     "text": "Training RNNs\n\n\n\n\nTraining\n\n\nAs previously with ANNs networks, we use a training set, a loss function, and backpropagation to train the RNN.\n\n\n\n\n\nThere are now three sets of weights to update:\n\\(\\mathbf{W}_{xh}\\): is the weight matrix between the input and hidden layer\n\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection\n\\(\\mathbf{W}_{hy}\\): the weight matrix between the hidden and output layers,"
   },
   {
-    "objectID": "lectures/lstm.html#training-complications",
-    "href": "lectures/lstm.html#training-complications",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Training: Complications",
-    "text": "Training: Complications\nFirst, to compute the loss function for the output at time t we need the hidden layer from time t − 1. Second, the hidden layer at time t influences both the output at time t and the hidden layer at time t +1 (and hence the output and loss at t +1). It follows from this that to assess the error accruing to ht , we’ll need to know its influence on both the current output as well as the ones that follow."
-  },
-  {
     "objectID": "lectures/lstm.html#types-of-rnns",
     "href": "lectures/lstm.html#types-of-rnns",
     "title": "Approaches to biomedical knowledge",
     "section": "Types of RNNs",
-    "text": "Types of RNNs\n\n\n\nOne-to-one RNN.\n\n\nOne-to-many RNN.\n\n\nMany-to-one RNN.\n\n\nMany-to-many RNN.\n\n\nMany-to-many RNN.\n\n\n\nDas S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518."
+    "text": "Types of RNNs\n\n\n\n\n\nOne-to-one RNN.\n\n\nOne-to-many RNN.\n\n\nMany-to-one RNN.\n\n\n\n\n\nMany-to-many RNN.\n\n\nMany-to-many RNN.\n\n\n\n\nDas S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518."
+  },
+  {
+    "objectID": "lectures/lstm.html#training-of-rnns",
+    "href": "lectures/lstm.html#training-of-rnns",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training of RNNs",
+    "text": "Training of RNNs\n\n\n\n\n\n\n\n\n\n\nColumn 1\nColumn 2\nColumn 3\n\n\n\n\n\\(W\\): Recurrent weight matrix\n\\(a\\): Hidden state activation\n\\(L\\): Loss value\n\n\n\\(U\\): Input weight matrix\n\\(o\\): Weighted output value\n\\(x\\): Input vector\n\n\n\\(V\\): Output weight matrix\n\\(\\hat{y}\\): Predicted value (\\(\\text{y hat}\\))\n\\(b\\): Bias matrix (hidden)\n\n\n\\(s\\): Weighted sum (\\(s_{t}\\))\n\\(y\\): True target value\n\\(c\\): Bias matrix (output)"
+  },
+  {
+    "objectID": "lectures/lstm.html#training-of-rnns-forward-pass",
+    "href": "lectures/lstm.html#training-of-rnns-forward-pass",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training of RNNs: Forward pass",
+    "text": "Training of RNNs: Forward pass\n\n\n\n\n\n\n\n\n\\[\n\\begin{align*}\ns_t &= \\mathbf{W}a_{t+1} + \\mathbf{U}x_{t} + b & \\bullet \\text{current input and previous hidden and bias} \\\\\na_t &= \\tanh(s_t)  & \\bullet \\text{non-linear activation function} \\\\\no_t &= \\mathbf{V}a_t + c & \\bullet \\text{calculate output} \\\\\n\\hat{y}_t &= \\mathrm{softmax}(o_t)& \\bullet \\text{normalised probability distribution of the output} \\\\\n\\mathcal{L} &= -y_t\\log(\\hat{y}_t) & \\bullet \\text{loss} \\\\\n\\end{align*}\n\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#backpropagation-through-time-btt",
+    "href": "lectures/lstm.html#backpropagation-through-time-btt",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Backpropagation Through Time (BTT)",
+    "text": "Backpropagation Through Time (BTT)\n\nThe gradients are calculated layer by layer from the last time step towards the initial time step."
+  },
+  {
+    "objectID": "lectures/lstm.html#why-tanh",
+    "href": "lectures/lstm.html#why-tanh",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Why tanh?",
+    "text": "Why tanh?\n\nWhy do we tend not to use the sigmoid activation function in RNNs?\nThis has to do with the vanishing gradient problem\nThe maximum value of the sigmoid derivative is exactly \\(0.25\\)\nRecall that the sigmoid is \\(\\sigma(z) = \\frac{1}{1+e^{-z}}\\) and the first derivative is \\(\\sigma^{\\prime}(z) = \\sigma(z)(1-\\sigma(z))\\)\nUsing the chain rule on \\(\\sigma(z) - \\sigma(z)^2\\) to calculate the second derivative, we get \\[\n\\begin{align*}\n\\sigma^{\\prime\\prime}(z) &= \\sigma^{\\prime}(z) - 2\\sigma(z)\\sigma^{\\prime}(z) \\\\\n&= \\sigma^{\\prime}(z)(1-2\\sigma(z)) \\\\\n\\end{align*}\n\\]\nset \\(\\sigma^{\\prime\\prime}(z) = 0\\) to find crtical points: \\(\\sigma^{\\prime}(z)(1-2\\sigma(z)) = 0\\). We note that the slope of the sigmoid function (\\(\\sigma^{\\prime}\\)) is never zero for finite values, and so we solve the other term.\n\\(1-2\\sigma(z) = 0\\) implies \\(\\sigma(z) = \\frac{1}{2}\\) (Maximum slope of the sigmoid function occurs when \\(\\sigma(z) = \\frac{1}{2}\\) )\nIt is easy to show that if \\(\\frac{1}{1+e^z} = \\frac{1}{2}\\), then \\(z=0\\). The slope of the sigmoid has its max at the center point, \\(z=0\\)\nWe can now calculate the maximum value of the slope: \\(\\sigma^{\\prime}(z)(0) = \\sigma(z)(0)(1-\\sigma(z)(0)) = 0.5(1-0.5)=0.25\\)"
+  },
+  {
+    "objectID": "lectures/lstm.html#what-tanh-2",
+    "href": "lectures/lstm.html#what-tanh-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "What tanh? (2)",
+    "text": "What tanh? (2)\n\nWe can also show that \\(\\tanh\\)’s derivative has its maximum at 1.0 (when the input is 0).\nTherefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time\n\nAdditionally\n\nSigmoid restricts outputs strictly between \\(0\\) and \\(1\\). Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign (either all positive or all negative). This forces the gradient descent updates to violently “zig-zag” during optimization, slowing down convergence.\n\\(\\tanh\\) outputs range from \\(-1\\) to \\(1\\). Because it is zero-centered, the average output is close to zero. This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.\n\nTODO update above text."
   },
   {
     "objectID": "lectures/encoder.html#overview-lecture-1",
