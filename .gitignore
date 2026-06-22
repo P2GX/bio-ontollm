@@ -148,3 +148,4 @@ img/.DS_Store
 _site/
 
 *.quarto_ipynb_*
+**.log

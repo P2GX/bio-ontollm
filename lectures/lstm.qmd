@@ -208,31 +208,33 @@ to the current hidden layer ($\mathbf{W}_{hh}$ the weight matrix for the recurre
 - These weights are also trained by backpropagation
 - The activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function for categorical classfication).
 
-## The RNN Forward Pass Algorithm
 
-The complete temporal execution of a single hidden layer Recurrent Neural Network can be formalized as follows:
 
----
+## **RNN Forward Pass Algorithm**
 
-### **Algorithm: ForwardRNN**
+**Inputs:** 
 
-**Inputs:** * A sequence of input vectors $\mathbf{X} = \langle\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_T\rangle$
-* Network parameter matrices ($U, W, V$) and bias vectors ($\mathbf{b}_h, \mathbf{b}_y$)
-* Activation functions $g$ (hidden layer non-linearity, e.g., $\tanh$) and $f$ (output non-linearity)
+- A sequence of input vectors $\mathbf{X} = \langle\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_T\rangle$
+- Network parameter matrices ($U, W, V$) and bias vectors ($\mathbf{b}_h, \mathbf{b}_y$)
+- Activation functions $g$ (hidden layer, e.g., $\tanh$) and $f$ (output, e.g. softmax)
 
-**Output:** * A sequence of predicted output vectors $\mathbf{Y} = \langle\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_T\rangle$
+**Output:** A sequence of predicted output vectors $\mathbf{Y} = \langle\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_T\rangle$
 
 ### **Algorithm:**
 
-1.  $\mathbf{h}_0 \leftarrow \mathbf{0}$ *(Initialize the baseline context vector with zeros)*
-2.  $\mathbf{Y} \leftarrow \langle \rangle$ *(Initialize an empty sequence to store outputs)*
-3.  **for** $t \leftarrow 1$ **to** $T$ **do**
-4.  $\quad \mathbf{z}_t \leftarrow U\mathbf{h}_{t-1} + W\mathbf{x}_t + \mathbf{b}_h$  *(Linear combination of past memory and new input)*
-5.  $\quad \mathbf{h}_t \leftarrow g(\mathbf{z}_t)$ *(Compute the updated hidden state)*
-6.  $\quad \mathbf{y}_t \leftarrow f(V\mathbf{h}_t + \mathbf{b}_y)$ *(Generate the prediction for the current time step)*
-7.  $\quad \mathbf{Y} \leftarrow \mathbf{Y} \parallel \langle\mathbf{y}_t\rangle$ *(Append the current step output vector to the sequence)*
-8.  **end for**
-9.  **return** $\mathbf{Y}$
+$$
+\begin{aligned}
+&\text{1. } \mathbf{h}_0 \leftarrow \mathbf{0} && \bullet \text{Initialize the baseline context vector with zeros} \\
+&\text{2. } \mathbf{Y} \leftarrow \langle \rangle && \bullet \text{Initialize an empty sequence to store outputs} \\
+&\text{3. } \textbf{for } t \leftarrow 1 \textbf{ to } T \textbf{ do} && \\
+&\text{4. } \quad \mathbf{z}_t \leftarrow U\mathbf{h}_{t-1} + W\mathbf{x}_t + \mathbf{b}_h && \bullet \text{Linear combination of past memory and new input} \\
+&\text{5. } \quad \mathbf{h}_t \leftarrow g(\mathbf{z}_t) &&\bullet \text{Compute the updated hidden state} \\
+&\text{6. } \quad \mathbf{y}_t \leftarrow f(V\mathbf{h}_t + \mathbf{b}_y) && \bullet \text{Generate the prediction for the current time step} \\
+&\text{7. } \quad \mathbf{Y} \leftarrow \mathbf{Y} \parallel \langle\mathbf{y}_t\rangle && \bullet \text{Append the current step output vector to the sequence} \\
+&\text{8. } \textbf{end for} && \\
+&\text{9. } \textbf{return } \mathbf{Y} &&
+\end{aligned}
+$$
 
 
 
@@ -249,27 +251,104 @@ train the RNN.
 - $\mathbf{W}_{hy}$: the weight matrix between the hidden and output layers, 
 
 
-## Training: Complications
-
-First, to compute the loss function for
-the output at time t we need the hidden layer from time t − 1. Second, the hidden
-layer at time t influences both the output at time t and the hidden layer at time t +1
-(and hence the output and loss at t +1). It follows from this that to assess the error
-accruing to ht
-, we’ll need to know its influence on both the current output as well as
-the ones that follow.
 
 
 ## Types of RNNs
 
-![](./img/rnn-types.png){width=50% fig-align="center"}
+![](./img/rnn-types.png){width=75% fig-align="center"}
+
+:::: {.columns}
+
+::: {.column width="48%"}
 
 - (a) One-to-one RNN. 
 - (b) One-to-many RNN. 
 - (c) Many-to-one RNN. 
+:::
+::: {.column width="48%"}
 - (d) Many-to-many RNN. 
 - (e) Many-to-many RNN.
+:::
+::::
 
 ::: {style="font-size: 0.75em;"}
 Das S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518.
 :::
+
+## Training of RNNs
+
+
+![](./img/rnn-train.png){width=75% fig-align="center"}
+
+<div style="font-size: 11px; line-height: 1.2;">
+
+| Column 1 | Column 2 | Column 3 |
+|:---|:---|:---|
+| **$W$**: Recurrent weight matrix | **$a$**: Hidden state activation | **$L$**: Loss value |
+| **$U$**: Input weight matrix | **$o$**: Weighted output value | **$x$**: Input vector  |
+| **$V$**: Output weight matrix | **$\hat{y}$**: Predicted value ($\text{y hat}$) | **$b$**: Bias matrix (hidden) |
+| **$s$**: Weighted sum ($s_{t}$) | **$y$**: True target value | **$c$**: Bias matrix (output) |
+
+
+</div>
+
+## Training of RNNs: Forward pass
+
+:::: {.columns}
+
+::: {.column width="30%"}
+
+![](./img/rnn-onecol.png){width=75% fig-align="center"}
+
+:::
+::: {.column width="70%"}
+
+$$
+\begin{align*}
+s_t &= \mathbf{W}a_{t+1} + \mathbf{U}x_{t} + b & \bullet \text{current input and previous hidden and bias} \\
+a_t &= \tanh(s_t)  & \bullet \text{non-linear activation function} \\
+o_t &= \mathbf{V}a_t + c & \bullet \text{calculate output} \\
+\hat{y}_t &= \mathrm{softmax}(o_t)& \bullet \text{normalised probability distribution of the output} \\
+\mathcal{L} &= -y_t\log(\hat{y}_t) & \bullet \text{loss} \\
+\end{align*}
+$$
+:::
+::::
+
+## Backpropagation Through Time (BTT)
+
+- The gradients are calculated layer by layer  from the last time step towards the initial time step.
+
+
+
+## Why tanh?
+
+- Why do we tend not to use the sigmoid activation function in RNNs?
+- This has to do with the vanishing gradient problem
+- The maximum value of the sigmoid derivative is exactly $0.25$
+- Recall that the sigmoid is $\sigma(z) = \frac{1}{1+e^{-z}}$ and the first derivative is $\sigma^{\prime}(z) = \sigma(z)(1-\sigma(z))$
+- Using the chain rule on $\sigma(z) - \sigma(z)^2$ to calculate the second derivative, we get 
+$$
+\begin{align*}
+\sigma^{\prime\prime}(z) &= \sigma^{\prime}(z) - 2\sigma(z)\sigma^{\prime}(z) \\
+&= \sigma^{\prime}(z)(1-2\sigma(z)) \\
+\end{align*}
+$$
+- set $\sigma^{\prime\prime}(z) = 0$ to find crtical points: $\sigma^{\prime}(z)(1-2\sigma(z)) = 0$. We note that the slope of the sigmoid function ($\sigma^{\prime}$) is never zero for finite values, and so we solve the other term.
+- $1-2\sigma(z) = 0$ implies $\sigma(z) = \frac{1}{2}$ (Maximum slope of the sigmoid function occurs when $\sigma(z) = \frac{1}{2}$ )
+- It is easy to show that if $\frac{1}{1+e^z} = \frac{1}{2}$, then $z=0$. The slope of the sigmoid has its max at the center point, $z=0$
+- We can now calculate the maximum value of the slope: $\sigma^{\prime}(z)(0) = \sigma(z)(0)(1-\sigma(z)(0)) = 0.5(1-0.5)=0.25$
+
+## What tanh? (2)
+
+- We can also show that $\tanh$'s derivative has its maximum at 1.0 (when the input is 0). 
+- Therefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time
+
+Additionally
+
+- Sigmoid restricts outputs strictly between $0$ and $1$. Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign 
+(either all positive or all negative). This forces the gradient descent updates to violently "zig-zag" during optimization, slowing down convergence.
+- $\tanh$ outputs range from $-1$ to $1$. Because it is zero-centered, the average output is close to zero. 
+This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.
+
+TODO update above text.
