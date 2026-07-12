@@ -570,54 +570,6 @@ When you see  ``fibrillation'', your computer sees:
 
 
 
-## What is an Ontology?
-
-:::: {layout="[30, 5, 30, 5, 30]"}
-
-### Philosophy
-![](img/thinker.jpg){width="2.8cm"}
-
-# $\rightarrow$
-<br>
-
-### Artificial Intelligence
-![](img/artificialintelligence.jpg){width="2.8cm"}
-
-# $\rightarrow$
-<br>
-
-### Biomedical Research
-![](img/young_frankenstein.jpg){width="3cm"}
-
-::::
-
-
-## What is an Ontology?
-
-::: {style="text-align: right; font-size: 0.7em;"}
-"An ontology is a specification of a conceptualization."  
-**Tom Gruber, 1993**
-:::
-
-### The Ontology Spectrum
-
-To understand what an ontology is, we can view it as a progression of increasing semantic complexity:
-
-| | | | | | | | | |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| Catalog | | Thesaurus | | Instances | | Value Restrictions | | Formal Relations |
-| $\uparrow$ | | $\uparrow$ | | $\uparrow$ | | $\uparrow$ | | $\uparrow$ |
-| ● | —— | ● | —— | ● | —— | ● | —— | ● $\rightarrow$ |
-| | $\downarrow$ | | $\downarrow$ | | $\downarrow$ | | $\downarrow$ | |
-| | Glossary | | Subclassing | | Properties | | Logical Constraints | |
-
-
-
-::: {.callout-tip}
-## Evolution of Complexity
-As we move from left to right, we move from simple **lists of terms** (Catalog/Glossary) to **hierarchical relationships** (Thesaurus/Subclassing) and finally to **formal logic** (Restrictions/Constraints).
-:::
-
 ## What is a phenotype ontology?
 
 ::: {.callout-note appearance="simple"}

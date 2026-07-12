@@ -30,7 +30,7 @@ Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the con
 :::: {.columns}
 
 ::: {.column width="48%"}
-### [Part 1: Review](#part-1)
+### [Part 1: RNNs](#part-1)
 * What is an RNN?
 * Forward vs. Reverse pass
 * Biomed applications
@@ -41,7 +41,7 @@ Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the con
 :::
 
 ::: {.column width="48%" .dimmed}
-### [Part 2: Architecture and Backprop](#part-2)
+### [Part 2: LSTMs](#part-2)
 * Chain rule & Jacobians
 * Vectorized derivatives
 :::
@@ -318,7 +318,37 @@ $$
 ## Backpropagation Through Time (BTT)
 
 - The gradients are calculated layer by layer  from the last time step towards the initial time step.
+- We will not present a derivation of the gradients, which is mainly analogous to the derivation we presented for ANNs 
+- The one exception is the fact that the gradients for the hidden state weights depend on previous time points
 
+$$
+\begin{align*}
+\mathbf{h}_i &= \sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h) \\
+&=\sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\sigma_h(\mathbf{W}_{xh}\mathbf{x}_{t-1} + \mathbf{W}_{hh}\mathbf{h}_{t-2} + \mathbf{b}_h)  + \mathbf{b}_h) \\
+&=\sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\sigma_h(\mathbf{W}_{xh}\mathbf{x}_{t-1} + \mathbf{W}_{hh}\sigma_h(\mathbf{W}_{xh}\mathbf{x}_{t-2} + \mathbf{W}_{hh}\mathbf{h}_{t-3} + \mathbf{b}_h) + \mathbf{b}_h)  + \mathbf{b}_h) \\
+&=\ldots
+\end{align*}  
+$$
+
+![](./img/telescope.png){width=40% fig-align="center"}
+
+
+## The Vanishing and Exploding Gradient Problems
+
+- It can be shown that when calculating the gradients of such "telescoped" terms, we encounter the product of many Jacobian matrices:
+$$
+\frac{\partial \mathbf{h}_t}{\partial \mathbf{h}_{t-n}} = \prod_{k=t-n}^{t-1} \mathbf{J}_k
+$$
+
+
+where $\mathbf{J}_k$ is the Jacobian matrix of the hidden state at time step $k$. If the eigenvalues of $\mathbf{J}_k$
+ are less than 1, the product of these matrices will tend to zero as $n$ increases, leading to vanishing gradients. If they are greater than one, the 
+ gradients will explode.[^2]
+
+ - The vanishing gradient problem prevents the network from effectively learning long-term dependencies, as the gradient signal becomes too weak to update the weights meaningfully for earlier layers. 
+ - The exploding gradient problem can cause the model to converge too quickly to a poor local minimum or make the training process fail entirely due to excessively large updates.
+
+[^2]: Mienye ID et al (2024) [Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517](https://www.mdpi.com/2078-2489/15/9/517).
 
 
 ## Why tanh?
@@ -350,5 +380,83 @@ Additionally
 (either all positive or all negative). This forces the gradient descent updates to violently "zig-zag" during optimization, slowing down convergence.
 - $\tanh$ outputs range from $-1$ to $1$. Because it is zero-centered, the average output is close to zero. 
 This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.
+- A number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs
 
 TODO update above text.
+- [HOMEWORK]{.hw-badge} You will be asked to implement RNN learning using pytorch etc TODO
+
+## Long Short-Term Memory Networks (LSTMs) {#part-2}
+
+- The key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network. 
+- LSTMs divide the context management problem into two subproblems: r
+
+  * Remove information no longer needed from the context,
+  * Add information likely to be needed for later decision making
+
+![](./img/lstm.png){width=40% fig-align="center"}
+
+- Let's go through step by step
+
+## LSTM Gates
+
+LSTMs have [three gates]{style="color: green; font-weight: bold;"}:
+
+- forget gate 
+- add gate
+- output gate
+
+Each gateconsists of a feedforward layer, followed by a sigmoid activation function, followed by a pointwise
+multiplication with the layer being gated. 
+
+- The sigmoid activation function tends to push its outputs to either 0 or 1. 
+- Combining this with a pointwise multiplication has an effect similar to that of a **binary mask**. 
+- Values in the layer being gated that align with values near 1 in the mask are **passed through**
+nearly unchanged; values corresponding to lower values are essentially **erased**.
+
+## Forget gate
+
+![](./img/lstm.png){width=20% fig-align="center"}
+
+- The forget fate deletes information from the context that is no longer relevant 
+- It computes a weighted sum of the previous state’s hidden layer and the current input and passes that through a sigmoid. 
+- This mask is then multiplied element-wise
+by the context vector to remove the information from context that is no longer required. 
+- Element-wise multiplication of two vectors (represented by the operator ,
+and sometimes called the Hadamard product) is the vector of the same dimension
+as the two input vectors, where each element i is the product of element i in the two
+input vectors:
+
+$$
+\begin{align*}
+\mathbf{f}_t &= \sigma(\mathbf{U}_t\mathbf{h}_{t-1} + \mathbf{W}_f\mathbf{x}_t) \\
+\mathbf{k}_t &= \mathbf{c}_{t-1} \odot\mathbf{f}_t 
+\end{align*}
+$$ {#eq-forget-gate}
+
+## Cell input
+
+![](./img/lstm.png){width=20% fig-align="center"}
+
+- Then we compute the actual information we need to extract from the previous hidden state and 
+current inputs—
+
+$$
+\mathbf{g}_t = \tanh(\mathbf{U}_g\mathbf{h}_{t-1} + \mathbf{W}_g\mathbf{x}_t)
+$$
+
+
+## Add gate 
+Next, we generate the mask for the add gate to select the information to add to the
+current context.
+
+$$
+\begin{align*}
+X\end{align*}
+$$ {#eq-add-gate}
+
+
+it = σ(Uiht−1 +Wixt) (13.23)
+jt = gt it
+(13.24)
+Next, we add this to the modified context vector to get our new context vector.
+ct = jt +k
