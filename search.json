@@ -516,6 +516,30 @@
     ]
   },
   {
+    "objectID": "lectures/ontology1.html#what-is-an-ontology",
+    "href": "lectures/ontology1.html#what-is-an-ontology",
+    "title": "Approaches to biomedical knowledge",
+    "section": "What is an Ontology?",
+    "text": "What is an Ontology?\n\n\n\nPhilosophy\n\n\n\n\\(\\rightarrow\\)\n\n\n\nArtificial Intelligence\n\n\n\n\\(\\rightarrow\\)\n\n\n\nBiomedical Research",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#what-is-an-ontology-1",
+    "href": "lectures/ontology1.html#what-is-an-ontology-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "What is an Ontology?",
+    "text": "What is an Ontology?\n\n\n“An ontology is a specification of a conceptualization.”\nTom Gruber, 1993\n\n\nOntologies are on the right of a scale of increasing semantic complexity:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCatalog\n→\nThesaurus\n→\nInstances\n→\nRestrictions\n→\nOntology\n\n\n\n\nGlossary\n\nSubclassing\n\nProperties\n\nLogical Constraints\n\nFormal Relations\n\n\n\n\n\n\n\n\n\nEvolution of Complexity\n\n\nAs we move from left to right, we move from simple lists of terms (Catalog/Glossary) to hierarchical relationships (Thesaurus/Subclassing) and finally to formal logic (Restrictions/Constraints).",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
     "objectID": "lectures/ontology1.html#obo-open-bio-ontologies",
     "href": "lectures/ontology1.html#obo-open-bio-ontologies",
     "title": "Approaches to biomedical knowledge",
@@ -1060,7 +1084,7 @@
     "href": "lectures/lstm.html#overview-rnns-and-lstms",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview: RNNs and LSTMs",
-    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\n\nPart 1: Review\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Architecture and Backprop\n\nChain rule & Jacobians\nVectorized derivatives\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits"
+    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: LSTMs\n\nChain rule & Jacobians\nVectorized derivatives\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits"
   },
   {
     "objectID": "lectures/lstm.html#part-1",
@@ -1144,7 +1168,14 @@
     "href": "lectures/lstm.html#backpropagation-through-time-btt",
     "title": "Approaches to biomedical knowledge",
     "section": "Backpropagation Through Time (BTT)",
-    "text": "Backpropagation Through Time (BTT)\n\nThe gradients are calculated layer by layer from the last time step towards the initial time step."
+    "text": "Backpropagation Through Time (BTT)\n\nThe gradients are calculated layer by layer from the last time step towards the initial time step.\nWe will not present a derivation of the gradients, which is mainly analogous to the derivation we presented for ANNs\nThe one exception is the fact that the gradients for the hidden state weights depend on previous time points\n\n\\[\n\\begin{align*}\n\\mathbf{h}_i &= \\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{b}_h) \\\\\n&=\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_{t-1} + \\mathbf{W}_{hh}\\mathbf{h}_{t-2} + \\mathbf{b}_h)  + \\mathbf{b}_h) \\\\\n&=\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_{t-1} + \\mathbf{W}_{hh}\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_{t-2} + \\mathbf{W}_{hh}\\mathbf{h}_{t-3} + \\mathbf{b}_h) + \\mathbf{b}_h)  + \\mathbf{b}_h) \\\\\n&=\\ldots\n\\end{align*}  \n\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problems",
+    "href": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problems",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Vanishing and Exploding Gradient Problems",
+    "text": "The Vanishing and Exploding Gradient Problems\n\nIt can be shown that when calculating the gradients of such “telescoped” terms, we encounter the product of many Jacobian matrices: \\[\n\\frac{\\partial \\mathbf{h}_t}{\\partial \\mathbf{h}_{t-n}} = \\prod_{k=t-n}^{t-1} \\mathbf{J}_k\n\\]\n\nwhere \\(\\mathbf{J}_k\\) is the Jacobian matrix of the hidden state at time step \\(k\\). If the eigenvalues of \\(\\mathbf{J}_k\\) are less than 1, the product of these matrices will tend to zero as \\(n\\) increases, leading to vanishing gradients. If they are greater than one, the gradients will explode.1\n\nThe vanishing gradient problem prevents the network from effectively learning long-term dependencies, as the gradient signal becomes too weak to update the weights meaningfully for earlier layers.\nThe exploding gradient problem can cause the model to converge too quickly to a poor local minimum or make the training process fail entirely due to excessively large updates.\n\nMienye ID et al (2024) Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517."
   },
   {
     "objectID": "lectures/lstm.html#why-tanh",
@@ -1158,7 +1189,42 @@
     "href": "lectures/lstm.html#what-tanh-2",
     "title": "Approaches to biomedical knowledge",
     "section": "What tanh? (2)",
-    "text": "What tanh? (2)\n\nWe can also show that \\(\\tanh\\)’s derivative has its maximum at 1.0 (when the input is 0).\nTherefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time\n\nAdditionally\n\nSigmoid restricts outputs strictly between \\(0\\) and \\(1\\). Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign (either all positive or all negative). This forces the gradient descent updates to violently “zig-zag” during optimization, slowing down convergence.\n\\(\\tanh\\) outputs range from \\(-1\\) to \\(1\\). Because it is zero-centered, the average output is close to zero. This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.\n\nTODO update above text."
+    "text": "What tanh? (2)\n\nWe can also show that \\(\\tanh\\)’s derivative has its maximum at 1.0 (when the input is 0).\nTherefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time\n\nAdditionally\n\nSigmoid restricts outputs strictly between \\(0\\) and \\(1\\). Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign (either all positive or all negative). This forces the gradient descent updates to violently “zig-zag” during optimization, slowing down convergence.\n\\(\\tanh\\) outputs range from \\(-1\\) to \\(1\\). Because it is zero-centered, the average output is close to zero. This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.\nA number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs\n\nTODO update above text. - HOMEWORK You will be asked to implement RNN learning using pytorch etc TODO"
+  },
+  {
+    "objectID": "lectures/lstm.html#part-2",
+    "href": "lectures/lstm.html#part-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Long Short-Term Memory Networks (LSTMs)",
+    "text": "Long Short-Term Memory Networks (LSTMs)\n\nThe key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network.\nLSTMs divide the context management problem into two subproblems: r\n\nRemove information no longer needed from the context,\nAdd information likely to be needed for later decision making\n\n\n\n\nLet’s go through step by step"
+  },
+  {
+    "objectID": "lectures/lstm.html#lstm-gates",
+    "href": "lectures/lstm.html#lstm-gates",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LSTM Gates",
+    "text": "LSTM Gates\nLSTMs have three gates:\n\nforget gate\nadd gate\noutput gate\n\nEach gateconsists of a feedforward layer, followed by a sigmoid activation function, followed by a pointwise multiplication with the layer being gated.\n\nThe sigmoid activation function tends to push its outputs to either 0 or 1.\nCombining this with a pointwise multiplication has an effect similar to that of a binary mask.\nValues in the layer being gated that align with values near 1 in the mask are passed through nearly unchanged; values corresponding to lower values are essentially erased."
+  },
+  {
+    "objectID": "lectures/lstm.html#forget-gate",
+    "href": "lectures/lstm.html#forget-gate",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Forget gate",
+    "text": "Forget gate\n\n\nThe forget fate deletes information from the context that is no longer relevant\nIt computes a weighted sum of the previous state’s hidden layer and the current input and passes that through a sigmoid.\nThis mask is then multiplied element-wise by the context vector to remove the information from context that is no longer required.\nElement-wise multiplication of two vectors (represented by the operator \f, and sometimes called the Hadamard product) is the vector of the same dimension as the two input vectors, where each element i is the product of element i in the two input vectors:\n\n\\[\n\\begin{align*}\n\\mathbf{f}_t &= \\sigma(\\mathbf{U}_t\\mathbf{h}_{t-1} + \\mathbf{W}_f\\mathbf{x}_t) \\\\\n\\mathbf{k}_t &= \\mathbf{c}_{t-1} \\odot\\mathbf{f}_t\n\\end{align*}\n\\tag{4}\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#cell-input",
+    "href": "lectures/lstm.html#cell-input",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Cell input",
+    "text": "Cell input\n\n\nThen we compute the actual information we need to extract from the previous hidden state and current inputs—\n\n\\[\n\\mathbf{g}_t = \\tanh(\\mathbf{U}_g\\mathbf{h}_{t-1} + \\mathbf{W}_g\\mathbf{x}_t)\n\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#add-gate",
+    "href": "lectures/lstm.html#add-gate",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Add gate",
+    "text": "Add gate\nNext, we generate the mask for the add gate to select the information to add to the current context.\n\\[\n\\begin{align*}\nX\\end{align*}\n\\tag{5}\\]\nit = σ(Uiht−1 +Wixt) (13.23) jt = gt \fit (13.24) Next, we add this to the modified context vector to get our new context vector. ct = jt +k"
   },
   {
     "objectID": "lectures/encoder.html#overview-lecture-1",
@@ -3921,30 +3987,6 @@
     "title": "Bioontologies: Semantic Similarity",
     "section": "Bioinformatics for Medicine?",
     "text": "Bioinformatics for Medicine?\n\nHow exactly do we calculate the similarity between diseases, symptoms, patients, and more?\n\n\n\n\n\n\n\nCommon Cold\n\n\n\n\n\n\n\nICU\n\n\n\n\n\n\n\n\n\nBroken Bone\n\n\n\n\n\n\n\nEKG",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Bioontologies: Semantic Similarity"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology4.html#what-is-an-ontology",
-    "href": "lectures/ontology4.html#what-is-an-ontology",
-    "title": "Bioontologies: Semantic Similarity",
-    "section": "What is an Ontology?",
-    "text": "What is an Ontology?\n\n\n\nPhilosophy\n\n\n\n\\(\\rightarrow\\)\n\n\n\nArtificial Intelligence\n\n\n\n\\(\\rightarrow\\)\n\n\n\nBiomedical Research",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Bioontologies: Semantic Similarity"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology4.html#what-is-an-ontology-1",
-    "href": "lectures/ontology4.html#what-is-an-ontology-1",
-    "title": "Bioontologies: Semantic Similarity",
-    "section": "What is an Ontology?",
-    "text": "What is an Ontology?\n\n“An ontology is a specification of a conceptualization.”\nTom Gruber, 1993\n\nThe Ontology Spectrum\nTo understand what an ontology is, we can view it as a progression of increasing semantic complexity:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCatalog\n\nThesaurus\n\nInstances\n\nValue Restrictions\n\nFormal Relations\n\n\n\\(\\uparrow\\)\n\n\\(\\uparrow\\)\n\n\\(\\uparrow\\)\n\n\\(\\uparrow\\)\n\n\\(\\uparrow\\)\n\n\n●\n——\n●\n——\n●\n——\n●\n——\n● \\(\\rightarrow\\)\n\n\n\n\\(\\downarrow\\)\n\n\\(\\downarrow\\)\n\n\\(\\downarrow\\)\n\n\\(\\downarrow\\)\n\n\n\n\nGlossary\n\nSubclassing\n\nProperties\n\nLogical Constraints\n\n\n\n\n\n\n\n\n\n\nEvolution of Complexity\n\n\nAs we move from left to right, we move from simple lists of terms (Catalog/Glossary) to hierarchical relationships (Thesaurus/Subclassing) and finally to formal logic (Restrictions/Constraints).",
     "crumbs": [
       "Home",
       "Lectures",
