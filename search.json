@@ -1090,6 +1090,41 @@
     "objectID": "lectures/lstm.html#part-1",
     "href": "lectures/lstm.html#part-1",
     "title": "Approaches to biomedical knowledge",
+    "section": "RNNs: Modelling sequences",
+    "text": "RNNs: Modelling sequences\n\n\n\n\n\n\n\nSequences\n\n\n\na sentence (sequences of works)\na time series (sequence of numbers)\na patient’s visit history (Sequence of observations and measures at different times)\n\n\n\n\n\n\nSequences can have wildly different lengths from one example to the next.\nIt is not straightforward to model sequences with standard ANNs, which take a fixed-dimensional input vector"
+  },
+  {
+    "objectID": "lectures/lstm.html#rnn-basic-idea",
+    "href": "lectures/lstm.html#rnn-basic-idea",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RNN: Basic idea",
+    "text": "RNN: Basic idea\n\n\n\n\n\n\n\n\n\n\n\nKey idea: RNNs have an internal (hidden) state that is updates as a sequence is processed \\[\n\\mathbf{h}_t = f_W(\\mathbf{h}_{t-1}, \\mathbf{x}_t)\n\\]\n\\(\\mathbf{h}_t\\): New state\n\\(f_W\\): function with learnable parameters W\n\\(\\mathbf{h}_{t-1}\\): Prior state\n\\(\\mathbf{x}_{t}\\): Input at time \\(t\\)\nU, V, and W are learnable matrices\n\n\nImage credit: Wikipedia"
+  },
+  {
+    "objectID": "lectures/lstm.html#rnn-output",
+    "href": "lectures/lstm.html#rnn-output",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RNN: Output",
+    "text": "RNN: Output\n\nThere is a separate function for the output of an RNN\n\n\n\n\n\n\n\n\n\n\n\n\nKey idea: RNNs have an internal (hidden) state that is updates as a sequence is processed \\[\n\\mathbf{y}_t = f_W_{hy}(\\mathbf{h}_{t})\n\\]\nThe output at time \\(t\\), $_t $, is calculated from the hidden state\n\\(f_W_{hy}\\): function with learnable parameters W_{hy}\n\\(\\mathbf{h}_{t}\\): hidden state at time \\(t\\)\nConvert the dimension of the hidden state to the dimension of the output\n\n\nImage credit: Wikipedia"
+  },
+  {
+    "objectID": "lectures/lstm.html#unfolding-the-rnn",
+    "href": "lectures/lstm.html#unfolding-the-rnn",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Unfolding the RNN",
+    "text": "Unfolding the RNN\n\n\nThis unfolded view is equivalent\nThe parameters \\(\\mathbf{U}\\), \\(\\mathbf{V}\\), and \\(\\mathbf{W}\\) are learnable weight matrices that are the same for each time step"
+  },
+  {
+    "objectID": "lectures/lstm.html#rnn-types",
+    "href": "lectures/lstm.html#rnn-types",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RNN types",
+    "text": "RNN types\n\n\n\n\n\n\n\n\n\n\n\n\n\nMany-to-one: e.g., sequence of words, predict whether text is positive or negative (sentiment analysis\nOne-to-many: e.g., image captioning. From one image, create a sequence of words to describe the image\nMany-to-many (synched): one output for each input, e.g. part-of-speech prediction\nMany-to-many (encoder-decoder): e.g., translation\n\n\nSee: Das S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518."
+  },
+  {
+    "objectID": "lectures/lstm.html#rnns-overview",
+    "href": "lectures/lstm.html#rnns-overview",
+    "title": "Approaches to biomedical knowledge",
     "section": "RNNs: Overview",
     "text": "RNNs: Overview\n\n\n\n\n\n\n\nRecurrent Neural Networks\n\n\nUnlike standard feed-forward networks, Recurrent Neural Networks (RNNs) introduce a hidden state (\\(\\mathbf{h}_t\\)) that acts as a “memory,” carrying information from time step \\(t-1\\) to time step \\(t\\).\n\npossess both current and past features of the temporal sequences\nadapt to the long-term historical changes in the data\nstore the past information to solve context-dependent tasks\nmake predictions simultaneously with existing observations.\n\n\n\n\n\n\n\n\n\nMienye ID et al (2024) Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517."
   },
@@ -1098,7 +1133,7 @@
     "href": "lectures/lstm.html#rnn-architecture-hidden-layer",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN Architecture: hidden layer",
-    "text": "RNN Architecture: hidden layer\n\nRNNs are designed to process sequential data by maintaining a hidden state that captures information about previous inputs.\n\nThe basic architecture consists of an input layer, a hidden layer, and an output layer.\n\nUnlike feedforward neural networks, RNNs have recurrent connections, allowing information to cycle within the networks. At each time step, \\(t\\), the RNN takes an input vector, \\(x_t\\) , and updates its hidden state, \\(h_t\\) using the following equation:\n\n\\[\n\\mathbf{h}_i = \\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{b}_h)\n\\tag{1}\\]\nwhere\n\n\\(\\mathbf{x}_t\\): Input at time \\(t\\)\n\\(\\mathbf{W}_{xh}\\): is the weight matrix between the input and hidden layer\n\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection\n\\(\\mathbf{b}_h\\): the bias vector\n\\(\\sigma_h\\): the activation function, typically the hyperbolic tangent function (tanh) or the rectified linear unit"
+    "text": "RNN Architecture: hidden layer\n\nRNNs are designed to process sequential data by maintaining a hidden state that captures information about previous inputs.\n\nThe basic architecture consists of an input layer, a hidden layer, and an output layer.\n\nRNNs have recurrent connections, allowing information to cycle within the networks. At each time step, \\(t\\), the RNN takes an input vector, \\(x_t\\) , and updates its hidden state, \\(h_t\\) using the following equation:\n\n\\[\n\\mathbf{h}_t = \\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{b}_h)\n\\tag{1}\\]\nwhere\n\n\n\\(\\mathbf{x}_t\\): Input at time \\(t\\)\n\\(\\mathbf{W}_{xh}\\): is the weight matrix between the input and hidden layer\n\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection\n\\(\\mathbf{b}_h\\): the bias vector\n\\(\\sigma_h\\): the activation function, typically the hyperbolic tangent function (tanh) or the rectified linear unit"
   },
   {
     "objectID": "lectures/lstm.html#rnn-architecture-output",
@@ -1126,28 +1161,56 @@
     "href": "lectures/lstm.html#rnn-architecture",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN Architecture",
-    "text": "RNN Architecture\n\nCompared to ANNs, the significant change for RNNs is the new set of weights that connect the hidden layer from the previous time step to the current hidden layer (\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection ).\n\\(\\mathbf{W}_{hh}\\) determines how the network makes use of past context in calculating the output for the current input.\nThese weights are also trained by backpropagation\nThe activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function for categorical classfication)."
+    "text": "RNN Architecture\n\nCompared to ANNs, the significant change for RNNs is the new set of weights that connect the hidden layer from the previous time step to the current hidden layer (\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection ).\n\\(\\mathbf{W}_{hh}\\) determines how the network makes use of past context in calculating the output for the current input.\nThese weights are also trained by backpropagation\nThe activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function (for categorical classfication)."
+  },
+  {
+    "objectID": "lectures/lstm.html#understanding-the-hidden-state",
+    "href": "lectures/lstm.html#understanding-the-hidden-state",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Understanding the hidden state",
+    "text": "Understanding the hidden state\n\nTo demonstrate that a hidden state can actually “remember” previous steps, let us construct by hand an RNN that outputs \\(x_t\\) if \\(x_t &gt; x_{t-1}\\), otherwise it outputs zero.1\nThe general equation for the hidden state pre-activation is: \\[\nz_t = w_{hh} h_{t-1} + w_{xh} x_t\n\\]\nIn this toy example, we define the hidden state to be a \\(2\\times 1\\) column vector that memorizes both the current input and the immediate history. \\[\n\\begin{align*}\nz_t^{(2\\times 1)} &= w_{hh}^{(2\\times 2)} h_{t-1}^{(2\\times 1)} + w_{xh}^{(2\\times 1)} x_t^{(1\\times 1)} \\\\\nh_t^{(2\\times 1)} &= \\mathrm{relu}(z_t^{(2\\times 1)})\n\\end{align*}\n\\]\n\nAdapted from an example to output 1 if both \\(x_t\\) and \\(x_{t-1}\\) are 1, zero otherwise, from Stanford CS231N online lecture on RNNs"
+  },
+  {
+    "objectID": "lectures/lstm.html#understanding-the-hidden-state-2",
+    "href": "lectures/lstm.html#understanding-the-hidden-state-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Understanding the hidden state (2)",
+    "text": "Understanding the hidden state (2)\n\nWe define these two matrices as follows\n\nw_xh = np.array([[1], [0]])\nw_hh = np.array([[0, 0],  [1, 0]])\n\nThis corresponds to \\[\n\\begin{align*}\nz_t^{(2\\times 1)} &= w_{hh}^{(2\\times 2)} h_{t-1}^{(2\\times 1)} + w_{xh}^{(2\\times 1)} x_t^{(1\\times 1)} \\\\\n&= \\begin{bmatrix} 0 & 0 \\\\ 1 & 0 \\end{bmatrix} \\begin{bmatrix} h_{1, t-1} \\\\ h_{2, t-1} \\end{bmatrix}+ \\begin{bmatrix} 1\\\\0\\end{bmatrix} \\begin{bmatrix}x_t\\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\ 1\\cdot h_{1, t-1} + 0\\cdot h_{2, t-1}  \\end{bmatrix}  + \\begin{bmatrix} 1 \\cdot x_t \\\\ 0 \\cdot x_t \\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\  h_{1, t-1}  \\end{bmatrix} + \\begin{bmatrix} x_t \\\\ 0  \\end{bmatrix} \\\\\n&= \\begin{bmatrix} x_t \\\\  h_{1, t-1}  \\end{bmatrix}  \\\\\n\\end{align*}\n\\]\nThat is, Combined State Pre-Activation (\\(z_t\\)) consists of two numbers: the current input (\\(x_t\\)) and the first element of the previous hidden state (\\(h_{1, t-1}\\))"
+  },
+  {
+    "objectID": "lectures/lstm.html#understanding-the-hidden-state-3",
+    "href": "lectures/lstm.html#understanding-the-hidden-state-3",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Understanding the hidden state (3)",
+    "text": "Understanding the hidden state (3)\nAssuming positive inputs \\(x_t \\ge 0\\), applying the \\(\\text{ReLU}\\) function produces: \\[\nh_t = \\text{ReLU}(z_t) = \\text{ReLU} \\left( \\begin{bmatrix} x_t \\\\ h_{1, t-1} \\end{bmatrix} \\right) = \\begin{bmatrix} x_t \\\\ h_{1, t-1} \\end{bmatrix} = \\begin{bmatrix} \\text{Current Input } (x_t) \\\\ \\text{Previous Input } (x_{t-1}) \\end{bmatrix}\\] $$\nThus\n\nRow 1 of \\(h_t\\) always receives \\(x_t\\) via \\(w_{xh}\\).\nRow 2 of \\(h_t\\) receives the previous value \\(x_{t-1}\\) copied from row 1 via \\(w_{hh}\\).\n\n\\[\\begin{aligned}\nh_t &= \\text{ReLU}\\left( w_{hh} h_{t-1} + w_{xh} x_t \\right) \\\\\n    &= \\text{ReLU}\\left(\n        \\begin{bmatrix} 0 & 0 \\\\ 1 & 0 \\end{bmatrix} \\begin{bmatrix} h_{1, t-1} \\\\ h_{2, t-1} \\end{bmatrix}\n        +\n        \\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix} x_t\n       \\right) \\\\\n    &= \\text{ReLU}\\left(\n        \\begin{bmatrix} 0 \\\\ h_{1, t-1} \\end{bmatrix}\n        +\n        \\begin{bmatrix} x_t \\\\ 0 \\end{bmatrix}\n       \\right) \\\\\n    &= \\text{ReLU}\\left(\n        \\begin{bmatrix} x_t \\\\ h_{1, t-1} \\end{bmatrix}\n       \\right)\n\\end{aligned}\\]\n$$"
+  },
+  {
+    "objectID": "lectures/lstm.html#understanding-the-hidden-state-4",
+    "href": "lectures/lstm.html#understanding-the-hidden-state-4",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Understanding the hidden state (4)",
+    "text": "Understanding the hidden state (4)\n\nOur next step is to produce the output\n\ny_t = relu(w_yh @ h_t.flatten())\nThis corresponds to \\[\ny_t = \\text{ReLU}\\left( w_{yh} h_t \\right)\n\\] - \\(w_{yh}\\) is a 1D row weight vector (or 1D array of shape \\((2,)\\)). - \\(h_t\\) is a column vector of shape \\((2, 1)\\):\\[h_t = \\begin{bmatrix} h_{1, t} \\\\ h_{2, t} \\end{bmatrix} = \\begin{bmatrix} x_t \\\\ x_{t-1} \\end{bmatrix}\\] - Expanding the dot product using the weights \\(w_{yh} = \\begin{bmatrix} 1 & -1 \\end{bmatrix}\\):\\[\\begin{align*}    w_{yh} h_t &= \\begin{bmatrix} 1 & -1 \\end{bmatrix} \\begin{bmatrix} h_{1, t} \\\\ h_{2, t} \\end{bmatrix} \\\\    &= (1 \\cdot h_{1, t}) + (-1 \\cdot h_{2, t}) \\\\    &= h_{1, t} - h_{2, t} \\\\    &= x_t - x_{t-1}    \\end{align*}\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#understanding-the-hidden-state-5",
+    "href": "lectures/lstm.html#understanding-the-hidden-state-5",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Understanding the hidden state (5)",
+    "text": "Understanding the hidden state (5)\nApplying the Activation Function (\\(\\text{ReLU}\\)): - Finally, the scalar result passes through the element-wise \\(\\text{ReLU}\\) function to ensure the output is non-negative: \\[y_t = \\text{ReLU}(x_t - x_{t-1}) = \\max(0, x_t - x_{t-1})\\] - If \\(x_t &gt; x_{t-1}\\), the output is positive (\\(x_t - x_{t-1}\\)). - If \\(x_t \\le x_{t-1}\\), the output floors at \\(0\\).\n\n\n\nOf course, real RNNs are trained to learn the parameters of the network, but we have shown in this simple example that the architecture of an RNN can be made to remember past information\nIn the following slides, we will show how RNNs are trained."
   },
   {
     "objectID": "lectures/lstm.html#rnn-forward-pass-algorithm",
     "href": "lectures/lstm.html#rnn-forward-pass-algorithm",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN Forward Pass Algorithm",
-    "text": "RNN Forward Pass Algorithm\nInputs:\n\nA sequence of input vectors \\(\\mathbf{X} = \\langle\\mathbf{x}_1, \\mathbf{x}_2, \\dots, \\mathbf{x}_T\\rangle\\)\nNetwork parameter matrices (\\(U, W, V\\)) and bias vectors (\\(\\mathbf{b}_h, \\mathbf{b}_y\\))\nActivation functions \\(g\\) (hidden layer, e.g., \\(\\tanh\\)) and \\(f\\) (output, e.g. softmax)\n\nOutput: A sequence of predicted output vectors \\(\\mathbf{Y} = \\langle\\mathbf{y}_1, \\mathbf{y}_2, \\dots, \\mathbf{y}_T\\rangle\\)\nAlgorithm:\n\\[\n\\begin{aligned}\n&\\text{1. } \\mathbf{h}_0 \\leftarrow \\mathbf{0} && \\bullet \\text{Initialize the baseline context vector with zeros} \\\\\n&\\text{2. } \\mathbf{Y} \\leftarrow \\langle \\rangle && \\bullet \\text{Initialize an empty sequence to store outputs} \\\\\n&\\text{3. } \\textbf{for } t \\leftarrow 1 \\textbf{ to } T \\textbf{ do} && \\\\\n&\\text{4. } \\quad \\mathbf{z}_t \\leftarrow U\\mathbf{h}_{t-1} + W\\mathbf{x}_t + \\mathbf{b}_h && \\bullet \\text{Linear combination of past memory and new input} \\\\\n&\\text{5. } \\quad \\mathbf{h}_t \\leftarrow g(\\mathbf{z}_t) &&\\bullet \\text{Compute the updated hidden state} \\\\\n&\\text{6. } \\quad \\mathbf{y}_t \\leftarrow f(V\\mathbf{h}_t + \\mathbf{b}_y) && \\bullet \\text{Generate the prediction for the current time step} \\\\\n&\\text{7. } \\quad \\mathbf{Y} \\leftarrow \\mathbf{Y} \\parallel \\langle\\mathbf{y}_t\\rangle && \\bullet \\text{Append the current step output vector to the sequence} \\\\\n&\\text{8. } \\textbf{end for} && \\\\\n&\\text{9. } \\textbf{return } \\mathbf{Y} &&\n\\end{aligned}\n\\]"
+    "text": "RNN Forward Pass Algorithm\n\nInputs:\n\nA sequence of input vectors \\(\\mathbf{X} = \\langle\\mathbf{x}_1, \\mathbf{x}_2, \\dots, \\mathbf{x}_T\\rangle\\)\nNetwork parameter matrices (\\(U, W, V\\)) and bias vectors (\\(\\mathbf{b}_h, \\mathbf{b}_y\\))\nActivation functions \\(g\\) (hidden layer, e.g., \\(\\tanh\\)) and \\(f\\) (output, e.g. softmax)\n\nOutput: A sequence of predicted output vectors \\(\\mathbf{Y} = \\langle\\mathbf{y}_1, \\mathbf{y}_2, \\dots, \\mathbf{y}_T\\rangle\\)\n\nAlgorithm:\n\\[\n\\begin{aligned}\n&\\text{1. } \\mathbf{h}_0 \\leftarrow \\mathbf{0} && \\bullet \\text{Initialize the baseline context vector with zeros} \\\\\n&\\text{2. } \\mathbf{Y} \\leftarrow \\langle \\rangle && \\bullet \\text{Initialize an empty sequence to store outputs} \\\\\n&\\text{3. } \\textbf{for } t \\leftarrow 1 \\textbf{ to } T \\textbf{ do} && \\\\\n&\\text{4. } \\quad \\mathbf{z}_t \\leftarrow U\\mathbf{h}_{t-1} + W\\mathbf{x}_t + \\mathbf{b}_h && \\bullet \\text{Linear combination of past memory and new input} \\\\\n&\\text{5. } \\quad \\mathbf{h}_t \\leftarrow g(\\mathbf{z}_t) &&\\bullet \\text{Compute the updated hidden state} \\\\\n&\\text{6. } \\quad \\mathbf{y}_t \\leftarrow f(V\\mathbf{h}_t + \\mathbf{b}_y) && \\bullet \\text{Generate the prediction for the current time step} \\\\\n&\\text{7. } \\quad \\mathbf{Y} \\leftarrow \\mathbf{Y} \\parallel \\langle\\mathbf{y}_t\\rangle && \\bullet \\text{Append the current step output vector to the sequence} \\\\\n&\\text{8. } \\textbf{end for} && \\\\\n&\\text{9. } \\textbf{return } \\mathbf{Y} &&\n\\end{aligned}\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#training-rnns",
     "href": "lectures/lstm.html#training-rnns",
     "title": "Approaches to biomedical knowledge",
     "section": "Training RNNs",
-    "text": "Training RNNs\n\n\n\n\nTraining\n\n\nAs previously with ANNs networks, we use a training set, a loss function, and backpropagation to train the RNN.\n\n\n\n\n\nThere are now three sets of weights to update:\n\\(\\mathbf{W}_{xh}\\): is the weight matrix between the input and hidden layer\n\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection\n\\(\\mathbf{W}_{hy}\\): the weight matrix between the hidden and output layers,"
-  },
-  {
-    "objectID": "lectures/lstm.html#types-of-rnns",
-    "href": "lectures/lstm.html#types-of-rnns",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Types of RNNs",
-    "text": "Types of RNNs\n\n\n\n\n\nOne-to-one RNN.\n\n\nOne-to-many RNN.\n\n\nMany-to-one RNN.\n\n\n\n\n\nMany-to-many RNN.\n\n\nMany-to-many RNN.\n\n\n\n\nDas S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518."
+    "text": "Training RNNs\n\n\n\n\nTraining\n\n\nAs previously with ANN networks, we use a training set, a loss function, and backpropagation to train the RNN.\n\n\n\n\n\nThere are now three sets of weights to update:\n\\(\\mathbf{W}_{xh}\\): is the weight matrix between the input and hidden layer\n\\(\\mathbf{W}_{hh}\\) the weight matrix for the recurrent connection\n\\(\\mathbf{W}_{hy}\\): the weight matrix between the hidden and output layers,"
   },
   {
     "objectID": "lectures/lstm.html#training-of-rnns",
@@ -1178,6 +1241,34 @@
     "text": "The Vanishing and Exploding Gradient Problems\n\nIt can be shown that when calculating the gradients of such “telescoped” terms, we encounter the product of many Jacobian matrices: \\[\n\\frac{\\partial \\mathbf{h}_t}{\\partial \\mathbf{h}_{t-n}} = \\prod_{k=t-n}^{t-1} \\mathbf{J}_k\n\\]\n\nwhere \\(\\mathbf{J}_k\\) is the Jacobian matrix of the hidden state at time step \\(k\\). If the eigenvalues of \\(\\mathbf{J}_k\\) are less than 1, the product of these matrices will tend to zero as \\(n\\) increases, leading to vanishing gradients. If they are greater than one, the gradients will explode.1\n\nThe vanishing gradient problem prevents the network from effectively learning long-term dependencies, as the gradient signal becomes too weak to update the weights meaningfully for earlier layers.\nThe exploding gradient problem can cause the model to converge too quickly to a poor local minimum or make the training process fail entirely due to excessively large updates.\n\nMienye ID et al (2024) Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517."
   },
   {
+    "objectID": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problem-intuition",
+    "href": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problem-intuition",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Vanishing and Exploding Gradient Problem: Intuition",
+    "text": "The Vanishing and Exploding Gradient Problem: Intuition\n\nLet us examine an example to understand why the vanishing gradient problem occurs.\nFor simplicity, Let’s consider the following symmetric matrix \\(A\\): \\[A = \\begin{bmatrix}  0.65 & 0.15 \\\\  0.15 & 0.65  \\end{bmatrix}\\]\nTo diagonalize \\(A\\), we first find its eigenvalues \\(\\lambda\\) by solving \\(\\det(A - \\lambda I) = 0\\):\nEigenvalues (\\(\\lambda\\)):Solving the characteristic polynomial gives:\\[\\lambda_1 = 0.8, \\quad \\lambda_2 = 0.5\\]\nEigenvectors (\\(P\\)):The corresponding eigenvectors form the columns of matrix \\(P\\):\\[P = \\begin{bmatrix}     1 & 1 \\\\     1 & -1     \\end{bmatrix}, \\quad     P^{-1} = \\begin{bmatrix}     0.5 & 0.5 \\\\     0.5 & -0.5     \\end{bmatrix}\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problem-intuition-2",
+    "href": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problem-intuition-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Vanishing and Exploding Gradient Problem: Intuition (2)",
+    "text": "The Vanishing and Exploding Gradient Problem: Intuition (2)\n\nAny diagonalizable matrix can be factored as:\\[A = P D P^{-1}\\]\nwhere \\(D\\) is a diagonal matrix containing the eigenvalues – in our example we have: \\[D = \\begin{bmatrix}  0.8 & 0 \\\\  0 & 0.5  \\end{bmatrix}\\]\nWhen we multiple the matrix by itself many times, the intermediate terms cancel out \\[\\begin{align*} A^n &= (P D P^{-1}) (P D P^{-1}) \\dots (P D P^{-1}) \\\\ &= P D (P^{-1} P) D (P^{-1} P) \\dots D P^{-1} \\\\ &= P D^n P^{-1} \\end{align*}\\]\nBecause \\(D\\) is a diagonal matrix, raising it to the power \\(n\\) simply means raising each individual eigenvalue to the power \\(n\\):\\[D^n = \\begin{bmatrix}  0.8^n & 0 \\\\  0 & 0.5^n  \\end{bmatrix}\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problem-intuition-3",
+    "href": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problem-intuition-3",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Vanishing and Exploding Gradient Problem: Intuition (3)",
+    "text": "The Vanishing and Exploding Gradient Problem: Intuition (3)\nFor \\(n = 1\\):\\[D^1 =  \\begin{bmatrix} 0.8^1 & 0 \\\\ 0 & 0.5^1 \\end{bmatrix}  = \\begin{bmatrix} 0.8 & 0 \\\\ 0 & 0.5 \\end{bmatrix} \\] For \\(n = 5\\):\\[D^5 = \\begin{bmatrix} 0.8^5 & 0 \\\\ 0 & 0.5^5 \\end{bmatrix} = \\begin{bmatrix} 0.32768 & 0 \\\\ 0 & 0.03125 \\end{bmatrix}\\] For \\(n = 20\\):\\[D^{20} = \\begin{bmatrix} 0.8^{20} & 0 \\\\ 0 & 0.5^{20} \\end{bmatrix} \\approx \\begin{bmatrix} 0.0115 & 0 \\\\ 0 & 0.00000095 \\end{bmatrix}\\]\n\nBecause both eigenvalues (\\(\\lambda_1 = 0.8\\) and \\(\\lambda_2 = 0.5\\)) are less than \\(1\\), raising them to a large power \\(n\\) forces them to decay exponentially toward zero."
+  },
+  {
+    "objectID": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problem-intuition-4",
+    "href": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problem-intuition-4",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Vanishing and Exploding Gradient Problem: Intuition (4)",
+    "text": "The Vanishing and Exploding Gradient Problem: Intuition (4)\n\nThis is the algebraic root of the vanishing gradient problem in RNNs: if the eigenvalues of the hidden-to-hidden Jacobian matrices are less than 1, long-term gradient signals shrink to zero before they can reach earlier time steps.\nConversely, if eigenvalues are greater than 1, \\(D^n\\) explodes toward infinity, causing exploding gradients."
+  },
+  {
     "objectID": "lectures/lstm.html#why-tanh",
     "href": "lectures/lstm.html#why-tanh",
     "title": "Approaches to biomedical knowledge",
@@ -1189,7 +1280,14 @@
     "href": "lectures/lstm.html#what-tanh-2",
     "title": "Approaches to biomedical knowledge",
     "section": "What tanh? (2)",
-    "text": "What tanh? (2)\n\nWe can also show that \\(\\tanh\\)’s derivative has its maximum at 1.0 (when the input is 0).\nTherefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time\n\nAdditionally\n\nSigmoid restricts outputs strictly between \\(0\\) and \\(1\\). Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign (either all positive or all negative). This forces the gradient descent updates to violently “zig-zag” during optimization, slowing down convergence.\n\\(\\tanh\\) outputs range from \\(-1\\) to \\(1\\). Because it is zero-centered, the average output is close to zero. This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.\nA number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs\n\nTODO update above text. - HOMEWORK You will be asked to implement RNN learning using pytorch etc TODO"
+    "text": "What tanh? (2)\n\nWe can also show that \\(\\tanh\\)’s derivative has its maximum at 1.0 (when the input is 0).\nTherefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time\n\nAdditionally\n\nSigmoid restricts outputs strictly between \\(0\\) and \\(1\\). Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign (either all positive or all negative). This forces the gradient descent updates to violently “zig-zag” during optimization, slowing down convergence.\n\\(\\tanh\\) outputs range from \\(-1\\) to \\(1\\). Because it is zero-centered, the average output is close to zero. This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.\nA number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs"
+  },
+  {
+    "objectID": "lectures/lstm.html#python",
+    "href": "lectures/lstm.html#python",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Python",
+    "text": "Python"
   },
   {
     "objectID": "lectures/lstm.html#part-2",
@@ -3855,6 +3953,18 @@
     "title": "Approaches to biomedical knowledge",
     "section": "GSEA: Examples",
     "text": "GSEA: Examples\n\n\nS1 is significantly enriched and scores highly\nS2 is randomly distributed and scores poorly\nS3 is not enriched at the top of the list but is nonrandom, so it scores well (but somewhat difficult to interpret biologically)\n\n\nSources:\n\nSubramanian A, et al. (2005) Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S A. 102:15545-50 PMID: 16199517.\nMootha VK, et al. (2003) PGC-1alpha-responsive genes involved in oxidative phosphorylation are coordinately downregulated in human diabetes. Nat Genet. 34:267-73. PMID:12808457.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#conclusion",
+    "href": "lectures/ontology2.html#conclusion",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Conclusion",
+    "text": "Conclusion\n\nA major use case for bioontologies such as GO that are used to annotate biological domains (genes and gene products) is to visualize terms (biological concepts) that are overrepresented in experimental results\nWe have examined two major algorithmic approaches:\n\nGO Overrepresentation Analysis (Fisher Exact Test)\nGene-set Enrichment Analysis\n\nBoth approaches typically require multiple testing correction because they perform hundreds or even thousands of individual tests",
     "crumbs": [
       "Home",
       "Lectures",
