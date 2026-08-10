@@ -69,8 +69,135 @@ Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the con
 
 ::::
 
+## RNNs: Modelling sequences {#part-1}
 
-## RNNs: Overview {#part-1}
+::: {.callout-important  icon=false, title="Sequences"}
+
+- a sentence (sequences of works)
+- a time series (sequence of numbers)
+- a patient's visit history (Sequence of observations and measures at different times) 
+
+:::
+
+- Sequences can have wildly different lengths from one example to the next.
+- It is not straightforward to model sequences with standard ANNs, which take a fixed-dimensional input vector
+
+
+## RNN: Basic idea
+
+:::: {.columns}
+
+::: {.column width="48%"}
+
+
+![](./img/rnn-simple.png){width=100% fig-align="center"}
+
+:::
+::: {.column width="10%"}
+:::
+::: {.column width="38%"}
+
+- `Key idea`: RNNs have an internal (hidden) state that is updates as a sequence is processed
+$$
+\mathbf{h}_t = f_W(\mathbf{h}_{t-1}, \mathbf{x}_t)
+$$
+- $\mathbf{h}_t$: New state
+- $f_W$: function with learnable parameters W
+- $\mathbf{h}_{t-1}$: Prior state
+- $\mathbf{x}_{t}$: Input at time $t$
+- U, V, and W are learnable matrices
+
+::: {.tiny-credit}
+Image credit: Wikipedia
+:::
+
+:::
+::::
+
+
+## RNN: Output
+
+- There is a separate function for the output of an RNN
+
+
+:::: {.columns}
+
+::: {.column width="48%"}
+
+
+![](./img/rnn-simple.png){width=100% fig-align="center"}
+
+:::
+::: {.column width="10%"}
+:::
+::: {.column width="38%"}
+
+- `Key idea`: RNNs have an internal (hidden) state that is updates as a sequence is processed
+$$
+\mathbf{y}_t = f_W_{hy}(\mathbf{h}_{t})
+$$
+
+- The output at time $t$, $\mathbf{y}_t $, is calculated from the hidden state
+
+- $f_W_{hy}$: function with learnable parameters W_{hy}
+- $\mathbf{h}_{t}$: hidden state at time $t$
+- Convert the dimension of the hidden state to the dimension of the output
+
+::: {.tiny-credit}
+Image credit: Wikipedia
+:::
+
+:::
+::::
+
+
+## Unfolding the RNN
+
+
+![](./img/rnn-simple-unfolded.png){width=100% fig-align="center"}
+
+- This unfolded view is equivalent
+- The parameters $\mathbf{U}$, $\mathbf{V}$, and $\mathbf{W}$ are learnable weight matrices that are the same for each time step
+
+
+## RNN types
+
+:::: {.columns}
+
+::: {.column width="65%"}
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+from rnn_plots import plot_sequence_models
+
+plot_sequence_models(figsize=(10,6))
+plt.show()
+```
+
+:::
+::: {.column width="34%"}
+
+
+- **Many-to-one**: e.g., sequence of words, predict whether text is positive or negative (sentiment analysis
+- **One-to-many**: e.g., image captioning. From one image, create a sequence of words to describe the image
+- **Many-to-many (synched)**: one output for each input, e.g. part-of-speech prediction
+- **Many-to-many (encoder-decoder)**: e.g., translation
+
+::: {.tiny-credit}
+See: Das S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518.
+:::
+
+:::
+::::
+
+
+
+
+## RNNs: Overview 
 
 ::: {.callout-important  icon=false, title="Recurrent Neural Networks"}
 
@@ -98,22 +225,22 @@ that acts as a "memory," carrying information from time step $t-1$ to time step 
 
 The basic architecture consists of an input layer, a hidden layer, and an output layer. 
 
-- Unlike feedforward neural networks, RNNs have recurrent connections, allowing information to cycle within the networks. 
+- RNNs have recurrent connections, allowing information to cycle within the networks. 
 At each time step, $t$, the RNN takes an input vector, $x_t$
 , and updates its hidden state, $h_t$ using the following equation:
 
 $$
-\mathbf{h}_i = \sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h)
+\mathbf{h}_t = \sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h)
 $$ {#eq-rnn-hidden}
 
 where
-
+<div style="fontsize=0.8rem">
 - $\mathbf{x}_t$: Input at time $t$
 - $\mathbf{W}_{xh}$:  is the weight matrix between the input and hidden layer
 - $\mathbf{W}_{hh}$ the weight matrix for the recurrent connection
 - $\mathbf{b}_h$: the bias vector
 - $\sigma_h$: the activation function, typically the hyperbolic tangent function (tanh) or the rectified linear unit 
-
+</div>
 ![](./img/rnn.png){width=20% fig-align="center"}
 
 
@@ -206,12 +333,107 @@ plt.show()
 to the current hidden layer ($\mathbf{W}_{hh}$ the weight matrix for the recurrent connection ).
 - $\mathbf{W}_{hh}$ determines how the network makes use of past context in calculating the output for the current input. 
 - These weights are also trained by backpropagation
-- The activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function for categorical classfication).
+- The activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function (for categorical classfication).
 
 
+## Understanding the hidden state
 
-## **RNN Forward Pass Algorithm**
+- To demonstrate that a hidden state can actually "remember" previous steps, let us construct _by hand_ an RNN that outputs 
+$x_t$ if $x_t > x_{t-1}$, otherwise it outputs zero.^[Adapted from an example to output 1 if both $x_t$ and $x_{t-1}$ are 1, zero otherwise, from Stanford CS231N online lecture on RNNs]
+- The general equation for the hidden state pre-activation is:
+$$
+z_t = w_{hh} h_{t-1} + w_{xh} x_t
+$$
+- In this toy example, we define the hidden state to be a $2\times 1$ column vector that memorizes both the current input and the immediate history.
+$$
+\begin{align*}
+z_t^{(2\times 1)} &= w_{hh}^{(2\times 2)} h_{t-1}^{(2\times 1)} + w_{xh}^{(2\times 1)} x_t^{(1\times 1)} \\
+h_t^{(2\times 1)} &= \mathrm{relu}(z_t^{(2\times 1)})
+\end{align*}
+$$
 
+## Understanding the hidden state (2)
+
+- We define these two matrices as follows
+
+```python
+w_xh = np.array([[1], [0]])
+w_hh = np.array([[0, 0],  [1, 0]])
+```
+
+- This corresponds to 
+$$
+\begin{align*}
+z_t^{(2\times 1)} &= w_{hh}^{(2\times 2)} h_{t-1}^{(2\times 1)} + w_{xh}^{(2\times 1)} x_t^{(1\times 1)} \\
+ &= \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} h_{1, t-1} \\ h_{2, t-1} \end{bmatrix}+ \begin{bmatrix} 1\\0\end{bmatrix} \begin{bmatrix}x_t\end{bmatrix} \\
+&= \begin{bmatrix} 0  \\ 1\cdot h_{1, t-1} + 0\cdot h_{2, t-1}  \end{bmatrix}  + \begin{bmatrix} 1 \cdot x_t \\ 0 \cdot x_t \end{bmatrix} \\
+&= \begin{bmatrix} 0  \\  h_{1, t-1}  \end{bmatrix} + \begin{bmatrix} x_t \\ 0  \end{bmatrix} \\
+&= \begin{bmatrix} x_t \\  h_{1, t-1}  \end{bmatrix}  \\
+\end{align*} 
+$$
+
+- That is, Combined State Pre-Activation ($z_t$) consists of two numbers: the current input ($x_t$) and the first element of the previous hidden state ($h_{1, t-1}$)
+
+## Understanding the hidden state (3)
+Assuming positive inputs $x_t \ge 0$, applying the $\text{ReLU}$ function produces:
+$$
+h_t = \text{ReLU}(z_t) = \text{ReLU} \left( \begin{bmatrix} x_t \\ h_{1, t-1} \end{bmatrix} \right) = \begin{bmatrix} x_t \\ h_{1, t-1} \end{bmatrix} = \begin{bmatrix} \text{Current Input } (x_t) \\ \text{Previous Input } (x_{t-1}) \end{bmatrix}$$
+$$
+
+Thus
+
+- Row 1 of $h_t$ always receives $x_t$ via $w_{xh}$.
+- Row 2 of $h_t$ receives the previous value $x_{t-1}$ copied from row 1 via $w_{hh}$.
+
+\begin{aligned}
+h_t &= \text{ReLU}\left( w_{hh} h_{t-1} + w_{xh} x_t \right) \\
+    &= \text{ReLU}\left( 
+        \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} h_{1, t-1} \\ h_{2, t-1} \end{bmatrix} 
+        + 
+        \begin{bmatrix} 1 \\ 0 \end{bmatrix} x_t 
+       \right) \\
+    &= \text{ReLU}\left( 
+        \begin{bmatrix} 0 \\ h_{1, t-1} \end{bmatrix} 
+        + 
+        \begin{bmatrix} x_t \\ 0 \end{bmatrix} 
+       \right) \\
+    &= \text{ReLU}\left( 
+        \begin{bmatrix} x_t \\ h_{1, t-1} \end{bmatrix} 
+       \right)
+\end{aligned}
+$$
+
+## Understanding the hidden state (4)
+
+- Our next step is to produce the output
+```python
+y_t = relu(w_yh @ h_t.flatten())
+```
+This corresponds to
+$$
+y_t = \text{ReLU}\left( w_{yh} h_t \right)
+$$
+- $w_{yh}$ is a 1D row weight vector (or 1D array of shape $(2,)$).
+- $h_t$ is a column vector of shape $(2, 1)$:$$h_t = \begin{bmatrix} h_{1, t} \\ h_{2, t} \end{bmatrix} = \begin{bmatrix} x_t \\ x_{t-1} \end{bmatrix}$$
+- Expanding the dot product using the weights $w_{yh} = \begin{bmatrix} 1 & -1 \end{bmatrix}$:$$\begin{align*}    w_{yh} h_t &= \begin{bmatrix} 1 & -1 \end{bmatrix} \begin{bmatrix} h_{1, t} \\ h_{2, t} \end{bmatrix} \\    &= (1 \cdot h_{1, t}) + (-1 \cdot h_{2, t}) \\    &= h_{1, t} - h_{2, t} \\    &= x_t - x_{t-1}    \end{align*}$$
+
+
+## Understanding the hidden state (5)
+
+Applying the Activation Function ($\text{ReLU}$):
+- Finally, the scalar result passes through the element-wise $\text{ReLU}$ function to ensure the output is non-negative:
+$$y_t = \text{ReLU}(x_t - x_{t-1}) = \max(0, x_t - x_{t-1})$$
+- If $x_t > x_{t-1}$, the output is positive ($x_t - x_{t-1}$). 
+- If $x_t \le x_{t-1}$, the output floors at $0$.
+
+
+> * Of course, real RNNs are trained to learn the parameters of the network, but we have shown in this simple example that the architecture of an RNN can be made to `remember` past information
+> * In the following slides, we will show how RNNs are trained.
+
+
+## RNN Forward Pass Algorithm
+
+<div style="font-size: 0.8em;">
 **Inputs:** 
 
 - A sequence of input vectors $\mathbf{X} = \langle\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_T\rangle$
@@ -219,6 +441,7 @@ to the current hidden layer ($\mathbf{W}_{hh}$ the weight matrix for the recurre
 - Activation functions $g$ (hidden layer, e.g., $\tanh$) and $f$ (output, e.g. softmax)
 
 **Output:** A sequence of predicted output vectors $\mathbf{Y} = \langle\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_T\rangle$
+</div>
 
 ### **Algorithm:**
 
@@ -241,7 +464,7 @@ $$
 ## Training RNNs
 
 ::: {.callout-tip appearance="minimal" icon=false style="background-color: #fafbfc; border-left: 4px solid #34495e; font-size: 0.85em;" title="Training"}
-As previously with ANNs networks, we use a training set, a loss function, and backpropagation to
+As previously with ANN networks, we use a training set, a loss function, and backpropagation to
 train the RNN.
 :::
 
@@ -252,28 +475,6 @@ train the RNN.
 
 
 
-
-## Types of RNNs
-
-![](./img/rnn-types.png){width=75% fig-align="center"}
-
-:::: {.columns}
-
-::: {.column width="48%"}
-
-- (a) One-to-one RNN. 
-- (b) One-to-many RNN. 
-- (c) Many-to-one RNN. 
-:::
-::: {.column width="48%"}
-- (d) Many-to-many RNN. 
-- (e) Many-to-many RNN.
-:::
-::::
-
-::: {style="font-size: 0.75em;"}
-Das S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518.
-:::
 
 ## Training of RNNs
 
@@ -351,6 +552,37 @@ where $\mathbf{J}_k$ is the Jacobian matrix of the hidden state at time step $k$
 [^2]: Mienye ID et al (2024) [Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517](https://www.mdpi.com/2078-2489/15/9/517).
 
 
+## The Vanishing and Exploding Gradient Problem: Intuition
+
+- Let us examine an example to understand why the vanishing gradient problem occurs. 
+- For simplicity, Let's consider the following symmetric matrix $A$:
+$$A = \begin{bmatrix}  0.65 & 0.15 \\  0.15 & 0.65  \end{bmatrix}$$
+- To diagonalize $A$, we first find its eigenvalues $\lambda$ by solving $\det(A - \lambda I) = 0$:
+- Eigenvalues ($\lambda$):Solving the characteristic polynomial gives:$$\lambda_1 = 0.8, \quad \lambda_2 = 0.5$$
+- Eigenvectors ($P$):The corresponding eigenvectors form the columns of matrix $P$:$$P = \begin{bmatrix}     1 & 1 \\     1 & -1     \end{bmatrix}, \quad     P^{-1} = \begin{bmatrix}     0.5 & 0.5 \\     0.5 & -0.5     \end{bmatrix}$$
+
+## The Vanishing and Exploding Gradient Problem: Intuition (2)
+- Any diagonalizable matrix can be factored as:$$A = P D P^{-1}$$
+- where $D$ is a diagonal matrix containing the eigenvalues -- in our example we have:
+$$D = \begin{bmatrix}  0.8 & 0 \\  0 & 0.5  \end{bmatrix}$$
+- When we multiple the matrix by itself many times, the intermediate terms cancel out
+$$\begin{align*} A^n &= (P D P^{-1}) (P D P^{-1}) \dots (P D P^{-1}) \\ &= P D (P^{-1} P) D (P^{-1} P) \dots D P^{-1} \\ &= P D^n P^{-1} \end{align*}$$
+- Because $D$ is a diagonal matrix, raising it to the power $n$ simply means raising each individual eigenvalue to the power $n$:$$D^n = \begin{bmatrix}  0.8^n & 0 \\  0 & 0.5^n  \end{bmatrix}$$
+
+
+## The Vanishing and Exploding Gradient Problem: Intuition (3)
+
+For $n = 1$:$$D^1 =  \begin{bmatrix} 0.8^1 & 0 \\ 0 & 0.5^1 \end{bmatrix}  = \begin{bmatrix} 0.8 & 0 \\ 0 & 0.5 \end{bmatrix} $$
+For $n = 5$:$$D^5 = \begin{bmatrix} 0.8^5 & 0 \\ 0 & 0.5^5 \end{bmatrix} = \begin{bmatrix} 0.32768 & 0 \\ 0 & 0.03125 \end{bmatrix}$$
+For $n = 20$:$$D^{20} = \begin{bmatrix} 0.8^{20} & 0 \\ 0 & 0.5^{20} \end{bmatrix} \approx \begin{bmatrix} 0.0115 & 0 \\ 0 & 0.00000095 \end{bmatrix}$$
+
+- Because both eigenvalues ($\lambda_1 = 0.8$ and $\lambda_2 = 0.5$) are less than $1$, raising them to a large power $n$ forces them to decay exponentially toward zero.
+
+## The Vanishing and Exploding Gradient Problem: Intuition (4)
+
+- This is the algebraic root of the vanishing gradient problem in RNNs: if the eigenvalues of the hidden-to-hidden Jacobian matrices are less than 1, long-term gradient signals shrink to zero before they can reach earlier time steps. 
+- Conversely, if eigenvalues are greater than 1, $D^n$ explodes toward infinity, causing exploding gradients.
+
 ## Why tanh?
 
 - Why do we tend not to use the sigmoid activation function in RNNs?
@@ -382,8 +614,12 @@ Additionally
 This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.
 - A number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs
 
-TODO update above text.
-- [HOMEWORK]{.hw-badge} You will be asked to implement RNN learning using pytorch etc TODO
+
+## Python
+
+
+
+
 
 ## Long Short-Term Memory Networks (LSTMs) {#part-2}
 

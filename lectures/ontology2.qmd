@@ -786,3 +786,11 @@ Sources:
 - Subramanian A, et al. (2005) Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S A. **102**:15545-50 PMID: 16199517.
 - Mootha VK, et al. (2003) PGC-1alpha-responsive genes involved in oxidative phosphorylation are coordinately downregulated in human diabetes. Nat Genet. **34**:267-73.  PMID:12808457.
 :::
+
+## Conclusion
+
+- A major use case for bioontologies such as GO that are used to annotate biological domains (genes and gene products) is to visualize terms (biological concepts) that are overrepresented in experimental results
+- We have examined two major algorithmic approaches:
+    - GO Overrepresentation Analysis (Fisher Exact Test)
+    - Gene-set Enrichment Analysis
+- Both approaches typically require multiple testing correction because they perform hundreds or even thousands of individual tests
