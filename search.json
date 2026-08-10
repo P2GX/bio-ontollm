@@ -3662,7 +3662,7 @@
     "href": "lectures/ontology2.html#go-overrepresentation-with-the-hypergeometric-distribution-1",
     "title": "Approaches to biomedical knowledge",
     "section": "GO Overrepresentation with the Hypergeometric Distribution",
-    "text": "GO Overrepresentation with the Hypergeometric Distribution\nThe statistical analysis basically just counts up all the ways of getting \\(k\\) genes annotated to \\(t\\) and \\(n-k\\) remaining genes not annotated to \\(t\\), and compares this number to the number of all possible outcomes.\n\nLet \\(m\\) be the number of genes on the microarray chip.\n\n\\(m_t\\) be the number of these genes that are annotated to GO term \\(t\\).\n\\(n\\) be the number of DE genes (the study set).\n\\(k\\) be the number of DE genes that are annotated to \\(t\\).\n\nWe have: \\[\nP(k,n,m,m_t) = \\dfrac{\\binom{m_t}{k}\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\]\nNumerator: \\(\\binom{m_t}{k}\\binom{m-m_t}{n-k}\\): The number of ways to choose exactly \\(k\\) annotated genes AND \\(n-k\\) non-annotated genes.\nDenominator: \\(\\binom{m}{n}\\): The total number of ways to choose any \\(n\\) genes from the population \\(m\\).",
+    "text": "GO Overrepresentation with the Hypergeometric Distribution\nThe statistical analysis basically just counts up all the ways of getting \\(k\\) genes annotated to \\(t\\) and \\(n-k\\) remaining genes not annotated to \\(t\\), ß´and compares this number to the number of all possible outcomes.\n\nLet \\(m\\) be the number of genes on the microarray chip.\n\n\\(m_t\\) be the number of these genes that are annotated to GO term \\(t\\).\n\\(n\\) be the number of DE genes (the study set).\n\\(k\\) be the number of DE genes that are annotated to \\(t\\).\n\nWe have: \\[\nP(k,n,m,m_t) = \\dfrac{\\binom{m_t}{k}\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\]\nNumerator: \\(\\binom{m_t}{k}\\binom{m-m_t}{n-k}\\): The number of ways to choose exactly \\(k\\) annotated genes AND \\(n-k\\) non-annotated genes.\nDenominator: \\(\\binom{m}{n}\\): The total number of ways to choose any \\(n\\) genes from the population \\(m\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3674,7 +3674,7 @@
     "href": "lectures/ontology2.html#go-overrepresentation-with-fishers-exact-test",
     "title": "Approaches to biomedical knowledge",
     "section": "GO Overrepresentation with Fisher’s exact test",
-    "text": "GO Overrepresentation with Fisher’s exact test\nwe refer to the set of genes which are investigated in an experiment as the population set.\n\nNote that we use the term gene only for simplicity. The items annotated to the ontology terms may also be proteins or other biological entities.\nWe denote this set by the uppercase letter \\(M\\), while the cardinality of the population set is denoted by \\(m\\).\nIf, for example, a microarray experiment is conducted, the population set will comprise all genes that the microarray chip can detect. The outcome of the experiment is referred to as the study set. It is denoted by \\(N\\) and has the cardinality \\(n\\).\nIn the microarray or RNA-seq scenario the study set could consist of all genes that were detected to be differentially expressed.",
+    "text": "GO Overrepresentation with Fisher’s exact test\n\nWe refer to the set of genes1 which are investigated in an experiment as the population set.\nThe cardinality (count) of the population set is refered to as \\(m\\)\nIn RNA-seq, the population set can be defined as all measured genes\nIn microarray or other targeted experiments, we might define the population set as all genes that the microarray chip can detect.\nThe outcome of the experiment is referred to as the study set. The cardinality of the study set is \\(n\\).\nIn the microarray or RNA-seq scenario the study set could consist of all genes that were detected to be differentially expressed.\nThe count of genes in the population that are annotated to GO term \\(t\\) is \\(m_t\\).\n\\(k\\) is the number of genes in the study set annotated to GO term \\(t\\)\n\n\\[\np(K\\geq k^{'},n,p) =\n\\sum_{k=k^{'}}^{\\max(K,|DE|)}\\dfrac{\\binom{m_t}{k}\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\]\nWe use the term gene only for simplicity. The items annotated to the ontology terms may also be proteins or other biological entities.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3686,43 +3686,7 @@
     "href": "lectures/ontology2.html#term-for-term",
     "title": "Approaches to biomedical knowledge",
     "section": "Term-for-Term",
-    "text": "Term-for-Term\nThe standard approach to identify the most interesting terms is to perform Fisher’s exact test for each term separately. For this reason, we refer to this procedure as the term-for-term (TfT) approach\n\nFor each GO term \\(t\\), the genes in the population set \\(M\\) are either annotated to term \\(t\\) or not.\nThis divides the population set into two classes of items, comparable to an urn with white and black marbles.\nWe denote the set of all genes in the population that are annotated to GO term \\(t\\) as \\(M_t\\) and the cardinality of the set as \\(m_t\\).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology2.html#term-for-term-1",
-    "href": "lectures/ontology2.html#term-for-term-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Term-for-Term",
-    "text": "Term-for-Term\nThe study set is assumed to be a random sample that is obtained by drawing \\(n\\) genes without replacement from the population.\n\nThe random variable that describes the number of genes of the study set that are annotated to \\(t\\) in this random sample, denoted by \\(X_t\\), therefore follows the hypergeometric distribution, i.e.,\n\n\\[\nX_t \\sim h(k|m;m_t;n) := P(X_t=k) = \\frac{\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\tag{5}\\]\n\nThat is, \\(P(X_t=k)\\) gives the probability of observing exactly \\(k\\) annotated genes in a study set of size \\(n\\) if the population set of size \\(m\\) contains \\(m_t\\) genes that are annotated to term \\(t\\).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology2.html#term-for-term-2",
-    "href": "lectures/ontology2.html#term-for-term-2",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Term-for-Term",
-    "text": "Term-for-Term\n\n\n\nNote\n\n\nNull and Alternative Hypothesis\n\n\n\nThe number of genes in the study set that are annotated to \\(t\\) represents the observation. This number is denoted by \\(n_t\\).\n\nNow we want to assess whether the study set is enriched for term \\(t\\), i.e., whether the observed \\(n_t\\) is higher than one would expect.\nIn order to formulate a statistical test, we need to formulate a null hypothesis (\\(H_0\\)) and an alternative hypothesis (\\(H_1\\)).\nNull Hypothesis (\\(H_0\\)): In this case, it simply states that there is no positive association between genes annotated to the term \\(t\\) and the study set; that is, there is no overrepresentation of term \\(t\\).\nAlternative Hypothesis (\\(H_1\\)): There is overrepresentation of the term.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology2.html#term-for-term-3",
-    "href": "lectures/ontology2.html#term-for-term-3",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Term-for-Term",
-    "text": "Term-for-Term\nThe null hypothesis corresponds to the probability of observing a test statistic that is at least as extreme as the one that was observed given that the null hypothesis is true.\n\nTherefore, the null hypothesis corresponding to a one-sided test is rejected if the probability of observing \\(n_t\\) genes annotated to term \\(t\\) in the study set by chance is less than \\(\\alpha\\)\nBy convention, \\(\\alpha\\) is usually set to 0.05\nThis is given by:\n\n\\[\n  P(X_t\\geq n_t|H_0) = \\sum_{k=n_t}^{\\min(m_t,n)}\n\\frac{\\displaystyle{m_t \\choose k}\\displaystyle{{m - m_t}\n\\choose {n - k}}}{\\displaystyle{m \\choose n}}.\n\\]",
+    "text": "Term-for-Term\n\n\n\nNote\n\n\nThe actual testing procedure for the most basic kind of GO analysis involves performing one statistical test for each GO term that is represented in the dataset of interest (usually this means we are performing thousands of tests)\n\n\n\nFor each tested GO term, we have:\n\nNull Hypothesis (\\(H_0\\)): there is no positive association between genes annotated to the term \\(t\\) and the study set; that is, there is no overrepresentation of term \\(t\\).\nAlternative Hypothesis (\\(H_1\\)): There is overrepresentation of the term.\nThe null hypothesis corresponds to the probability of observing a test statistic that is at least as extreme as the one that was observed given that the null hypothesis is true.\nTherefore, the null hypothesis corresponding to a one-sided test is rejected if the probability of observing \\(n_t\\) genes annotated to term \\(t\\) in the study set by chance is less than \\(\\alpha\\)\nBy convention, \\(\\alpha\\) is usually set to 0.05\nThis is given by:\n\n\\[\n  P(X_t\\geq n_t|H_0) = \\sum_{k=n_t}^{\\min(m_t,n)}\n\\frac{\\displaystyle{m_t \\choose k}\\displaystyle{{m - m_t}\n\\choose {n - k}}}{\\displaystyle{m \\choose n}}.\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3747,6 +3711,150 @@
     "title": "Approaches to biomedical knowledge",
     "section": "Example",
     "text": "Example\n\nSuppose that there is a population set of \\(m=18\\) genes, of which \\(m_t=4\\) genes are annotated to the term \\(t\\).\nThe outcome of an experiment conducted on all 18 genes of the population yields a set of 5 genes. This means that the study set consists of \\(n=5\\) genes.\nMoreover, we observe that a total of \\(n_t=3\\) genes from the genes of the study set are annotated to term \\(t\\)\nWe would now like to analyze whether term \\(t\\) is significantly overrepresented in the study set and thus can be interpreted to represent an important result of the experiment:\n\n\\[\nP(X_t\\geq 3|H_0) = \\frac{\\displaystyle{5 \\choose 3}\\displaystyle{{13} \\choose {2}}}{\\displaystyle{18\n\\choose 5}} + \\frac{\\displaystyle{5 \\choose 4}\\displaystyle{{13} \\choose {1}}}{\\displaystyle{18\n\\choose 5}}\n   = 0.044.\n\\] - Since \\(P(X_t\\geq 3|H_0)=0.044&lt;0.05=\\alpha\\), the null-hypotheses is rejected and the term may be interpreted as being characteristic of the experiment.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#multiple-testing-correction",
+    "href": "lectures/ontology2.html#multiple-testing-correction",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Multiple testing correction",
+    "text": "Multiple testing correction\n\n\n\n\n\n\n\n\n\n\n\nmultiple testing problem occurs when many statistical tests are performed on the same dataset.\nEach test has its own chance of a Type I error (false positive)\nThe overall probability of making at least one false positive increases as the number of tests grows.\nIf m independent comparisons are performed, the family-wise error rate (FWER), is given by \\[\n\\bar {\\alpha }=1-\\left(1-\\alpha _{\\{{\\text{per comparison}}\\}}\\right)^{m}\n\\]\nThe Bonferroni correction sets \\(\\alpha _{\\mathrm {\\{per\\ comparison\\}} }=\\frac{\\alpha }{m}\\)\nWe will not go into detail in this course; there are many other MTC procedures",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#ontologizer",
+    "href": "lectures/ontology2.html#ontologizer",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Ontologizer",
+    "text": "Ontologizer\n\n\nHOMEWORK You will process several datasets with the Ontologizer to gain intuition about GO TfT analysis.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#gene-set-enrichment-analysis",
+    "href": "lectures/ontology2.html#gene-set-enrichment-analysis",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Gene set enrichment analysis",
+    "text": "Gene set enrichment analysis\n\nDrawbacks of GO Overrepresentation Analysis (GOOA)\n\nAfter correcting for multiple hypotheses testing, no individual gene may meet the threshold for statistical significance, because the relevant biological differences are modest relative to the noise inherent to the microarray technology.\nThe threshold for signicance is arbitrary. What about genes with p=0.051? Maybe they would become significant if we did more repetitions in our RNA-seq experiment\n\nGene Set Enrichment Analysis (GSEA):\n\nDo not divide genes into study (differentially expressed) and population (all genes)\nInstead, rank genes according to degree of expression or differential expression\nDetermine whether members of a gene set S tend to occur toward the top (or bottom) of the list L\nIn this case the gene set is correlated with the phenotypic class distinction.\n\n\n\nSubramanian A, et al. (2005) Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S A. 102:15545-50. PMID: 16199517.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#gsea-concepts",
+    "href": "lectures/ontology2.html#gsea-concepts",
+    "title": "Approaches to biomedical knowledge",
+    "section": "GSEA: concepts",
+    "text": "GSEA: concepts\n\nGSEA considers experiments with genomewide expression profiles from samples belonging to two classes, labeled 1 or 2.\nGenes are ranked based on the correlation between their expression and the class distinction by using any suitable metric\nConcretely, class 1 can be Annotated to GO term *t* and class 2 Not annotated to *t*",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#gsea-enrichment-score",
+    "href": "lectures/ontology2.html#gsea-enrichment-score",
+    "title": "Approaches to biomedical knowledge",
+    "section": "GSEA: Enrichment Score",
+    "text": "GSEA: Enrichment Score\n\nThe enrichment score (ES) that reflects the degree to which a set S is overrepresented at the extremes (top or bottom) of the entire ranked list L.\nThe score is calculated by walking down the list L, increasing a running-sum statistic when we encounter a gene in S and decreasing it when we encounter genes not in S.\nThe magnitude of the increment depends on the correlation of the gene with the phenotype.\nThe enrichment score is the maximum deviation from zero encountered in the random walk; it corresponds to a weighted Kolmogorov–Smirnov-like statistic",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#gsea-enrichment-score-setup",
+    "href": "lectures/ontology2.html#gsea-enrichment-score-setup",
+    "title": "Approaches to biomedical knowledge",
+    "section": "GSEA: Enrichment score setup",
+    "text": "GSEA: Enrichment score setup\n\nInput: A ranked list of N genes, ordered by some gene-level statistic\n\ncorrelation with phenotype\ndifferential expression\na t statistic\n\nThe most differentially expressed genes are placed at the top of the list, the least differential at the bottom.\n\nThe original GSEA implementation had a type of signal to noise ratio (Difference of class means divided by sum of class standard deviations. This is essentially a variance-stabilized fold-change)\n\\[\nr_j = \\frac{\\mu_{j,A} - \\mu_{j,B}}{\\sigma_{j,A} + \\sigma_{j,B}}\n\\]\n\nFavors genes with a large, consistent (low-variance) difference between groups over genes with a large but noisy difference.\nSimilar in intent to a t-test, which most implementations use now",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#gsea-running-sum",
+    "href": "lectures/ontology2.html#gsea-running-sum",
+    "title": "Approaches to biomedical knowledge",
+    "section": "GSEA: Running Sum",
+    "text": "GSEA: Running Sum\nThe running-sum construction - Walk down the ranked list from position \\(j=1,\\ldots,N\\) - At each step, maintain two running sums:\n\\[\nP_{hit}(S,i) = \\sum_{\\substack{j \\le i \\\\ g_j \\in S}} \\dfrac{|r_j|^p}{N_R}\n\\quad\\quad N_R = \\sum_{g_j\\in S}|r_j|^p\n\\tag{6}\\]\n\nThe hit term of Equation 6 increases whenever it encounters a gene that belongs to \\(S\\), weighted by the magnitude of its ranking statistic \\(r_j\\)\n\nand\n\\[\nP_{miss}(S,i) = \\sum_{\\substack{j \\le i \\\\ g_j \\notin S}}\\dfrac{1}{N-N_H}\n\\]\n\nThe miss term increases whenever it encounters a gene not in S, with a uniform step size.\nBoth are normalized so each is a proper empirical CDF: they start at 0, and \\(P_{hit}(S,N) = P_{miss}(S,N) = 1\\).",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#gsea-running-sum-1",
+    "href": "lectures/ontology2.html#gsea-running-sum-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "GSEA: Running Sum",
+    "text": "GSEA: Running Sum\n\n\n\n\n\n\n\n\n\n\nThe enrichment score is the maximum deviation from zero encountered in the random walk\n\\(D = ES(S) = 0.699\\) at rank 64\nLeading-edge subset size: 16 of 20 gene-set members",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#kolmogorovsmirnov",
+    "href": "lectures/ontology2.html#kolmogorovsmirnov",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Kolmogorov–Smirnov",
+    "text": "Kolmogorov–Smirnov\n\nHOMEWORK We will review the Kolmogorov–Smirnov (KS) test in the homework.\nGSEA is “KS-like” but not exactly a KS-test\nThe classical two-sample KS test statistic is\n\n\\[\nD = \\sup_x |CDF_1(x) - CDF_2(x)|\n\\tag{8}\\]\n\nThe is, the KS statistic is the largest vertical gap between two empirical cumulative distribution functions.\nGSEA is also the largest gap between two step functions, but there are three key differences\n\nGSEA takes weighted (not uniform) steps. The hit function’s step size at gene \\(j\\) is proportional to \\(∣𝑟_j|^p\\) (genes that are more correlated with the phenotype contribute larger jumps when they appear.)\nSigned max (GSEA), not absolute max (KS).\nDiscrete, rank-based domain. The distribution being compared isn’t over a continuous variable (as with KS), it’s over discrete positions in a fixed permutation (the gene rank order), so \\(P_{hit}\\) and \\(P_{miss}\\) are step functions over \\({1,\\ldots, N}\\) rather than continuous functions over \\(\\mathbb{R}\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#estimation-of-significance-level-of-es",
+    "href": "lectures/ontology2.html#estimation-of-significance-level-of-es",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Estimation of Significance Level of ES",
+    "text": "Estimation of Significance Level of ES\n\nThe calculation of the p-value in the KS test is .is computed from a known asymptotic distribution (the Kolmogorov distribution), either via an exact formula for small n or asymptotically for large n.\nGSEA has no such closed-form null\nIn GSEA, the p-value is estimated empirically using permutations\npermuting phenotype labels changes the ranked gene list itself\nIf the actual GSEA statistic is higher than all but 2 of 10,000 permutations, then the p value is calculated as \\[\np=\\frac{b+1}{m+1} = \\frac{2+1}{10000+1} \\approx 3\\times 10^{-4}\n\\]\nSpecifically, we permute the phenotype labels and recompute the ES of the gene set for the permuted data, which generates a null distribution for the ES.\nThe empirical, nominal P value of the observed ES is then calculated relative to this null distribution.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#adjustment-for-multiple-hypothesis-testing",
+    "href": "lectures/ontology2.html#adjustment-for-multiple-hypothesis-testing",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Adjustment for Multiple Hypothesis Testing",
+    "text": "Adjustment for Multiple Hypothesis Testing\n\nThe adjustment fo multiple testing is essentially the same as with GO Overrepresentation Analysis\nSkipping some details in the original publication",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology2.html#gsea-examples",
+    "href": "lectures/ontology2.html#gsea-examples",
+    "title": "Approaches to biomedical knowledge",
+    "section": "GSEA: Examples",
+    "text": "GSEA: Examples\n\n\nS1 is significantly enriched and scores highly\nS2 is randomly distributed and scores poorly\nS3 is not enriched at the top of the list but is nonrandom, so it scores well (but somewhat difficult to interpret biologically)\n\n\nSources:\n\nSubramanian A, et al. (2005) Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S A. 102:15545-50 PMID: 16199517.\nMootha VK, et al. (2003) PGC-1alpha-responsive genes involved in oxidative phosphorylation are coordinately downregulated in human diabetes. Nat Genet. 34:267-73. PMID:12808457.",
     "crumbs": [
       "Home",
       "Lectures",
