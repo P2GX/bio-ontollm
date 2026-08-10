@@ -40,50 +40,31 @@ GO has become one of the most widely used and mature bio-ontologies, although it
 * **Lag in functional description** $\longmapsto$ progress in how biologists describe functions has not kept pace with large-scale sequencing. Need for efficient procedures for preliminary annotation.
 * **Divergent Nomenclature** $\longmapsto$ names for genes and functions vary widely between databases, making cross-species comparison difficult.
 * **Primary Uses:**
-    * Information extraction
-    * Data mining
+    * Overrepresentation analysis/Pathway analysis of high-throughput data
+    * Data mining from PubMed etc.
     * Database integration
 
 ## GO: A Structured Hierarchy
 
-![](./img/dnametabolism.png){fig-align="center" height="30%"}
+![](./img/dnametabolism.png){fig-align="center" width="30%"}
 
 
 
 ## DNA Ligation: GO:0006266
 
-The following represents the lineage of the term **DNA Ligation** (number of children in parentheses):
+The following represents the lineage of the term **DNA ligase (ATP) activity** (GO:0003910):
 
-* **GO:0003673** : Gene_Ontology (79026)
-    * **GO:0008150** : biological_process (56409)
-        * **GO:0009987** : cellular process (20228)
-            * **GO:0008151** : cell growth and/or maintenance (14057)
-                * **GO:0008283** : cell proliferation (4030)
-                    * **GO:0007049** : cell cycle (3207)
-                        * **GO:0000067** : DNA replication and chromosome cycle (1301)
-                            * **GO:0006260** : DNA replication (880)
-                                * **GO:0006261** : DNA dependent DNA replication (366)
-                                    * [**GO:0006266 : DNA ligation (7)**]{style="color: red;"}
-
-- Parent terms of __DNA Ligation__: A `second` path through the 
-graph
+![](./img/dna-ligase.png){fig-align="center" width="30%"}
 
 
 ## DAG: Directed Acyclic Graph
 
-```{python}
-#| echo: false
-#| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-sys.path.append('utils') 
-from ontology_plots import dag
+![](img/threekindsofgraph.png){fig-align="center" height="300px"}
 
-dag()
-plt.show()
-```
-* A graph with directed edges
-* No cycles (closed loops whereby a path leads back to the starting node)
+* Gene Ontology is a directed acyclic graph (DAG)
+    (A) Tree
+    (B) A graph with directed edges and no cycles
+    (C) A graph with a cycle
 
 ## QuickGO: DAG
 
@@ -130,7 +111,7 @@ A biological process is a series of events accomplished by one or more ordered a
 :::
 
 ::: {layout-ncol=1}
-![](img/subontologies.png){fig-align="center" height="300px"}
+![](img/subontologies.png){fig-align="center" width="300px"}
 
 figure credit: EMBL-EBI
 :::
@@ -149,7 +130,7 @@ Molecular functions generally correspond to the individual steps in a biological
 
 
 ::: {layout-ncol=1}
-![](img/subontologies.png){fig-align="center" height="200px"}
+![](img/subontologies.png){fig-align="center" width="300px"}
 
 figure credit: EMBL-EBI
 :::
@@ -167,22 +148,34 @@ A cellular component is not just a "where"—it can be a functional structure li
 :::
 
 ::: {layout-ncol=1}
-![](img/subontologies.png){fig-align="center" height="200px"}
+![](img/subontologies.png){fig-align="center" width="300px"}
 
 figure credit: EMBL-EBI
 :::
 
 ## GO Terms: The Anatomy of an Entry
 
-* **Accession:** `GO:0003678`
-* **Name:** DNA helicase activity
-* **Definition:** Catalysis of the hydrolysis of ATP to unwind the DNA helix at the replication fork, allowing the resulting single strands to be copied.
-* **Lineage:** Information about parent terms (this handles the "bookkeeping" of the DAG structure).
-
 ::: {.callout-important appearance="minimal"}
 Each entry (*term*) in the Gene Ontology contains these standardized metadata fields to ensure consistency across different databases.
 :::
 
+<div style="font-size: 1.8em;">
+```text
+[Term]
+id: GO:0003678
+name: DNA helicase activity
+namespace: molecular_function
+alt_id: GO:0003679
+alt_id: GO:0004003
+def: "Unwinding of a DNA helix, driven by ATP hydrolysis." [GOC:jl]
+synonym: "ATP-dependent DNA helicase activity" EXACT []
+xref: EC:3.6.4.12
+xref: Reactome:R-HSA-5693589 "D-loop dissociation and strand annealing"
+is_a: GO:0004386 ! helicase activity
+is_a: GO:0008094 ! ATP-dependent activity, acting on DNA
+property_value: skos:exactMatch EC:3.6.4.12
+```
+</div>
 
 ## GO Annotations
 
@@ -194,7 +187,7 @@ Each entry (*term*) in the Gene Ontology contains these standardized metadata fi
 Source: [https://current.geneontology.org/products/pages/downloads.html](https://current.geneontology.org/products/pages/downloads.html)
 :::
 
-## GO Annotations: The Mapping Logic
+## GO Annotations
 
 * **Gene Association Files (GAFs):** Collaborating databases (like FlyBase, MGI, or UniProt) prepare and maintain these files.
 * **Cardinality ($0$ to $n$):**
@@ -204,10 +197,10 @@ Source: [https://current.geneontology.org/products/pages/downloads.html](https:/
 
 ::: {.callout-note}
 ### The "Annotation" vs. "Term"
-Remember: A **Term** is a definition in the ontology (the "dictionary"). An **Annotation** is the link between a specific gene and that term (the "usage").
+Remember: A **Term** is a definition in the ontology. An **Annotation** is the link between a specific gene and that term.
 :::
 
-## GO Annotations: The Mapping Logic
+## GO Annotations
 
 * **Gene Association Files (GAFs):** Collaborating databases prepare and maintain these files to link genes to terms.
 * **Cardinality ($0$ to $n$):**
@@ -227,15 +220,16 @@ An annotation record typically includes:
 
 ::: {.callout-note}
 ### Metadata
-Records also include synonyms, PubMed IDs (for literature support), Taxon (species), and the date the annotation was last updated.
+Records also include synonyms, PubMed IDs, Taxon (species), and the date the annotation was last updated (biocuration date).
 :::
 
 ## GO Evidence Codes
 
-Not all annotations are created equal. Evidence codes tell us **how** we know what we know.
+How do we know that a gene product has a certain function?
 
+<div style="font-size: 0.8em;">
 ### 1. Manually Curated (Experimental)
-* **IDA:** Inferred from Direct Assay (The "Gold Standard")
+* **IDA:** Inferred from Direct Assay ("Gold Standard")
 * **IMP:** Inferred from Mutant Phenotype
 * **IGI:** Inferred from Genetic Interaction
 
@@ -246,10 +240,11 @@ Not all annotations are created equal. Evidence codes tell us **how** we know wh
 ### 3. Automated (Computational)
 * **IEA:** Inferred from Electronic Annotation (The most common type)
 * **ISO:** Inferred from Sequence Orthology
+</div>
 
 ::: {.callout-warning}
 ### Caution
-Many high-throughput analyses filter out **IEA** codes because they are automated and may have a higher false-positive rate compared to experimental data.
+Many high-throughput analyses filter out **IEA** codes because they are automated and tend to have a higher false-positive rate as compared to experimental data.
 :::
 
 
@@ -261,8 +256,8 @@ We have performed a high-throughput experiment (e.g., RNA-seq) and identified a 
 :::
 
 * **Beyond Counting:** We cannot simply count genes annotated to a term. Why? Because common biological processes are naturally common in the genome.
-* **The Core Question:** Is a specific GO term annotated to our gene list **more often than we would expect by random chance?**
-* **The Method:** * We use the **Fisher's Exact Test** (standard procedure).
+* **Core Question:** Is a specific GO term annotated to our gene list **more often than we would expect by random chance?**
+* **Approach:** We use the **Fisher's Exact Test** (standard procedure).
     * Today's demonstration will use the **Ontologizer** software.
 
 ## The Binomial Coefficient
@@ -270,8 +265,9 @@ We have performed a high-throughput experiment (e.g., RNA-seq) and identified a 
 To calculate the number of unique ways to arrange $k$ "heads" and $n-k$ "tails," we must account for redundant rearrangements:
 
 * **Total Permutations:** There are $n!$ ways to rearrange $n$ distinct objects.
-* **Redundancy Correction:** * Exchanging the positions of two "heads" does not change the observable sequence. There are $k!$ such internal reorderings.
-    * Similarly, there are $(n-k)!$ ways to reorder the "tails" without changing the sequence.
+* **Redundancy Correction:** Exchanging the positions of two "heads" does not change the observable sequence. 
+    - There are $k!$ ways to reorder the "heads" without chainging the overall sequence.
+    - Similarly, there are $(n-k)!$ ways to reorder the "tails" without changing the sequence.
 * **The Formula:** To find the number of *distinct* orderings, we divide the total by the redundancies:
 
 $$
@@ -285,20 +281,27 @@ This value $\binom{n}{k}$, represents the number of different ways of choosing $
 
 ## Binomial Coefficient
 
-This quantity (read "$n$ choose $k$") is known as the binomial coefficient. We can now use this to calculate the probability of obtaining $k$ *successes* in $n$ trials, whereby the probability of *success* in one trial is $p$, and the probability of *failure* is $q=1-p$. 
+* This quantity (read "$n$ choose $k$") is known as the binomial coefficient. We can now use this to calculate the probability of obtaining $k$ *successes* in $n$ trials, whereby the probability of *success* in one trial is $p$, and the probability of *failure* is $q=1-p$. 
 
-To obtain the probability of any one particular order of trials with $k$ successes and $n-k$ failures, we multiply the probabilities of the individual trials to obtain $p^k(1-p)^{n-k}$. 
+* The probability of a particular order of trials with $k$ successes and $n-k$ failures is obtained by multiplying the probabilities of the individual trials;
 
-In order to find the total probability of obtaining $k$ successes, we simply multiply the probability of one particular trial order with $k$ successes by the number of trial orders resulting in $k$ successes, which is given by the binomial coefficient. This probability distribution is called the **binomial distribution**:
+$$
+p^k(1-p)^{n-k}
+$$
+
+* The total probability of obtaining $k$ successes is the probability of one particular trial order with $k$ successes by the number of trial orders resulting in $k$ successes, which is given by the binomial coefficient. This probability distribution is called the **binomial distribution**:
 
 $$
 P(k,n,p) = \binom{n}{k} p^k(1-p)^{n-k}
-$$ {eq-binomial-distribution}
+$$ {#eq-binomial}
 
 
 # Binomial Coefficient
 
-For instance, the figure shows A) the probability of $k=1,\ldots,10$ "heads" in ten coin tosses using a fair coin ($p=0.5$). B) Probability of $k=1,\ldots,10$ "heads" in ten coin tosses using a biased coin ($p=0.1$).{fig-align="center" width="80%"}
+For instance, the figure shows 
+
+A) the probability of $k=1,\ldots,10$ "heads" in ten coin tosses using a fair coin ($p=0.5$). 
+B) Probability of $k=1,\ldots,10$ "heads" in ten coin tosses using a biased coin ($p=0.1$).
 
 ```{python}
 #| echo: false
@@ -395,7 +398,7 @@ size of the DE set (denoted $|\textit{DE}|$).  We thus obtain:
 $$
 p(k \geq k^{'},n,p) = \sum_{k=k^{'}}^{\max(p_t,|\textit{DE}|)}\binom{n}{k} 
 k^p\left(n-k\right)^{1-p}.
-$$
+$$ {#eq-dbinomial}
  
 # GO Overrepresentation with the Binomial Distribution
 
@@ -423,7 +426,7 @@ plt.show()
 ::: 
 ::: 
 
-## Details
+## GO Overrepresentation with the Binomial Distribution
 
 ```{python}
 #| echo: false
@@ -436,11 +439,10 @@ plot_binom()
 plt.show()
 ``` 
 
-- The smoothed variant of the probability mass function for the binomial distribution, with $p=0.06$ and   $n=250$. 
-- Values for $k=0,1,\ldots,40$ are shown (the values for  $k>40$ are nearly zero and are not shown). 
-- The observed value for    $k$ of 30 lies outside of the range containing 95% of the    probability mass, and we reject the null hypothesis that the genes
+
+- The observed value for $k$ of 30 lies outside of the range containing 95% of the probability mass, and we reject the null hypothesis that the genes
    in the study set are not enriched in genes annotated by $t$. 
-- The    $p$-value for this observation can be calculated by    Equation~(\ref{eq:dbinomial}) to be $1.68\times 10^{-8}$.
+- The $p$-value for this observation can be calculated by @eq-dbinomial to be $1.68\times 10^{-8}$.
 
 # binomial vs hypergeometric distribution
 
@@ -479,7 +481,7 @@ the chip is represented by an urn with 10,000 balls.
 
 The statistical analysis basically just counts up all the ways of getting $k$ genes annotated to $t$ and $n-k$ remaining genes not annotated to $t$, and compares this number to the number of all possible outcomes.
 
-- If we let:$m$ be the number of genes on the microarray chip.
+- Let $m$ be the number of genes on the microarray chip.
   - $m_t$ be the number of these genes that are annotated to GO term $t$.
   - $n$ be the number of DE genes (the study set).
   - $k$ be the number of DE genes that are annotated to $t$.
@@ -492,17 +494,18 @@ $$
 - Denominator: $\binom{m}{n}$: The total number of ways to choose any $n$ genes from the population $m$.
 
 # GO Overrepresentation with the Hypergeometric Distribution
-$$p(k,n,m,m_t) = \dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}$$
+$$
+p(k,n,m,m_t) = \dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}
+$$ {#eq-hypergeometric}
 
 - Ways to choose annotated genes: There are $\binom{m_t}{k}$ ways of choosing $k$ genes annotated to $t$.
 - Ways to choose non-annotated genes: There are $\binom{m-m_t}{n-k}$ ways of choosing the remaining $n-k$ genes that are not annotated to $t$.
 - Combined combinations: In total, there are $\binom{m_t}{k}\binom{m-m_t}{n-k}$ ways of choosing the genes in the study set such that $k$ are annotated to $t$ and $n-k$ are not.
 - Total possible outcomes: There are $\binom{m}{n}$ total ways of choosing a study set with $n$ genes from the population of $m$ genes with arbitrary annotations.
-- The hypergeometric equation reflects the proportion of all possible study sets that can be chosen from the population such that exactly $k$ of the genes are annotated to $t$. If this proportion is very small, it is unlikely that such a study set will be chosen at random.
-
+- - The hypergeometric equation reflects the proportion of all possible study sets that can be chosen from the population such that exactly $k$ of the genes are annotated to $t$. [If this proportion is very small, it is unlikely that such a study set will be chosen at random.]{style="color: #3b82f6;"}
 
 # GO Overrepresentation with the Hypergeometric Distribution
- Equation~(\ref{eq:hypergeometric}) is known as the `hypergeometric
+@eq-hypergeometric is known as the `hypergeometric
 distribution`. 
 
 - Analogously to the situation with the binomial distribution, we need to calculate the probability of observing some

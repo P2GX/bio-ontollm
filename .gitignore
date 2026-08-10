@@ -139,10 +139,12 @@ neural.html
 temp.*
 *.html
 
-sandbox/tikz/*.aux
+**.aux
 sandbox/tikz/*.pdf
 sandbox/ATTIC.txt
 sandbox/TMP.py
+**.fdb_latexmk
+**.fls
 .DS_Store
 img/.DS_Store
 _site/
