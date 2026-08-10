@@ -3398,7 +3398,7 @@
     "href": "lectures/ontology2.html#why-do-we-need-go",
     "title": "Approaches to biomedical knowledge",
     "section": "Why do we need GO?",
-    "text": "Why do we need GO?\n\nExponential increase in biological data \\(\\longmapsto\\) need for databases with appropriate representation techniques.\nLag in functional description \\(\\longmapsto\\) progress in how biologists describe functions has not kept pace with large-scale sequencing. Need for efficient procedures for preliminary annotation.\nDivergent Nomenclature \\(\\longmapsto\\) names for genes and functions vary widely between databases, making cross-species comparison difficult.\nPrimary Uses:\n\nInformation extraction\nData mining\nDatabase integration",
+    "text": "Why do we need GO?\n\nExponential increase in biological data \\(\\longmapsto\\) need for databases with appropriate representation techniques.\nLag in functional description \\(\\longmapsto\\) progress in how biologists describe functions has not kept pace with large-scale sequencing. Need for efficient procedures for preliminary annotation.\nDivergent Nomenclature \\(\\longmapsto\\) names for genes and functions vary widely between databases, making cross-species comparison difficult.\nPrimary Uses:\n\nOverrepresentation analysis/Pathway analysis of high-throughput data\nData mining from PubMed etc.\nDatabase integration",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3422,7 +3422,7 @@
     "href": "lectures/ontology2.html#dna-ligation-go0006266",
     "title": "Approaches to biomedical knowledge",
     "section": "DNA Ligation: GO:0006266",
-    "text": "DNA Ligation: GO:0006266\nThe following represents the lineage of the term DNA Ligation (number of children in parentheses):\n\nGO:0003673 : Gene_Ontology (79026)\n\nGO:0008150 : biological_process (56409)\n\nGO:0009987 : cellular process (20228)\n\nGO:0008151 : cell growth and/or maintenance (14057)\n\nGO:0008283 : cell proliferation (4030)\n\nGO:0007049 : cell cycle (3207)\n\nGO:0000067 : DNA replication and chromosome cycle (1301)\n\nGO:0006260 : DNA replication (880)\n\nGO:0006261 : DNA dependent DNA replication (366)\n\nGO:0006266 : DNA ligation (7)\n\n\n\n\n\n\n\n\n\nParent terms of DNA Ligation: A second path through the graph",
+    "text": "DNA Ligation: GO:0006266\nThe following represents the lineage of the term DNA ligase (ATP) activity (GO:0003910):",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3434,7 +3434,7 @@
     "href": "lectures/ontology2.html#dag-directed-acyclic-graph",
     "title": "Approaches to biomedical knowledge",
     "section": "DAG: Directed Acyclic Graph",
-    "text": "DAG: Directed Acyclic Graph\n\n\n\n\n\n\n\n\n\n\nA graph with directed edges\nNo cycles (closed loops whereby a path leads back to the starting node)",
+    "text": "DAG: Directed Acyclic Graph\n\n\n\n\n\n\nGene Ontology is a directed acyclic graph (DAG)\n\nTree\nA graph with directed edges and no cycles\nA graph with a cycle",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3506,7 +3506,7 @@
     "href": "lectures/ontology2.html#go-terms-the-anatomy-of-an-entry",
     "title": "Approaches to biomedical knowledge",
     "section": "GO Terms: The Anatomy of an Entry",
-    "text": "GO Terms: The Anatomy of an Entry\n\nAccession: GO:0003678\nName: DNA helicase activity\nDefinition: Catalysis of the hydrolysis of ATP to unwind the DNA helix at the replication fork, allowing the resulting single strands to be copied.\nLineage: Information about parent terms (this handles the “bookkeeping” of the DAG structure).\n\n\n\n\nEach entry (term) in the Gene Ontology contains these standardized metadata fields to ensure consistency across different databases.",
+    "text": "GO Terms: The Anatomy of an Entry\n\n\n\nEach entry (term) in the Gene Ontology contains these standardized metadata fields to ensure consistency across different databases.\n\n\n\n\n[Term]\nid: GO:0003678\nname: DNA helicase activity\nnamespace: molecular_function\nalt_id: GO:0003679\nalt_id: GO:0004003\ndef: \"Unwinding of a DNA helix, driven by ATP hydrolysis.\" [GOC:jl]\nsynonym: \"ATP-dependent DNA helicase activity\" EXACT []\nxref: EC:3.6.4.12\nxref: Reactome:R-HSA-5693589 \"D-loop dissociation and strand annealing\"\nis_a: GO:0004386 ! helicase activity\nis_a: GO:0008094 ! ATP-dependent activity, acting on DNA\nproperty_value: skos:exactMatch EC:3.6.4.12",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3526,11 +3526,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology2.html#go-annotations-the-mapping-logic",
-    "href": "lectures/ontology2.html#go-annotations-the-mapping-logic",
+    "objectID": "lectures/ontology2.html#go-annotations-1",
+    "href": "lectures/ontology2.html#go-annotations-1",
     "title": "Approaches to biomedical knowledge",
-    "section": "GO Annotations: The Mapping Logic",
-    "text": "GO Annotations: The Mapping Logic\n\nGene Association Files (GAFs): Collaborating databases (like FlyBase, MGI, or UniProt) prepare and maintain these files.\nCardinality (\\(0\\) to \\(n\\)):\n\nA gene product may have zero entries if its function is entirely unknown.\nA single gene product often has multiple entries across the three domains (Cellular Component, Molecular Function, and Biological Process).\n\nGranularity: One protein can be localized to the nucleus and the cytoplasm, while acting as both a transcription factor and a dimerizing agent.\n\n\n\n\n\n\n\nThe “Annotation” vs. “Term”\n\n\nRemember: A Term is a definition in the ontology (the “dictionary”). An Annotation is the link between a specific gene and that term (the “usage”).",
+    "section": "GO Annotations",
+    "text": "GO Annotations\n\nGene Association Files (GAFs): Collaborating databases (like FlyBase, MGI, or UniProt) prepare and maintain these files.\nCardinality (\\(0\\) to \\(n\\)):\n\nA gene product may have zero entries if its function is entirely unknown.\nA single gene product often has multiple entries across the three domains (Cellular Component, Molecular Function, and Biological Process).\n\nGranularity: One protein can be localized to the nucleus and the cytoplasm, while acting as both a transcription factor and a dimerizing agent.\n\n\n\n\n\n\n\nThe “Annotation” vs. “Term”\n\n\nRemember: A Term is a definition in the ontology. An Annotation is the link between a specific gene and that term.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3538,11 +3538,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology2.html#go-annotations-the-mapping-logic-1",
-    "href": "lectures/ontology2.html#go-annotations-the-mapping-logic-1",
+    "objectID": "lectures/ontology2.html#go-annotations-2",
+    "href": "lectures/ontology2.html#go-annotations-2",
     "title": "Approaches to biomedical knowledge",
-    "section": "GO Annotations: The Mapping Logic",
-    "text": "GO Annotations: The Mapping Logic\n\nGene Association Files (GAFs): Collaborating databases prepare and maintain these files to link genes to terms.\nCardinality (\\(0\\) to \\(n\\)):\n\nA gene product may have zero entries if nothing is known about it.\nOne gene product often has multiple entries covering its Cellular Component, Molecular Function, and Biological Process.",
+    "section": "GO Annotations",
+    "text": "GO Annotations\n\nGene Association Files (GAFs): Collaborating databases prepare and maintain these files to link genes to terms.\nCardinality (\\(0\\) to \\(n\\)):\n\nA gene product may have zero entries if nothing is known about it.\nOne gene product often has multiple entries covering its Cellular Component, Molecular Function, and Biological Process.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3554,7 +3554,7 @@
     "href": "lectures/ontology2.html#example-deoxyribonuclease-ii",
     "title": "Approaches to biomedical knowledge",
     "section": "Example: Deoxyribonuclease II",
-    "text": "Example: Deoxyribonuclease II\nAn annotation record typically includes:\n\n\n\nField\nValue\nDescription\n\n\n\n\nAccession\nO00115\nUnique protein identifier\n\n\nDB Name\nDRN2_HUMAN\nStandardized database symbol\n\n\nGO ID\nGO:0003677\nThe GO term assigned (DNA binding)\n\n\nEvidence\nTAS\nTraceable Author Statement\n\n\n\n\n\n\n\n\n\nMetadata\n\n\nRecords also include synonyms, PubMed IDs (for literature support), Taxon (species), and the date the annotation was last updated.",
+    "text": "Example: Deoxyribonuclease II\nAn annotation record typically includes:\n\n\n\nField\nValue\nDescription\n\n\n\n\nAccession\nO00115\nUnique protein identifier\n\n\nDB Name\nDRN2_HUMAN\nStandardized database symbol\n\n\nGO ID\nGO:0003677\nThe GO term assigned (DNA binding)\n\n\nEvidence\nTAS\nTraceable Author Statement\n\n\n\n\n\n\n\n\n\nMetadata\n\n\nRecords also include synonyms, PubMed IDs, Taxon (species), and the date the annotation was last updated (biocuration date).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3566,7 +3566,7 @@
     "href": "lectures/ontology2.html#go-evidence-codes",
     "title": "Approaches to biomedical knowledge",
     "section": "GO Evidence Codes",
-    "text": "GO Evidence Codes\nNot all annotations are created equal. Evidence codes tell us how we know what we know.\n1. Manually Curated (Experimental)\n\nIDA: Inferred from Direct Assay (The “Gold Standard”)\nIMP: Inferred from Mutant Phenotype\nIGI: Inferred from Genetic Interaction\n\n2. Manually Curated (Non-Experimental)\n\nTAS: Traceable Author Statement (Found in a peer-reviewed paper)\nNAS: Non-traceable Author Statement\n\n3. Automated (Computational)\n\nIEA: Inferred from Electronic Annotation (The most common type)\nISO: Inferred from Sequence Orthology\n\n\n\n\n\n\n\nCaution\n\n\nMany high-throughput analyses filter out IEA codes because they are automated and may have a higher false-positive rate compared to experimental data.",
+    "text": "GO Evidence Codes\nHow do we know that a gene product has a certain function?\n\n1. Manually Curated (Experimental)\n\nIDA: Inferred from Direct Assay (“Gold Standard”)\nIMP: Inferred from Mutant Phenotype\nIGI: Inferred from Genetic Interaction\n\n2. Manually Curated (Non-Experimental)\n\nTAS: Traceable Author Statement (Found in a peer-reviewed paper)\nNAS: Non-traceable Author Statement\n\n3. Automated (Computational)\n\nIEA: Inferred from Electronic Annotation (The most common type)\nISO: Inferred from Sequence Orthology\n\n\n\n\n\n\n\n\nCaution\n\n\nMany high-throughput analyses filter out IEA codes because they are automated and tend to have a higher false-positive rate as compared to experimental data.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3578,7 +3578,7 @@
     "href": "lectures/ontology2.html#go-overrepresentation-analysis",
     "title": "Approaches to biomedical knowledge",
     "section": "GO: Overrepresentation Analysis",
-    "text": "GO: Overrepresentation Analysis\n\n\n\nThe Situation\n\n\nWe have performed a high-throughput experiment (e.g., RNA-seq) and identified a list of differentially expressed genes. What are the salient characteristics of the genes in this list?\n\n\n\n\nBeyond Counting: We cannot simply count genes annotated to a term. Why? Because common biological processes are naturally common in the genome.\nThe Core Question: Is a specific GO term annotated to our gene list more often than we would expect by random chance?\nThe Method: * We use the Fisher’s Exact Test (standard procedure).\n\nToday’s demonstration will use the Ontologizer software.",
+    "text": "GO: Overrepresentation Analysis\n\n\n\nThe Situation\n\n\nWe have performed a high-throughput experiment (e.g., RNA-seq) and identified a list of differentially expressed genes. What are the salient characteristics of the genes in this list?\n\n\n\n\nBeyond Counting: We cannot simply count genes annotated to a term. Why? Because common biological processes are naturally common in the genome.\nCore Question: Is a specific GO term annotated to our gene list more often than we would expect by random chance?\nApproach: We use the Fisher’s Exact Test (standard procedure).\n\nToday’s demonstration will use the Ontologizer software.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3590,7 +3590,7 @@
     "href": "lectures/ontology2.html#the-binomial-coefficient",
     "title": "Approaches to biomedical knowledge",
     "section": "The Binomial Coefficient",
-    "text": "The Binomial Coefficient\nTo calculate the number of unique ways to arrange \\(k\\) “heads” and \\(n-k\\) “tails,” we must account for redundant rearrangements:\n\nTotal Permutations: There are \\(n!\\) ways to rearrange \\(n\\) distinct objects.\nRedundancy Correction: * Exchanging the positions of two “heads” does not change the observable sequence. There are \\(k!\\) such internal reorderings.\n\nSimilarly, there are \\((n-k)!\\) ways to reorder the “tails” without changing the sequence.\n\nThe Formula: To find the number of distinct orderings, we divide the total by the redundancies:\n\n\\[\n\\binom{n}{k} = \\dfrac{n!}{(n-k)! k!}\n\\tag{1}\\]\n\n\n\n\n\n\nNote\n\n\nThis value \\(\\binom{n}{k}\\), represents the number of different ways of choosing \\(k\\) items from a set of \\(n\\) items where the order of selection does not matter.",
+    "text": "The Binomial Coefficient\nTo calculate the number of unique ways to arrange \\(k\\) “heads” and \\(n-k\\) “tails,” we must account for redundant rearrangements:\n\nTotal Permutations: There are \\(n!\\) ways to rearrange \\(n\\) distinct objects.\nRedundancy Correction: Exchanging the positions of two “heads” does not change the observable sequence.\n\nThere are \\(k!\\) ways to reorder the “heads” without chainging the overall sequence.\nSimilarly, there are \\((n-k)!\\) ways to reorder the “tails” without changing the sequence.\n\nThe Formula: To find the number of distinct orderings, we divide the total by the redundancies:\n\n\\[\n\\binom{n}{k} = \\dfrac{n!}{(n-k)! k!}\n\\tag{1}\\]\n\n\n\n\n\n\nNote\n\n\nThis value \\(\\binom{n}{k}\\), represents the number of different ways of choosing \\(k\\) items from a set of \\(n\\) items where the order of selection does not matter.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3602,7 +3602,7 @@
     "href": "lectures/ontology2.html#binomial-coefficient",
     "title": "Approaches to biomedical knowledge",
     "section": "Binomial Coefficient",
-    "text": "Binomial Coefficient\nThis quantity (read “\\(n\\) choose \\(k\\)”) is known as the binomial coefficient. We can now use this to calculate the probability of obtaining \\(k\\) successes in \\(n\\) trials, whereby the probability of success in one trial is \\(p\\), and the probability of failure is \\(q=1-p\\).\nTo obtain the probability of any one particular order of trials with \\(k\\) successes and \\(n-k\\) failures, we multiply the probabilities of the individual trials to obtain \\(p^k(1-p)^{n-k}\\).\nIn order to find the total probability of obtaining \\(k\\) successes, we simply multiply the probability of one particular trial order with \\(k\\) successes by the number of trial orders resulting in \\(k\\) successes, which is given by the binomial coefficient. This probability distribution is called the binomial distribution:\n\\[\nP(k,n,p) = \\binom{n}{k} p^k(1-p)^{n-k}\n\\] {eq-binomial-distribution}",
+    "text": "Binomial Coefficient\n\nThis quantity (read “\\(n\\) choose \\(k\\)”) is known as the binomial coefficient. We can now use this to calculate the probability of obtaining \\(k\\) successes in \\(n\\) trials, whereby the probability of success in one trial is \\(p\\), and the probability of failure is \\(q=1-p\\).\nThe probability of a particular order of trials with \\(k\\) successes and \\(n-k\\) failures is obtained by multiplying the probabilities of the individual trials;\n\n\\[\np^k(1-p)^{n-k}\n\\]\n\nThe total probability of obtaining \\(k\\) successes is the probability of one particular trial order with \\(k\\) successes by the number of trial orders resulting in \\(k\\) successes, which is given by the binomial coefficient. This probability distribution is called the binomial distribution:\n\n\\[\nP(k,n,p) = \\binom{n}{k} p^k(1-p)^{n-k}\n\\tag{2}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3646,11 +3646,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology2.html#details",
-    "href": "lectures/ontology2.html#details",
+    "objectID": "lectures/ontology2.html#go-overrepresentation-with-the-binomial-distribution-5",
+    "href": "lectures/ontology2.html#go-overrepresentation-with-the-binomial-distribution-5",
     "title": "Approaches to biomedical knowledge",
-    "section": "Details",
-    "text": "Details\n\n\n\n\n\n\n\n\n\n\nThe smoothed variant of the probability mass function for the binomial distribution, with \\(p=0.06\\) and \\(n=250\\).\nValues for \\(k=0,1,\\ldots,40\\) are shown (the values for \\(k&gt;40\\) are nearly zero and are not shown).\nThe observed value for \\(k\\) of 30 lies outside of the range containing 95% of the probability mass, and we reject the null hypothesis that the genes in the study set are not enriched in genes annotated by \\(t\\).\nThe \\(p\\)-value for this observation can be calculated by Equation~(\\(\\ref{eq:dbinomial}\\)) to be \\(1.68\\times 10^{-8}\\).",
+    "section": "GO Overrepresentation with the Binomial Distribution",
+    "text": "GO Overrepresentation with the Binomial Distribution\n\n\n\n\n\n\n\n\n\n\nThe observed value for \\(k\\) of 30 lies outside of the range containing 95% of the probability mass, and we reject the null hypothesis that the genes in the study set are not enriched in genes annotated by \\(t\\).\nThe \\(p\\)-value for this observation can be calculated by Equation 3 to be \\(1.68\\times 10^{-8}\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3662,7 +3662,7 @@
     "href": "lectures/ontology2.html#go-overrepresentation-with-the-hypergeometric-distribution-1",
     "title": "Approaches to biomedical knowledge",
     "section": "GO Overrepresentation with the Hypergeometric Distribution",
-    "text": "GO Overrepresentation with the Hypergeometric Distribution\nThe statistical analysis basically just counts up all the ways of getting \\(k\\) genes annotated to \\(t\\) and \\(n-k\\) remaining genes not annotated to \\(t\\), and compares this number to the number of all possible outcomes.\n\nIf we let:\\(m\\) be the number of genes on the microarray chip.\n\n\\(m_t\\) be the number of these genes that are annotated to GO term \\(t\\).\n\\(n\\) be the number of DE genes (the study set).\n\\(k\\) be the number of DE genes that are annotated to \\(t\\).\n\nWe have: \\[\nP(k,n,m,m_t) = \\dfrac{\\binom{m_t}{k}\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\]\nNumerator: \\(\\binom{m_t}{k}\\binom{m-m_t}{n-k}\\): The number of ways to choose exactly \\(k\\) annotated genes AND \\(n-k\\) non-annotated genes.\nDenominator: \\(\\binom{m}{n}\\): The total number of ways to choose any \\(n\\) genes from the population \\(m\\).",
+    "text": "GO Overrepresentation with the Hypergeometric Distribution\nThe statistical analysis basically just counts up all the ways of getting \\(k\\) genes annotated to \\(t\\) and \\(n-k\\) remaining genes not annotated to \\(t\\), and compares this number to the number of all possible outcomes.\n\nLet \\(m\\) be the number of genes on the microarray chip.\n\n\\(m_t\\) be the number of these genes that are annotated to GO term \\(t\\).\n\\(n\\) be the number of DE genes (the study set).\n\\(k\\) be the number of DE genes that are annotated to \\(t\\).\n\nWe have: \\[\nP(k,n,m,m_t) = \\dfrac{\\binom{m_t}{k}\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\]\nNumerator: \\(\\binom{m_t}{k}\\binom{m-m_t}{n-k}\\): The number of ways to choose exactly \\(k\\) annotated genes AND \\(n-k\\) non-annotated genes.\nDenominator: \\(\\binom{m}{n}\\): The total number of ways to choose any \\(n\\) genes from the population \\(m\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -3698,7 +3698,7 @@
     "href": "lectures/ontology2.html#term-for-term-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Term-for-Term",
-    "text": "Term-for-Term\nThe study set is assumed to be a random sample that is obtained by drawing \\(n\\) genes without replacement from the population.\n\nThe random variable that describes the number of genes of the study set that are annotated to \\(t\\) in this random sample, denoted by \\(X_t\\), therefore follows the hypergeometric distribution, i.e.,\n\n\\[\nX_t \\sim h(k|m;m_t;n) := P(X_t=k) = \\frac{\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\tag{2}\\]\n\nThat is, \\(P(X_t=k)\\) gives the probability of observing exactly \\(k\\) annotated genes in a study set of size \\(n\\) if the population set of size \\(m\\) contains \\(m_t\\) genes that are annotated to term \\(t\\).",
+    "text": "Term-for-Term\nThe study set is assumed to be a random sample that is obtained by drawing \\(n\\) genes without replacement from the population.\n\nThe random variable that describes the number of genes of the study set that are annotated to \\(t\\) in this random sample, denoted by \\(X_t\\), therefore follows the hypergeometric distribution, i.e.,\n\n\\[\nX_t \\sim h(k|m;m_t;n) := P(X_t=k) = \\frac{\\binom{m-m_t}{n-k}}{\\binom{m}{n}}\n\\tag{5}\\]\n\nThat is, \\(P(X_t=k)\\) gives the probability of observing exactly \\(k\\) annotated genes in a study set of size \\(n\\) if the population set of size \\(m\\) contains \\(m_t\\) genes that are annotated to term \\(t\\).",
     "crumbs": [
       "Home",
       "Lectures",
