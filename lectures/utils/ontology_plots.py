@@ -113,3 +113,122 @@ def plot_binom():
     plt.axhline(0, color='black', linewidth=0.8)
 
     plt.tight_layout()
+
+def plot_gsea(figsize=(8, 6)):
+    # ----------------------------------------------------------------------
+    # 1. Simulate a ranked gene list
+    # ----------------------------------------------------------------------
+    rng = np.random.default_rng(seed=7)
+
+    N = 200          # total number of genes
+    N_H = 20         # number of genes in the gene set S
+    p = 1.0          # weighting exponent (p=1 is the GSEA default)
+
+    # Ranking statistic r_j: e.g. a signal-to-noise ratio or t-statistic,
+    # sorted from most positive (top of list) to most negative (bottom).
+    # We simulate a smoothly decaying score plus noise.
+    base_signal = np.linspace(3.0, -3.0, N)
+    noise = rng.normal(scale=0.4, size=N)
+    r = base_signal + noise
+    r = np.sort(r)[::-1]  # ensure monotonic decreasing rank order
+
+    ranks = np.arange(1, N + 1)  # rank positions 1..N (1 = top of list)
+
+    # ----------------------------------------------------------------------
+    # 2. Build an "enriched" gene set S
+    # ----------------------------------------------------------------------
+    # Bias membership probability toward the top of the ranked list so the
+    # set is clearly (but not perfectly) enriched near rank 1.
+    top_bias_weights = np.exp(-ranks / 40.0)  # decays with rank -> favors top
+    top_bias_weights /= top_bias_weights.sum()
+
+    in_set_idx = rng.choice(N, size=N_H, replace=False, p=top_bias_weights)
+    in_set = np.zeros(N, dtype=bool)
+    in_set[in_set_idx] = True
+
+    # ----------------------------------------------------------------------
+    # 3. Compute the running-sum statistic
+    # ----------------------------------------------------------------------
+    abs_r_weighted = np.abs(r) ** p
+    N_R = abs_r_weighted[in_set].sum()          # normalization for hits
+    N_miss_total = N - N_H                       # normalization for misses
+
+    P_hit = np.zeros(N)
+    P_miss = np.zeros(N)
+
+    hit_step = np.where(in_set, abs_r_weighted / N_R, 0.0)
+    miss_step = np.where(~in_set, 1.0 / N_miss_total, 0.0)
+
+    P_hit = np.cumsum(hit_step)
+    P_miss = np.cumsum(miss_step)
+
+    ES_curve = P_hit - P_miss
+
+    # ----------------------------------------------------------------------
+    # 4. Find D = ES(S): the signed maximum deviation
+    # ----------------------------------------------------------------------
+    max_idx = np.argmax(ES_curve)
+    min_idx = np.argmin(ES_curve)
+
+    if abs(ES_curve[max_idx]) >= abs(ES_curve[min_idx]):
+        D_idx, D_val = max_idx, ES_curve[max_idx]
+    else:
+        D_idx, D_val = min_idx, ES_curve[min_idx]
+
+    # Leading-edge subset: hits occurring at or before the position of D
+    leading_edge = np.sum(in_set[: D_idx + 1])
+
+    # ----------------------------------------------------------------------
+    # 5. Plot
+    # ----------------------------------------------------------------------
+    fig, (ax_es, ax_ticks, ax_rank) = plt.subplots(
+        3, 1, figsize=figsize, sharex=True,
+        gridspec_kw={"height_ratios": [3, 0.6, 1.2], "hspace": 0.08},
+    )
+
+    # --- Top panel: P_hit, P_miss, and the ES running-sum curve ---
+    ax_es.plot(ranks, P_hit, color="#1f77b4", lw=1.8, label=r"$P_{hit}(S,i)$")
+    ax_es.plot(ranks, P_miss, color="#7f7f7f", lw=1.4, ls="--",
+            label=r"$P_{miss}(S,i)$")
+    ax_es.plot(ranks, ES_curve, color="#2ca02c", lw=2.2,
+            label=r"$ES(i) = P_{hit}-P_{miss}$")
+
+    ax_es.axhline(0, color="black", lw=0.8, alpha=0.5)
+
+    # Mark D, the maximum deviation
+    ax_es.plot([ranks[D_idx]], [D_val], "o", color="crimson", ms=8, zorder=5)
+    ax_es.vlines(ranks[D_idx], 0, D_val, color="crimson", lw=1.2, ls=":")
+    ax_es.annotate(
+        rf"$D = ES(S) = {D_val:.3f}$" + "\n" + rf"(rank {ranks[D_idx]})",
+        xy=(ranks[D_idx], D_val),
+        xytext=(ranks[D_idx] + N * 0.12, D_val * 0.65 if D_val > 0 else D_val * 0.65 - 0.05),
+        fontsize=9.5,
+        color="crimson",
+        arrowprops=dict(arrowstyle="->", color="crimson", lw=1.0),
+    )
+
+    ax_es.set_ylabel("Running sum")
+    ax_es.set_title(
+        "GSEA weighted running-sum (KS-like) statistic\n"
+        f"N={N} genes, |S|={N_H}, weighting exponent p={p:g}, "
+        f"leading edge = {leading_edge} genes"
+    )
+    ax_es.legend(loc="upper right", frameon=False, fontsize=9)
+
+    # --- Middle panel: hit/miss "barcode" ticks along the ranked list ---
+    hit_ranks = ranks[in_set]
+    ax_ticks.vlines(hit_ranks, 0, 1, color="#1f77b4", lw=0.9)
+    ax_ticks.set_ylim(0, 1)
+    ax_ticks.set_yticks([])
+    ax_ticks.set_ylabel("Hits", rotation=0, ha="right", va="center", fontsize=9)
+
+    # --- Bottom panel: ranking metric r_j across the list ---
+    ax_rank.fill_between(ranks, r, 0, color="#c7c7c7", step="mid")
+    ax_rank.axhline(0, color="black", lw=0.6)
+    ax_rank.set_ylabel(r"$r_j$")
+    ax_rank.set_xlabel("Rank in ordered gene list (i)")
+
+    for ax in (ax_es, ax_ticks, ax_rank):
+        ax.set_xlim(1, N)
+
+    plt.tight_layout()
