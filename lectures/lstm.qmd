@@ -41,9 +41,8 @@ Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the con
 :::
 
 ::: {.column width="48%" .dimmed}
-### [Part 2: LSTMs](#part-2)
-* Chain rule & Jacobians
-* Vectorized derivatives
+### [Part 2: Python](#part-2)
+* Sentiment analysis
 :::
 
 ::::
@@ -62,9 +61,9 @@ Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the con
 :::
 
 ::: {.column width="48%" .dimmed}
-### [Part 4: Python](#part-4)
-* Full implementation of ANN
-* Classify handwritten digits
+### [Part 4: RNNs as Language Models](#part-4)
+* Attention mechanism
+* Encoder-decoder RNNs
 :::
 
 ::::
@@ -289,8 +288,6 @@ information extending back to the beginning of the sequence.
 Adapted from Jurafsky D and Martin JH (2026) Speech and Language Processing (3rd ed. draft)
 :::
 
-:::
-::::
 
 ## Activation Functions
 
@@ -615,13 +612,157 @@ This allows the weights to be updated in both positive and negative directions s
 - A number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs
 
 
-## Python
+## Overview: RNNs and LSTMs
+
+::: {.callout-note title="Game plan"}
+Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data 
+(like clinical notes, time-series measurements, or genetic sequences).
+:::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 1: RNNs](#part-1)
+* What is an RNN?
+* Forward vs. Reverse pass
+* Biomed applications
+:::
+
+::: {.column width="4%"}
+<br>
+:::
+
+::: {.column width="48%" }
+### [Part 2: Python](#part-2)
+* Sentiment analysis
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 3: LSTMs](#part-3)
+* Loss functions (MSE)
+* Momentum & Adam
+* Learning rates
+:::
+
+::: {.column width="4%"}
+<br>
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 4: RNNs as Language Models](#part-4)
+* Attention mechanism
+* Encoder-decoder RNNs
+:::
 
 
+::::
 
 
+## Python: RNN-based sentiment analysis {#part-2}
 
-## Long Short-Term Memory Networks (LSTMs) {#part-2}
+- The point of sentiment analysis is to perform binary classification about the opinion expressed by a certain text
+- The classic example is to predict whether a movie review is positive or negative
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import sentiment_analysis_basic_idea
+
+sentiment_analysis_basic_idea()
+plt.plot()
+```
+
+## Sentiment analysis: embedding
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import sentiment_embedding
+
+sentiment_embedding()
+plt.plot()
+```
+
+
+## Sentiment analysis: Unrolling the RNN
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import unrolled_rnn_sentiment
+
+unrolled_rnn_sentiment()
+plt.plot()
+```
+
+
+## Overview: RNNs and LSTMs
+
+::: {.callout-note title="Game plan"}
+Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data 
+(like clinical notes, time-series measurements, or genetic sequences).
+:::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 1: RNNs](#part-1)
+* What is an RNN?
+* Forward vs. Reverse pass
+* Biomed applications
+:::
+
+::: {.column width="4%"}
+<br>
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 2: Python](#part-2)
+* Sentiment analysis
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" }
+### [Part 3: LSTMs](#part-3)
+* Loss functions (MSE)
+* Momentum & Adam
+* Learning rates
+:::
+
+::: {.column width="4%"}
+<br>
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 4: RNNs as Language Models](#part-4)
+* Attention mechanism
+* Encoder-decoder RNNs
+:::
+
+
+::::
+
+
+## Long Short-Term Memory Networks (LSTMs) {#part-3}
 
 - The key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network. 
 - LSTMs divide the context management problem into two subproblems: r
@@ -696,3 +837,170 @@ jt = gt it
 (13.24)
 Next, we add this to the modified context vector to get our new context vector.
 ct = jt +k
+
+
+
+
+## Overview: RNNs and LSTMs
+
+::: {.callout-note title="Game plan"}
+Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data 
+(like clinical notes, time-series measurements, or genetic sequences).
+:::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 1: RNNs](#part-1)
+* What is an RNN?
+* Forward vs. Reverse pass
+* Biomed applications
+:::
+
+::: {.column width="4%"}
+<br>
+:::
+
+::: {.column width="48%" .dimmed}
+### [Part 2: Python](#part-2)
+* Sentiment analysis
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="48%" .dimmed}
+### [Part 3: LSTMs](#part-3)
+* Loss functions (MSE)
+* Momentum & Adam
+* Learning rates
+:::
+
+::: {.column width="4%"}
+<br>
+:::
+
+::: {.column width="48%" }
+### [Part 4: RNNs as Language Models](#part-4)
+* Attention mechanism
+* Encoder-decoder RNNs
+:::
+
+
+::::
+
+
+## RNNs as Language Models {#part-4}
+
+that language models predict the next word in a sequence given some preceding
+context. For example, if the preceding context is “Something is rotten in the state of” and we want
+to know how likely the next word is "Denmark"^[In Hamlet, the palace guard Marcellus, says this right after Hamlet has just seen his father's ghost for the first time.] we would compute:
+
+$$
+P(\mathrm{Denmark}\mid \text{Something is rotten in the state of})
+$$
+
+- That is, we are computing the probability of the word "Denmark" given the previous 7 words.
+- RNN language models process the input sequence one word at a time, attempting to predict the next word from the current word ($x_t$) and the previous hidden state ($h_{t-1}$).
+
+## Forward inference in an RNN language model
+
+- The input is a sequence of words  $\mathbf{X} = \left[x_1;\ldots;x_t\right]$
+- Let the Vocabulary be a collection of words of size $|V|$
+- Then each word is represented by a one-hot column vector of size $|V|\times 1$.
+- The output prediction $\hat{\mathbf{y}}$ is a vector representing a probabilites distribution over the vocabulary. 
+- For each step the model uses an embedding matrix $\mathbf{E}$ to retrieve the embedding for the current word^[We will study embeddings in a later lecture. For now, suffice it to say that embeddings are lower dimensional vectorial represesntations of words or tokens that in some way reflect the semantics of the words.]
+- The model then multiplies the embedding vector for each word by the  weight matrix $\mathbf{W}$, and then adds it to the hidden layer from the previous step (weighted by weight matrix $\mathbf{U}$ to compute a new
+hidden layer. This hidden layer is then used to generate an output layer which is
+passed through a softmax layer to generate the final prediction.
+
+
+
+## RNN Language model equations
+
+:::: {.columns}
+
+::: {.column width="45%"}
+
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import rnn_language_model
+
+rnn_language_model()
+plt.plot()
+```
+
+:::
+::: {.column width="45%"}
+
+$$
+\begin{align}
+\mathbf{e}_t &= \mathbf{E}\mathbf{x}_t & \quad \text{Retrieve the embedding for word } \mathbf{x}_t\\
+\mathbf{h}_t &= g(\mathbf{U}\mathbf{h}_{t-1} + \mathbf{E}\mathbf{e}_t)  & \quad \text{Compute new hidden layer } \\
+\hat{\mathbf{y}_t} &= \mathrm{softmax}(\mathbf{EV}\mathbf{h}_t) & \quad \text{generate  output and pass through softmax} \\
+\end{align}
+$$
+
+- $g$ is an activation function such as tanh.
+- The softmax operation creates a probability distribution oover the entire vocabulary
+- The probability that a particular word $k$ is the next word is then
+$$
+P(w_{t+1}| w_1,\ldots, w_t ) = \hat{\mathbf{y}_t}[k]
+$$
+
+- $\hat{\mathbf{y}$ is a vector with one field for every word in the vocabulary
+- The output is then the highest-probability word 
+
+:::
+::::
+
+
+
+
+
+##  CE Loss: Review
+
+- For a multi-class classification problem,  each true label vector $\mathbf{y}$ is one-hot encoded (meaning $y_i = 1$ for the correct class and $y_i = 0$ otherwise), 
+- The model predicts a set of probabilities $\hat{y}_{i}$ for each class
+- For a multi-class classification problem with $K$ classes, the cross-entropy loss is 
+$$
+\log L(\theta) = -\sum _{i=1}^{C} y_{i}\log \hat{y}_{i}\\
+$$ {#eq-ce-loss}
+
+- For the correct class ($y_k = 1$), the loss term $-\log(p_k)$ decreases as $p_k$ increases. 
+- Weight updates that increase the probability of an incorrect class must decrease the probability of the correct class, thereby increasing the loss
+
+## Training RNN language Models
+
+- **self-supervision**: We use a corpus of text as training. The model is trained to predict the next word.
+- No need for gold-standard labelling.
+- We minimize therror in predicting the next word with a **cross-entropy** loss function
+
+$$
+L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \mathbf{y}_t[w]\log \hat{\mathbf{y}_t}[w]
+$$
+
+- In language modelling, the correct prediction is the next word, which is represented by a one-hot vector (so $\mathbf{y}_t[w]=1$).
+- Thus our loss is
+$$
+L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_t}[w]
+$$
+
+
+## Sources
+
+
+Sources for this lecture include
+
+- Dan Jurafsky and James H. Martin (2026) Speech and Language Processing (3rd ed. draft) https://web.stanford.edu/~jurafsky/
+- Alex Sherstinsky (2020) Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network,
+Physica D: Nonlinear Phenomena, Volume 404,132306
+- Andrej Karpathy and Justin Johnson and Li Fei-Fei (2015) Visualizing and Understanding Recurrent Networks, arXiv, https://arxiv.org/abs/1506.02078
+- Aurélien Géron (2025) Hands-On Machine Learning with Scikit-Learn and PyTorch, O'Reilly 

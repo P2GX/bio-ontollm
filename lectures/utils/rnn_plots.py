@@ -4,7 +4,8 @@ from matplotlib.patches import FancyBboxPatch, Ellipse, FancyArrowPatch
 import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from matplotlib.path import Path
-
+from matplotlib.patches import Rectangle, FancyArrow, FancyBboxPatch,  FancyArrowPatch, Polygon
+import matplotlib.patches as mpatches
 
 def basic_rnn(figsize=(10,5)):
 
@@ -312,4 +313,408 @@ def rnn_basic_idea(figsize=(8, 8)):
 
     # --- Finalize and Display ---
     plt.tight_layout()
-  
+
+
+def sentiment_analysis_basic_idea(figsize=(9, 2.2)):
+    """
+    sentiment_pipeline.py
+
+    Recreates a simple horizontal pipeline diagram:
+    quoted input text --> [ Sentiment Analysis ] --> output label
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # ----------------------------------------------------------------------
+    # Left: quoted input text
+    # ----------------------------------------------------------------------
+    input_text = (
+        '"A startlingly inept film that offers overblown,\n'
+        'wall-to-wall action without a hint of\n'
+        'wit, coherence, style, or originality."'
+    )
+    ax.text(0.0, 0.5, input_text, fontsize=11, ha="left", va="center",
+            linespacing=1.4)
+
+    # ----------------------------------------------------------------------
+    # Middle: gray "Sentiment Analysis" box
+    # ----------------------------------------------------------------------
+    box_x, box_w = 4.3, 2.6
+    box_y, box_h = 0.15, 0.7
+
+    box = Rectangle((box_x, box_y), box_w, box_h,
+                    facecolor="#A6A6A6", edgecolor="#7F7F7F", linewidth=1.0, zorder=2)
+    ax.add_patch(box)
+    ax.text(box_x + box_w / 2, box_y + box_h / 2, "Sentiment Analysis",
+            fontsize=11, ha="center", va="center", zorder=3)
+
+    # ----------------------------------------------------------------------
+    # Right: output label
+    # ----------------------------------------------------------------------
+    ax.text(7.85, 0.5, "Negative", fontsize=11, ha="left", va="center")
+
+    # ----------------------------------------------------------------------
+    # Arrows
+    # ----------------------------------------------------------------------
+    def block_arrow(x_start, x_end, y):
+        ax.add_patch(FancyArrow(
+            x_start, y, x_end - x_start, 0,
+            width=0.09, head_width=0.28, head_length=0.18,
+            length_includes_head=True,
+            facecolor="#5B9BD5", edgecolor="#5B9BD5", zorder=2,
+        ))
+
+    block_arrow(3.05, 4.2, 0.5)
+    block_arrow(7.05, 7.75, 0.5)
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    ax.set_xlim(-0.1, 9.1)
+    ax.set_ylim(-0.1, 1.1)
+    ax.axis("off")
+
+    plt.tight_layout()
+
+def sentiment_embedding(figsize=(11, 3.2)):
+    """
+    embedding_pipeline.py
+
+    Recreates a pipeline diagram: a stack of word-embedding vectors
+    (word label, row index, D-dimensional dot vector) feeding into a
+    "Sentiment Analysis" box, producing an output label.
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # ----------------------------------------------------------------------
+    # Word-vector rows
+    # ----------------------------------------------------------------------
+    words = ["A", "startlingly", None, "originality"]   # None -> vertical "..." row
+    indices = ["1", "2", None, "20"]
+
+    n_dots = 16          # dots per vector (visual only, not tied to real D)
+    vec_x0 = 1.75        # left edge of the blue vector bar
+    vec_w = 2.7          # width of the blue vector bar
+    row_h = 0.34         # height of each vector bar
+    row_ys = [2.55, 2.05, 1.30, 0.35]   # y-position (bottom) of each row, incl. gap for "..."
+
+    BLUE = "#5B9BD5"
+    DOT = "black"
+
+    for (word, idx, y) in zip(words, indices, row_ys):
+        if word is None:
+            # vertical ellipsis between row 2 and the last row
+            for dy in (0.55, 0.40, 0.25):
+                ax.plot(vec_x0 + vec_w / 2, y + dy, marker="o",
+                        markersize=4, color="black", zorder=4)
+            continue
+
+        ax.text(-0.05, y + row_h / 2, word, fontsize=12, ha="left", va="center")
+        ax.text(1.4, y + row_h / 2, idx, fontsize=12, ha="right", va="center")
+
+        bar = Rectangle((vec_x0, y), vec_w, row_h,
+                        facecolor=BLUE, edgecolor="#3D6E9E", linewidth=1.0, zorder=2)
+        ax.add_patch(bar)
+
+        dot_xs = [vec_x0 + vec_w * (k + 0.5) / n_dots for k in range(n_dots)]
+        ax.scatter(dot_xs, [y + row_h / 2] * n_dots, s=26, color=DOT, zorder=3)
+
+    ax.text(vec_x0 + vec_w / 2, 3.05, "D-dimensional vector",
+            fontsize=12, ha="center", va="center")
+
+    # ----------------------------------------------------------------------
+    # Middle: gray "Sentiment Analysis" box
+    # ----------------------------------------------------------------------
+    box_x, box_w = 6.6, 2.9
+    box_y, box_h = 0.9, 1.7
+
+    box = Rectangle((box_x, box_y), box_w, box_h,
+                    facecolor="#A6B3C5", edgecolor="#7F8FA6", linewidth=1.0, zorder=2)
+    ax.add_patch(box)
+    ax.text(box_x + box_w / 2, box_y + box_h / 2, "Sentiment Analysis",
+            fontsize=13, ha="center", va="center", zorder=3)
+
+    # ----------------------------------------------------------------------
+    # Right: output label
+    # ----------------------------------------------------------------------
+    ax.text(10.35, box_y + box_h / 2, "Negative", fontsize=13, ha="left", va="center")
+
+    # ----------------------------------------------------------------------
+    # Arrows
+    # ----------------------------------------------------------------------
+    def block_arrow(x_start, x_end, y):
+        ax.add_patch(FancyArrow(
+            x_start, y, x_end - x_start, 0,
+            width=0.11, head_width=0.34, head_length=0.22,
+            length_includes_head=True,
+            facecolor=BLUE, edgecolor=BLUE, zorder=2,
+        ))
+
+    block_arrow(4.85, 6.35, box_y + box_h / 2)
+    block_arrow(9.5, 10.15, box_y + box_h / 2)
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    ax.set_xlim(-0.4, 11.2)
+    ax.set_ylim(0, 3.5)
+    ax.axis("off")
+
+    plt.tight_layout()
+
+
+def unrolled_rnn_sentiment(figsize=(15, 6)):
+    """
+    rnn_unrolled_classifier.py
+
+    Recreates an unrolled-RNN diagram for sentiment classification:
+    input words -> x_t vectors -> recurrent hidden states h_t (chained by W^H,
+    fed by W^X) -> ... -> Binary Softmax Classifier -> output probabilities,
+    with a curly brace marking "Max Sequence Length" under the input words.
+    """
+
+
+
+    BLUE = "#AFC6E9"
+    BLUE_EDGE = "#5B87B5"
+    ORANGE = "#F2A97E"
+    ORANGE_EDGE = "#D97F44"
+    YELLOW = "#F5E08A"
+    YELLOW_EDGE = "#C9A72E"
+    ARROW_BLUE = "#5B9BD5"
+    BLACK = "black"
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # ----------------------------------------------------------------------
+    # Column layout for the three explicit time steps
+    # ----------------------------------------------------------------------
+    col_x = [1.0, 4.2, 7.4]              # x-centers for t-1, t, t+1
+    h_labels = [r"$h_{t-1}$", r"$h_t$", r"$h_{t+1}$"]
+    x_labels = [r"$x_{t-1}$", r"$x_t$", r"$x_{t+1}$"]
+    wx_labels = [r"$W^{X}_{t-1}$", r"$W^{X}_t$", r"$W^{X}_{t+1}$"]
+    words = ["The", "movie", "was"]
+
+    h_w, h_h = 1.0, 1.5
+    h_y = 3.1
+    x_w, x_h = 1.3, 0.62
+    x_y = 0.55
+
+    # ----------------------------------------------------------------------
+    # Draw hidden-state cells (orange rounded boxes) + input cells (blue)
+    # ----------------------------------------------------------------------
+    for i, xc in enumerate(col_x):
+        # hidden state box
+        hbox = FancyBboxPatch(
+            (xc - h_w / 2, h_y), h_w, h_h,
+            boxstyle="round,pad=0.02,rounding_size=0.15",
+            linewidth=1.3, edgecolor=ORANGE_EDGE, facecolor=ORANGE, zorder=3,
+        )
+        ax.add_patch(hbox)
+        ax.text(xc, h_y + h_h / 2, h_labels[i], fontsize=15, ha="center", va="center", zorder=4)
+
+        # input box
+        xbox = Rectangle(
+            (xc - x_w / 2, x_y), x_w, x_h,
+            linewidth=1.3, edgecolor=BLUE_EDGE, facecolor=BLUE, zorder=3,
+        )
+        ax.add_patch(xbox)
+        ax.text(xc, x_y + x_h / 2, x_labels[i], fontsize=14, ha="center", va="center", zorder=4)
+
+        # word label under input box
+        ax.text(xc, x_y - 0.35, words[i], fontsize=15, ha="center", va="center")
+
+        # arrow: x box (top) -> straight up into hidden box (bottom)
+        wx_arrow = FancyArrowPatch(
+            (xc - h_w * 0.22, x_y + x_h), (xc - h_w * 0.22, h_y),
+            arrowstyle="-|>", mutation_scale=16,
+            linewidth=1.6, color=ARROW_BLUE, zorder=2,
+            shrinkA=0, shrinkB=0,
+        )
+        ax.add_patch(wx_arrow)
+        ax.text(xc - 0.85, (x_y + x_h + h_y) / 2, wx_labels[i],
+                fontsize=13, ha="center", va="center")
+
+    # ----------------------------------------------------------------------
+    # W^H arrows chaining the hidden states
+    # ----------------------------------------------------------------------
+    def straight_arrow(x_from, x_to, y, color=ARROW_BLUE, lw=1.8, mscale=16):
+        a = FancyArrowPatch(
+            (x_from, y), (x_to, y),
+            arrowstyle="-|>", mutation_scale=mscale,
+            linewidth=lw, color=color, zorder=2,
+            shrinkA=0, shrinkB=0,
+        )
+        ax.add_patch(a)
+
+
+    h_mid_y = h_y + h_h * 0.72
+
+    # arrow entering the first hidden cell from the left
+    straight_arrow(col_x[0] - h_w / 2 - 0.9, col_x[0] - h_w / 2, h_mid_y)
+    ax.text((col_x[0] - h_w / 2 - 0.9 + col_x[0] - h_w / 2) / 2, h_mid_y + 0.28,
+            r"$W^{H}$", fontsize=14, ha="center", va="center")
+
+    for i in range(len(col_x) - 1):
+        x_from = col_x[i] + h_w / 2
+        x_to = col_x[i + 1] - h_w / 2
+        straight_arrow(x_from, x_to, h_mid_y)
+        ax.text((x_from + x_to) / 2, h_mid_y + 0.28, r"$W^{H}$",
+                fontsize=14, ha="center", va="center")
+
+    # ----------------------------------------------------------------------
+    # Ellipsis, then arrow to classifier, then arrow to output
+    # ----------------------------------------------------------------------
+    last_x = col_x[-1] + h_w / 2
+    dots_x = last_x + 1.1
+    straight_arrow(last_x, dots_x - 0.35, h_mid_y)
+
+    for dx in (-0.18, 0.0, 0.18):
+        ax.plot(dots_x + dx, h_mid_y, marker="o", markersize=6, color="black", zorder=4)
+
+    clf_x0 = dots_x + 0.55
+    clf_w, clf_h = 2.1, 1.7
+    clf_y = h_mid_y - clf_h / 2
+    straight_arrow(dots_x + 0.35, clf_x0, h_mid_y)
+
+    clf_box = Rectangle(
+        (clf_x0, clf_y), clf_w, clf_h,
+        linewidth=1.3, edgecolor=YELLOW_EDGE, facecolor=YELLOW, zorder=3,
+    )
+    ax.add_patch(clf_box)
+    ax.text(clf_x0 + clf_w / 2, clf_y + clf_h / 2,
+            "Binary\nSoftmax\nClassifier", fontsize=14, ha="center", va="center", zorder=4)
+
+    out_x0 = clf_x0 + clf_w + 0.9
+    straight_arrow(clf_x0 + clf_w, out_x0 - 0.15, h_mid_y)
+    ax.text(out_x0, h_mid_y, "[ 0.09, .91 ]", fontsize=15, ha="left", va="center")
+
+    # ----------------------------------------------------------------------
+    # Curly brace under the input words + "Max Sequence Length" label
+    # ----------------------------------------------------------------------
+    def curly_brace(ax, x_start, x_end, y_top, depth=0.35, lw=1.8, color="black"):
+        x_mid = (x_start + x_end) / 2
+        dx = (x_end - x_start) * 0.22
+
+        verts = [
+            (x_start, y_top),
+            (x_start, y_top - depth * 0.9), (x_mid - dx, y_top - depth * 0.9), (x_mid, y_top - depth * 1.6),
+            (x_mid + dx, y_top - depth * 0.9), (x_end, y_top - depth * 0.9), (x_end, y_top),
+        ]
+        codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4,
+                Path.CURVE4, Path.CURVE4, Path.LINETO]
+        path = Path(verts, codes)
+        patch = mpatches.PathPatch(path, facecolor="none", edgecolor=color, linewidth=lw, zorder=2)
+        ax.add_patch(patch)
+        return x_mid, y_top - depth * 1.6
+
+
+    brace_y = x_y - 0.65
+    brace_x_start = col_x[0] - x_w / 2
+    brace_x_end = col_x[-1] + x_w / 2
+    _, tip_y = curly_brace(ax, brace_x_start, brace_x_end, brace_y, depth=0.35)
+    ax.text((brace_x_start + brace_x_end) / 2, tip_y - 0.35, "Max Sequence Length",
+            fontsize=15, ha="center", va="center")
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    ax.set_xlim(-1.2, out_x0 + 2.0)
+    ax.set_ylim(tip_y - 0.9, h_y + h_h + 0.7)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
+
+
+def rnn_language_model(figsize=(6, 6.5)):
+    """
+    rnn_language_model_diagram.py
+
+    Recreates panel (b): a chain of embeddings e_{t-2..t} feeding through
+    weight boxes W into hidden states h_{t-2..t}, chained by weight boxes U,
+    with the final hidden state h_t projected through a flared weight box V
+    into an output y_hat_t.
+    """
+
+    CYAN = "#AEEEEE"
+    CYAN_EDGE = "#3AA0A0"
+    WHITE = "white"
+    EDGE = "black"
+
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    col_x = [0.0, 2.2, 4.4]                 # x positions for t-2, t-1, t
+    e_labels = [r"$e_{t-2}$", r"$e_{t-1}$", r"$e_t$"]
+    h_labels = [r"$h_{t-2}$", r"$h_{t-1}$", r"$h_t$"]
+
+    e_y = 0.0
+    w_y0, w_h = 0.75, 1.15
+    h_y = 2.55
+    ell_w, ell_h = 1.35, 0.75    # circle (ellipse) size
+    sq_w = 0.9                   # W/U square width
+
+    # ----------------------------------------------------------------------
+    # Bottom row: e_t embeddings, W boxes, h_t hidden states
+    # ----------------------------------------------------------------------
+    for xc, e_lab, h_lab in zip(col_x, e_labels, h_labels):
+        # embedding circle
+        ax.add_patch(Ellipse((xc, e_y), ell_w, ell_h, facecolor=WHITE,
+                            edgecolor=EDGE, linewidth=1.3, zorder=3))
+        ax.text(xc, e_y, e_lab, fontsize=13, ha="center", va="center", zorder=4)
+
+        # W square
+        ax.add_patch(Rectangle((xc - sq_w / 2, w_y0), sq_w, w_h,
+                                facecolor=CYAN, edgecolor=CYAN_EDGE, linewidth=1.3, zorder=2))
+        ax.text(xc, w_y0 + w_h / 2, "W", fontsize=14, ha="center", va="center", zorder=4)
+
+        # hidden state circle
+        ax.add_patch(Ellipse((xc, h_y), ell_w, ell_h, facecolor=WHITE,
+                            edgecolor=EDGE, linewidth=1.3, zorder=3))
+        ax.text(xc, h_y, h_lab, fontsize=13, ha="center", va="center", zorder=4)
+
+    # ----------------------------------------------------------------------
+    # U boxes chaining the hidden states horizontally
+    # ----------------------------------------------------------------------
+    u_w = 0.6
+    for i in range(len(col_x) - 1):
+        xc = (col_x[i] + col_x[i + 1]) / 2
+        ax.add_patch(Rectangle((xc - u_w / 2, h_y - u_w / 2), u_w, u_w,
+                                facecolor=CYAN, edgecolor=CYAN_EDGE, linewidth=1.3, zorder=4))
+        ax.text(xc, h_y, "U", fontsize=13, ha="center", va="center", zorder=5)
+
+    # ----------------------------------------------------------------------
+    # V trapezoid (flares wider toward the top) above the last hidden state,
+    # and the final output circle y_hat_t
+    # ----------------------------------------------------------------------
+    xc = col_x[-1]
+    v_y0, v_y1 = h_y + ell_h / 2 + 0.15, h_y + ell_h / 2 + 1.7
+    v_bottom_w, v_top_w = sq_w, 1.5
+
+    v_poly = Polygon(
+        [
+            (xc - v_bottom_w / 2, v_y0),
+            (xc + v_bottom_w / 2, v_y0),
+            (xc + v_top_w / 2, v_y1),
+            (xc - v_top_w / 2, v_y1),
+        ],
+        closed=True, facecolor=CYAN, edgecolor=CYAN_EDGE, linewidth=1.3, zorder=2,
+    )
+    ax.add_patch(v_poly)
+    ax.text(xc, (v_y0 + v_y1) / 2, "V", fontsize=14, ha="center", va="center", zorder=4)
+
+    y_hat_y = v_y1 + ell_h / 2 + 0.15
+    ax.add_patch(Ellipse((xc, y_hat_y), ell_w, ell_h, facecolor=WHITE,
+                        edgecolor=EDGE, linewidth=1.3, zorder=3))
+    ax.text(xc, y_hat_y, r"$\hat{y}_t$", fontsize=13, ha="center", va="center", zorder=4)
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    ax.set_xlim(col_x[0] - 1.6, col_x[-1] + 1.4)
+    ax.set_ylim(e_y - ell_h / 2 - 0.3, y_hat_y + ell_h / 2 + 0.5)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
