@@ -1084,7 +1084,7 @@
     "href": "lectures/lstm.html#overview-rnns-and-lstms",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview: RNNs and LSTMs",
-    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: LSTMs\n\nChain rule & Jacobians\nVectorized derivatives\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits"
+    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Python\n\nSentiment analysis\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: RNNs as Language Models\n\nAttention mechanism\nEncoder-decoder RNNs"
   },
   {
     "objectID": "lectures/lstm.html#part-1",
@@ -1147,7 +1147,7 @@
     "href": "lectures/lstm.html#recursivity",
     "title": "Approaches to biomedical knowledge",
     "section": "Recursivity",
-    "text": "Recursivity\n\nRNNs can be portrayed as (equivalent) folded or unfolded networks\n\n\n\n\n\n\n\n\n\n\n\n\nThe hidden layer from the previous time step provides a form of memory, or context, that encodes earlier processing and informs the decisions to be made at later points in time.\nThis approach does not impose a fixed-length limit on this prior context; the context embodied in the previous hidden layer can include information extending back to the beginning of the sequence.\n\n\n\nAdapted from Jurafsky D and Martin JH (2026) Speech and Language Processing (3rd ed. draft)\n\n::: ::::"
+    "text": "Recursivity\n\nRNNs can be portrayed as (equivalent) folded or unfolded networks\n\n\n\n\n\n\n\n\n\n\n\n\nThe hidden layer from the previous time step provides a form of memory, or context, that encodes earlier processing and informs the decisions to be made at later points in time.\nThis approach does not impose a fixed-length limit on this prior context; the context embodied in the previous hidden layer can include information extending back to the beginning of the sequence.\n\n\n\nAdapted from Jurafsky D and Martin JH (2026) Speech and Language Processing (3rd ed. draft)"
   },
   {
     "objectID": "lectures/lstm.html#activation-functions",
@@ -1283,15 +1283,43 @@
     "text": "What tanh? (2)\n\nWe can also show that \\(\\tanh\\)’s derivative has its maximum at 1.0 (when the input is 0).\nTherefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time\n\nAdditionally\n\nSigmoid restricts outputs strictly between \\(0\\) and \\(1\\). Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign (either all positive or all negative). This forces the gradient descent updates to violently “zig-zag” during optimization, slowing down convergence.\n\\(\\tanh\\) outputs range from \\(-1\\) to \\(1\\). Because it is zero-centered, the average output is close to zero. This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.\nA number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs"
   },
   {
-    "objectID": "lectures/lstm.html#python",
-    "href": "lectures/lstm.html#python",
+    "objectID": "lectures/lstm.html#overview-rnns-and-lstms-1",
+    "href": "lectures/lstm.html#overview-rnns-and-lstms-1",
     "title": "Approaches to biomedical knowledge",
-    "section": "Python",
-    "text": "Python"
+    "section": "Overview: RNNs and LSTMs",
+    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Python\n\nSentiment analysis\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: RNNs as Language Models\n\nAttention mechanism\nEncoder-decoder RNNs"
   },
   {
     "objectID": "lectures/lstm.html#part-2",
     "href": "lectures/lstm.html#part-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Python: RNN-based sentiment analysis",
+    "text": "Python: RNN-based sentiment analysis\n\nThe point of sentiment analysis is to perform binary classification about the opinion expressed by a certain text\nThe classic example is to predict whether a movie review is positive or negative"
+  },
+  {
+    "objectID": "lectures/lstm.html#sentiment-analysis-embedding",
+    "href": "lectures/lstm.html#sentiment-analysis-embedding",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sentiment analysis: embedding",
+    "text": "Sentiment analysis: embedding"
+  },
+  {
+    "objectID": "lectures/lstm.html#sentiment-analysis-unrolling-the-rnn",
+    "href": "lectures/lstm.html#sentiment-analysis-unrolling-the-rnn",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sentiment analysis: Unrolling the RNN",
+    "text": "Sentiment analysis: Unrolling the RNN"
+  },
+  {
+    "objectID": "lectures/lstm.html#overview-rnns-and-lstms-2",
+    "href": "lectures/lstm.html#overview-rnns-and-lstms-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Overview: RNNs and LSTMs",
+    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Python\n\nSentiment analysis\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: RNNs as Language Models\n\nAttention mechanism\nEncoder-decoder RNNs"
+  },
+  {
+    "objectID": "lectures/lstm.html#part-3",
+    "href": "lectures/lstm.html#part-3",
     "title": "Approaches to biomedical knowledge",
     "section": "Long Short-Term Memory Networks (LSTMs)",
     "text": "Long Short-Term Memory Networks (LSTMs)\n\nThe key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network.\nLSTMs divide the context management problem into two subproblems: r\n\nRemove information no longer needed from the context,\nAdd information likely to be needed for later decision making\n\n\n\n\nLet’s go through step by step"
@@ -1323,6 +1351,55 @@
     "title": "Approaches to biomedical knowledge",
     "section": "Add gate",
     "text": "Add gate\nNext, we generate the mask for the add gate to select the information to add to the current context.\n\\[\n\\begin{align*}\nX\\end{align*}\n\\tag{5}\\]\nit = σ(Uiht−1 +Wixt) (13.23) jt = gt \fit (13.24) Next, we add this to the modified context vector to get our new context vector. ct = jt +k"
+  },
+  {
+    "objectID": "lectures/lstm.html#overview-rnns-and-lstms-3",
+    "href": "lectures/lstm.html#overview-rnns-and-lstms-3",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Overview: RNNs and LSTMs",
+    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Python\n\nSentiment analysis\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: RNNs as Language Models\n\nAttention mechanism\nEncoder-decoder RNNs"
+  },
+  {
+    "objectID": "lectures/lstm.html#part-4",
+    "href": "lectures/lstm.html#part-4",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RNNs as Language Models",
+    "text": "RNNs as Language Models\nthat language models predict the next word in a sequence given some preceding context. For example, if the preceding context is “Something is rotten in the state of” and we want to know how likely the next word is “Denmark”1 we would compute:\n\\[\nP(\\mathrm{Denmark}\\mid \\text{Something is rotten in the state of})\n\\]\n\nThat is, we are computing the probability of the word “Denmark” given the previous 7 words.\nRNN language models process the input sequence one word at a time, attempting to predict the next word from the current word (\\(x_t\\)) and the previous hidden state (\\(h_{t-1}\\)).\n\nIn Hamlet, the palace guard Marcellus, says this right after Hamlet has just seen his father’s ghost for the first time."
+  },
+  {
+    "objectID": "lectures/lstm.html#forward-inference-in-an-rnn-language-model",
+    "href": "lectures/lstm.html#forward-inference-in-an-rnn-language-model",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Forward inference in an RNN language model",
+    "text": "Forward inference in an RNN language model\n\nThe input is a sequence of words \\(\\mathbf{X} = \\left[x_1;\\ldots;x_t\\right]\\)\nLet the Vocabulary be a collection of words of size \\(|V|\\)\nThen each word is represented by a one-hot column vector of size \\(|V|\\times 1\\).\nThe output prediction \\(\\hat{\\mathbf{y}}\\) is a vector representing a probabilites distribution over the vocabulary.\nFor each step the model uses an embedding matrix \\(\\mathbf{E}\\) to retrieve the embedding for the current word1\nThe model then multiplies the embedding vector for each word by the weight matrix \\(\\mathbf{W}\\), and then adds it to the hidden layer from the previous step (weighted by weight matrix \\(\\mathbf{U}\\) to compute a new hidden layer. This hidden layer is then used to generate an output layer which is passed through a softmax layer to generate the final prediction.\n\nWe will study embeddings in a later lecture. For now, suffice it to say that embeddings are lower dimensional vectorial represesntations of words or tokens that in some way reflect the semantics of the words."
+  },
+  {
+    "objectID": "lectures/lstm.html#rnn-language-model-equations",
+    "href": "lectures/lstm.html#rnn-language-model-equations",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RNN Language model equations",
+    "text": "RNN Language model equations\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\n\\begin{align}\n\\mathbf{e}_t &= \\mathbf{E}\\mathbf{x}_t & \\quad \\text{Retrieve the embedding for word } \\mathbf{x}_t\\\\\n\\mathbf{h}_t &= g(\\mathbf{U}\\mathbf{h}_{t-1} + \\mathbf{E}\\mathbf{e}_t)  & \\quad \\text{Compute new hidden layer } \\\\\n\\hat{\\mathbf{y}_t} &= \\mathrm{softmax}(\\mathbf{EV}\\mathbf{h}_t) & \\quad \\text{generate  output and pass through softmax} \\\\\n\\end{align}\n\\]\n\n\\(g\\) is an activation function such as tanh.\nThe softmax operation creates a probability distribution oover the entire vocabulary\nThe probability that a particular word \\(k\\) is the next word is then \\[\nP(w_{t+1}| w_1,\\ldots, w_t ) = \\hat{\\mathbf{y}_t}[k]\n\\]\n\\(\\hat{\\mathbf{y}\\) is a vector with one field for every word in the vocabulary\nThe output is then the highest-probability word"
+  },
+  {
+    "objectID": "lectures/lstm.html#ce-loss-review",
+    "href": "lectures/lstm.html#ce-loss-review",
+    "title": "Approaches to biomedical knowledge",
+    "section": "CE Loss: Review",
+    "text": "CE Loss: Review\n\nFor a multi-class classification problem, each true label vector \\(\\mathbf{y}\\) is one-hot encoded (meaning \\(y_i = 1\\) for the correct class and \\(y_i = 0\\) otherwise),\nThe model predicts a set of probabilities \\(\\hat{y}_{i}\\) for each class\nFor a multi-class classification problem with \\(K\\) classes, the cross-entropy loss is \\[\n\\log L(\\theta) = -\\sum _{i=1}^{C} y_{i}\\log \\hat{y}_{i}\\\\\n\\tag{6}\\]\nFor the correct class (\\(y_k = 1\\)), the loss term \\(-\\log(p_k)\\) decreases as \\(p_k\\) increases.\nWeight updates that increase the probability of an incorrect class must decrease the probability of the correct class, thereby increasing the loss"
+  },
+  {
+    "objectID": "lectures/lstm.html#training-rnn-language-models",
+    "href": "lectures/lstm.html#training-rnn-language-models",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training RNN language Models",
+    "text": "Training RNN language Models\n\nself-supervision: We use a corpus of text as training. The model is trained to predict the next word.\nNo need for gold-standard labelling.\nWe minimize therror in predicting the next word with a cross-entropy loss function\n\n\\[\nL_{CE}(\\hat{\\mathbf{y}_t}, \\mathbf{y}_t) = - \\sum_{w\\in V} \\mathbf{y}_t[w]\\log \\hat{\\mathbf{y}_t}[w]\n\\]\n\nIn language modelling, the correct prediction is the next word, which is represented by a one-hot vector (so \\(\\mathbf{y}_t[w]=1\\)).\nThus our loss is \\[\nL_{CE}(\\hat{\\mathbf{y}_t}, \\mathbf{y}_t) = - \\sum_{w\\in V} \\log \\hat{\\mathbf{y}_t}[w]\n\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#sources",
+    "href": "lectures/lstm.html#sources",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sources",
+    "text": "Sources\nSources for this lecture include\n\nDan Jurafsky and James H. Martin (2026) Speech and Language Processing (3rd ed. draft) https://web.stanford.edu/~jurafsky/\nAlex Sherstinsky (2020) Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network, Physica D: Nonlinear Phenomena, Volume 404,132306\nAndrej Karpathy and Justin Johnson and Li Fei-Fei (2015) Visualizing and Understanding Recurrent Networks, arXiv, https://arxiv.org/abs/1506.02078\nAurélien Géron (2025) Hands-On Machine Learning with Scikit-Learn and PyTorch, O’Reilly"
   },
   {
     "objectID": "lectures/encoder.html#overview-lecture-1",
