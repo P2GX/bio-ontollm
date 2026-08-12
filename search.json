@@ -2208,7 +2208,119 @@
     "href": "lectures/embeddings.html#one-hot-for-nucleotides",
     "title": "Approaches to biomedical knowledge",
     "section": "One hot for nucleotides",
-    "text": "One hot for nucleotides\n\n\n\nPosition / Base\nA\nC\nG\nT\n\n\n\n\n1: A\n1\n0\n0\n0\n\n\n2: C\n0\n1\n0\n0\n\n\n3: G\n0\n0\n1\n0\n\n\n4: T\n0\n0\n0\n1\n\n\n5: A\n1\n0\n0\n0\n\n\n6: A\n1\n0\n0\n0\n\n\n7: T\n0\n0\n0\n1\n\n\n8: C\n0\n1\n0\n0\n\n\n9: C\n0\n1\n0\n0\n\n\n10: T\n0\n0\n0\n1\n\n\n11: A\n1\n0\n0\n0"
+    "text": "One hot for nucleotides\n\n\nImage adapted from https://jalammar.github.io/illustrated-word2vec/"
+  },
+  {
+    "objectID": "lectures/embeddings.html#semantic-vector-space-of-cars",
+    "href": "lectures/embeddings.html#semantic-vector-space-of-cars",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Semantic vector space of cars",
+    "text": "Semantic vector space of cars\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn this constructed t space, we have three dimensions representing cars: size, color, and price\nWe can represent a arbitrary car in this space.\nCars that are semantically similar (have similar attributes) are close to each other in this space"
+  },
+  {
+    "objectID": "lectures/embeddings.html#semantics-of-one-hot-vectors",
+    "href": "lectures/embeddings.html#semantics-of-one-hot-vectors",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Semantics of one-hot vectors",
+    "text": "Semantics of one-hot vectors\n\nWe would like to be able to test whether, say, “Man” and “Uncle” are relatively similar, but “Tofu” and “Airplane” are not very similar.\nThe usual way of comparing vectors \\(\\mathbf{x},\\mathbf{y} \\in \\mathbb{R}^d\\) is a cosine similarity (cosine of the angle between the vectors)\n\n\\[\n\\text{cosine similarity}(\\mathbf{x},\\mathbf{y}) =\n\\dfrac{\\mathbf{x}^T\\mathbf{y}}{\\Vert \\mathbf{x}\\Vert  \\Vert \\mathbf{y}\\Vert }\n\\in {-1,1}\n\\]\n\ncosine similarity between one-hot vectors of any two different words is 0\nThus, one-hot vectors cannot encode similarities among words (except for identity)."
+  },
+  {
+    "objectID": "lectures/embeddings.html#word2vec",
+    "href": "lectures/embeddings.html#word2vec",
+    "title": "Approaches to biomedical knowledge",
+    "section": "word2vec",
+    "text": "word2vec\n\nword2vec maps each word to a fixed-length vector, and these vectors can better express the similarity and analogy relationship among different words.\n\n\n\nMikolov, T. et al. (2013) Efficient Estimation of Word Representations in Vector Space”. arXiv:1301.3781\nMikolov, T. et al. (2013) Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546\n\n\n\nword2vec is a classic algorithm that was extremely influential in NLP before the advent of transformer based algorithms.\nThe word2vec algorithm has several features that influenced the development of transformers and it is a good place to learn about how embeddings can be created."
+  },
+  {
+    "objectID": "lectures/embeddings.html#word-embeddings",
+    "href": "lectures/embeddings.html#word-embeddings",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Word embeddings",
+    "text": "Word embeddings\n\n\n\n\n\n\n\n\n\n\nWord embeddings are semantically meaningful representations of words\n\n\nRedrawn after Figure 2 of Mikolov T, et al. (2013) Linguistic Regularities in Continuous Space Word Representations"
+  },
+  {
+    "objectID": "lectures/embeddings.html#word2vec-1",
+    "href": "lectures/embeddings.html#word2vec-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "word2vec",
+    "text": "word2vec\n\nWord2vec is based on two different models: skip-gram and continuous bag of words.\n\n. The word2vec tool contains two models, namely skip-gram (Mikolov et al., 2013) and continuous bag of words (CBOW) (Mikolov et al., 2013). For semantically meaningful representations, their training relies on conditional probabilities that can be viewed as predicting some words using some of their surrounding words in corpora. Since supervision comes from the data without labels, both skip-gram and continuous bag of words are self-supervised models."
+  },
+  {
+    "objectID": "lectures/embeddings.html#skipgram",
+    "href": "lectures/embeddings.html#skipgram",
+    "title": "Approaches to biomedical knowledge",
+    "section": "skipgram",
+    "text": "skipgram\n\n\n\n\n\n\n\n\n\n\nThe skip-gram model assumes that a word can be used to generate its surrounding words in a text sequence.\nHere, “the”, “man”, “loves”, “his”, “dog” is a text window of five words and the center word is “loves”\nThe skip-gram model considers the conditional probability for generating the context words: “the”, “man”, “his”, and “dog”, which are no more than 2 words away from the center word:\n\n\\[\nP(the, man, his, dog \\mid loves)\n\\]"
+  },
+  {
+    "objectID": "lectures/embeddings.html#skipgram-1",
+    "href": "lectures/embeddings.html#skipgram-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "skipgram",
+    "text": "skipgram\nThe probability \\[\nP(the, man, his, dog \\mid loves) = P(the \\mid loves) \\cdot P(man\\mid loves) \\cdot P( his \\mid loves) \\cdot P(dog \\mid loves)\n\\]\n\nEach word in the vocabulary has two \\(d\\)-dimensional vector representations (embeddings):\n\n\\(\\mathbf{v}_i \\in \\mathbb{R}^{d}\\) when word \\(i\\) is used as a center word\n\n\\(\\mathbf{u}_i \\in \\mathbb{R}^{d}\\) when word \\(i\\) is used as a context word\n\n\nThe conditional probability of generating a context word \\(j\\) from center word \\(i\\) is given by the softmax operation on vector dot products \\[\np(w_j\\mid w_i) = \\dfrac{\\exp{\\mathbf{v}_i^T\\mathbf{u}_j}}\n{\\sum_{k\\in V} \\exp{\\mathbf{v}_k^T\\mathbf{u}_j}}\n\\tag{1}\\]"
+  },
+  {
+    "objectID": "lectures/embeddings.html#skipgram-2",
+    "href": "lectures/embeddings.html#skipgram-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "skipgram",
+    "text": "skipgram\n\nIf we train on a text of length \\(T\\) where the word at step \\(t\\) is denoted \\(w^{(t)}\\), then the the likelihood function of the skip-gram model is the probability of generating all context words given any center word:\n\n\\[\n\\prod_{t=1}^{T} \\prod_{\\substack{-m\\leq j\\leq m \\\\ j\\neq 0}} P(w^{(t+j)}\\mid w^{j})\n\\]"
+  },
+  {
+    "objectID": "lectures/embeddings.html#training-the-skipgram",
+    "href": "lectures/embeddings.html#training-the-skipgram",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training the skipgram",
+    "text": "Training the skipgram\n\nThe skip-gram model parameters are the center word vector and context word vector for each word in the vocabulary.\nIn training, we learn the model parameters by maximizing the likelihood function (i.e., maximum likelihood estimation), which is the same as minimizing the following loss function:\n\n\\[\n- \\sum_{t=1}^{T} \\sum_{\\substack{-m\\leq j\\leq m \\\\ j\\neq 0}} \\log P(w^{(t+j)}\\mid w^{j})\n\\]\n\nLet us determine how to take the gradient of one term, say for center word \\(w_c\\) and context word \\(w_o\\):\nThe log probability of this pair, according to Equation 1, is\n\n\\[\n\\begin{align}\n\\log P(w_o\\mid w_c) &= \\log \\dfrac{\\exp{\\mathbf{u}_o^T\\mathbf{v}_c}}\n{\\sum_{k\\in V} \\exp{\\mathbf{u}_k^T\\mathbf{v}_c}} \\\\\n&= \\log \\exp{\\mathbf{u}_o^T\\mathbf{v}_c} - \\log \\sum_{k\\in V} \\exp{\\mathbf{u}_k^T\\mathbf{v}_c} \\\\\n&= \\mathbf{u}_o^T\\mathbf{v}_c- \\log \\sum_{k\\in V} \\exp{\\mathbf{u}_k^T\\mathbf{v}_c} \\\\\n\\end{align}\n\\]"
+  },
+  {
+    "objectID": "lectures/embeddings.html#training-the-skipgram-1",
+    "href": "lectures/embeddings.html#training-the-skipgram-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training the skipgram",
+    "text": "Training the skipgram\n\nWe differentiate the gradient with respect to the center word vector \\[\n\\begin{align}\n\\dfrac{\\partial \\log P(w_o\\mid w_c)}{\\partial \\mathbf{v}_c} &=\n\\dfrac{\\partial }{\\partial \\mathbf{v}_c} \\left[ \\mathbf{u}_o^T\\mathbf{v}_c- \\log \\sum_{k\\in V} \\exp(\\mathbf{u}_k^T\\mathbf{v}_c) \\right] \\\\\n&=\\mathbf{u}_o - \\dfrac{\\partial }{\\partial \\mathbf{v}_c}\\log \\sum_{k\\in V} \\exp(\\mathbf{u}_k^T\\mathbf{v}_c)  \\\\\n\\end{align}\n\\]\nApply chain rule to second term, letting \\(S = \\sum_{k\\in V}\\exp (\\mathbf{u}^T\\mathbf{v}_c)\\)\nBy basic calculus we have \\[\n\\dfrac{\\partial \\log S}{\\partial \\mathbf{v}_c} = \\dfrac{1}{S}\\dfrac{\\partial S}{\\partial \\mathbf{v}_c}\n\\]"
+  },
+  {
+    "objectID": "lectures/embeddings.html#training-the-skipgram-2",
+    "href": "lectures/embeddings.html#training-the-skipgram-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training the skipgram",
+    "text": "Training the skipgram\n\nDifferentiate S itself.\nNote: each term is \\(\\exp(\\text{linear in }\\mathbf{v}_c)\\), whose derivative brings down the linear coefficient \\(\\mathbf{u}_k\\) by the exponential chain rule. \\[\n\\begin{align}\n\\dfrac{\\partial S}{\\partial \\mathbf{v}_c} &=\n\\dfrac{\\partial}{\\partial \\mathbf{v}_c} \\sum_{k\\in V}\\exp (\\mathbf{u}_k^T\\mathbf{v}_c) \\\\\n&= \\sum_{k\\in V}\\dfrac{\\partial}{\\partial \\mathbf{v}_c}  \\exp (\\mathbf{u}_k^T\\mathbf{v}_c) \\\\\n&= \\sum_{k\\in V}  \\exp (\\mathbf{u}_k^T\\mathbf{v}_c) \\mathbf{u}_k \\\\\n\\end{align}\n\\]"
+  },
+  {
+    "objectID": "lectures/embeddings.html#training-the-skipgram-3",
+    "href": "lectures/embeddings.html#training-the-skipgram-3",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training the skipgram",
+    "text": "Training the skipgram\n\nCombine\n\n\\[\n\\begin{align}\n\\dfrac{\\partial \\log S}{\\partial \\mathbf{v}_c} &= \\dfrac{1}{S}\\dfrac{\\partial S}{\\partial \\mathbf{v}_c} \\\\\n&=\\dfrac{1}{S}\\sum_{k\\in V}  \\exp (\\mathbf{u}_k^T\\mathbf{v}_c) \\mathbf{u}_k \\\\\n\\end{align}\n\\]\n\nRecall Equation 1 \\[\np(w_j\\mid w_i) = \\dfrac{\\exp{\\mathbf{v}_i^T\\mathbf{u}_j}}\n{\\sum_{k\\in V} \\exp{\\mathbf{v}_k^T\\mathbf{u}_j}} = \\dfrac{1}{S}\\exp{\\mathbf{v}_i^T\\mathbf{u}_j}\n\\]\nthis rewrites the derivative as an expectation — it’s the weighted average of every context vector \\(\\mathbf{u}_k\\) in the vocabulary, weighted by how likely the model currently thinks \\(w_k\\) is given \\(w_c\\)."
+  },
+  {
+    "objectID": "lectures/embeddings.html#plug-back-into-the-full-gradient.",
+    "href": "lectures/embeddings.html#plug-back-into-the-full-gradient.",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Plug back into the full gradient.",
+    "text": "Plug back into the full gradient.\n\\[\n\\dfrac{\\partial P(w_o\\mid w_c)}{\\partial \\mathbf{v}_c} =\n\\mathbf{u}_o - \\sum_{k\\in V}P(w_k\\mid w_c)\\mathbf{u}_k =\n\\mathbf{u}_o  - \\mathbb{E}_{w_k\\sim P(\\cdot\\mid w_c)}[\\mathbf{u}_k]\n\\]"
+  },
+  {
+    "objectID": "lectures/embeddings.html#understanding",
+    "href": "lectures/embeddings.html#understanding",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Understanding",
+    "text": "Understanding\n\nLet’s understand what this is doing\nWe are maximizing the probability of the true context word, meaning we are doing gradient ascent\n\n\\[\n\\mathbf{v}_c \\leftarrow \\mathbf{v}_c +\\eta \\dfrac{\\partial P(w_o\\mid w_c)}{\\partial \\mathbf{v}_c}\n= \\mathbf{v}_c(\\mathbf{u}_o  - \\mathbb{E}_{w_k\\sim P(\\cdot\\mid w_c)}[\\mathbf{u}_k])\n\\]\n\n\\(\\eta\\) is the learning rate\n\\(\\eta\\mathbf{u}_o\\) adds a positive multiple of \\(\\mathbf{u}_o\\) to \\(\\mathbf{v}_c\\), moving the latter vector towards the actual context vector \\(\\mathbf{u}_o\\).\n\\(-\\eta\\mathbb{E}_{w_k\\sim P(\\cdot\\mid w_c)}[\\mathbf{u}_k])\\) subtracts the expected vector\n\\(\\mathbb{E}_{w_k\\sim P(\\cdot\\mid w_c)}[\\mathbf{u}_k])\\) is an expectation taken over every word \\(k\\in V\\) in the vocabulary according to the models own distribution \\(P(w_o\\mid w_c)\\), i.e., the softmax output. ​- This is also why the exact skip-gram gradient is expensive: computing this expectation requires touching every word vector in the vocabulary at every single training step, which is the practical bottleneck that motivates approximations like negative sampling (which replaces the full sum with a small sample of “negative” words)"
+  },
+  {
+    "objectID": "lectures/embeddings.html#todo",
+    "href": "lectures/embeddings.html#todo",
+    "title": "Approaches to biomedical knowledge",
+    "section": "TODO",
+    "text": "TODO\n\nclean up above material\nadd better explanations according to word2vec Explained"
+  },
+  {
+    "objectID": "lectures/embeddings.html#sources",
+    "href": "lectures/embeddings.html#sources",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sources",
+    "text": "Sources\nThe sources used to prepare this lecture include\n\nGoldberg Y and Levy O (2014) word2vec Explained: deriving Mikolov et al.’s negative-sampling word-embedding method, arXiv 1402.3722"
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",
