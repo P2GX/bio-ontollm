@@ -2,10 +2,31 @@ from matplotlib import patches, path
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch, Ellipse, FancyArrowPatch
 import numpy as np
-from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from matplotlib.path import Path
-from matplotlib.patches import Rectangle, FancyArrow, FancyBboxPatch,  FancyArrowPatch, Polygon
+from matplotlib.patches import Circle,Rectangle, FancyArrow, FancyBboxPatch,  FancyArrowPatch, Polygon,FancyBboxPatch, Rectangle, Ellipse, PathPatch
 import matplotlib.patches as mpatches
+
+
+
+ARROW_BLUE = "#3C6FB0"
+PURPLE = "#8C8CE0"
+PURPLE_EDGE = "#5A5AC0"
+RED_SHADES = ["#8B1A1A", "#C0392B", "#E63946"]
+WHITE = "white"
+BLUE = "#9DC3E6"
+BLUE_CELL = "#AACBEA"
+BLUE_EDGE = "black"
+ORANGE = "#F2B98B"
+ORANGE_EDGE = "#2255AA"
+GREEN = "#A9D18E"
+GREEN_CELL = "#8FCB7A"
+GREEN_EDGE = "#4E9A33"
+PURPLE = "#B7B7EA"
+PURPLE_EDGE = "#8E8ED6"
+PINK = "#F4B6B6"
+PINK_EDGE = "#D98888"
+WHITE = "white"
+BLACK = "black"
 
 def basic_rnn(figsize=(10,5)):
 
@@ -109,9 +130,7 @@ def plot_tanh(figsize=(5.5, 3.5)):
     plt.tight_layout()
 
 
-BLUE = "#9DC3E6"
-ORANGE = "#F4B183"
-GREEN = "#A9D18E"
+
 EDGE = "black"
 BOX_W, BOX_H = 0.62, 0.42          # input / output rectangles
 ELL_W, ELL_H = 0.62, 0.42          # hidden-state ellipses
@@ -714,6 +733,1053 @@ def rnn_language_model(figsize=(6, 6.5)):
     # ----------------------------------------------------------------------
     ax.set_xlim(col_x[0] - 1.6, col_x[-1] + 1.4)
     ax.set_ylim(e_y - ell_h / 2 - 0.3, y_hat_y + ell_h / 2 + 0.5)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
+
+def rnn_next_word(figsize=(14, 6.5)):
+    """
+    Recreates the full RNN-language-model training diagram: a chain of input
+    word embeddings feeding into RNN cells (inside a shared "RNN" block),
+    each producing a softmax distribution over the vocabulary, each compared
+    against the true next word via a per-step cross-entropy loss box, with
+    the average loss formula at the right.
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # ----------------------------------------------------------------------
+    # Columns / words
+    # ----------------------------------------------------------------------
+    words_in = ["So", "long", "and", "thanks", "for"]
+    words_next = ["long", "and", "thanks", "for", "all"]
+    col_x = [1.6, 3.5, 5.4, 7.3, 9.2]
+    dots_x = 10.7
+
+    # ----------------------------------------------------------------------
+    # Row y-coordinates
+    # ----------------------------------------------------------------------
+    word_y = 0.0
+    emb_y0, emb_y1 = 0.55, 1.55          # embedding capsule span
+    rnn_y0, rnn_y1 = 2.35, 3.15          # RNN square span
+    sm_y0, sm_y1 = 3.75, 4.55            # softmax icon span
+    loss_y0, loss_y1 = 5.15, 5.85        # loss box span
+    nextword_y = 6.35
+
+    sq_w = 0.62   # RNN square width
+    emb_w = 0.42  # embedding capsule width
+
+    # ----------------------------------------------------------------------
+    # Shared purple background block (covers RNN + softmax rows)
+    # ----------------------------------------------------------------------
+    block_x0 = col_x[0] - 0.85
+    block_x1 = dots_x + 0.55
+    block = FancyBboxPatch(
+        (block_x0, rnn_y0 - 0.35), block_x1 - block_x0, (sm_y1 + 0.3) - (rnn_y0 - 0.35),
+        boxstyle="round,pad=0.02,rounding_size=0.3",
+        linewidth=1.2, edgecolor=PURPLE_EDGE, facecolor=PURPLE, zorder=1,
+    )
+    ax.add_patch(block)
+
+    # ----------------------------------------------------------------------
+    # Helper: small histogram/bar-chart icon
+    # ----------------------------------------------------------------------
+    rng = np.random.default_rng(3)
+
+    def histogram_icon(ax, xc, y0, y1, w=0.55):
+        box = FancyBboxPatch(
+            (xc - w / 2, y0), w, y1 - y0,
+            boxstyle="round,pad=0.01,rounding_size=0.08",
+            linewidth=1.0, edgecolor="#999999", facecolor=WHITE, zorder=3,
+        )
+        ax.add_patch(box)
+        n_bars = 6
+        heights = rng.uniform(0.25, 0.85, n_bars) * (y1 - y0 - 0.12)
+        bar_w = (w - 0.14) / n_bars
+        base = y0 + 0.06
+        for i, h in enumerate(heights):
+            bx = xc - w / 2 + 0.07 + i * bar_w
+            ax.add_patch(Rectangle((bx, base), bar_w * 0.7, h,
+                                    facecolor="black", edgecolor="none", zorder=4))
+
+    # ----------------------------------------------------------------------
+    # Helper: straight arrow
+    # ----------------------------------------------------------------------
+    def arrow(xy_from, xy_to, color="black", lw=1.5, mscale=14, zorder=3):
+        a = FancyArrowPatch(xy_from, xy_to, arrowstyle="-|>", mutation_scale=mscale,
+                            linewidth=lw, color=color, zorder=zorder,
+                            shrinkA=0, shrinkB=0)
+        ax.add_patch(a)
+
+    # ----------------------------------------------------------------------
+    # Build each column
+    # ----------------------------------------------------------------------
+    for i, xc in enumerate(col_x):
+        # word (bottom)
+        ax.text(xc, word_y, words_in[i], fontsize=13, ha="center", va="center")
+
+        # embedding capsule with 3 stacked dots
+        capsule = FancyBboxPatch(
+            (xc - emb_w / 2, emb_y0), emb_w, emb_y1 - emb_y0,
+            boxstyle="round,pad=0.0,rounding_size=0.2",
+            linewidth=1.2, edgecolor="#555555", facecolor="none", zorder=3,
+        )
+        ax.add_patch(capsule)
+        dot_ys = np.linspace(emb_y0 + 0.22, emb_y1 - 0.22, 3)
+        for dy, color in zip(dot_ys, RED_SHADES):
+            ax.add_patch(Ellipse((xc, dy), 0.22, 0.22, facecolor=color,
+                                edgecolor="black", linewidth=0.6, zorder=4))
+
+        arrow((xc, emb_y1), (xc, rnn_y0))
+
+        # RNN square
+        rnn_box = Rectangle((xc - sq_w / 2, rnn_y0), sq_w, rnn_y1 - rnn_y0,
+                            facecolor=WHITE, edgecolor="black", linewidth=1.2, zorder=3)
+        ax.add_patch(rnn_box)
+
+        # recurrent arrow to next RNN cell
+        if i < len(col_x) - 1:
+            arrow((xc + sq_w / 2, (rnn_y0 + rnn_y1) / 2),
+                (col_x[i + 1] - sq_w / 2, (rnn_y0 + rnn_y1) / 2))
+        if i == 0:
+            ax.text((xc + col_x[1]) / 2 - 0.35, (rnn_y0 + rnn_y1) / 2 + 0.25,
+                    "h", fontsize=13, ha="center", va="center", style="italic")
+
+        arrow((xc, rnn_y1), (xc, sm_y0))
+        if i == 0:
+            ax.text(xc - 0.55, (rnn_y1 + sm_y0) / 2, "Vh", fontsize=12,
+                    ha="center", va="center", style="italic")
+
+        # softmax histogram icon
+        histogram_icon(ax, xc, sm_y0, sm_y1)
+
+        arrow((xc, sm_y1), (xc, loss_y0))
+        if i == 0:
+            ax.text(xc - 0.3, (sm_y1 + loss_y0) / 2, "$y$", fontsize=13,
+                    ha="center", va="center", style="italic")
+
+        # loss box
+        loss_box = FancyBboxPatch(
+            (xc - 0.55, loss_y0), 1.1, loss_y1 - loss_y0,
+            boxstyle="round,pad=0.02,rounding_size=0.08",
+            linewidth=1.0, edgecolor=PINK_EDGE, facecolor=PINK, zorder=3,
+        )
+        ax.add_patch(loss_box)
+        ax.text(xc, (loss_y0 + loss_y1) / 2, rf"$-\log \hat{{y}}_{{\mathrm{{{words_next[i]}}}}}$",
+                fontsize=10.5, ha="center", va="center", zorder=4)
+
+        arrow((xc, loss_y1), (xc, nextword_y - 0.25))
+
+        # next-word label
+        ax.text(xc, nextword_y, words_next[i], fontsize=13, ha="center", va="center")
+
+    # ----------------------------------------------------------------------
+    # Ellipsis column ("...") at each row
+    # ----------------------------------------------------------------------
+    for y in [word_y, (emb_y0 + emb_y1) / 2, (rnn_y0 + rnn_y1) / 2,
+            (sm_y0 + sm_y1) / 2, (loss_y0 + loss_y1) / 2, nextword_y]:
+        ax.text(dots_x, y, "...", fontsize=16, ha="center", va="center", zorder=3)
+
+    # extend the recurrent arrow from the last RNN cell to the dots
+    arrow((col_x[-1] + sq_w / 2, (rnn_y0 + rnn_y1) / 2),
+        (dots_x - 0.3, (rnn_y0 + rnn_y1) / 2))
+
+    # ----------------------------------------------------------------------
+    # Average-loss formula, far right
+    # ----------------------------------------------------------------------
+    formula_x = dots_x + 2.0
+    ax.text(formula_x, (loss_y0 + loss_y1) / 2,
+            r"$\dfrac{1}{T}\sum_{t=1}^{T} L_{CE}$",
+            fontsize=15, ha="center", va="center")
+
+    # ----------------------------------------------------------------------
+    # Row labels (left margin)
+    # ----------------------------------------------------------------------
+    row_labels = [
+        ("Next word", nextword_y),
+        ("Loss", (loss_y0 + loss_y1) / 2),
+        ("Softmax over\nVocabulary", (sm_y0 + sm_y1) / 2),
+        ("RNN", (rnn_y0 + rnn_y1) / 2),
+        ("Input\nEmbeddings", (emb_y0 + emb_y1) / 2),
+    ]
+    label_x = block_x0 - 0.5
+    for text, y in row_labels:
+        ax.text(label_x, y, text, fontsize=12, ha="right", va="center", zorder=5)
+
+    # ----------------------------------------------------------------------
+    # Outer border
+    # ----------------------------------------------------------------------
+    xlim = (label_x - 2.4, formula_x + 1.5)
+    ylim = (word_y - 0.6, nextword_y + 0.6)
+    border = Rectangle((xlim[0], ylim[0]), xlim[1] - xlim[0], ylim[1] - ylim[0],
+                        facecolor="none", edgecolor="black", linewidth=1.2, zorder=0)
+    ax.add_patch(border)
+
+    ax.set_xlim(*xlim)
+    ax.set_ylim(*ylim)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
+
+
+def rnn_autoregression(figsize=(9, 5.2)):
+    """
+    rnn_autoregressive_generation.py
+
+    Recreates a textbook-style figure: autoregressive generation with an
+    RNN-based neural language model. Each timestep column shows an input
+    word -> embedding -> RNN cell -> softmax -> sampled word, with dashed
+    vertical separators between timesteps and a figure caption at the bottom.
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # ----------------------------------------------------------------------
+    # Columns / words
+    # ----------------------------------------------------------------------
+    words_in = ["<s>", "So", "long", "and"]
+    words_sampled = ["So", "long", "and", "?"]
+    col_x = [1.75, 3.45, 5.15, 6.85]
+
+    # ----------------------------------------------------------------------
+    # Row y-coordinates
+    # ----------------------------------------------------------------------
+    input_y = 0.0
+    emb_y0, emb_y1 = 0.55, 1.35
+    rnn_y0, rnn_y1 = 2.15, 2.95
+    sm_y0, sm_y1 = 3.55, 4.2
+    sampled_y = 4.85
+
+    sq_w = 0.55
+
+    # ----------------------------------------------------------------------
+    # Shared purple RNN background block
+    # ----------------------------------------------------------------------
+    block_x0 = col_x[0] - 1.15
+    block_x1 = col_x[-1] + 1.35
+    block = FancyBboxPatch(
+        (block_x0, rnn_y0 - 0.35), block_x1 - block_x0, (rnn_y1 - rnn_y0) + 0.7,
+        boxstyle="round,pad=0.02,rounding_size=0.25",
+        linewidth=1.2, edgecolor=PURPLE_EDGE, facecolor=PURPLE, zorder=1,
+    )
+    ax.add_patch(block)
+    ax.text(block_x0 + 0.45, (rnn_y0 + rnn_y1) / 2, "RNN", fontsize=15,
+            ha="center", va="center", fontweight="bold", zorder=2, color="black")
+
+    # ----------------------------------------------------------------------
+    # Helpers
+    # ----------------------------------------------------------------------
+    rng = np.random.default_rng(5)
+
+    def histogram_pill(ax, xc, y0, y1, w=1.0):
+        h = y1 - y0
+        box = FancyBboxPatch(
+            (xc - w / 2, y0), w, h,
+            boxstyle="round,pad=0.01,rounding_size=" + str(h / 2),
+            linewidth=1.1, edgecolor="black", facecolor=WHITE, zorder=3,
+        )
+        ax.add_patch(box)
+        n_bars = 6
+        heights = rng.uniform(0.25, 0.85, n_bars) * (h - 0.14)
+        bar_w = (w - 0.3) / n_bars
+        base = y0 + 0.07
+        for i, hh in enumerate(heights):
+            bx = xc - w / 2 + 0.15 + i * bar_w
+            ax.add_patch(Rectangle((bx, base), bar_w * 0.65, hh,
+                                    facecolor="black", edgecolor="none", zorder=4))
+
+
+    def arrow(xy_from, xy_to, color="black", lw=1.5, mscale=14, zorder=3):
+        a = FancyArrowPatch(xy_from, xy_to, arrowstyle="-|>", mutation_scale=mscale,
+                            linewidth=lw, color=color, zorder=zorder,
+                            shrinkA=0, shrinkB=0)
+        ax.add_patch(a)
+
+    # ----------------------------------------------------------------------
+    # Build each column
+    # ----------------------------------------------------------------------
+    for i, xc in enumerate(col_x):
+        ax.text(xc, input_y, words_in[i], fontsize=14, ha="center", va="center")
+
+        # embedding: 3 stacked dots, no outline
+        dot_ys = np.linspace(emb_y0 + 0.14, emb_y1 - 0.14, 3)
+        for dy, color in zip(dot_ys, RED_SHADES):
+            ax.add_patch(Ellipse((xc, dy), 0.26, 0.26, facecolor=color,
+                                edgecolor="black", linewidth=0.7, zorder=4))
+
+        arrow((xc, emb_y1 + 0.05), (xc, rnn_y0))
+
+        # RNN square
+        rnn_box = Rectangle((xc - sq_w / 2, rnn_y0), sq_w, rnn_y1 - rnn_y0,
+                            facecolor=WHITE, edgecolor="black", linewidth=1.2, zorder=3)
+        ax.add_patch(rnn_box)
+
+        if i < len(col_x) - 1:
+            arrow((xc + sq_w / 2, (rnn_y0 + rnn_y1) / 2),
+                (col_x[i + 1] - sq_w / 2, (rnn_y0 + rnn_y1) / 2))
+
+        arrow((xc, rnn_y1), (xc, sm_y0))
+
+        histogram_pill(ax, xc, sm_y0, sm_y1)
+
+        arrow((xc, sm_y1), (xc, sampled_y - 0.3))
+
+        ax.text(xc, sampled_y, words_sampled[i], fontsize=15, ha="center", va="center")
+
+    # arrow continuing right past the last RNN cell
+    arrow((col_x[-1] + sq_w / 2, (rnn_y0 + rnn_y1) / 2),
+        (block_x1 - 0.15, (rnn_y0 + rnn_y1) / 2))
+
+    # ----------------------------------------------------------------------
+    # Dashed vertical timestep separators
+    # ----------------------------------------------------------------------
+    sep_top = sampled_y + 0.45
+    sep_bottom = input_y - 0.35
+    sep_xs = [(col_x[i] + col_x[i + 1]) / 2 for i in range(len(col_x) - 1)]
+    for sx in sep_xs:
+        ax.plot([sx, sx], [sep_bottom, sep_top], linestyle="--", color="black",
+                linewidth=1.1, zorder=5)
+
+    # ----------------------------------------------------------------------
+    # Row labels (left margin)
+    # ----------------------------------------------------------------------
+    row_labels = [
+        ("Sampled Word", sampled_y),
+        ("Softmax", (sm_y0 + sm_y1) / 2),
+        ("Embedding", (emb_y0 + emb_y1) / 2),
+        ("Input Word", input_y),
+    ]
+    label_x = block_x0 - 0.5
+    for text, y in row_labels:
+        ax.text(label_x, y, text, fontsize=13, ha="right", va="center", zorder=5)
+
+    # ----------------------------------------------------------------------
+    # Outer border + caption
+    # ----------------------------------------------------------------------
+    xlim = (label_x - 2.3, block_x1 + 0.4)
+    ylim = (sep_bottom - 0.9, sep_top + 0.15)
+
+
+    ax.set_xlim(*xlim)
+    ax.set_ylim(*ylim)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
+
+def encode_decode(figsize=(12, 3.2)):
+    """
+    encoder_decoder_pipeline.py
+
+    Recreates a simple encoder-decoder diagram:
+    Input Text -> [Encoder] -> Context Vector -> [Decoder] -> Summary
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # ----------------------------------------------------------------------
+    # Input Text box
+    # ----------------------------------------------------------------------
+    in_x, in_y, in_w, in_h = 0.0, 0.85, 1.9, 0.7
+    ax.add_patch(Rectangle((in_x, in_y), in_w, in_h,
+                            facecolor="white", edgecolor="black", linewidth=1.5, zorder=3))
+    ax.text(in_x + in_w / 2, in_y + in_h / 2, "Input Text ..", fontsize=15,
+            ha="center", va="center", zorder=4)
+
+    # ----------------------------------------------------------------------
+    # Encoder box
+    # ----------------------------------------------------------------------
+    enc_x, enc_y, enc_w, enc_h = 3.1, 0.15, 2.9, 2.0
+    ax.add_patch(FancyBboxPatch(
+        (enc_x, enc_y), enc_w, enc_h,
+        boxstyle="round,pad=0.02,rounding_size=0.25",
+        linewidth=1.8, edgecolor=GREEN_EDGE, facecolor=GREEN, zorder=3,
+    ))
+    ax.text(enc_x + enc_w / 2, enc_y + enc_h / 2, "Encoder", fontsize=18,
+            ha="center", va="center", fontweight="bold", zorder=4)
+
+    # ----------------------------------------------------------------------
+    # Context Vector box
+    # ----------------------------------------------------------------------
+    ctx_x, ctx_y, ctx_w, ctx_h = 6.85, 0.35, 0.55, 1.6
+    ax.add_patch(Rectangle((ctx_x, ctx_y), ctx_w, ctx_h,
+                            facecolor=ORANGE, edgecolor=ORANGE_EDGE, linewidth=1.8, zorder=3))
+    values = ["0.1", "0.8", "-0.3", "0.6", "0.1"]
+    val_ys = [ctx_y + ctx_h * (0.9 - 0.2 * i) for i in range(len(values))]
+    for v, vy in zip(values, val_ys):
+        ax.text(ctx_x + ctx_w / 2, vy, v, fontsize=11, ha="center", va="center",
+                fontweight="bold", zorder=4)
+
+    ax.text(ctx_x + ctx_w / 2, ctx_y - 0.35, "Context Vector", fontsize=15,
+            ha="center", va="center", fontweight="bold")
+
+    # ----------------------------------------------------------------------
+    # Decoder box
+    # ----------------------------------------------------------------------
+    dec_x, dec_y, dec_w, dec_h = 7.9, 0.15, 2.9, 2.0
+    ax.add_patch(FancyBboxPatch(
+        (dec_x, dec_y), dec_w, dec_h,
+        boxstyle="round,pad=0.02,rounding_size=0.25",
+        linewidth=1.8, edgecolor=BLUE_EDGE, facecolor=BLUE, zorder=3,
+    ))
+    ax.text(dec_x + dec_w / 2, dec_y + dec_h / 2, "Decoder", fontsize=18,
+            ha="center", va="center", fontweight="bold", zorder=4)
+
+    # ----------------------------------------------------------------------
+    # Summary box
+    # ----------------------------------------------------------------------
+    sum_x, sum_y, sum_w, sum_h = 11.6, 0.85, 1.75, 0.7
+    ax.add_patch(Rectangle((sum_x, sum_y), sum_w, sum_h,
+                            facecolor="white", edgecolor="black", linewidth=1.5, zorder=3))
+    ax.text(sum_x + sum_w / 2, sum_y + sum_h / 2, "Output...", fontsize=15,
+            ha="center", va="center", zorder=4)
+
+    # ----------------------------------------------------------------------
+    # Block arrows
+    # ----------------------------------------------------------------------
+    def block_arrow(x_start, x_end, y):
+        ax.add_patch(FancyArrow(
+            x_start, y, x_end - x_start, 0,
+            width=0.16, head_width=0.42, head_length=0.22,
+            length_includes_head=True,
+            facecolor=ARROW_BLUE, edgecolor=ARROW_BLUE, zorder=2,
+        ))
+
+    mid_y = 1.2
+    block_arrow(in_x + in_w + 0.1, enc_x - 0.1, mid_y)
+    block_arrow(enc_x + enc_w + 0.1, ctx_x - 0.1, mid_y)
+    block_arrow(ctx_x + ctx_w + 0.1, dec_x - 0.1, mid_y)
+    block_arrow(dec_x + dec_w + 0.1, sum_x - 0.1, mid_y)
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    ax.set_xlim(-0.3, sum_x + sum_w + 0.3)
+    ax.set_ylim(-0.7, 2.5)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
+
+def doughnut(figsize=(15, 6.5)):
+    """
+    encoder_decoder_mt_diagram.py
+
+    Recreates the classic encoder-decoder machine-translation figure:
+    source words (English) are encoded by an RNN into a final hidden state
+    h_n, which then seeds an autoregressive decoder that predicts target
+    words (Spanish) one at a time, each predicted word being fed back in
+    as the next input word.
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # ----------------------------------------------------------------------
+    # Columns
+    # ----------------------------------------------------------------------
+    src_words = ["Ich", "bin", "ein", "Berliner"]
+    tgt_input_words = ["<s>", "I", "am", "a", "doughnut"]
+    tgt_pred_words = ["I", "am", "a", "doughnut", "</s>"]
+
+    n_src, n_tgt = len(src_words), len(tgt_input_words)
+    col_x = [1.0 + 1.55 * i for i in range(n_src)]
+    gap = 0.9
+    tgt_start = col_x[-1] + 1.55 + gap
+    col_x += [tgt_start + 1.55 * i for i in range(n_tgt)]
+
+    # ----------------------------------------------------------------------
+    # Row y-coordinates
+    # ----------------------------------------------------------------------
+    word_y = 0.0
+    emb_y0, emb_y1 = 0.5, 1.3
+    hid_y0, hid_y1 = 1.95, 2.65
+    sm_y0, sm_y1 = 3.35, 4.0
+    pred_y = 4.6
+    sq_w = 0.65
+
+    # ----------------------------------------------------------------------
+    # Purple background block (spans hidden-layer row across all columns)
+    # ----------------------------------------------------------------------
+    block_x0 = col_x[0] - 0.85
+    block_x1 = col_x[-1] + 0.85
+    block = FancyBboxPatch(
+        (block_x0, hid_y0 - 0.35), block_x1 - block_x0, (hid_y1 - hid_y0) + 0.7,
+        boxstyle="round,pad=0.02,rounding_size=0.3",
+        linewidth=1.2, edgecolor=PURPLE_EDGE, facecolor=PURPLE, zorder=1,
+    )
+    ax.add_patch(block)
+
+    # ----------------------------------------------------------------------
+    # Helpers
+    # ----------------------------------------------------------------------
+    rng = np.random.default_rng(9)
+
+    def arrow(xy_from, xy_to, lw=1.6, mscale=13, color="black", zorder=3, style="-"):
+        a = FancyArrowPatch(xy_from, xy_to, arrowstyle="-|>", mutation_scale=mscale,
+                            linewidth=lw, color=color, zorder=zorder,
+                            linestyle=style, shrinkA=0, shrinkB=0)
+        ax.add_patch(a)
+
+
+    def histogram_pill(ax, xc, y0, y1, w=0.85):
+        h = y1 - y0
+        box = FancyBboxPatch(
+            (xc - w / 2, y0), w, h,
+            boxstyle="round,pad=0.01,rounding_size=" + str(h / 2),
+            linewidth=1.0, edgecolor="black", facecolor=WHITE, zorder=3,
+        )
+        ax.add_patch(box)
+        n_bars = 6
+        heights = rng.uniform(0.25, 0.85, n_bars) * (h - 0.12)
+        bar_w = (w - 0.26) / n_bars
+        base = y0 + 0.06
+        for i, hh in enumerate(heights):
+            bx = xc - w / 2 + 0.13 + i * bar_w
+            ax.add_patch(Rectangle((bx, base), bar_w * 0.65, hh,
+                                    facecolor="black", edgecolor="none", zorder=4))
+
+
+    def curly_brace(ax, x_start, x_end, y_ref, depth=0.32, lw=1.6, direction="down"):
+        """direction='down': tip points below y_ref (brace sits above its label).
+        direction='up':   tip points above y_ref (brace sits below its label)."""
+        sign = -1 if direction == "down" else 1
+        x_mid = (x_start + x_end) / 2
+        dx = (x_end - x_start) * 0.22
+        verts = [
+            (x_start, y_ref),
+            (x_start, y_ref + sign * depth * 0.9), (x_mid - dx, y_ref + sign * depth * 0.9),
+            (x_mid, y_ref + sign * depth * 1.6),
+            (x_mid + dx, y_ref + sign * depth * 0.9), (x_end, y_ref + sign * depth * 0.9),
+            (x_end, y_ref),
+        ]
+        codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4,
+                Path.CURVE4, Path.CURVE4, Path.LINETO]
+        ax.add_patch(PathPatch(Path(verts, codes), facecolor="none",
+                                edgecolor="black", linewidth=lw, zorder=2))
+        return x_mid, y_ref + sign * depth * 1.6
+
+    # ----------------------------------------------------------------------
+    # Build all 9 columns
+    # ----------------------------------------------------------------------
+    all_words_bottom = src_words + tgt_input_words
+    is_source = [True] * n_src + [False] * n_tgt
+
+    for i, xc in enumerate(col_x):
+        color = "#2255CC" if is_source[i] else "#CC2222"
+        ax.text(xc, word_y, all_words_bottom[i], fontsize=13, ha="center", va="center",
+                color=color, fontweight="bold")
+
+        dot_ys = np.linspace(emb_y0 + 0.13, emb_y1 - 0.13, 3)
+        for dy, c in zip(dot_ys, RED_SHADES):
+            ax.add_patch(Ellipse((xc, dy), 0.24, 0.24, facecolor=c, edgecolor="black",
+                                linewidth=0.6, zorder=4))
+        arrow((xc, emb_y1 + 0.05), (xc, hid_y0))
+
+        is_hn = (i == n_src - 1)
+        cell_color = GREEN_CELL if is_hn else BLUE_CELL
+        cell_edge = GREEN_EDGE if is_hn else BLUE_EDGE
+        ax.add_patch(Rectangle((xc - sq_w / 2, hid_y0), sq_w, hid_y1 - hid_y0,
+                                facecolor=cell_color, edgecolor=cell_edge, linewidth=1.4, zorder=3))
+        if is_hn:
+            ax.text(xc, (hid_y0 + hid_y1) / 2, r"$h_n$", fontsize=13, ha="center",
+                    va="center", zorder=4, color="black")
+
+        if i < len(col_x) - 1:
+            arrow((xc + sq_w / 2, (hid_y0 + hid_y1) / 2),
+                (col_x[i + 1] - sq_w / 2, (hid_y0 + hid_y1) / 2))
+
+        if not is_source[i]:
+            arrow((xc, hid_y1), (xc, sm_y0))
+            histogram_pill(ax, xc, sm_y0, sm_y1)
+            arrow((xc, sm_y1), (xc, pred_y - 0.28))
+            j = i - n_src
+            ax.text(xc, pred_y, tgt_pred_words[j], fontsize=14, ha="center",
+                    va="center", color="#CC2222", fontweight="bold")
+
+    ax.text((col_x[0] + col_x[n_src - 1]) / 2, (sm_y0 + sm_y1) / 2,
+            "(output of source is ignored)", fontsize=11, ha="center", va="center", zorder=3)
+
+    # ----------------------------------------------------------------------
+    # Dashed vertical separators between target columns
+    # ----------------------------------------------------------------------
+    sep_top = pred_y + 0.4
+    sep_bottom = word_y - 0.3
+    for i in range(n_src, len(col_x) - 1):
+        sx = (col_x[i] + col_x[i + 1]) / 2
+        ax.plot([sx, sx], [sep_bottom, sep_top], linestyle="--", color="black",
+                linewidth=1.0, zorder=5)
+
+    # curved dashed feedback arrows: predicted word (top) -> next input word (bottom)
+    for i in range(n_src, len(col_x) - 1):
+        x_from, x_to = col_x[i], col_x[i + 1]
+        conn = FancyArrowPatch(
+            (x_from, word_y + 0.12), (x_to, word_y + 0.12),
+            connectionstyle="arc3,rad=-0.5",
+            arrowstyle="-|>", mutation_scale=12, linewidth=1.1,
+            linestyle="--", color="#444444", zorder=2,
+        )
+        ax.add_patch(conn)
+
+    # ----------------------------------------------------------------------
+    # Source Text brace (below words, tip down)
+    # ----------------------------------------------------------------------
+    src_x0 = col_x[0] - sq_w
+    src_x1 = col_x[n_src - 1] + sq_w
+    _, tip_y = curly_brace(ax, src_x0, src_x1, word_y - 0.35, depth=0.3, direction="down")
+    ax.text((src_x0 + src_x1) / 2, tip_y - 0.3, "Source Text", fontsize=14,
+            ha="center", va="center", fontweight="bold")
+
+    # ----------------------------------------------------------------------
+    # Target Text brace (above predicted words, tip down onto them)
+    # ----------------------------------------------------------------------
+    tgt_x0 = col_x[n_src] - sq_w
+    tgt_x1 = col_x[-1] + sq_w
+    _, tip_y2 = curly_brace(ax, tgt_x0, tgt_x1, pred_y + 0.4, depth=0.3, direction="up")
+    ax.text((tgt_x0 + tgt_x1) / 2, tip_y2 + 0.3, "Target Text", fontsize=14,
+            ha="center", va="center", fontweight="bold")
+
+    # ----------------------------------------------------------------------
+    # Separator label + arrow pointing at <s> column
+    # ----------------------------------------------------------------------
+    sep_x = col_x[n_src]
+    ax.text(sep_x, word_y - 1.0, "Separator", fontsize=11, ha="center", va="center")
+    arrow((sep_x, word_y - 0.85), (sep_x - 0.15, word_y - 0.15), lw=1.1, mscale=10)
+
+    # ----------------------------------------------------------------------
+    # Row labels
+    # ----------------------------------------------------------------------
+    row_labels = [
+        ("softmax", (sm_y0 + sm_y1) / 2),
+        ("hidden\nlayer(s)", (hid_y0 + hid_y1) / 2),
+        ("embedding\nlayer", (emb_y0 + emb_y1) / 2),
+    ]
+    label_x = block_x0 - 0.6
+    for text, y in row_labels:
+        ax.text(label_x, y, text, fontsize=11, ha="right", va="center", zorder=5)
+
+    # ----------------------------------------------------------------------
+    # Outer border
+    # ----------------------------------------------------------------------
+    xlim = (label_x - 1.6, col_x[-1] + 1.3)
+    ylim = (word_y - 1.6, tip_y2 + 1.0)
+    ax.add_patch(Rectangle((xlim[0], ylim[0]), xlim[1] - xlim[0], ylim[1] - ylim[0],
+                            facecolor="none", edgecolor="black", linewidth=1.2, zorder=0))
+
+    ax.set_xlim(*xlim)
+    ax.set_ylim(*ylim)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
+
+
+def attention(figsize=(15, 7.5)):
+    """
+    attention_encoder_decoder_diagram.py
+
+    Recreates the attention-based seq2seq diagram: encoder hidden states
+    h^e_1..h^e_n, attention weights alpha_ij computed via dot product with
+    the previous decoder state, combined into context vector c_i, which
+    (together with the previous predicted word) drives the decoder hidden
+    states h^d_{i-1}, h^d_i and their softmax predictions y_{i-1}, y_i.
+    """
+
+    BLUE_CELL = "#AAAAE8"
+    BLUE_EDGE = "#5A5AC0"
+    GREEN = "#7FE896"
+    GREEN_EDGE = "#2E9E4A"
+    GREEN_TEXT = "#1E7A34"
+    RED_TEXT = "#CC2222"
+    BLUE_TEXT = "#2255CC"
+  
+
+    fig, ax = plt.subplots(figsize=figsize)
+
+    rng = np.random.default_rng(11)
+
+    # ----------------------------------------------------------------------
+    # Helpers
+    # ----------------------------------------------------------------------
+    def arrow(xy_from, xy_to, lw=1.5, mscale=13, color="black", zorder=3, style="-"):
+        a = FancyArrowPatch(xy_from, xy_to, arrowstyle="-|>", mutation_scale=mscale,
+                            linewidth=lw, color=color, zorder=zorder,
+                            linestyle=style, shrinkA=0, shrinkB=0)
+        ax.add_patch(a)
+
+
+    def histogram_pill(ax, xc, y0, y1, w=0.85):
+        h = y1 - y0
+        box = FancyBboxPatch(
+            (xc - w / 2, y0), w, h,
+            boxstyle="round,pad=0.01,rounding_size=" + str(h / 2),
+            linewidth=1.0, edgecolor="black", facecolor=WHITE, zorder=3,
+        )
+        ax.add_patch(box)
+        n_bars = 6
+        heights = rng.uniform(0.25, 0.85, n_bars) * (h - 0.12)
+        bar_w = (w - 0.26) / n_bars
+        base = y0 + 0.06
+        for i, hh in enumerate(heights):
+            bx = xc - w / 2 + 0.13 + i * bar_w
+            ax.add_patch(Rectangle((bx, base), bar_w * 0.65, hh,
+                                    facecolor="black", edgecolor="none", zorder=4))
+
+
+    def curly_brace(ax, x_start, x_end, y_ref, depth=0.32, lw=1.6, direction="down"):
+        sign = -1 if direction == "down" else 1
+        x_mid = (x_start + x_end) / 2
+        dx = (x_end - x_start) * 0.22
+        verts = [
+            (x_start, y_ref),
+            (x_start, y_ref + sign * depth * 0.9), (x_mid - dx, y_ref + sign * depth * 0.9),
+            (x_mid, y_ref + sign * depth * 1.6),
+            (x_mid + dx, y_ref + sign * depth * 0.9), (x_end, y_ref + sign * depth * 0.9),
+            (x_end, y_ref),
+        ]
+        codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4,
+                Path.CURVE4, Path.CURVE4, Path.LINETO]
+        ax.add_patch(PathPatch(Path(verts, codes), facecolor="none",
+                                edgecolor="black", linewidth=lw, zorder=2))
+        return x_mid, y_ref + sign * depth * 1.6
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    enc_x = [1.0, 2.5, 4.0, 5.9]
+    enc_labels = [r"$h^e_1$", r"$h^e_2$", r"$h^e_3$", r"$h^e_n$"]
+    x_labels = [r"$x_1$", r"$x_2$", r"$x_3$", r"$x_n$"]
+    attn_vals = [".4", ".3", ".1", ".2"]
+
+    hid_y0, hid_y1 = 2.15, 2.85
+    attn_y = 4.1
+    x_y = 1.2
+    sq_w = 0.65
+
+    ci_x, ci_y0, ci_y1 = 8.0, 3.55, 4.45
+    ci_w = 0.75
+
+    dec_x = [10.3, 11.9]
+    dec_labels = [r"$h^d_{i-1}$", r"$h^d_i$"]
+    pred_labels = [r"$y_{i-1}$", r"$y_i$"]
+    y_in_labels = [r"$y_{i-2}$", r"$y_{i-1}$"]
+    sm_y0, sm_y1 = attn_y - 0.35, attn_y + 0.35
+    pred_y = 5.15
+
+    # ----------------------------------------------------------------------
+    # Encoder hidden states + inputs
+    # ----------------------------------------------------------------------
+    for i, xc in enumerate(enc_x):
+        ax.text(xc, x_y - 0.55, x_labels[i], fontsize=13, ha="center", va="center", color=BLUE_TEXT)
+        arrow((xc, x_y - 0.3), (xc, hid_y0))
+        ax.add_patch(Rectangle((xc - sq_w / 2, hid_y0), sq_w, hid_y1 - hid_y0,
+                                facecolor=BLUE_CELL, edgecolor=BLUE_EDGE, linewidth=1.4, zorder=3))
+        ax.text(xc, (hid_y0 + hid_y1) / 2, enc_labels[i], fontsize=12, ha="center", va="center", zorder=4)
+        if i < len(enc_x) - 1:
+            arrow((xc + sq_w / 2, (hid_y0 + hid_y1) / 2), (enc_x[i + 1] - sq_w / 2, (hid_y0 + hid_y1) / 2))
+
+    # arrow + dots continuing right of h^e_n
+    arrow((enc_x[-1] + sq_w / 2, (hid_y0 + hid_y1) / 2), (enc_x[-1] + 0.85, (hid_y0 + hid_y1) / 2))
+    ax.text(enc_x[-1] + 1.05, (hid_y0 + hid_y1) / 2, "...", fontsize=14, ha="center", va="center")
+
+    # attention-weight circles + dashed connections
+    for i, xc in enumerate(enc_x):
+        ax.add_patch(Circle((xc, attn_y), 0.28, facecolor="none", edgecolor=GREEN_EDGE,
+                            linewidth=1.4, linestyle="--", zorder=4))
+        ax.text(xc, attn_y, attn_vals[i], fontsize=11, ha="center", va="center",
+                color=GREEN_TEXT, zorder=5)
+        # dashed arrow down into own h^e cell
+        arrow((xc, attn_y - 0.28), (xc, hid_y1 + 0.03), lw=1.1, mscale=10,
+            color=GREEN_EDGE, style="--", zorder=2)
+        # solid green arrow up-right into c_i
+        arrow((xc + 0.22, attn_y + 0.2), (ci_x - ci_w / 2 - 0.05, ci_y0 + (ci_y1 - ci_y0) * (0.3 + 0.15 * i)),
+            lw=1.3, mscale=11, color=GREEN_EDGE, zorder=2)
+        # dashed green arrow fanning down-right into decoder h^d_{i-1}
+        arrow((xc + 0.15, attn_y - 0.22), (dec_x[0] - sq_w / 2 - 0.05, (hid_y0 + hid_y1) / 2 + 0.05),
+            lw=1.0, mscale=9, color=GREEN_EDGE, style="--", zorder=2)
+
+    ax.text((enc_x[0] + enc_x[-1]) / 2, attn_y + 0.9,
+            r"$\sum_j \alpha_{ij} h^e_j$", fontsize=15, ha="center", va="center", color=GREEN_TEXT)
+    ax.text((enc_x[1] + enc_x[2]) / 2 + 1.6, attn_y - 0.75,
+            r"$h^d_{i-1} \cdot h^e_j$", fontsize=11, ha="center", va="center", color="black")
+    ax.text(enc_x[0] - 0.95, attn_y, "attention\nweights\n" + r"$\alpha_{ij}$",
+            fontsize=10.5, ha="center", va="center", color="black")
+
+    # ----------------------------------------------------------------------
+    # Context vector c_i
+    # ----------------------------------------------------------------------
+    ax.add_patch(FancyBboxPatch(
+        (ci_x - ci_w / 2, ci_y0), ci_w, ci_y1 - ci_y0,
+        boxstyle="round,pad=0.02,rounding_size=0.12",
+        linewidth=1.6, edgecolor=GREEN_EDGE, facecolor=GREEN, zorder=4,
+    ))
+    ax.text(ci_x, (ci_y0 + ci_y1) / 2, r"$c_i$", fontsize=14, ha="center", va="center", zorder=5)
+
+    # c_i -> decoder h^d_{i-1} (solid black elbow arrow, built manually)
+    elbow_mid = (ci_x, hid_y1 + 0.35)
+    ax.plot([ci_x, ci_x], [ci_y0, elbow_mid[1]], color="black", linewidth=1.4, zorder=2)
+    ax.plot([ci_x, dec_x[0]], [elbow_mid[1], elbow_mid[1]], color="black", linewidth=1.4, zorder=2)
+    arrow((dec_x[0], elbow_mid[1]), (dec_x[0], hid_y1), lw=1.4, mscale=12)
+
+    # ----------------------------------------------------------------------
+    # Decoder: leading dots, hidden states, softmax, predictions
+    # ----------------------------------------------------------------------
+    ax.text(dec_x[0] - 1.0, (hid_y0 + hid_y1) / 2, "...", fontsize=14, ha="center", va="center")
+    arrow((dec_x[0] - 0.8, (hid_y0 + hid_y1) / 2), (dec_x[0] - sq_w / 2, (hid_y0 + hid_y1) / 2))
+
+    for i, xc in enumerate(dec_x):
+        ax.add_patch(Rectangle((xc - sq_w / 2, hid_y0), sq_w, hid_y1 - hid_y0,
+                                facecolor=BLUE_CELL, edgecolor=BLUE_EDGE, linewidth=1.4, zorder=3))
+        ax.text(xc, (hid_y0 + hid_y1) / 2, dec_labels[i], fontsize=12, ha="center", va="center", zorder=4)
+        if i < len(dec_x) - 1:
+            arrow((xc + sq_w / 2, (hid_y0 + hid_y1) / 2), (dec_x[i + 1] - sq_w / 2, (hid_y0 + hid_y1) / 2))
+
+        arrow((xc, hid_y1), (xc, sm_y0))
+        histogram_pill(ax, xc, sm_y0, sm_y1)
+        arrow((xc, sm_y1), (xc, pred_y - 0.28))
+        ax.text(xc, pred_y, pred_labels[i], fontsize=14, ha="center", va="center",
+                color=RED_TEXT, fontweight="bold")
+
+        # y input from below
+        ax.text(xc, x_y - 0.55, y_in_labels[i], fontsize=13, ha="center", va="center",
+                color=RED_TEXT, fontweight="bold")
+        arrow((xc, x_y - 0.3), (xc, hid_y0))
+
+    # c_{i-1} / c_i small labels feeding decoder cells from lower-left
+    ax.text(dec_x[0] - 0.55, x_y - 0.05, r"$c_{i-1}$", fontsize=10.5, ha="center", va="center")
+    ax.text(dec_x[1] - 0.55, x_y - 0.05, r"$c_i$", fontsize=10.5, ha="center", va="center")
+
+    # arrow + dots continuing right of h^d_i
+    arrow((dec_x[-1] + sq_w / 2, (hid_y0 + hid_y1) / 2), (dec_x[-1] + 0.85, (hid_y0 + hid_y1) / 2))
+    ax.text(dec_x[-1] + 1.05, (hid_y0 + hid_y1) / 2, "...", fontsize=14, ha="center", va="center")
+
+    # dashed vertical separator before the shown decoder cells
+    sep_x = dec_x[0] - 0.85
+    ax.plot([sep_x, sep_x], [x_y - 1.0, pred_y + 0.55], linestyle="--", color="#888888",
+            linewidth=1.3, zorder=1)
+
+    # curved dashed feedback arrow (autoregressive), bottom of decoder
+    fb = FancyArrowPatch(
+        (dec_x[0], x_y - 0.75), (dec_x[1], x_y - 0.75),
+        connectionstyle="arc3,rad=-0.4",
+        arrowstyle="-|>", mutation_scale=11, linewidth=1.1,
+        linestyle="--", color="#888888", zorder=2,
+    )
+    ax.add_patch(fb)
+
+    # ----------------------------------------------------------------------
+    # Encoder / Decoder braces + labels
+    # ----------------------------------------------------------------------
+    _, tip_y = curly_brace(ax, enc_x[0] - sq_w, enc_x[-1] + sq_w, x_y - 0.9, depth=0.28, direction="down")
+    ax.text((enc_x[0] + enc_x[-1]) / 2, tip_y - 0.3, "Encoder", fontsize=15,
+            ha="center", va="center", fontweight="bold")
+
+    _, tip_y2 = curly_brace(ax, sep_x, dec_x[-1] + sq_w, pred_y + 0.55, depth=0.25, direction="up")
+    ax.text((sep_x + dec_x[-1]) / 2, tip_y2 + 0.3, "Decoder", fontsize=15,
+            ha="center", va="center", fontweight="bold")
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    ax.set_xlim(enc_x[0] - 2.2, dec_x[-1] + 2.0)
+    ax.set_ylim(x_y - 1.6, tip_y2 + 1.0)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
+
+
+def rnn_vs_lstm_1():
+    """
+    rnn_colah_style_diagram.py
+
+    Recreates the classic "unrolled RNN" diagram: three repeated cells (A),
+    each taking x_t as input and producing h_t as output, with the middle
+    cell expanded to show the internal routing through a tanh nonlinearity.
+    """
+    GREEN = "#DDEEC0"
+    GREEN_EDGE = "#6B8E4E"
+    BLUE = "#A9D6E8"
+    BLUE_EDGE = "black"
+    PURPLE = "#E3B8E8"
+    PURPLE_EDGE = "black"
+    YELLOW = "#F5DE9A"
+    YELLOW_EDGE = "black"
+    LINE = "black"
+
+    fig, ax = plt.subplots(figsize=(13, 6))
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    box_w, box_h = 2.6, 2.3
+    gap = 0.55
+    box_x0 = [0.0, box_w + gap, 2 * (box_w + gap)]
+    box_y0, box_y1 = 0.0, box_h
+    mid_y = (box_y0 + box_y1) / 2
+
+    circle_r = 0.42
+    x_circle_y = box_y0 - 1.15
+    h_circle_y = box_y1 + 1.15
+
+    # ----------------------------------------------------------------------
+    # Helpers
+    # ----------------------------------------------------------------------
+    def rounded_path_patch(ax, points, radius=0.18, lw=3.2, color=LINE, alpha=1.0, zorder=3):
+        verts = [points[0]]
+        codes = [Path.MOVETO]
+        n = len(points)
+        for i in range(1, n - 1):
+            p_prev = np.array(points[i - 1], dtype=float)
+            p_curr = np.array(points[i], dtype=float)
+            p_next = np.array(points[i + 1], dtype=float)
+            d1 = p_curr - p_prev
+            d2 = p_next - p_curr
+            len1, len2 = np.linalg.norm(d1), np.linalg.norm(d2)
+            r = min(radius, len1 / 2, len2 / 2) if len1 > 0 and len2 > 0 else 0
+            p_in = p_curr - d1 / len1 * r if len1 > 0 else p_curr
+            p_out = p_curr + d2 / len2 * r if len2 > 0 else p_curr
+            verts += [tuple(p_in), tuple(p_curr), tuple(p_out)]
+            codes += [Path.LINETO, Path.CURVE3, Path.CURVE3]
+        verts.append(points[-1])
+        codes.append(Path.LINETO)
+        patch = PathPatch(Path(verts, codes), facecolor="none", edgecolor=color,
+                        linewidth=lw, alpha=alpha, capstyle="round", joinstyle="round", zorder=zorder)
+        ax.add_patch(patch)
+
+
+    def arrow_marker(ax, tip, direction, size=0.16, color=LINE, zorder=4):
+        """direction: 'up', 'down', 'left', 'right'"""
+        angle = {"up": 0, "right": -90, "down": 180, "left": 90}[direction]
+        ax.plot(*tip, marker=(3, 0, angle), markersize=size * 90, color=color, zorder=zorder)
+
+
+    def straight(ax, p0, p1, lw=3.2, color=LINE, zorder=3):
+        ax.plot([p0[0], p1[0]], [p0[1], p1[1]], color=color, linewidth=lw,
+                solid_capstyle="round", zorder=zorder)
+
+    # ----------------------------------------------------------------------
+    # Faint decorative background curves inside each box (purely cosmetic)
+    # ----------------------------------------------------------------------
+    def decorative_lines(ax, x0):
+        pts_list = [
+            [(x0, box_y0 + box_h * 0.62), (x0 + box_w * 0.18, box_y0 + box_h * 0.62),
+            (x0 + box_w * 0.18, box_y0 + box_h * 0.78), (x0 + box_w * 0.75, box_y0 + box_h * 0.78)],
+            [(x0, box_y0 + box_h * 0.30), (x0 + box_w * 0.28, box_y0 + box_h * 0.30),
+            (x0 + box_w * 0.28, box_y0 + box_h * 0.15), (x0 + box_w * 0.85, box_y0 + box_h * 0.15)],
+        ]
+        for pts in pts_list:
+            rounded_path_patch(ax, pts, radius=0.15, lw=1.8, color="#BBBBBB", alpha=0.35, zorder=2)
+
+    # ----------------------------------------------------------------------
+    # Draw the three green cells
+    # ----------------------------------------------------------------------
+    for x0 in box_x0:
+        ax.add_patch(FancyBboxPatch(
+            (x0, box_y0), box_w, box_h,
+            boxstyle="round,pad=0.02,rounding_size=0.28",
+            linewidth=2.0, edgecolor=GREEN_EDGE, facecolor=GREEN, zorder=1,
+        ))
+        decorative_lines(ax, x0)
+
+    # ----------------------------------------------------------------------
+    # Left + right (collapsed) cells: "A" label, straight in/out lines
+    # ----------------------------------------------------------------------
+    for x0 in (box_x0[0], box_x0[2]):
+        xc = x0 + box_w / 2
+        ax.text(xc, mid_y, "A", fontsize=34, ha="center", va="center", fontweight="bold", zorder=3)
+
+        # x_t input (straight, no arrowhead)
+        ax.add_patch(Circle((xc, x_circle_y), circle_r, facecolor=BLUE, edgecolor=BLUE_EDGE,
+                            linewidth=2.2, zorder=4))
+        straight(ax, (xc, x_circle_y + circle_r), (xc, box_y0))
+
+        # h_t output (straight, with arrowhead)
+        ax.add_patch(Circle((xc, h_circle_y), circle_r, facecolor=PURPLE, edgecolor=PURPLE_EDGE,
+                            linewidth=2.2, zorder=4))
+        straight(ax, (xc, box_y1), (xc, h_circle_y - circle_r - 0.15))
+        arrow_marker(ax, (xc, h_circle_y - circle_r - 0.02), "up")
+
+    # horizontal pass-through arrows through/between all three boxes
+    h_line_pts = [box_x0[0] - 0.6] + [x for x0 in box_x0 for x in (x0, x0 + box_w)] + [box_x0[2] + box_w + 0.6]
+    # draw as separate straight segments with arrowheads just before each box entry
+    straight(ax, (box_x0[0] - 0.6, mid_y), (box_x0[0], mid_y))
+    for i in range(3):
+        x0 = box_x0[i]
+        x1 = x0 + box_w
+        if i < 2:
+            x_next = box_x0[i + 1]
+            straight(ax, (x1, mid_y), (x_next, mid_y))
+            arrow_marker(ax, (x_next - 0.02, mid_y), "right")
+        else:
+            straight(ax, (x1, mid_y), (x1 + 0.6, mid_y))
+            arrow_marker(ax, (x1 + 0.58, mid_y), "right")
+
+    # labels for x_{t-1}, h_{t-1}, x_{t+1}, h_{t+1}
+    xc_left = box_x0[0] + box_w / 2
+    xc_right = box_x0[2] + box_w / 2
+    ax.text(xc_left, x_circle_y, r"$x_{t-1}$", fontsize=15, ha="center", va="center", zorder=5)
+    ax.text(xc_left, h_circle_y, r"$h_{t-1}$", fontsize=15, ha="center", va="center", zorder=5)
+    ax.text(xc_right, x_circle_y, r"$x_{t+1}$", fontsize=15, ha="center", va="center", zorder=5)
+    ax.text(xc_right, h_circle_y, r"$h_{t+1}$", fontsize=15, ha="center", va="center", zorder=5)
+
+    # ----------------------------------------------------------------------
+    # Middle cell: detailed internal routing through tanh
+    # ----------------------------------------------------------------------
+    x0m = box_x0[1]
+    xcm = x0m + box_w / 2
+    xt_x = x0m + box_w * 0.28
+
+    tanh_w, tanh_h = 0.62, 0.36
+    tanh_cx = xcm + 0.05
+    tanh_y0 = box_y0 + box_h * 0.30
+    tanh_y1 = tanh_y0 + tanh_h
+
+    # x_t circle + input line rising then curving right into tanh (from below-left)
+    ax.add_patch(Circle((xt_x, x_circle_y), circle_r, facecolor=BLUE, edgecolor=BLUE_EDGE,
+                        linewidth=2.2, zorder=4))
+    ax.text(xt_x, x_circle_y, r"$x_t$", fontsize=15, ha="center", va="center", zorder=5)
+    xt_path = [
+        (xt_x, x_circle_y + circle_r),
+        (xt_x, tanh_y0 - 0.55),
+        (tanh_cx - 0.11, tanh_y0 - 0.55),
+        (tanh_cx - 0.11, tanh_y0 - 0.02),
+    ]
+    rounded_path_patch(ax, xt_path, radius=0.18)
+    arrow_marker(ax, (tanh_cx - 0.11, tanh_y0), "up")
+
+    # horizontal pass-through line entering box2, curving down into tanh (from above-left)
+    h_in_path = [
+        (x0m, mid_y),
+        (x0m + 0.55, mid_y),
+        (x0m + 0.55, tanh_y0 - 0.3),
+        (tanh_cx + 0.11, tanh_y0 - 0.3),
+        (tanh_cx + 0.11, tanh_y0 - 0.02),
+    ]
+    rounded_path_patch(ax, h_in_path, radius=0.18)
+    arrow_marker(ax, (tanh_cx + 0.11, tanh_y0), "up")
+
+    # tanh box
+    ax.add_patch(FancyBboxPatch(
+        (tanh_cx - tanh_w / 2, tanh_y0), tanh_w, tanh_h,
+        boxstyle="round,pad=0.01,rounding_size=0.06",
+        linewidth=2.0, edgecolor=YELLOW_EDGE, facecolor=YELLOW, zorder=4,
+    ))
+    ax.text(tanh_cx, tanh_y0 + tanh_h / 2, "tanh", fontsize=13, ha="center", va="center", zorder=5)
+
+    # output from tanh top -> junction on the mid_y spine
+    out_path = [(tanh_cx, tanh_y1), (tanh_cx, mid_y)]
+    rounded_path_patch(ax, out_path, radius=0.18)
+
+    # from junction: up to h_t
+    straight(ax, (tanh_cx, mid_y), (tanh_cx, h_circle_y - circle_r - 0.15))
+    arrow_marker(ax, (tanh_cx, h_circle_y - circle_r - 0.02), "up")
+    ax.add_patch(Circle((tanh_cx, h_circle_y), circle_r, facecolor=PURPLE, edgecolor=PURPLE_EDGE,
+                        linewidth=2.2, zorder=4))
+    ax.text(tanh_cx, h_circle_y, r"$h_t$", fontsize=15, ha="center", va="center", zorder=5)
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    ax.set_xlim(box_x0[0] - 1.6, box_x0[2] + box_w + 1.4)
+    ax.set_ylim(x_circle_y - circle_r - 0.4, h_circle_y + circle_r + 0.4)
     ax.set_aspect("equal")
     ax.axis("off")
 

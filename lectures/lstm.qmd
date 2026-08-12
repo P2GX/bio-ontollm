@@ -712,6 +712,193 @@ plt.plot()
 ```
 
 
+## Sentiment analysis
+
+- We will present a bare-bones implementaton of an RNN trained to perform sentiment analysis using the IMDB movie review dataset.
+- The full script is available in the course material, we will briefly review some of the salient blocks of code
+- We make use of the pytorch framework for most of the heavy lifting
+
+## Data Preparation & Tokenization
+
+* **Loading:** Fetching the IMDb movie review corpus directly via Hugging Face (`stanfordnlp/imdb`).
+* **Normalization:** Lowercasing and tokenizing reviews into word lists.
+
+```python
+from datasets import load_dataset
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+# 1. Load and merge train/test splits
+hf_dataset = load_dataset("stanfordnlp/imdb")
+df = pd.concat([pd.DataFrame(hf_dataset["train"]), 
+                pd.DataFrame(hf_dataset["test"])], ignore_index=True)
+
+# 2. Lowercase and split text into tokens
+df["text"] = df["text"].str.lower().str.split()
+train_data, test_data = train_test_split(df, test_size=0.2, random_state=42)
+```
+
+## Data Preparation & Tokenization (2) 
+* **Vocabulary Mapping**: Assign a unique integer index to every distinct word.
+* **Truncation & Padding**: Fixing sequences to a uniform length ($\text{max\_length} = 250$) for batching tensors.
+
+```python 
+Build vocabulary index (starting at 1, reserving 0 for padding)
+vocab = {word for phrase in df["text"] for word in phrase}
+word_to_idx = {word: idx for idx, word in enumerate(vocab, start=1)}
+
+max_length = 250
+def encode_and_pad(text):
+    truncated = text[:max_length]  
+    encoded = [word_to_idx[word] for word in truncated]
+    length = len(encoded)
+    padded = encoded + [0] * (max_length - length)
+    return padded, length
+
+# Apply transformation
+train_data[["text", "length"]] = train_data["text"].apply(lambda t: pd.Series(encode_and_pad(t)))
+test_data[["text", "length"]] = test_data["text"].apply(lambda t: pd.Series(encode_and_pad(t)))
+```
+
+## Custom PyTorch Datasets & DataLoaders
+
+* **Dataset Class**: Wraps pandas dataframes to serve pre-padded sequences, labels, and true lengths item-by-item as PyTorch tensors.
+* **DataLoader**: Automatically batches samples, shuffles training data, and handles parallel iteration.
+
+```python 
+import torch
+from torch.utils.data import Dataset, DataLoader
+
+class SentimentDataset(Dataset):
+    def __init__(self, data):
+        self.texts = data['text'].values. ## The movie reviews
+        self.labels = data['label'].values ## Positive (1) or negative (0) reviews?
+        self.lengths = data['length'].values ## How long (how many chars is the text)
+    
+    def __len__(self):
+        return len(self.texts)
+    
+    def __getitem__(self, idx):
+        return (torch.tensor(self.texts[idx], dtype=torch.long), 
+                torch.tensor(self.labels[idx], dtype=torch.long), 
+                torch.tensor(self.lengths[idx], dtype=torch.long))
+
+train_dataset = SentimentDataset(train_data)
+test_dataset = SentimentDataset(test_data)
+
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+```
+
+## Building the RNN Sentiment Classifier
+
+* **Architecture**: Combines an embedding layer, a recurrent layer (nn.RNN), dropout regularization, and a final linear classification layer.
+* **Sequence Packing**: Uses pack_padded_sequence to bypass zero-padding during recurrent updates, extracting the final hidden state ($h_n$).
+
+```python
+import torch.nn as nn
+
+class SentimentRNN(nn.Module):
+    def __init__(self, vocab_size, embed_size, hidden_size, output_size):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_size, padding_idx=0)
+        self.rnn = nn.RNN(embed_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+        self.dropout = nn.Dropout(0.2)
+    
+    def forward(self, x, lengths):
+        x = self.embedding(x)
+        # Skip padding processing for efficiency
+        packed = nn.utils.rnn.pack_padded_sequence(x, lengths.cpu(), batch_first=True, enforce_sorted=False)
+        _, h_n = self.rnn(packed)
+        return self.fc(self.dropout(h_n[-1]))
+
+# Instantiate model on the device (e.g., Mac MPS or CPU)
+model = SentimentRNN(len(vocab) + 1, embed_size=128, hidden_size=128, output_size=2).to(device)
+```
+
+## Training Loop & Optimization
+* **Loss & Optimizer**: Cross-Entropy Loss for multi-class classification and the Adam optimizer.
+* **Device Management & Gradient Clipping**: Pushes batches to the target device (device) and applies gradient clipping (clip_grad_norm_) to prevent exploding gradients.
+
+```python
+import torch.optim as optim
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+num_epochs = 10
+for epoch in range(num_epochs):
+    model.train()
+    epoch_loss = 0
+    for texts, labels, lengths in train_loader:
+        texts, labels = texts.to(device), labels.to(device)
+        
+        optimizer.zero_grad()
+        outputs = model(texts, lengths)
+        loss = criterion(outputs, labels)
+        
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
+        optimizer.step()
+        
+        epoch_loss += loss.item()
+    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss / len(train_loader):.4f}')
+```
+
+
+## Loss
+
+```{python}
+import matplotlib.pyplot as plt
+
+# Recorded training loss per epoch from the training loop
+losses = [0.6880, 0.6158, 0.5277, 0.4361, 0.3764, 0.2970, 0.2239, 0.1730, 0.1387, 0.1020]
+epochs = list(range(1, len(losses) + 1))
+
+# Create the plot
+plt.figure(figsize=(8, 5))
+plt.plot(epochs, losses, marker='o', linestyle='-', color='b', linewidth=2, label='Training Loss')
+
+plt.title('RNN Sentiment Classifier Training Loss', fontsize=14)
+plt.xlabel('Epoch', fontsize=12)
+plt.ylabel('Loss (Cross-Entropy)', fontsize=12)
+plt.xticks(epochs)
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+```
+
+
+## Model Evaluation & Accuracy
+
+* **Evaluation Mode (model.eval())**: Disables layers like Dropout during testing so evaluation is deterministic.
+* **No-Gradient Context (torch.no_grad())**: Saves memory and speeds up computation by disabling gradient tracking since we aren't updating weights.
+* **Batch Accuracy Calculation**: Compares predicted classes against ground-truth labels to compute overall test set accuracy.
+
+```python
+model.eval()
+correct = 0
+total = 0
+with torch.no_grad():
+    for texts, labels, lengths in test_loader:
+        texts = texts.to(device)
+        labels = labels.to(device)
+        outputs = model(texts, lengths)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+accuracy = 100 * correct / total
+print(f'Accuracy: {accuracy:.2f}%')
+```
+
+- Accuracy: 73.94% (as compared to the 50% we would have expected by chance, but much worse than the training accuracy of 97.85% - thus, we are overfitting! In the practical, we will discuss some methods for reducing overfitting)
+
+
+
 ## Overview: RNNs and LSTMs
 
 ::: {.callout-note title="Game plan"}
@@ -765,14 +952,53 @@ Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the con
 ## Long Short-Term Memory Networks (LSTMs) {#part-3}
 
 - The key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network. 
-- LSTMs divide the context management problem into two subproblems: r
+- A challenge for RNNs is to keep track of information from distant parts of the sentence:
 
-  * Remove information no longer needed from the context,
-  * Add information likely to be needed for later decision making
+> The rates the phone company was increasing were already expensive
+
+- It is easy to relate "was" to "company" because "was" comes immediately after "company"
+- It is harder to relate "were" to "rates" because there are five other intervening words
+- The hidden state of the RNN is being asked to perform two things: inform the current output and to update and carry forward the information needed for future outputs
+- LSTMS attempt to address the challenge by adding a context layer to the existing hidden layer and by introducing **gates** to control flow of information
+
+::: { .tiny-credit}
+Hochreiter, S. and J. Schmidhuber. 1997. Long short-term
+memory. Neural Computation, 9(8):1735–1780.
+:::
+
+## LSTMS vs RNNs
+
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import rnn_vs_lstm_1
+
+rnn_vs_lstm_1()
+plt.plot()
+```
+
+- All recurrent neural networks have the form of a chain of repeating modules. 
+- In standard RNNs, this  module has a simple structure with a single tanh layer and passes on the hidden state
+
+
+## LSTMS vs RNNs
+
+- TODO similar graphic for LSTM
+
+- In contrast, LSTM modules have four intacting structures and are connected by the cell state in addition to the hidden state
+
+
+## LSTMS 
+
+- Let's review the main ideas of the LSTM step by step
 
 ![](./img/lstm.png){width=40% fig-align="center"}
 
-- Let's go through step by step
 
 ## LSTM Gates
 
@@ -782,26 +1008,44 @@ LSTMs have [three gates]{style="color: green; font-weight: bold;"}:
 - add gate
 - output gate
 
-Each gateconsists of a feedforward layer, followed by a sigmoid activation function, followed by a pointwise
-multiplication with the layer being gated. 
+Each gate consists of 
+
+  1. feedforward layer
+  2. followed by a sigmoid activation function
+  3. followed by a pointwise multiplication with the layer being gated. 
 
 - The sigmoid activation function tends to push its outputs to either 0 or 1. 
 - Combining this with a pointwise multiplication has an effect similar to that of a **binary mask**. 
 - Values in the layer being gated that align with values near 1 in the mask are **passed through**
 nearly unchanged; values corresponding to lower values are essentially **erased**.
 
+
+
+
 ## Forget gate
 
-![](./img/lstm.png){width=20% fig-align="center"}
+::: {.r-stack}
+<div style="position: relative; width: 50%; margin: auto;">
+  <!-- The Base Image fills the container width -->
+  <img src="./img/lstm.png" style="width: 100%; display: block;">
 
+  <!-- Highlight Box (Adjust top, left, width, height as needed) -->
+  <div style="position: absolute; 4px solid #1a73e8; 
+       background-color: rgba(26, 115, 232, 0.25); border-radius: 8px; z-index: 999;
+       top: 24%; left: 20%; width: 10%; height: 35%;">
+  </div>
+</div>
+:::
+
+::: { .small-text}
 - The forget fate deletes information from the context that is no longer relevant 
 - It computes a weighted sum of the previous state’s hidden layer and the current input and passes that through a sigmoid. 
 - This mask is then multiplied element-wise
 by the context vector to remove the information from context that is no longer required. 
-- Element-wise multiplication of two vectors (represented by the operator ,
-and sometimes called the Hadamard product) is the vector of the same dimension
-as the two input vectors, where each element i is the product of element i in the two
+- Element-wise multiplication of two vectors, represented by the $\odot$ 
+operator,^[called the Hadamard product] results in a vector where  element $i$ is the product of element $i$ in the two
 input vectors:
+:::
 
 $$
 \begin{align*}
@@ -812,34 +1056,95 @@ $$ {#eq-forget-gate}
 
 ## Cell input
 
-![](./img/lstm.png){width=20% fig-align="center"}
+
+::: {.r-stack}
+<div style="position: relative; width: 50%; margin: auto;">
+  <!-- The Base Image fills the container width -->
+  <img src="./img/lstm.png" style="width: 100%; display: block;">
+
+  <!-- Highlight Box (Adjust top, left, width, height as needed) -->
+  <div style="position: absolute; 4px solid #1a73e8; 
+       background-color: rgba(26, 115, 232, 0.25); border-radius: 8px; z-index: 999;
+       top: 34%; left: 30%; width: 10%; height: 25%;">
+  </div>
+</div>
+:::
+
 
 - Then we compute the actual information we need to extract from the previous hidden state and 
-current inputs—
+current inputs
 
 $$
 \mathbf{g}_t = \tanh(\mathbf{U}_g\mathbf{h}_{t-1} + \mathbf{W}_g\mathbf{x}_t)
-$$
-
+$$ {#eq-lstm-info-to-extract}
+- This is the same as with the vanilla RNN
 
 ## Add gate 
 Next, we generate the mask for the add gate to select the information to add to the
 current context.
 
+::: {.r-stack}
+<div style="position: relative; width: 50%; margin: auto;">
+  <!-- The Base Image fills the container width -->
+  <img src="./img/lstm.png" style="width: 100%; display: block;">
+
+  <!-- Highlight Box (Adjust top, left, width, height as needed) -->
+  <div style="position: absolute; 4px solid #1a73e8; 
+       background-color: rgba(26, 115, 232, 0.25); border-radius: 8px; z-index: 999;
+       top: 24%; left: 40%; width: 10%; height: 35%;">
+  </div>
+</div>
+:::
+
 $$
 \begin{align*}
-X\end{align*}
+\mathbf{i}_t &= \sigma(\mathbf{U}\mathbf{h}_{t-1} + \mathbf{W}_i\mathbf{x}_{t}) &\quad  \\
+\mathbf{j}_t &= \mathbf{g}_t \odot \mathbf{i}_t &\quad \text{See previous slide} \\
+\mathbf{c}_t &= \mathbf{j}_t + \mathbf{k}_t &\quad \text{add to context vector} \\
+\end{align*}
 $$ {#eq-add-gate}
 
 
-it = σ(Uiht−1 +Wixt) (13.23)
-jt = gt it
-(13.24)
-Next, we add this to the modified context vector to get our new context vector.
-ct = jt +k
+
+## Output gate 
+Next, we generate the mask for the add gate to select the information to add to the
+current context.
+
+::: {.r-stack}
+<div style="position: relative; width: 50%; margin: auto;">
+  <!-- The Base Image fills the container width -->
+  <img src="./img/lstm.png" style="width: 100%; display: block;">
+
+  <!-- Highlight Box (Adjust top, left, width, height as needed) -->
+  <div style="position: absolute; 4px solid #1a73e8; 
+       background-color: rgba(26, 115, 232, 0.25); border-radius: 8px; z-index: 999;
+       top: 24%; left: 50%; width: 20%; height: 35%;">
+  </div>
+</div>
+:::
+
+- The output gate  decides what information is required for the current hidden state
+
+$$
+\begin{align*}
+\mathbf{o}_t &= \sigma(\mathbf{U}\mathbf{o}_{t-1} + \mathbf{W}_o\mathbf{x}_{t})   \\
+\mathbf{h}_t &= \mathbf{o}_t \odot \tanh(\mathbf{c}_t)
+\end{align*}
+$$ {#eq-output-gate}
 
 
+## LSTM
 
+  <img src="./img/lstm.png" style="width: 50%; display: block;">
+
+In Summary
+
+- an LSTM accepts as input the context layer ($\mathbf{c}_{t-1}$)
+ and hidden layer ($\mathbf{h}_{t-1}$) from the previous time step, along with the current input
+vector ($\mathbf{x}_{t}$). 
+- It generates $\mathbf{c}_{t}$ and $\mathbf{h}_{t}$ as output that is passed to the next step
+- The hidden state $\mathbf{h}_{t}$ is used to generate the output of the network similar to an RNN
+- LSTMs can be used as drop-in replacements for RNNs in many contexts and often perform better
 
 ## Overview: RNNs and LSTMs
 
@@ -942,9 +1247,9 @@ plt.plot()
 
 $$
 \begin{align}
-\mathbf{e}_t &= \mathbf{E}\mathbf{x}_t & \quad \text{Retrieve the embedding for word } \mathbf{x}_t\\
-\mathbf{h}_t &= g(\mathbf{U}\mathbf{h}_{t-1} + \mathbf{E}\mathbf{e}_t)  & \quad \text{Compute new hidden layer } \\
-\hat{\mathbf{y}_t} &= \mathrm{softmax}(\mathbf{EV}\mathbf{h}_t) & \quad \text{generate  output and pass through softmax} \\
+\mathbf{e}_t &= \mathbf{E}\mathbf{x}_t & \quad \text{Retrieve embedding} \\
+\mathbf{h}_t &= g(\mathbf{U}\mathbf{h}_{t-1} + \mathbf{E}\mathbf{e}_t)  & \quad \text{new hidden layer } \\
+\hat{\mathbf{y}_t} &= \mathrm{softmax}(\mathbf{EV}\mathbf{h}_t) & \quad \text{generate  output} \\
 \end{align}
 $$
 
@@ -955,7 +1260,7 @@ $$
 P(w_{t+1}| w_1,\ldots, w_t ) = \hat{\mathbf{y}_t}[k]
 $$
 
-- $\hat{\mathbf{y}$ is a vector with one field for every word in the vocabulary
+- $\hat{\mathbf{y}}$ is a vector with one field for every word in the vocabulary
 - The output is then the highest-probability word 
 
 :::
@@ -993,6 +1298,233 @@ $$
 L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_t}[w]
 $$
 
+## Training 
+
+:::: {.columns}
+
+::: {.column width="70%"}
+
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import rnn_next_word
+
+rnn_next_word(figsize=(10,6))
+plt.plot()
+```
+::: {.tiny-credit}
+figure adapted from Jurafsky and Martin (2026) Speech and Language Processing
+:::
+
+:::
+::: {.column width="25%"}
+
+::: {.small-text}
+- At each position $t$, take correct word $w_t$ and hidden state $h_t$, which encodes information from $w_1,\ldots,w_{t-1}$
+- Compute probability distribution over possible next words
+- Compute loss for the next token 
+- Use the next correct word (not the predicted word - called **teacher forcing**) for next position
+- Calculate total loss as average
+- Perform backpropagation through time
+:::
+
+
+
+
+:::
+::::
+
+
+
+## Generative RNNs
+
+:::: {.columns}
+
+::: {.column width="70%"}
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import rnn_autoregression
+
+rnn_autoregression()
+plt.plot()
+```
+
+::: {.tiny-credit}
+figure adapted from Jurafsky and Martin (2026) Speech and Language Processing
+:::
+
+:::
+::: {.column width="25%"}
+
+
+::: {.small-text}
+- RNN-based language models can also be used to generate text (Generative AI)
+- **Autoregressive generation**: Iteratively sample the next work based on previous words
+- *This was one of the inspirations for the autoregressive approach used by LLMs*
+- Algorithm:
+  * Sample a word from the softmax distribution. 
+  * Use the start of sentence marker **`<s>`** as the first input 
+  * The word embedding for the current word is used as input to the network to choose the word for the next time step 
+  * The output word is used as input for the next step 
+  * Continue until end of sentence marker **`</s>`** is sampled
+:::
+
+:::
+::::
+
+
+# The Encoder-Decoder Model 
+
+- RNNs were among early examples of the **encoder-decoder model**
+  - encode an input sequence of length $n$
+  - aim to output a sequence of length $m$, where $n$ and $m$ may be distinct
+  - input and output sequences do not necessarily align word-to-word
+- A kind of sequence-to-sequence network
+- Applications:
+  - summarization
+  - question answering
+  - machine translation
+
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import encode_decode
+
+encode_decode()
+plt.plot()
+```
+
+# The Encoder-Decoder Model 
+
+- Encoder decoder models have three major components
+
+::: {.small-text}
+  - Encoder: transform an input sequence, $x_{1:n}$ into a corresponding sequence of contextualized representations, $h_{1:n}$.
+    - RNNs, LSTMs, transformers, etc., can be used as encoders
+  - Context: A vector $c$ that is a function of $h_{1:n}$ and represents the "meaning" of the input to the decoder 
+  - Decoder: takes the context $c$ and generates a sequence of hidden states $h_{1:m}$ that can be used to generate a sequence of output states $y_{1:m}$
+:::
+- We can adapt the autoregressive RNN
+- Recall that the hidden state is calculated as $\mathbf{h}_t = g(\mathbf{h}_{t-1},\mathbf{x}_t)$ and the output is calculated as $\mathbf{y}_t = \mathrm{softmax}(\mathbf{h}_{t})$
+- For training we add a sentence separation marker after the source text (language 1), and then add the target text (language 2)
+
+> Ich bin ein Berliner `<s>` I am a doughnut
+
+
+# The Encoder-Decoder Model 
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import doughnut
+
+doughnut()
+plt.plot()
+```
+
+# The Encoder-Decoder Model 
+
+- Note that the order of the words does not have to be the same
+
+> Ich habe ein tolles Buch zu Ende gelesen! `<s>` I finished a great book!
+
+- Simplest version of the decoder
+- Take the context vector (the last hidden state of the encoder): $c$
+- Use the context vector as its own first hidden state: $\mathbf{h}_{0}^d = \mathbf{c} = \mathbf{h}_n^{e}$
+- Generate outputs autoregressively until end of sentence marker is reached
+- There are many more sophisticated architectures. For insance, we can make the context vector available at each decoding timestep
+
+$$
+\begin{align}
+\mathbf{c} &= \mathbf{h}_n^{e} \\
+ \mathbf{h}_0^{d} &= \mathbf{c}\\
+\mathbf{h}_{0}^d &= g(\mathbf{h}_{t-1}^d,\hat{\mathbf{y}}_{t-1}, \mathbf{c})\\
+\hat{\mathbf{y}}_{t} &= \mathrm{softmax}(\mathbf{h}_{t}^d)
+\end{align}
+$$
+
+
+## Attention
+
+- In the encoder decoder model as described above, the context $\mathbf{c}$ must represent **everything** about the input sequence
+- Information present at the beginning of the input text may not be well represented in the context vector
+- The **attention mechanism** was designed as a way to extract information from **all hidden states** of the input  
+- With attention, the context vector is no longer equal to the final hidden state of the input, instead it is dynamically calculated as a function of the hidden states of the encoder. 
+
+$$
+\mathbf{c}_i = f(\mathbf{h}_1^{e},\mathbf{h}_2^{e}, \ldots, \mathbf{h}_n^{e})
+$$
+
+- The goal is for the  weights to focus on (‘attend to’) a particular part of
+the source text that is relevant for the token $i$ that the decoder is currently producing.
+- Note that the context vector is now generated anew for each decoding step $i$, i.e., we have $\mathbf{c}_i$ instead of the same $\mathbf{c}$ for all steps.
+
+
+## Attention: Relevance?
+
+- In order to compute $\mathbf{c}_i$, our goal is to determine how *relevant* each encoder hidden state is for the current decoder step.
+- That is, we want to have a function for the relevance of encoder state $j$ for decoding step $i$
+$$
+\mathbf{relevance}(i, j) = f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^e)
+$$
+- The simplest function is the **dot product**, which equates relevance with vector similarity
+$$
+f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^de) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e
+$$
+- We calculate one such score for each of the encoder states and use softmax to convert into a probability distribution
+$$
+\begin{align}
+\alpha_{ij} &= \mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)\\
+&= \dfrac{\exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e))}
+{\sum_k \exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{k}^e))}
+\end{align}
+$$
+- $\mathbf{c}_i$ is then calculated as the weighted average over these scores
+$$
+\mathbf{c}_i = \sum_j \alpha_{ij}\mathbf{h}_{j}^e
+$$
+
+## Attention: 
+
+- $\mathbf{c}_i$ thus takes information from the entire encoder into account and is dynamically updated at each step of decoding
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import attention
+
+attention(figsize=(12,6))
+plt.plot()
+```
+
+## Attention
+
+- The dot product is a relatively simple way of calculating an attention score
+- We will return to this topic in the lectures about transformers
 
 ## Sources
 
