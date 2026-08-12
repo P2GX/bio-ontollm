@@ -52,16 +52,24 @@ We will go over the algorithm in detail, because it is an excellent preparation 
 
 ## One hot for nucleotides
 
-|Position / Base|A|C|G|T|
-| :--- | :---: | :---: | :---: | :---: | 
-| 1: A|1|0|0|0| 
-| 2: C|0|1|0|0| 
-| 3: G|0|0|1|0| 
-| 4: T|0|0|0|1| 
-| 5: A|1|0|0|0| 
-| 6: A|1|0|0|0| 
-| 7: T|0|0|0|1| 
-| 8: C|0|1|0|0| 
-| 9: C|0|1|0|0| 
-| 10: T|0|0|0|1| 
-| 11: A|1|0|0|0| 
+![](./img/onehot-bases.jpg){width=40% fig-align="center"}
+
+::: {.tiny-credit}
+Image adapted from https://jalammar.github.io/illustrated-word2vec/
+:::
+
+
+## Semantic vector space of cars
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from embed_plots import cars_pca
+
+cars_pca()
+plt.plot()
+```
