@@ -1,0 +1,67 @@
+---
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #8: Embeddings and tokens"
+author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
+jupyter: python3
+format: 
+  revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    slide-number: true
+    show-slide-number: all
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.1
+    embed-resources: true
+    transition: fade
+    background-transition: convex
+    controls: true
+---
+
+## Introduction {#part-1}
+
+Logistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.
+
+- Email analysis (Is an email spam or not?)
+- Sentiment analysis (is a movie review positive or negative?)
+- Medical diagnostics (is a given diagnosis present or absent?)
+
+::: {.callout-note appearance="simple"}
+We will go over the algorithm in detail, because it is an excellent preparation for understanding neural networks.
+:::
+
+![](./img/logistic_regression.png){fig-align="center"}
+
+## One-hot encoding
+
+
+| Word | brown | dog | fox | jumps | lazy | over | quick | the |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **the** | 0 | 0 | 0 | 0 | 0 | 0 | 0 | <span style="color:blue">**1**</span> |
+| **quick** | 0 | 0 | 0 | 0 | 0 | 0 | <span style="color:blue">**1**</span> | 0 |
+| **brown** | <span style="color:blue">**1**</span> | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| **fox** | 0 | 0 | <span style="color:blue">**1**</span> | 0 | 0 | 0 | 0 | 0 |
+| **jumps** | 0 | 0 | 0 | <span style="color:blue">**1**</span> | 0 | 0 | 0 | 0 |
+| **over** | 0 | 0 | 0 | 0 | 0 | <span style="color:blue">**1**</span> | 0 | 0 |
+| **the** | 0 | 0 | 0 | 0 | 0 | 0 | 0 | <span style="color:blue">**1**</span> |
+| **lazy** | 0 | 0 | 0 | 0 | <span style="color:blue">**1**</span> | 0 | 0 | 0 |
+| **dog** | 0 | <span style="color:blue">**1**</span> | 0 | 0 | 0 | 0 | 0 | 0 |
+
+## One hot for nucleotides
+
+|Position / Base|A|C|G|T|
+| :--- | :---: | :---: | :---: | :---: | 
+| 1: A|1|0|0|0| 
+| 2: C|0|1|0|0| 
+| 3: G|0|0|1|0| 
+| 4: T|0|0|0|1| 
+| 5: A|1|0|0|0| 
+| 6: A|1|0|0|0| 
+| 7: T|0|0|0|1| 
+| 8: C|0|1|0|0| 
+| 9: C|0|1|0|0| 
+| 10: T|0|0|0|1| 
+| 11: A|1|0|0|0| 

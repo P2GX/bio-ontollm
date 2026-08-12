@@ -988,7 +988,18 @@ plt.plot()
 
 ## LSTMS vs RNNs
 
-- TODO similar graphic for LSTM
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from rnn_plots import rnn_vs_lstm_2
+
+rnn_vs_lstm_2()
+plt.plot()
+```
 
 - In contrast, LSTM modules have four intacting structures and are connected by the cell state in addition to the hidden state
 

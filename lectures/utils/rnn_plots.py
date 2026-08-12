@@ -1784,3 +1784,230 @@ def rnn_vs_lstm_1():
     ax.axis("off")
 
     plt.tight_layout()
+
+
+def rnn_vs_lstm_2():
+    """
+    lstm_colah_style_diagram.py
+
+    Recreates the classic "unrolled LSTM" diagram: three repeated cells (A),
+    each with a cell-state line (top) and hidden-state line (bottom) running
+    through, and the middle cell expanded to show the forget/input/output
+    gates, candidate value, and pointwise operations.
+    """
+
+    GREEN = "#DDEEC0"
+    GREEN_EDGE = "#6B8E4E"
+    BLUE = "#A9D6E8"
+    PURPLE = "#E3B8E8"
+    YELLOW = "#F5DE9A"
+    PINK = "#F3C9D6"
+    LINE = "black"
+
+    fig, ax = plt.subplots(figsize=(15, 7))
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    box_w, box_h = 3.4, 2.7
+    gap = 0.55
+    box_x0 = [0.0, box_w + gap, 2 * (box_w + gap)]
+    top_y = box_h * 0.72     # cell-state line
+    bot_y = box_h * 0.32     # hidden-state line
+
+    circle_r = 0.42
+    x_circle_y = -1.15
+    h_circle_y = box_h + 1.15
+
+    # ----------------------------------------------------------------------
+    # Generic helpers (shared style with the RNN version)
+    # ----------------------------------------------------------------------
+    def rounded_path_patch(ax, points, radius=0.15, lw=3.0, color=LINE, alpha=1.0, zorder=3):
+        verts = [points[0]]
+        codes = [Path.MOVETO]
+        n = len(points)
+        for i in range(1, n - 1):
+            p_prev = np.array(points[i - 1], dtype=float)
+            p_curr = np.array(points[i], dtype=float)
+            p_next = np.array(points[i + 1], dtype=float)
+            d1 = p_curr - p_prev
+            d2 = p_next - p_curr
+            len1, len2 = np.linalg.norm(d1), np.linalg.norm(d2)
+            r = min(radius, len1 / 2, len2 / 2) if len1 > 0 and len2 > 0 else 0
+            p_in = p_curr - d1 / len1 * r if len1 > 0 else p_curr
+            p_out = p_curr + d2 / len2 * r if len2 > 0 else p_curr
+            verts += [tuple(p_in), tuple(p_curr), tuple(p_out)]
+            codes += [Path.LINETO, Path.CURVE3, Path.CURVE3]
+        verts.append(points[-1])
+        codes.append(Path.LINETO)
+        ax.add_patch(PathPatch(Path(verts, codes), facecolor="none", edgecolor=color,
+                                linewidth=lw, alpha=alpha, capstyle="round",
+                                joinstyle="round", zorder=zorder))
+
+
+    def arrow_marker(ax, tip, direction, size=0.15, color=LINE, zorder=5):
+        angle = {"up": 0, "right": -90, "down": 180, "left": 90}[direction]
+        ax.plot(*tip, marker=(3, 0, angle), markersize=size * 90, color=color, zorder=zorder)
+
+
+    def straight(ax, p0, p1, lw=3.0, color=LINE, zorder=3):
+        ax.plot([p0[0], p1[0]], [p0[1], p1[1]], color=color, linewidth=lw,
+                solid_capstyle="round", zorder=zorder)
+
+
+    def op_circle(ax, x, y, symbol, r=0.14, zorder=4):
+        ax.add_patch(Circle((x, y), r, facecolor=PINK, edgecolor="black", linewidth=1.6, zorder=zorder))
+        ax.text(x, y, symbol, fontsize=13, ha="center", va="center", zorder=zorder + 1)
+
+
+    def gate_box(ax, x, y, label, w=0.5, h=0.34, zorder=4):
+        ax.add_patch(FancyBboxPatch((x - w / 2, y - h / 2), w, h,
+                                    boxstyle="round,pad=0.01,rounding_size=0.05",
+                                    linewidth=1.6, edgecolor="black", facecolor=YELLOW, zorder=zorder))
+        ax.text(x, y, label, fontsize=12, ha="center", va="center", zorder=zorder + 1)
+
+
+    def decorative_lines(ax, x0):
+        pts_list = [
+            [(x0, top_y), (x0 + box_w * 0.15, top_y), (x0 + box_w * 0.15, top_y + 0.02),
+            (x0 + box_w * 0.55, top_y + 0.02)],
+            [(x0, bot_y), (x0 + box_w * 0.35, bot_y), (x0 + box_w * 0.35, bot_y - 0.35),
+            (x0 + box_w * 0.55, bot_y - 0.35)],
+        ]
+        for pts in pts_list:
+            rounded_path_patch(ax, pts, radius=0.12, lw=1.6, color="#BBBBBB", alpha=0.4, zorder=2)
+        ax.text(x0 + box_w * 0.72, top_y * 0.62, "tanh", fontsize=10, ha="center", va="center",
+                color="#BBBBBB", alpha=0.6, zorder=2)
+
+    # ----------------------------------------------------------------------
+    # Draw the three green cells
+    # ----------------------------------------------------------------------
+    for x0 in box_x0:
+        ax.add_patch(FancyBboxPatch(
+            (x0, 0), box_w, box_h,
+            boxstyle="round,pad=0.02,rounding_size=0.28",
+            linewidth=2.0, edgecolor=GREEN_EDGE, facecolor=GREEN, zorder=1,
+        ))
+        decorative_lines(ax, x0)
+
+    # ----------------------------------------------------------------------
+    # Left + right (collapsed) cells: "A" label, straight top/bottom lines
+    # ----------------------------------------------------------------------
+    for x0 in (box_x0[0], box_x0[2]):
+        xc = x0 + box_w / 2
+        ax.text(xc, box_h * 0.42, "A", fontsize=36, ha="center", va="center", fontweight="bold", zorder=3)
+
+        ax.add_patch(Circle((xc, x_circle_y), circle_r, facecolor=BLUE, edgecolor="black", linewidth=2.2, zorder=4))
+        straight(ax, (xc, x_circle_y + circle_r), (xc, 0))
+
+        ax.add_patch(Circle((xc, h_circle_y), circle_r, facecolor=PURPLE, edgecolor="black", linewidth=2.2, zorder=4))
+        straight(ax, (xc, box_h), (xc, h_circle_y - circle_r - 0.15))
+        arrow_marker(ax, (xc, h_circle_y - circle_r - 0.02), "up")
+
+    # top-line (cell state) and bottom-line (hidden state) pass-through
+    for y in (top_y, bot_y):
+        straight(ax, (box_x0[0] - 0.6, y), (box_x0[0], y))
+        for i in range(3):
+            x0 = box_x0[i]
+            x1 = x0 + box_w
+            if i < 2:
+                x_next = box_x0[i + 1]
+                straight(ax, (x1, y), (x_next, y))
+                arrow_marker(ax, (x_next - 0.02, y), "right")
+            else:
+                straight(ax, (x1, y), (x1 + 0.6, y))
+                arrow_marker(ax, (x1 + 0.58, y), "right")
+
+    # labels
+    xc_left, xc_right = box_x0[0] + box_w / 2, box_x0[2] + box_w / 2
+    ax.text(xc_left, x_circle_y, r"$x_{t-1}$", fontsize=15, ha="center", va="center", zorder=5)
+    ax.text(xc_left, h_circle_y, r"$h_{t-1}$", fontsize=15, ha="center", va="center", zorder=5)
+    ax.text(xc_right, x_circle_y, r"$x_{t+1}$", fontsize=15, ha="center", va="center", zorder=5)
+    ax.text(xc_right, h_circle_y, r"$h_{t+1}$", fontsize=15, ha="center", va="center", zorder=5)
+
+    # ----------------------------------------------------------------------
+    # Middle cell: detailed LSTM internals
+    # ----------------------------------------------------------------------
+    x0m = box_x0[1]
+
+    g1_x, g2_x, g3_x, g4_x = x0m + 0.85, x0m + 1.30, x0m + 1.75, x0m + 2.65
+    gate_y = 0.62
+    spine_y = 0.20
+
+    mult1_x = g1_x
+    plus_x = g1_x + (g2_x - g1_x) * 0.5 + 0.35   # roughly above the E node
+    E_x, E_y = (g2_x + g3_x) / 2, gate_y + 0.75
+    tanh2_x, tanh2_y = plus_x + 0.62, top_y - 0.22
+    mult3_x, mult3_y = g4_x, gate_y + 1.15
+
+    # --- gate boxes ---
+    gate_box(ax, g1_x, gate_y, r"$\sigma$")
+    gate_box(ax, g2_x, gate_y, r"$\sigma$")
+    gate_box(ax, g3_x, gate_y, "tanh")
+    gate_box(ax, g4_x, gate_y, r"$\sigma$")
+
+    # --- bottom spine feeding the gates (h_{t-1} + x_t merged) ---
+    spine_left = x0m
+    spine_pts = [(spine_left, bot_y), (spine_left + 0.35, bot_y), (spine_left + 0.35, spine_y),
+                (g4_x, spine_y)]
+    rounded_path_patch(ax, spine_pts, radius=0.15)
+    for gx in (g1_x, g2_x, g3_x, g4_x):
+        straight(ax, (gx, spine_y), (gx, gate_y - 0.17))
+        arrow_marker(ax, (gx, gate_y - 0.19), "up", size=0.11)
+
+    # x_t merges into the spine from below
+    xt_x = spine_left + 0.35
+    ax.add_patch(Circle((xt_x, x_circle_y), circle_r, facecolor=BLUE, edgecolor="black", linewidth=2.2, zorder=4))
+    ax.text(xt_x, x_circle_y, r"$x_t$", fontsize=15, ha="center", va="center", zorder=5)
+    straight(ax, (xt_x, x_circle_y + circle_r), (xt_x, spine_y))
+
+    # --- gate outputs feeding the pointwise ops ---
+    straight(ax, (g1_x, gate_y + 0.17), (mult1_x, top_y - 0.14))
+    arrow_marker(ax, (mult1_x, top_y - 0.16), "up", size=0.11)
+
+    rounded_path_patch(ax, [(g2_x, gate_y + 0.17), (g2_x, E_y - 0.3), (E_x - 0.02, E_y - 0.16)], radius=0.12)
+    arrow_marker(ax, (E_x - 0.02, E_y - 0.15), "up", size=0.10)
+    rounded_path_patch(ax, [(g3_x, gate_y + 0.17), (g3_x, E_y - 0.3), (E_x + 0.02, E_y - 0.16)], radius=0.12)
+    arrow_marker(ax, (E_x + 0.02, E_y - 0.15), "up", size=0.10)
+
+    straight(ax, (E_x, E_y + 0.14), (plus_x, top_y - 0.14))
+    arrow_marker(ax, (plus_x, top_y - 0.16), "up", size=0.11)
+
+    rounded_path_patch(ax, [(g4_x, gate_y + 0.17), (g4_x, mult3_y - 0.25), (mult3_x, mult3_y - 0.16)], radius=0.12)
+    arrow_marker(ax, (mult3_x, mult3_y - 0.15), "up", size=0.10)
+
+    # --- top line (cell state): entry -> ×(forget) -> +(add) -> exit, with tanh tap ---
+    straight(ax, (x0m, top_y), (mult1_x - 0.14, top_y))
+    op_circle(ax, mult1_x, top_y, r"$\times$")
+    straight(ax, (mult1_x + 0.14, top_y), (plus_x - 0.14, top_y))
+    op_circle(ax, plus_x, top_y, "+")
+    straight(ax, (plus_x + 0.14, top_y), (x0m + box_w, top_y))
+
+    op_circle(ax, E_x, E_y, r"$\times$")
+
+    # tanh tap from top line down to tanh2 oval
+    straight(ax, (tanh2_x, top_y), (tanh2_x, tanh2_y + 0.16))
+    ax.add_patch(Ellipse((tanh2_x, tanh2_y), 0.62, 0.32, facecolor=PINK, edgecolor="black", linewidth=1.6, zorder=4))
+    ax.text(tanh2_x, tanh2_y, "tanh", fontsize=11, ha="center", va="center", zorder=5)
+
+    # tanh2 -> mult3
+    rounded_path_patch(ax, [(tanh2_x, tanh2_y - 0.16), (tanh2_x, mult3_y + 0.02), (mult3_x - 0.02, mult3_y + 0.14)], radius=0.1)
+    op_circle(ax, mult3_x, mult3_y, r"$\times$")
+
+    # mult3 -> h_t (crosses the top line visually) and -> bottom-line exit
+    straight(ax, (mult3_x, mult3_y + 0.14), (mult3_x, h_circle_y - circle_r - 0.15), zorder=6)
+    arrow_marker(ax, (mult3_x, h_circle_y - circle_r - 0.02), "up", zorder=6)
+    ax.add_patch(Circle((mult3_x, h_circle_y), circle_r, facecolor=PURPLE, edgecolor="black", linewidth=2.2, zorder=4))
+    ax.text(mult3_x, h_circle_y, r"$h_t$", fontsize=15, ha="center", va="center", zorder=5)
+
+    rounded_path_patch(ax, [(mult3_x, mult3_y - 0.14), (mult3_x, bot_y), (x0m + box_w, bot_y)], radius=0.15)
+
+    # ----------------------------------------------------------------------
+    # Layout
+    # ----------------------------------------------------------------------
+    ax.set_xlim(box_x0[0] - 1.5, box_x0[2] + box_w + 1.3)
+    ax.set_ylim(x_circle_y - circle_r - 0.4, h_circle_y + circle_r + 0.4)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    plt.tight_layout()
