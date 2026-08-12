@@ -1787,21 +1787,21 @@ Figure 3: RNN vs Encoder
 <h2>Understanding the PE Matrix (1)</h2>
 <p>A positional encoding has the same dimension as an embedding, and calculates a value for each dimension using the sine and cosine formulas.</p>
 <div class="small-table">
-<div id="da7252a0" class="cell" data-execution_count="2">
+<div id="8c799177" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display" data-execution_count="2">
 <style type="text/css">
-#T_11669 th {
+#T_cf40c th {
 background-color: #f2f2f2;
 font-weight: bold;
 }
-#T_11669 td:nth-child(1) {
+#T_cf40c td:nth-child(1) {
 background-color: white;
 font-weight: 500;
 }
-#T_11669 td:nth-child(2) {
+#T_cf40c td:nth-child(2) {
 background-color: #f9f9f9;
 }
-#T_11669_row0_col0, #T_11669_row0_col1, #T_11669_row0_col2, #T_11669_row0_col3, #T_11669_row0_col4, #T_11669_row0_col5, #T_11669_row1_col0, #T_11669_row1_col1, #T_11669_row1_col2, #T_11669_row1_col3, #T_11669_row1_col4, #T_11669_row1_col5, #T_11669_row2_col0, #T_11669_row2_col1, #T_11669_row2_col2, #T_11669_row2_col3, #T_11669_row2_col4, #T_11669_row2_col5, #T_11669_row3_col0, #T_11669_row3_col1, #T_11669_row3_col2, #T_11669_row3_col3, #T_11669_row3_col4, #T_11669_row3_col5 {
+#T_cf40c_row0_col0, #T_cf40c_row0_col1, #T_cf40c_row0_col2, #T_cf40c_row0_col3, #T_cf40c_row0_col4, #T_cf40c_row0_col5, #T_cf40c_row1_col0, #T_cf40c_row1_col1, #T_cf40c_row1_col2, #T_cf40c_row1_col3, #T_cf40c_row1_col4, #T_cf40c_row1_col5, #T_cf40c_row2_col0, #T_cf40c_row2_col1, #T_cf40c_row2_col2, #T_cf40c_row2_col3, #T_cf40c_row2_col4, #T_cf40c_row2_col5, #T_cf40c_row3_col0, #T_cf40c_row3_col1, #T_cf40c_row3_col2, #T_cf40c_row3_col3, #T_cf40c_row3_col4, #T_cf40c_row3_col5 {
 text-align: left;
 padding: 2px;
 font-size: 0.5;
@@ -1810,49 +1810,49 @@ line-height: 1.1;
 }
 </style>
 
-<table id="T_11669" class="caption-top">
+<table id="T_cf40c" class="caption-top">
 <thead>
 <tr class="header">
-<th id="T_11669_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Sequence</th>
-<th id="T_11669_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Index (k)</th>
-<th id="T_11669_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">i=0 (sine)</th>
-<th id="T_11669_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">i=0 (cosine)</th>
-<th id="T_11669_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">i=1 (sine)</th>
-<th id="T_11669_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">i=1 (cosine)</th>
+<th id="T_cf40c_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Sequence</th>
+<th id="T_cf40c_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Index (k)</th>
+<th id="T_cf40c_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">i=0 (sine)</th>
+<th id="T_cf40c_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">i=0 (cosine)</th>
+<th id="T_cf40c_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">i=1 (sine)</th>
+<th id="T_cf40c_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">i=1 (cosine)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_11669_row0_col0" class="data row0 col0">I</td>
-<td id="T_11669_row0_col1" class="data row0 col1">0</td>
-<td id="T_11669_row0_col2" class="data row0 col2">sin(0/1) = <span style="color: #a52a2a;"><strong>0.00</strong></span></td>
-<td id="T_11669_row0_col3" class="data row0 col3">cos(0/1) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
-<td id="T_11669_row0_col4" class="data row0 col4">sin(0/10) = <span style="color: #a52a2a;"><strong>0.00</strong></span></td>
-<td id="T_11669_row0_col5" class="data row0 col5">cos(0/10) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
+<td id="T_cf40c_row0_col0" class="data row0 col0">I</td>
+<td id="T_cf40c_row0_col1" class="data row0 col1">0</td>
+<td id="T_cf40c_row0_col2" class="data row0 col2">sin(0/1) = <span style="color: #a52a2a;"><strong>0.00</strong></span></td>
+<td id="T_cf40c_row0_col3" class="data row0 col3">cos(0/1) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
+<td id="T_cf40c_row0_col4" class="data row0 col4">sin(0/10) = <span style="color: #a52a2a;"><strong>0.00</strong></span></td>
+<td id="T_cf40c_row0_col5" class="data row0 col5">cos(0/10) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
 </tr>
 <tr class="even">
-<td id="T_11669_row1_col0" class="data row1 col0">am</td>
-<td id="T_11669_row1_col1" class="data row1 col1">1</td>
-<td id="T_11669_row1_col2" class="data row1 col2">sin(1/1) = <span style="color: #a52a2a;"><strong>0.84</strong></span></td>
-<td id="T_11669_row1_col3" class="data row1 col3">cos(1/1) = <span style="color: #a52a2a;"><strong>0.54</strong></span></td>
-<td id="T_11669_row1_col4" class="data row1 col4">sin(1/10) = <span style="color: #a52a2a;"><strong>0.10</strong></span></td>
-<td id="T_11669_row1_col5" class="data row1 col5">cos(1/10) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
+<td id="T_cf40c_row1_col0" class="data row1 col0">am</td>
+<td id="T_cf40c_row1_col1" class="data row1 col1">1</td>
+<td id="T_cf40c_row1_col2" class="data row1 col2">sin(1/1) = <span style="color: #a52a2a;"><strong>0.84</strong></span></td>
+<td id="T_cf40c_row1_col3" class="data row1 col3">cos(1/1) = <span style="color: #a52a2a;"><strong>0.54</strong></span></td>
+<td id="T_cf40c_row1_col4" class="data row1 col4">sin(1/10) = <span style="color: #a52a2a;"><strong>0.10</strong></span></td>
+<td id="T_cf40c_row1_col5" class="data row1 col5">cos(1/10) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
 </tr>
 <tr class="odd">
-<td id="T_11669_row2_col0" class="data row2 col0">an</td>
-<td id="T_11669_row2_col1" class="data row2 col1">2</td>
-<td id="T_11669_row2_col2" class="data row2 col2">sin(2/1) = <span style="color: #a52a2a;"><strong>0.91</strong></span></td>
-<td id="T_11669_row2_col3" class="data row2 col3">cos(2/1) = <span style="color: #a52a2a;"><strong>-0.42</strong></span></td>
-<td id="T_11669_row2_col4" class="data row2 col4">sin(2/10) = <span style="color: #a52a2a;"><strong>0.20</strong></span></td>
-<td id="T_11669_row2_col5" class="data row2 col5">cos(2/10) = <span style="color: #a52a2a;"><strong>0.98</strong></span></td>
+<td id="T_cf40c_row2_col0" class="data row2 col0">an</td>
+<td id="T_cf40c_row2_col1" class="data row2 col1">2</td>
+<td id="T_cf40c_row2_col2" class="data row2 col2">sin(2/1) = <span style="color: #a52a2a;"><strong>0.91</strong></span></td>
+<td id="T_cf40c_row2_col3" class="data row2 col3">cos(2/1) = <span style="color: #a52a2a;"><strong>-0.42</strong></span></td>
+<td id="T_cf40c_row2_col4" class="data row2 col4">sin(2/10) = <span style="color: #a52a2a;"><strong>0.20</strong></span></td>
+<td id="T_cf40c_row2_col5" class="data row2 col5">cos(2/10) = <span style="color: #a52a2a;"><strong>0.98</strong></span></td>
 </tr>
 <tr class="even">
-<td id="T_11669_row3_col0" class="data row3 col0">automaton</td>
-<td id="T_11669_row3_col1" class="data row3 col1">3</td>
-<td id="T_11669_row3_col2" class="data row3 col2">sin(3/1) = <span style="color: #a52a2a;"><strong>0.14</strong></span></td>
-<td id="T_11669_row3_col3" class="data row3 col3">cos(3/1) = <span style="color: #a52a2a;"><strong>-0.99</strong></span></td>
-<td id="T_11669_row3_col4" class="data row3 col4">sin(3/10) = <span style="color: #a52a2a;"><strong>0.30</strong></span></td>
-<td id="T_11669_row3_col5" class="data row3 col5">cos(3/10) = <span style="color: #a52a2a;"><strong>0.96</strong></span></td>
+<td id="T_cf40c_row3_col0" class="data row3 col0">automaton</td>
+<td id="T_cf40c_row3_col1" class="data row3 col1">3</td>
+<td id="T_cf40c_row3_col2" class="data row3 col2">sin(3/1) = <span style="color: #a52a2a;"><strong>0.14</strong></span></td>
+<td id="T_cf40c_row3_col3" class="data row3 col3">cos(3/1) = <span style="color: #a52a2a;"><strong>-0.99</strong></span></td>
+<td id="T_cf40c_row3_col4" class="data row3 col4">sin(3/10) = <span style="color: #a52a2a;"><strong>0.30</strong></span></td>
+<td id="T_cf40c_row3_col5" class="data row3 col5">cos(3/10) = <span style="color: #a52a2a;"><strong>0.96</strong></span></td>
 </tr>
 </tbody>
 </table>
@@ -1877,21 +1877,21 @@ line-height: 1.1;
 <h2>Understanding the PE Matrix (2)</h2>
 <p>A positional encoding has the same dimension as an embedding, and calculates a value for each dimension using the sine and cosine formulas.</p>
 <div class="small-table">
-<div id="08faab0e" class="cell" data-execution_count="3">
+<div id="c04779c2" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display" data-execution_count="3">
 <style type="text/css">
-#T_f14b5 th {
+#T_d835e th {
 background-color: #f2f2f2;
 font-weight: bold;
 }
-#T_f14b5 td:nth-child(1) {
+#T_d835e td:nth-child(1) {
 background-color: white;
 font-weight: 500;
 }
-#T_f14b5 td:nth-child(2) {
+#T_d835e td:nth-child(2) {
 background-color: #f9f9f9;
 }
-#T_f14b5_row0_col0, #T_f14b5_row0_col1, #T_f14b5_row0_col2, #T_f14b5_row0_col3, #T_f14b5_row0_col4, #T_f14b5_row0_col5, #T_f14b5_row1_col0, #T_f14b5_row1_col1, #T_f14b5_row1_col2, #T_f14b5_row1_col3, #T_f14b5_row1_col4, #T_f14b5_row1_col5, #T_f14b5_row2_col0, #T_f14b5_row2_col1, #T_f14b5_row2_col2, #T_f14b5_row2_col3, #T_f14b5_row2_col4, #T_f14b5_row2_col5, #T_f14b5_row3_col0, #T_f14b5_row3_col1, #T_f14b5_row3_col2, #T_f14b5_row3_col3, #T_f14b5_row3_col4, #T_f14b5_row3_col5 {
+#T_d835e_row0_col0, #T_d835e_row0_col1, #T_d835e_row0_col2, #T_d835e_row0_col3, #T_d835e_row0_col4, #T_d835e_row0_col5, #T_d835e_row1_col0, #T_d835e_row1_col1, #T_d835e_row1_col2, #T_d835e_row1_col3, #T_d835e_row1_col4, #T_d835e_row1_col5, #T_d835e_row2_col0, #T_d835e_row2_col1, #T_d835e_row2_col2, #T_d835e_row2_col3, #T_d835e_row2_col4, #T_d835e_row2_col5, #T_d835e_row3_col0, #T_d835e_row3_col1, #T_d835e_row3_col2, #T_d835e_row3_col3, #T_d835e_row3_col4, #T_d835e_row3_col5 {
 text-align: left;
 padding: 2px;
 font-size: 0.5;
@@ -1900,49 +1900,49 @@ line-height: 1.1;
 }
 </style>
 
-<table id="T_f14b5" class="caption-top">
+<table id="T_d835e" class="caption-top">
 <thead>
 <tr class="header">
-<th id="T_f14b5_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Sequence</th>
-<th id="T_f14b5_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Index (k)</th>
-<th id="T_f14b5_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">i=0 (sine)</th>
-<th id="T_f14b5_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">i=0 (cosine)</th>
-<th id="T_f14b5_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">i=1 (sine)</th>
-<th id="T_f14b5_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">i=1 (cosine)</th>
+<th id="T_d835e_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Sequence</th>
+<th id="T_d835e_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Index (k)</th>
+<th id="T_d835e_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">i=0 (sine)</th>
+<th id="T_d835e_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">i=0 (cosine)</th>
+<th id="T_d835e_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">i=1 (sine)</th>
+<th id="T_d835e_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">i=1 (cosine)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_f14b5_row0_col0" class="data row0 col0">I</td>
-<td id="T_f14b5_row0_col1" class="data row0 col1">0</td>
-<td id="T_f14b5_row0_col2" class="data row0 col2">sin(0/1) = <span style="color: #a52a2a;"><strong>0.00</strong></span></td>
-<td id="T_f14b5_row0_col3" class="data row0 col3">cos(0/1) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
-<td id="T_f14b5_row0_col4" class="data row0 col4">sin(0/10) = <span style="color: #a52a2a;"><strong>0.00</strong></span></td>
-<td id="T_f14b5_row0_col5" class="data row0 col5">cos(0/10) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
+<td id="T_d835e_row0_col0" class="data row0 col0">I</td>
+<td id="T_d835e_row0_col1" class="data row0 col1">0</td>
+<td id="T_d835e_row0_col2" class="data row0 col2">sin(0/1) = <span style="color: #a52a2a;"><strong>0.00</strong></span></td>
+<td id="T_d835e_row0_col3" class="data row0 col3">cos(0/1) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
+<td id="T_d835e_row0_col4" class="data row0 col4">sin(0/10) = <span style="color: #a52a2a;"><strong>0.00</strong></span></td>
+<td id="T_d835e_row0_col5" class="data row0 col5">cos(0/10) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
 </tr>
 <tr class="even">
-<td id="T_f14b5_row1_col0" class="data row1 col0">am</td>
-<td id="T_f14b5_row1_col1" class="data row1 col1">1</td>
-<td id="T_f14b5_row1_col2" class="data row1 col2">sin(1/1) = <span style="color: #a52a2a;"><strong>0.84</strong></span></td>
-<td id="T_f14b5_row1_col3" class="data row1 col3">cos(1/1) = <span style="color: #a52a2a;"><strong>0.54</strong></span></td>
-<td id="T_f14b5_row1_col4" class="data row1 col4">sin(1/10) = <span style="color: #a52a2a;"><strong>0.10</strong></span></td>
-<td id="T_f14b5_row1_col5" class="data row1 col5">cos(1/10) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
+<td id="T_d835e_row1_col0" class="data row1 col0">am</td>
+<td id="T_d835e_row1_col1" class="data row1 col1">1</td>
+<td id="T_d835e_row1_col2" class="data row1 col2">sin(1/1) = <span style="color: #a52a2a;"><strong>0.84</strong></span></td>
+<td id="T_d835e_row1_col3" class="data row1 col3">cos(1/1) = <span style="color: #a52a2a;"><strong>0.54</strong></span></td>
+<td id="T_d835e_row1_col4" class="data row1 col4">sin(1/10) = <span style="color: #a52a2a;"><strong>0.10</strong></span></td>
+<td id="T_d835e_row1_col5" class="data row1 col5">cos(1/10) = <span style="color: #a52a2a;"><strong>1.00</strong></span></td>
 </tr>
 <tr class="odd">
-<td id="T_f14b5_row2_col0" class="data row2 col0">an</td>
-<td id="T_f14b5_row2_col1" class="data row2 col1">2</td>
-<td id="T_f14b5_row2_col2" class="data row2 col2">sin(2/1) = <span style="color: #a52a2a;"><strong>0.91</strong></span></td>
-<td id="T_f14b5_row2_col3" class="data row2 col3">cos(2/1) = <span style="color: #a52a2a;"><strong>-0.42</strong></span></td>
-<td id="T_f14b5_row2_col4" class="data row2 col4">sin(2/10) = <span style="color: #a52a2a;"><strong>0.20</strong></span></td>
-<td id="T_f14b5_row2_col5" class="data row2 col5">cos(2/10) = <span style="color: #a52a2a;"><strong>0.98</strong></span></td>
+<td id="T_d835e_row2_col0" class="data row2 col0">an</td>
+<td id="T_d835e_row2_col1" class="data row2 col1">2</td>
+<td id="T_d835e_row2_col2" class="data row2 col2">sin(2/1) = <span style="color: #a52a2a;"><strong>0.91</strong></span></td>
+<td id="T_d835e_row2_col3" class="data row2 col3">cos(2/1) = <span style="color: #a52a2a;"><strong>-0.42</strong></span></td>
+<td id="T_d835e_row2_col4" class="data row2 col4">sin(2/10) = <span style="color: #a52a2a;"><strong>0.20</strong></span></td>
+<td id="T_d835e_row2_col5" class="data row2 col5">cos(2/10) = <span style="color: #a52a2a;"><strong>0.98</strong></span></td>
 </tr>
 <tr class="even">
-<td id="T_f14b5_row3_col0" class="data row3 col0">automaton</td>
-<td id="T_f14b5_row3_col1" class="data row3 col1">3</td>
-<td id="T_f14b5_row3_col2" class="data row3 col2">sin(3/1) = <span style="color: #a52a2a;"><strong>0.14</strong></span></td>
-<td id="T_f14b5_row3_col3" class="data row3 col3">cos(3/1) = <span style="color: #a52a2a;"><strong>-0.99</strong></span></td>
-<td id="T_f14b5_row3_col4" class="data row3 col4">sin(3/10) = <span style="color: #a52a2a;"><strong>0.30</strong></span></td>
-<td id="T_f14b5_row3_col5" class="data row3 col5">cos(3/10) = <span style="color: #a52a2a;"><strong>0.96</strong></span></td>
+<td id="T_d835e_row3_col0" class="data row3 col0">automaton</td>
+<td id="T_d835e_row3_col1" class="data row3 col1">3</td>
+<td id="T_d835e_row3_col2" class="data row3 col2">sin(3/1) = <span style="color: #a52a2a;"><strong>0.14</strong></span></td>
+<td id="T_d835e_row3_col3" class="data row3 col3">cos(3/1) = <span style="color: #a52a2a;"><strong>-0.99</strong></span></td>
+<td id="T_d835e_row3_col4" class="data row3 col4">sin(3/10) = <span style="color: #a52a2a;"><strong>0.30</strong></span></td>
+<td id="T_d835e_row3_col5" class="data row3 col5">cos(3/10) = <span style="color: #a52a2a;"><strong>0.96</strong></span></td>
 </tr>
 </tbody>
 </table>
@@ -1976,7 +1976,7 @@ line-height: 1.1;
 <h2>Understanding the PE Matrix (4)</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div id="f58f0175" class="cell" data-execution_count="4">
+<div id="b463d8ba" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2140,7 +2140,7 @@ Figure 4: RoPE
 <h2>The Encoder: Multi-head attention</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div id="02c6ede8" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="5">
+<div id="956357b7" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2574,7 +2574,7 @@ v_{n1} &amp; v_{n2} &amp; \dots  &amp; v_{nd_k}
 <h2>FFN Expansion-Contraction</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div id="2e820244" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="6">
+<div id="38e82aaa" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2636,7 +2636,7 @@ x = 0 &amp; \text{undefined but usually set to zero in code}\\
 <li>Leaky ReLU: <span class="math inline">\(f(x) = max(\alpha \cdot x, x)\)</span>, where <span class="math inline">\(\alpha\)</span> is a small value such as 0.01. Leaky ReLU enables a small, non-zero gradient for negative values.</li>
 </ul>
 </div><div class="column" style="width:30%;">
-<div id="16d19359" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="7">
+<div id="ebaab2e6" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2661,7 +2661,7 @@ x = 0 &amp; \text{undefined but usually set to zero in code}\\
 <li><span class="math inline">\(\Phi(x)\)</span> is the Cumulative Distribution Function (CDF) of the standard normal distribution. The BERT paper uses a fast approximation (shown on right)<sup>1</sup></li>
 </ul>
 </div><div class="column" style="width:30%;">
-<div id="1b105a3e" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="8">
+<div id="b9083fb3" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2676,7 +2676,7 @@ x = 0 &amp; \text{undefined but usually set to zero in code}\\
 <h2>BERT’s FFN Block</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div id="c586466f" class="cell" data-execution_count="9">
+<div id="85051765" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

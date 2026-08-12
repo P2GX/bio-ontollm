@@ -1392,7 +1392,7 @@
     "href": "lectures/lstm.html#lstms-vs-rnns-1",
     "title": "Approaches to biomedical knowledge",
     "section": "LSTMS vs RNNs",
-    "text": "LSTMS vs RNNs\n\nTODO similar graphic for LSTM\nIn contrast, LSTM modules have four intacting structures and are connected by the cell state in addition to the hidden state"
+    "text": "LSTMS vs RNNs\n\n\n\n\n\n\n\n\n\n\nIn contrast, LSTM modules have four intacting structures and are connected by the cell state in addition to the hidden state"
   },
   {
     "objectID": "lectures/lstm.html#lstms",
@@ -2187,7 +2187,28 @@
     "href": "index.html",
     "title": "Approaches to biomedical knowledge",
     "section": "",
-    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Word2Vec (partially finished)\nLecture 9: Encoders\nLecture 10: BERT and Sentence BERT (to do)\nLecture 11: Decoder architecture (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
+    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Tokens\nLecture 9: Encoders\nLecture 10: BERT and Sentence BERT (to do)\nLecture 11: Decoder architecture (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
+  },
+  {
+    "objectID": "lectures/embeddings.html#part-1",
+    "href": "lectures/embeddings.html#part-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Introduction",
+    "text": "Introduction\nLogistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.\n\nEmail analysis (Is an email spam or not?)\nSentiment analysis (is a movie review positive or negative?)\nMedical diagnostics (is a given diagnosis present or absent?)\n\n\n\n\n\n\n\nWe will go over the algorithm in detail, because it is an excellent preparation for understanding neural networks."
+  },
+  {
+    "objectID": "lectures/embeddings.html#one-hot-encoding",
+    "href": "lectures/embeddings.html#one-hot-encoding",
+    "title": "Approaches to biomedical knowledge",
+    "section": "One-hot encoding",
+    "text": "One-hot encoding\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWord\nbrown\ndog\nfox\njumps\nlazy\nover\nquick\nthe\n\n\n\n\nthe\n0\n0\n0\n0\n0\n0\n0\n1\n\n\nquick\n0\n0\n0\n0\n0\n0\n1\n0\n\n\nbrown\n1\n0\n0\n0\n0\n0\n0\n0\n\n\nfox\n0\n0\n1\n0\n0\n0\n0\n0\n\n\njumps\n0\n0\n0\n1\n0\n0\n0\n0\n\n\nover\n0\n0\n0\n0\n0\n1\n0\n0\n\n\nthe\n0\n0\n0\n0\n0\n0\n0\n1\n\n\nlazy\n0\n0\n0\n0\n1\n0\n0\n0\n\n\ndog\n0\n1\n0\n0\n0\n0\n0\n0"
+  },
+  {
+    "objectID": "lectures/embeddings.html#one-hot-for-nucleotides",
+    "href": "lectures/embeddings.html#one-hot-for-nucleotides",
+    "title": "Approaches to biomedical knowledge",
+    "section": "One hot for nucleotides",
+    "text": "One hot for nucleotides\n\n\n\nPosition / Base\nA\nC\nG\nT\n\n\n\n\n1: A\n1\n0\n0\n0\n\n\n2: C\n0\n1\n0\n0\n\n\n3: G\n0\n0\n1\n0\n\n\n4: T\n0\n0\n0\n1\n\n\n5: A\n1\n0\n0\n0\n\n\n6: A\n1\n0\n0\n0\n\n\n7: T\n0\n0\n0\n1\n\n\n8: C\n0\n1\n0\n0\n\n\n9: C\n0\n1\n0\n0\n\n\n10: T\n0\n0\n0\n1\n\n\n11: A\n1\n0\n0\n0"
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",
