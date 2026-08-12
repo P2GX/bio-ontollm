@@ -1311,6 +1311,62 @@
     "text": "Sentiment analysis: Unrolling the RNN"
   },
   {
+    "objectID": "lectures/lstm.html#sentiment-analysis",
+    "href": "lectures/lstm.html#sentiment-analysis",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sentiment analysis",
+    "text": "Sentiment analysis\n\nWe will present a bare-bones implementaton of an RNN trained to perform sentiment analysis using the IMDB movie review dataset.\nThe full script is available in the course material, we will briefly review some of the salient blocks of code\nWe make use of the pytorch framework for most of the heavy lifting"
+  },
+  {
+    "objectID": "lectures/lstm.html#data-preparation-tokenization",
+    "href": "lectures/lstm.html#data-preparation-tokenization",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Data Preparation & Tokenization",
+    "text": "Data Preparation & Tokenization\n\nLoading: Fetching the IMDb movie review corpus directly via Hugging Face (stanfordnlp/imdb).\nNormalization: Lowercasing and tokenizing reviews into word lists.\n\nfrom datasets import load_dataset\nimport pandas as pd\nfrom sklearn.model_selection import train_test_split\n\n# 1. Load and merge train/test splits\nhf_dataset = load_dataset(\"stanfordnlp/imdb\")\ndf = pd.concat([pd.DataFrame(hf_dataset[\"train\"]), \n                pd.DataFrame(hf_dataset[\"test\"])], ignore_index=True)\n\n# 2. Lowercase and split text into tokens\ndf[\"text\"] = df[\"text\"].str.lower().str.split()\ntrain_data, test_data = train_test_split(df, test_size=0.2, random_state=42)"
+  },
+  {
+    "objectID": "lectures/lstm.html#data-preparation-tokenization-2",
+    "href": "lectures/lstm.html#data-preparation-tokenization-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Data Preparation & Tokenization (2)",
+    "text": "Data Preparation & Tokenization (2)\n\nVocabulary Mapping: Assign a unique integer index to every distinct word.\nTruncation & Padding: Fixing sequences to a uniform length (\\(\\text{max\\_length} = 250\\)) for batching tensors.\n\nBuild vocabulary index (starting at 1, reserving 0 for padding)\nvocab = {word for phrase in df[\"text\"] for word in phrase}\nword_to_idx = {word: idx for idx, word in enumerate(vocab, start=1)}\n\nmax_length = 250\ndef encode_and_pad(text):\n    truncated = text[:max_length]  \n    encoded = [word_to_idx[word] for word in truncated]\n    length = len(encoded)\n    padded = encoded + [0] * (max_length - length)\n    return padded, length\n\n# Apply transformation\ntrain_data[[\"text\", \"length\"]] = train_data[\"text\"].apply(lambda t: pd.Series(encode_and_pad(t)))\ntest_data[[\"text\", \"length\"]] = test_data[\"text\"].apply(lambda t: pd.Series(encode_and_pad(t)))"
+  },
+  {
+    "objectID": "lectures/lstm.html#custom-pytorch-datasets-dataloaders",
+    "href": "lectures/lstm.html#custom-pytorch-datasets-dataloaders",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Custom PyTorch Datasets & DataLoaders",
+    "text": "Custom PyTorch Datasets & DataLoaders\n\nDataset Class: Wraps pandas dataframes to serve pre-padded sequences, labels, and true lengths item-by-item as PyTorch tensors.\nDataLoader: Automatically batches samples, shuffles training data, and handles parallel iteration.\n\nimport torch\nfrom torch.utils.data import Dataset, DataLoader\n\nclass SentimentDataset(Dataset):\n    def __init__(self, data):\n        self.texts = data['text'].values. ## The movie reviews\n        self.labels = data['label'].values ## Positive (1) or negative (0) reviews?\n        self.lengths = data['length'].values ## How long (how many chars is the text)\n    \n    def __len__(self):\n        return len(self.texts)\n    \n    def __getitem__(self, idx):\n        return (torch.tensor(self.texts[idx], dtype=torch.long), \n                torch.tensor(self.labels[idx], dtype=torch.long), \n                torch.tensor(self.lengths[idx], dtype=torch.long))\n\ntrain_dataset = SentimentDataset(train_data)\ntest_dataset = SentimentDataset(test_data)\n\ntrain_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)\ntest_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)"
+  },
+  {
+    "objectID": "lectures/lstm.html#building-the-rnn-sentiment-classifier",
+    "href": "lectures/lstm.html#building-the-rnn-sentiment-classifier",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Building the RNN Sentiment Classifier",
+    "text": "Building the RNN Sentiment Classifier\n\nArchitecture: Combines an embedding layer, a recurrent layer (nn.RNN), dropout regularization, and a final linear classification layer.\nSequence Packing: Uses pack_padded_sequence to bypass zero-padding during recurrent updates, extracting the final hidden state (\\(h_n\\)).\n\nimport torch.nn as nn\n\nclass SentimentRNN(nn.Module):\n    def __init__(self, vocab_size, embed_size, hidden_size, output_size):\n        super().__init__()\n        self.embedding = nn.Embedding(vocab_size, embed_size, padding_idx=0)\n        self.rnn = nn.RNN(embed_size, hidden_size, batch_first=True)\n        self.fc = nn.Linear(hidden_size, output_size)\n        self.dropout = nn.Dropout(0.2)\n    \n    def forward(self, x, lengths):\n        x = self.embedding(x)\n        # Skip padding processing for efficiency\n        packed = nn.utils.rnn.pack_padded_sequence(x, lengths.cpu(), batch_first=True, enforce_sorted=False)\n        _, h_n = self.rnn(packed)\n        return self.fc(self.dropout(h_n[-1]))\n\n# Instantiate model on the device (e.g., Mac MPS or CPU)\nmodel = SentimentRNN(len(vocab) + 1, embed_size=128, hidden_size=128, output_size=2).to(device)"
+  },
+  {
+    "objectID": "lectures/lstm.html#training-loop-optimization",
+    "href": "lectures/lstm.html#training-loop-optimization",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training Loop & Optimization",
+    "text": "Training Loop & Optimization\n\nLoss & Optimizer: Cross-Entropy Loss for multi-class classification and the Adam optimizer.\nDevice Management & Gradient Clipping: Pushes batches to the target device (device) and applies gradient clipping (clip_grad_norm_) to prevent exploding gradients.\n\nimport torch.optim as optim\n\ncriterion = nn.CrossEntropyLoss()\noptimizer = optim.Adam(model.parameters(), lr=0.001)\n\nnum_epochs = 10\nfor epoch in range(num_epochs):\n    model.train()\n    epoch_loss = 0\n    for texts, labels, lengths in train_loader:\n        texts, labels = texts.to(device), labels.to(device)\n        \n        optimizer.zero_grad()\n        outputs = model(texts, lengths)\n        loss = criterion(outputs, labels)\n        \n        loss.backward()\n        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)\n        optimizer.step()\n        \n        epoch_loss += loss.item()\n    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss / len(train_loader):.4f}')"
+  },
+  {
+    "objectID": "lectures/lstm.html#loss",
+    "href": "lectures/lstm.html#loss",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Loss",
+    "text": "Loss"
+  },
+  {
+    "objectID": "lectures/lstm.html#model-evaluation-accuracy",
+    "href": "lectures/lstm.html#model-evaluation-accuracy",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Model Evaluation & Accuracy",
+    "text": "Model Evaluation & Accuracy\n\nEvaluation Mode (model.eval()): Disables layers like Dropout during testing so evaluation is deterministic.\nNo-Gradient Context (torch.no_grad()): Saves memory and speeds up computation by disabling gradient tracking since we aren’t updating weights.\nBatch Accuracy Calculation: Compares predicted classes against ground-truth labels to compute overall test set accuracy.\n\nmodel.eval()\ncorrect = 0\ntotal = 0\nwith torch.no_grad():\n    for texts, labels, lengths in test_loader:\n        texts = texts.to(device)\n        labels = labels.to(device)\n        outputs = model(texts, lengths)\n        _, predicted = torch.max(outputs.data, 1)\n        total += labels.size(0)\n        correct += (predicted == labels).sum().item()\n\naccuracy = 100 * correct / total\nprint(f'Accuracy: {accuracy:.2f}%')\n\nAccuracy: 73.94% (as compared to the 50% we would have expected by chance, but much worse than the training accuracy of 97.85% - thus, we are overfitting! In the practical, we will discuss some methods for reducing overfitting)"
+  },
+  {
     "objectID": "lectures/lstm.html#overview-rnns-and-lstms-2",
     "href": "lectures/lstm.html#overview-rnns-and-lstms-2",
     "title": "Approaches to biomedical knowledge",
@@ -1322,35 +1378,70 @@
     "href": "lectures/lstm.html#part-3",
     "title": "Approaches to biomedical knowledge",
     "section": "Long Short-Term Memory Networks (LSTMs)",
-    "text": "Long Short-Term Memory Networks (LSTMs)\n\nThe key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network.\nLSTMs divide the context management problem into two subproblems: r\n\nRemove information no longer needed from the context,\nAdd information likely to be needed for later decision making\n\n\n\n\nLet’s go through step by step"
+    "text": "Long Short-Term Memory Networks (LSTMs)\n\nThe key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network.\nA challenge for RNNs is to keep track of information from distant parts of the sentence:\n\n\nThe rates the phone company was increasing were already expensive\n\n\nIt is easy to relate “was” to “company” because “was” comes immediately after “company”\nIt is harder to relate “were” to “rates” because there are five other intervening words\nThe hidden state of the RNN is being asked to perform two things: inform the current output and to update and carry forward the information needed for future outputs\nLSTMS attempt to address the challenge by adding a context layer to the existing hidden layer and by introducing gates to control flow of information\n\n\nHochreiter, S. and J. Schmidhuber. 1997. Long short-term memory. Neural Computation, 9(8):1735–1780."
+  },
+  {
+    "objectID": "lectures/lstm.html#lstms-vs-rnns",
+    "href": "lectures/lstm.html#lstms-vs-rnns",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LSTMS vs RNNs",
+    "text": "LSTMS vs RNNs\n\n\n\n\n\n\n\n\n\n\nAll recurrent neural networks have the form of a chain of repeating modules.\nIn standard RNNs, this module has a simple structure with a single tanh layer and passes on the hidden state"
+  },
+  {
+    "objectID": "lectures/lstm.html#lstms-vs-rnns-1",
+    "href": "lectures/lstm.html#lstms-vs-rnns-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LSTMS vs RNNs",
+    "text": "LSTMS vs RNNs\n\nTODO similar graphic for LSTM\nIn contrast, LSTM modules have four intacting structures and are connected by the cell state in addition to the hidden state"
+  },
+  {
+    "objectID": "lectures/lstm.html#lstms",
+    "href": "lectures/lstm.html#lstms",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LSTMS",
+    "text": "LSTMS\n\nLet’s review the main ideas of the LSTM step by step"
   },
   {
     "objectID": "lectures/lstm.html#lstm-gates",
     "href": "lectures/lstm.html#lstm-gates",
     "title": "Approaches to biomedical knowledge",
     "section": "LSTM Gates",
-    "text": "LSTM Gates\nLSTMs have three gates:\n\nforget gate\nadd gate\noutput gate\n\nEach gateconsists of a feedforward layer, followed by a sigmoid activation function, followed by a pointwise multiplication with the layer being gated.\n\nThe sigmoid activation function tends to push its outputs to either 0 or 1.\nCombining this with a pointwise multiplication has an effect similar to that of a binary mask.\nValues in the layer being gated that align with values near 1 in the mask are passed through nearly unchanged; values corresponding to lower values are essentially erased."
+    "text": "LSTM Gates\nLSTMs have three gates:\n\nforget gate\nadd gate\noutput gate\n\nEach gate consists of\n\nfeedforward layer\nfollowed by a sigmoid activation function\nfollowed by a pointwise multiplication with the layer being gated.\n\n\nThe sigmoid activation function tends to push its outputs to either 0 or 1.\nCombining this with a pointwise multiplication has an effect similar to that of a binary mask.\nValues in the layer being gated that align with values near 1 in the mask are passed through nearly unchanged; values corresponding to lower values are essentially erased."
   },
   {
     "objectID": "lectures/lstm.html#forget-gate",
     "href": "lectures/lstm.html#forget-gate",
     "title": "Approaches to biomedical knowledge",
     "section": "Forget gate",
-    "text": "Forget gate\n\n\nThe forget fate deletes information from the context that is no longer relevant\nIt computes a weighted sum of the previous state’s hidden layer and the current input and passes that through a sigmoid.\nThis mask is then multiplied element-wise by the context vector to remove the information from context that is no longer required.\nElement-wise multiplication of two vectors (represented by the operator \f, and sometimes called the Hadamard product) is the vector of the same dimension as the two input vectors, where each element i is the product of element i in the two input vectors:\n\n\\[\n\\begin{align*}\n\\mathbf{f}_t &= \\sigma(\\mathbf{U}_t\\mathbf{h}_{t-1} + \\mathbf{W}_f\\mathbf{x}_t) \\\\\n\\mathbf{k}_t &= \\mathbf{c}_{t-1} \\odot\\mathbf{f}_t\n\\end{align*}\n\\tag{4}\\]"
+    "text": "Forget gate\n\n\n \n\n\n\n\n\n\n\n\nThe forget fate deletes information from the context that is no longer relevant\nIt computes a weighted sum of the previous state’s hidden layer and the current input and passes that through a sigmoid.\nThis mask is then multiplied element-wise by the context vector to remove the information from context that is no longer required.\nElement-wise multiplication of two vectors, represented by the \\(\\odot\\) operator,1 results in a vector where element \\(i\\) is the product of element \\(i\\) in the two input vectors:\n\n\n\\[\n\\begin{align*}\n\\mathbf{f}_t &= \\sigma(\\mathbf{U}_t\\mathbf{h}_{t-1} + \\mathbf{W}_f\\mathbf{x}_t) \\\\\n\\mathbf{k}_t &= \\mathbf{c}_{t-1} \\odot\\mathbf{f}_t\n\\end{align*}\n\\tag{4}\\]\ncalled the Hadamard product"
   },
   {
     "objectID": "lectures/lstm.html#cell-input",
     "href": "lectures/lstm.html#cell-input",
     "title": "Approaches to biomedical knowledge",
     "section": "Cell input",
-    "text": "Cell input\n\n\nThen we compute the actual information we need to extract from the previous hidden state and current inputs—\n\n\\[\n\\mathbf{g}_t = \\tanh(\\mathbf{U}_g\\mathbf{h}_{t-1} + \\mathbf{W}_g\\mathbf{x}_t)\n\\]"
+    "text": "Cell input\n\n\n \n\n\n\n\n\n\n\nThen we compute the actual information we need to extract from the previous hidden state and current inputs\n\n\\[\n\\mathbf{g}_t = \\tanh(\\mathbf{U}_g\\mathbf{h}_{t-1} + \\mathbf{W}_g\\mathbf{x}_t)\n\\tag{5}\\] - This is the same as with the vanilla RNN"
   },
   {
     "objectID": "lectures/lstm.html#add-gate",
     "href": "lectures/lstm.html#add-gate",
     "title": "Approaches to biomedical knowledge",
     "section": "Add gate",
-    "text": "Add gate\nNext, we generate the mask for the add gate to select the information to add to the current context.\n\\[\n\\begin{align*}\nX\\end{align*}\n\\tag{5}\\]\nit = σ(Uiht−1 +Wixt) (13.23) jt = gt \fit (13.24) Next, we add this to the modified context vector to get our new context vector. ct = jt +k"
+    "text": "Add gate\nNext, we generate the mask for the add gate to select the information to add to the current context.\n\n\n \n\n\n\n\n\n\n\\[\n\\begin{align*}\n\\mathbf{i}_t &= \\sigma(\\mathbf{U}\\mathbf{h}_{t-1} + \\mathbf{W}_i\\mathbf{x}_{t}) &\\quad  \\\\\n\\mathbf{j}_t &= \\mathbf{g}_t \\odot \\mathbf{i}_t &\\quad \\text{See previous slide} \\\\\n\\mathbf{c}_t &= \\mathbf{j}_t + \\mathbf{k}_t &\\quad \\text{add to context vector} \\\\\n\\end{align*}\n\\tag{6}\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#output-gate",
+    "href": "lectures/lstm.html#output-gate",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Output gate",
+    "text": "Output gate\nNext, we generate the mask for the add gate to select the information to add to the current context.\n\n\n \n\n\n\n\n\n\n\nThe output gate decides what information is required for the current hidden state\n\n\\[\n\\begin{align*}\n\\mathbf{o}_t &= \\sigma(\\mathbf{U}\\mathbf{o}_{t-1} + \\mathbf{W}_o\\mathbf{x}_{t})   \\\\\n\\mathbf{h}_t &= \\mathbf{o}_t \\odot \\tanh(\\mathbf{c}_t)\n\\end{align*}\n\\tag{7}\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#lstm",
+    "href": "lectures/lstm.html#lstm",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LSTM",
+    "text": "LSTM\n\nIn Summary\n\nan LSTM accepts as input the context layer (\\(\\mathbf{c}_{t-1}\\)) and hidden layer (\\(\\mathbf{h}_{t-1}\\)) from the previous time step, along with the current input vector (\\(\\mathbf{x}_{t}\\)).\nIt generates \\(\\mathbf{c}_{t}\\) and \\(\\mathbf{h}_{t}\\) as output that is passed to the next step\nThe hidden state \\(\\mathbf{h}_{t}\\) is used to generate the output of the network similar to an RNN\nLSTMs can be used as drop-in replacements for RNNs in many contexts and often perform better"
   },
   {
     "objectID": "lectures/lstm.html#overview-rnns-and-lstms-3",
@@ -1378,14 +1469,14 @@
     "href": "lectures/lstm.html#rnn-language-model-equations",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN Language model equations",
-    "text": "RNN Language model equations\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\n\\begin{align}\n\\mathbf{e}_t &= \\mathbf{E}\\mathbf{x}_t & \\quad \\text{Retrieve the embedding for word } \\mathbf{x}_t\\\\\n\\mathbf{h}_t &= g(\\mathbf{U}\\mathbf{h}_{t-1} + \\mathbf{E}\\mathbf{e}_t)  & \\quad \\text{Compute new hidden layer } \\\\\n\\hat{\\mathbf{y}_t} &= \\mathrm{softmax}(\\mathbf{EV}\\mathbf{h}_t) & \\quad \\text{generate  output and pass through softmax} \\\\\n\\end{align}\n\\]\n\n\\(g\\) is an activation function such as tanh.\nThe softmax operation creates a probability distribution oover the entire vocabulary\nThe probability that a particular word \\(k\\) is the next word is then \\[\nP(w_{t+1}| w_1,\\ldots, w_t ) = \\hat{\\mathbf{y}_t}[k]\n\\]\n\\(\\hat{\\mathbf{y}\\) is a vector with one field for every word in the vocabulary\nThe output is then the highest-probability word"
+    "text": "RNN Language model equations\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\n\\begin{align}\n\\mathbf{e}_t &= \\mathbf{E}\\mathbf{x}_t & \\quad \\text{Retrieve embedding} \\\\\n\\mathbf{h}_t &= g(\\mathbf{U}\\mathbf{h}_{t-1} + \\mathbf{E}\\mathbf{e}_t)  & \\quad \\text{new hidden layer } \\\\\n\\hat{\\mathbf{y}_t} &= \\mathrm{softmax}(\\mathbf{EV}\\mathbf{h}_t) & \\quad \\text{generate  output} \\\\\n\\end{align}\n\\]\n\n\\(g\\) is an activation function such as tanh.\nThe softmax operation creates a probability distribution oover the entire vocabulary\nThe probability that a particular word \\(k\\) is the next word is then \\[\nP(w_{t+1}| w_1,\\ldots, w_t ) = \\hat{\\mathbf{y}_t}[k]\n\\]\n\\(\\hat{\\mathbf{y}}\\) is a vector with one field for every word in the vocabulary\nThe output is then the highest-probability word"
   },
   {
     "objectID": "lectures/lstm.html#ce-loss-review",
     "href": "lectures/lstm.html#ce-loss-review",
     "title": "Approaches to biomedical knowledge",
     "section": "CE Loss: Review",
-    "text": "CE Loss: Review\n\nFor a multi-class classification problem, each true label vector \\(\\mathbf{y}\\) is one-hot encoded (meaning \\(y_i = 1\\) for the correct class and \\(y_i = 0\\) otherwise),\nThe model predicts a set of probabilities \\(\\hat{y}_{i}\\) for each class\nFor a multi-class classification problem with \\(K\\) classes, the cross-entropy loss is \\[\n\\log L(\\theta) = -\\sum _{i=1}^{C} y_{i}\\log \\hat{y}_{i}\\\\\n\\tag{6}\\]\nFor the correct class (\\(y_k = 1\\)), the loss term \\(-\\log(p_k)\\) decreases as \\(p_k\\) increases.\nWeight updates that increase the probability of an incorrect class must decrease the probability of the correct class, thereby increasing the loss"
+    "text": "CE Loss: Review\n\nFor a multi-class classification problem, each true label vector \\(\\mathbf{y}\\) is one-hot encoded (meaning \\(y_i = 1\\) for the correct class and \\(y_i = 0\\) otherwise),\nThe model predicts a set of probabilities \\(\\hat{y}_{i}\\) for each class\nFor a multi-class classification problem with \\(K\\) classes, the cross-entropy loss is \\[\n\\log L(\\theta) = -\\sum _{i=1}^{C} y_{i}\\log \\hat{y}_{i}\\\\\n\\tag{8}\\]\nFor the correct class (\\(y_k = 1\\)), the loss term \\(-\\log(p_k)\\) decreases as \\(p_k\\) increases.\nWeight updates that increase the probability of an incorrect class must decrease the probability of the correct class, thereby increasing the loss"
   },
   {
     "objectID": "lectures/lstm.html#training-rnn-language-models",
@@ -1393,6 +1484,48 @@
     "title": "Approaches to biomedical knowledge",
     "section": "Training RNN language Models",
     "text": "Training RNN language Models\n\nself-supervision: We use a corpus of text as training. The model is trained to predict the next word.\nNo need for gold-standard labelling.\nWe minimize therror in predicting the next word with a cross-entropy loss function\n\n\\[\nL_{CE}(\\hat{\\mathbf{y}_t}, \\mathbf{y}_t) = - \\sum_{w\\in V} \\mathbf{y}_t[w]\\log \\hat{\\mathbf{y}_t}[w]\n\\]\n\nIn language modelling, the correct prediction is the next word, which is represented by a one-hot vector (so \\(\\mathbf{y}_t[w]=1\\)).\nThus our loss is \\[\nL_{CE}(\\hat{\\mathbf{y}_t}, \\mathbf{y}_t) = - \\sum_{w\\in V} \\log \\hat{\\mathbf{y}_t}[w]\n\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#training",
+    "href": "lectures/lstm.html#training",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training",
+    "text": "Training\n\n\n\n\n\n\n\n\n\n\n\n\nfigure adapted from Jurafsky and Martin (2026) Speech and Language Processing\n\n\n\n\nAt each position \\(t\\), take correct word \\(w_t\\) and hidden state \\(h_t\\), which encodes information from \\(w_1,\\ldots,w_{t-1}\\)\nCompute probability distribution over possible next words\nCompute loss for the next token\nUse the next correct word (not the predicted word - called teacher forcing) for next position\nCalculate total loss as average\nPerform backpropagation through time"
+  },
+  {
+    "objectID": "lectures/lstm.html#generative-rnns",
+    "href": "lectures/lstm.html#generative-rnns",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Generative RNNs",
+    "text": "Generative RNNs\n\n\n\n\n\n\n\n\n\n\n\n\nfigure adapted from Jurafsky and Martin (2026) Speech and Language Processing\n\n\n\n\nRNN-based language models can also be used to generate text (Generative AI)\nAutoregressive generation: Iteratively sample the next work based on previous words\nThis was one of the inspirations for the autoregressive approach used by LLMs\nAlgorithm:\n\nSample a word from the softmax distribution.\nUse the start of sentence marker &lt;s&gt; as the first input\nThe word embedding for the current word is used as input to the network to choose the word for the next time step\nThe output word is used as input for the next step\nContinue until end of sentence marker &lt;/s&gt; is sampled"
+  },
+  {
+    "objectID": "lectures/lstm.html#attention",
+    "href": "lectures/lstm.html#attention",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Attention",
+    "text": "Attention\n\nIn the encoder decoder model as described above, the context \\(\\mathbf{c}\\) must represent everything about the input sequence\nInformation present at the beginning of the input text may not be well represented in the context vector\nThe attention mechanism was designed as a way to extract information from all hidden states of the input\n\nWith attention, the context vector is no longer equal to the final hidden state of the input, instead it is dynamically calculated as a function of the hidden states of the encoder.\n\n\\[\n\\mathbf{c}_i = f(\\mathbf{h}_1^{e},\\mathbf{h}_2^{e}, \\ldots, \\mathbf{h}_n^{e})\n\\]\n\nThe goal is for the weights to focus on (‘attend to’) a particular part of the source text that is relevant for the token \\(i\\) that the decoder is currently producing.\nNote that the context vector is now generated anew for each decoding step \\(i\\), i.e., we have \\(\\mathbf{c}_i\\) instead of the same \\(\\mathbf{c}\\) for all steps."
+  },
+  {
+    "objectID": "lectures/lstm.html#attention-relevance",
+    "href": "lectures/lstm.html#attention-relevance",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Attention: Relevance?",
+    "text": "Attention: Relevance?\n\nIn order to compute \\(\\mathbf{c}_i\\), our goal is to determine how relevant each encoder hidden state is for the current decoder step.\nThat is, we want to have a function for the relevance of encoder state \\(j\\) for decoding step \\(i\\) \\[\n\\mathbf{relevance}(i, j) = f(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^e)\n\\]\nThe simplest function is the dot product, which equates relevance with vector similarity \\[\nf(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^de) = \\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e\n\\]\nWe calculate one such score for each of the encoder states and use softmax to convert into a probability distribution \\[\n\\begin{align}\n\\alpha_{ij} &= \\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e)\\\\\n&= \\dfrac{\\exp(\\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e))}\n{\\sum_k \\exp(\\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{k}^e))}\n\\end{align}\n\\]\n\\(\\mathbf{c}_i\\) is then calculated as the weighted average over these scores \\[\n\\mathbf{c}_i = \\sum_j \\alpha_{ij}\\mathbf{h}_{j}^e\n\\]"
+  },
+  {
+    "objectID": "lectures/lstm.html#attention-1",
+    "href": "lectures/lstm.html#attention-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Attention:",
+    "text": "Attention:\n\n\\(\\mathbf{c}_i\\) thus takes information from the entire encoder into account and is dynamically updated at each step of decoding"
+  },
+  {
+    "objectID": "lectures/lstm.html#attention-2",
+    "href": "lectures/lstm.html#attention-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Attention",
+    "text": "Attention\n\nThe dot product is a relatively simple way of calculating an attention score\nWe will return to this topic in the lectures about transformers"
   },
   {
     "objectID": "lectures/lstm.html#sources",
@@ -2054,7 +2187,7 @@
     "href": "index.html",
     "title": "Approaches to biomedical knowledge",
     "section": "",
-    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Word2Vec (partially finisheed)\nLecture 9: Encoders\nLecture 10: BERT and Sentence BERT (to do)\nLecture 11: Decoder architecture (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
+    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Word2Vec (partially finished)\nLecture 9: Encoders\nLecture 10: BERT and Sentence BERT (to do)\nLecture 11: Decoder architecture (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",
