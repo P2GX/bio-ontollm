@@ -14,7 +14,6 @@ RED = "#C0392B"
 def cars_pca(figsize=(10, 8)):
     np.random.seed(42)
     n_cars = 60
-
     # Generate synthetic data for dimensions
     # X-axis: Size (1 = Small/Compact, 5 = Large/SUV)
     size = np.random.uniform(1.0, 5.0, n_cars)
@@ -55,7 +54,6 @@ def cars_pca(figsize=(10, 8)):
     ax.view_init(elev=25, azim=135)
 
     plt.tight_layout()
-    plt.show()
 
 def w2v_analogy(figsize=(11, 5)):
     """
@@ -92,11 +90,10 @@ def w2v_analogy(figsize=(11, 5)):
         "UNCLE": (2.5, 1.0),
         "AUNT":  (5.0, 4.0),
         "KING":  (1.0, -4.0),
-        "QUEEN": (3.5, -1.0),
+        "QUEEN": (4.0, -0.5),
     }
 
     pairs_left = [("MAN", "WOMAN"), ("UNCLE", "AUNT"), ("KING", "QUEEN")]
-
     for start_name, end_name in pairs_left:
         draw_arrow(ax_left, points_left[start_name], points_left[end_name], BLUE)
 
@@ -106,7 +103,7 @@ def w2v_analogy(figsize=(11, 5)):
         "UNCLE": dict(dx=0.0, dy=-0.35, ha="center", va="top"),
         "AUNT":  dict(dx=0.0, dy=0.35, ha="center", va="bottom"),
         "KING":  dict(dx=-0.35, dy=0.0, ha="right", va="center"),
-        "QUEEN": dict(dx=0.0, dy=-0.35, ha="center", va="top"),
+        "QUEEN": dict(dx=0.8, dy=-0.15, ha="center", va="top"),
     }
 
     for name, xy in points_left.items():
