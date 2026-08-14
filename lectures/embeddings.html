@@ -1270,7 +1270,7 @@ Peter N Robinson
 </div>
 </div>
 </div>
-<div id="51b66b65" class="cell" data-execution_count="1">
+<div id="2e9562fb" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1414,7 +1414,7 @@ P(the, man, his, dog \mid loves) = P(the \mid loves) \cdot P(man\mid loves) \cdo
 </ul>
 <div class="small-text">
 <ul>
-<li>Mikolov, T. et al. (2013) <a href="https://arxiv.org/abs/1301.3781">Efficient Estimation of Word Representations in Vector Space”. arXiv:1301.3781</a></li>
+<li>Mikolov, T. et al. (2013) <a href="https://arxiv.org/abs/1301.3781">Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781</a></li>
 <li>Mikolov, T. et al. (2013) <a href="https://arxiv.org/abs/1310.4546">Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546</a></li>
 </ul>
 </div>
@@ -1571,7 +1571,7 @@ P(the, man, his, dog \mid loves) = P(the \mid loves) \cdot P(man\mid loves) \cdo
 <h2>Semantic vector space of cars</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="6e5d75f4" class="cell" data-execution_count="2">
+<div id="072e9261" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1608,7 +1608,7 @@ P(the, man, his, dog \mid loves) = P(the \mid loves) \cdot P(man\mid loves) \cdo
 </section>
 <section id="word-embeddings" class="slide level2">
 <h2>Word embeddings</h2>
-<div id="f1cf231a" class="cell" data-execution_count="3">
+<div id="47e1cf72" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2308,7 +2308,7 @@ Figure 1: Created with https://platform.openai.com/tokenizer
 <li>During training, an LLM learns embeddings to represent individual tokens</li>
 </ul>
 <div class="cell" data-fig-height="2" data-execution_count="4">
-<div id="fig-polar" class="cell quarto-float quarto-figure quarto-figure-center" data-fig-height="2" data-execution_count="4">
+<div id="fig-polar" class="cell quarto-float quarto-figure quarto-figure-center" data-execution_count="4" data-fig-height="2">
 <figure class="quarto-float quarto-float-fig">
 <div aria-describedby="fig-polar-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display">
@@ -2379,16 +2379,116 @@ Figure 2
 </div></div>
 </section>
 <section id="part-4" class="slide level2">
-<h2>Bytecode algorithm</h2>
+<h2>Byte Pair Encoding</h2>
 <ul>
-<li>TODO</li>
+<li>Byte Pair Encoding (BPE) is a simple, greedy algorithm that builds a vocabulary by repeatedly merging the most frequent pair of tokens.</li>
+<li>BPE proceeds by repeatedly identifying the most frequently occurring pair of symbols and replacing all occurrences of this pair with a new symbol, thereby shortening the text.</li>
+<li>The new symbols, together with the pairs they replace, are stored in a lookup-table, which allows the reconstruction of the original text.</li>
 </ul>
+</section>
+<section id="bpe" class="slide level2">
+<h2>BPE</h2>
+<ul>
+<li>BPE is widely used in the preprocessing stage of training large language models</li>
+<li>Originally introduced as a compression algorithm that repeatedly identifies the most frequently occurring pair of symbols and replaces all occurrences of this pair with a new symbol, thereby shortening the text.</li>
+</ul>
+<p><span class="math display">\[
+\begin{alignat}{3}
+\mathrm{aabaaaba} &amp;\to \mathrm{XbXaba} &amp;&amp;\to \mathrm{YXaba} &amp;&amp;\to \mathrm{Zaba} \\
+\mathrm{aabaaaba} &amp;\to \mathrm{aXaaXa} &amp;&amp;\to \phantom{\mathrm{Y}}\mathrm{YaYa} &amp;&amp;\to \mathrm{ZZ}
+\end{alignat}
+\]</span></p>
+<ul>
+<li>Input <span class="math inline">\(s= \mathrm{aabaaaba}\)</span></li>
+<li>Top: BPE merge sequence (<span class="math inline">\(\mathrm{aa} \to \mathrm{X}\)</span>, <span class="math inline">\(\mathrm{Xb} \to \mathrm {Y}\)</span>, <span class="math inline">\(\mathrm{YX}\to \mathrm{Z}\)</span>)</li>
+<li>Bottom: BPE merge sequence (<span class="math inline">\(\mathrm{ab} \to \mathrm{X}\)</span>, <span class="math inline">\(\mathrm{aX} \to \mathrm {Y}\)</span>, <span class="math inline">\(\mathrm{Ya}\to \mathrm{Z}\)</span>)</li>
+<li>Compression utility of <span class="math inline">\(\mathrm{aabaaaba} \to \mathrm{Zaba}\)</span> is <span class="math inline">\(8- 4= 4\)</span></li>
+<li>Compression utility of <span class="math inline">\(\mathrm{aabaaaba} \to \mathrm{ZZ}\)</span> is <span class="math inline">\(8-2=6\)</span></li>
+</ul>
+</section>
+<section id="problem-definition" class="slide level2">
+<h2>Problem definition</h2>
+<ul>
+<li>Consider an input string <span class="math inline">\(s\)</span> over an alphabet <span class="math inline">\(\Sigma\)</span></li>
+<li>Represent the concatenation of strings <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> as <span class="math inline">\(a\cdot b\)</span> (somes we will show simply <span class="math inline">\(ab\)</span> when clear from context)</li>
+<li>The length of a string <span class="math inline">\(a\)</span>: <span class="math inline">\(|a|\)</span>, the <span class="math inline">\(i^{th}\)</span> character of the string is <span class="math inline">\(a[i]\)</span>, and the substring <span class="math inline">\(a[i]\cdot a[i+1]\cdot\cdot\cdot a[j]\)</span> is <span class="math inline">\(a[i:j]\)</span></li>
+<li>A replacement rule is a function <span class="math inline">\(\mathrm{replace}_{x\to y}\)</span> that transforms a string <span class="math inline">\(s\)</span> by replacing all occurrences of the string <span class="math inline">\(x\)</span> in <span class="math inline">\(s\)</span> with the string <span class="math inline">\(y\)</span>.
+<ul>
+<li>If <span class="math inline">\(s\)</span> does not contain <span class="math inline">\(x\)</span> then <span class="math inline">\(\mathrm{replace}_{x\to y}(s) = s\)</span></li>
+<li>Otherwise <span class="math display">\[\mathrm{replace}_{x\to y}(s) = s[1:i]\cdot y\cdot \mathrm{replace}_{x\to y}(s[i+|x| + 1:|s|)\]</span> where i is the smallest index for which <span class="math inline">\(s[i + 1 : i + |x|] = x\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="probem-definition-2" class="slide level2">
+<h2>Probem definition (2)</h2>
+<ul>
+<li><p>A sequence of replacement rules <span class="math inline">\(\mathbb{R} = (\mathbb{R}_1,\ldots ,\mathbb{R}_k)\)</span> with <span class="math inline">\(\mathbb{R}_i = \mathrm{replace}_{a_ib_i\to c_i}\)</span> , where <span class="math inline">\(a_i, b_i\)</span>, and <span class="math inline">\(c_i\)</span> are symbols, is called a merge sequence of length <span class="math inline">\(k\)</span>. Denoting <span class="math inline">\(s^{\prime} =(\mathbb{R}_k \circ \ldots \circ \mathbb{R}_1)(s)\)</span>, where <span class="math inline">\(\circ\)</span> is function composition, we refer to <span class="math inline">\(|s^{\prime}|\)</span> as the compressed length, and <span class="math inline">\(|s| − |s^{\prime}|\)</span> as the utility of<span class="math inline">\(\mathbb{R}\)</span> for <span class="math inline">\(s\)</span>.</p></li>
+<li><p>BPE starts with the input string <span class="math inline">\(s\)</span>, it performs <span class="math inline">\(k\)</span> locally optimal full merge steps, always choosing a pair whose replacement maximizes compression utility</p></li>
+<li><p>This leads to a vocabulary of <span class="math inline">\(k\)</span> tokens (why?)</p></li>
+</ul>
+</section>
+<section id="bpe-algorithm" class="slide level2">
+<h2>BPE algorithm</h2>
+<p>Choose a desired <span class="math inline">\(k\)</span> (vocabulary size) and the input text corpus <span class="math inline">\(s\)</span></p>
+<ul>
+<li>Let <span class="math inline">\(s^{(0)} = s\)</span></li>
+<li>Let <span class="math inline">\(s^{(i)} = \mathbb{R}_i(s^{(i-1)})\)</span> for <span class="math inline">\(i\in k\)</span></li>
+<li>Output <span class="math inline">\(\mathbb{R} = (\mathbb{R}_1,\ldots ,\mathbb{R}_k)\)</span> with <span class="math inline">\(\mathbb{R}_i = \mathrm{replace}_{a_ib_i\to c_i}\)</span></li>
+<li>Each <span class="math inline">\(c_i\)</span> is a new symbol not occuring in <span class="math inline">\(s^{(j)}\)</span> for <span class="math inline">\(j&lt;i\)</span></li>
+<li>The pair <span class="math inline">\(a_ib_i\)</span> is chosen so that <span class="math inline">\(|\mathbb{R}_i((s^{(i-1)})|\)</span> is minimal</li>
+</ul>
+<p><span class="hw-badge">HOMEWORK</span> You will implement a version of BPE</p>
+</section>
+<section id="bpe-applications" class="slide level2">
+<h2>BPE Applications</h2>
+<section id="llms-and-bpe" class="mybox">
+<h3>LLMs and BPE</h3>
+<p>Virutally every major LLM uses BPE to transform input text into number (tokens) that are processed by the model</p>
+<ul>
+<li>GPE</li>
+<li>Llama</li>
+<li>Mistral</li>
+<li>Claude</li>
+</ul>
+</section>
+</section>
+<section id="bpe-applications-1" class="slide level2">
+<h2>BPE Applications</h2>
+<ul>
+<li>Balances between character-level (too slow, results in long sequences) and word-level (too many parameters for rare words, poor generalization).</li>
+<li>BPE handles rare words (e.g., not in training vocabulary) by falling back to smaller subwords or individual characters/bytes.</li>
+<li>Models learn morphological patterns (e.g., “ing”, “ed”, “tion”, “pre”, “un”) which may help with analysis of grammar</li>
+<li>Cross-lingual: May help with relating synonymous words in different languages (Produktion, production, producíon,…)</li>
+</ul>
+</section>
+<section id="bpe-applications-2" class="slide level2">
+<h2>BPE Applications</h2>
+<ul>
+<li>Better parameter efficiency: Model spends capacity on meaningful patterns rather than memorizing every word variant.</li>
+<li>Consider the German word “Abwasserbehandlungsanlage”
+<ul>
+<li>If a model created a single token for this word, it would need to learn the meaning of the token from relatively rare mentions in the training data</li>
+<li>If the model splits this into “Abwasser”, “Behandlung(s)” and “Anlage”, the meanings of these three tokens are inferred from a much richer context in the training data</li>
+</ul></li>
+<li>Consider word families:
+<ul>
+<li>“happy”: happy, happier, happiest, happily, happiness, unhappy, unhappier, unhappiest, unhappily, unhappiness</li>
+<li>“nation”: nations, national, nationally, nationalist, nationalists, nationalism, nationalistic, nationality, nationalities, nationalize, nationalized, nationalization, international, internationally, transnational, multinational.</li>
+</ul></li>
+<li>BPE often will extract a common root from families such as this – the model learns one embedding for the shared root and separate embeddings for the inflectional/derivational endings</li>
+</ul>
+<div class="tiny-credit">
+<p>Sennrich, R, et al. (2016) <a href="https://aclanthology.org/P16-1162/">Neural Machine Translation of Rare Words with Subword Units</a></p>
+</div>
 </section>
 <section id="sources" class="slide level2">
 <h2>Sources</h2>
 <p>The sources used to prepare this lecture include</p>
 <ul>
 <li>Goldberg Y and Levy O (2014) <a href="https://arxiv.org/abs/1402.3722">word2vec Explained: deriving Mikolov et al.’s negative-sampling word-embedding method, arXiv 1402.3722</a></li>
+<li>Kozma L and Voderholzer J (2024) <a href="https://arxiv.org/abs/2411.08671">Theoretical Analysis of Byte-Pair Encoding, arXiv 2411.08671</a></li>
+<li>Mikolov, T. et al. (2013) <a href="https://arxiv.org/abs/1301.3781">Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781</a></li>
+<li>Mikolov, T. et al. (2013) <a href="https://arxiv.org/abs/1310.4546">Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546</a></li>
 </ul>
 
 

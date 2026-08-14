@@ -2197,7 +2197,7 @@
     "href": "lectures/embeddings.html#part-2",
     "title": "Approaches to biomedical knowledge",
     "section": "word2vec",
-    "text": "word2vec\n\nword2vec maps each word to a fixed-length vector, and these vectors can better express the similarity and analogy relationship among different words.\n\n\n\nMikolov, T. et al. (2013) Efficient Estimation of Word Representations in Vector Space”. arXiv:1301.3781\nMikolov, T. et al. (2013) Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546\n\n\n\nword2vec is a classic algorithm that was extremely influential in NLP before the advent of transformer based algorithms.\nThe word2vec algorithm has several features that influenced the development of transformers and it is a good place to learn about how embeddings can be created.\n\n\nOne-hot vectors\nBefore explaing the word2vec algorithm, let’s study why semantic vectors are an improvement over one-hot vectors"
+    "text": "word2vec\n\nword2vec maps each word to a fixed-length vector, and these vectors can better express the similarity and analogy relationship among different words.\n\n\n\nMikolov, T. et al. (2013) Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781\nMikolov, T. et al. (2013) Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546\n\n\n\nword2vec is a classic algorithm that was extremely influential in NLP before the advent of transformer based algorithms.\nThe word2vec algorithm has several features that influenced the development of transformers and it is a good place to learn about how embeddings can be created.\n\n\nOne-hot vectors\nBefore explaing the word2vec algorithm, let’s study why semantic vectors are an improvement over one-hot vectors"
   },
   {
     "objectID": "lectures/embeddings.html#one-hot-encoding",
@@ -2462,15 +2462,64 @@
     "objectID": "lectures/embeddings.html#part-4",
     "href": "lectures/embeddings.html#part-4",
     "title": "Approaches to biomedical knowledge",
-    "section": "Bytecode algorithm",
-    "text": "Bytecode algorithm\n\nTODO"
+    "section": "Byte Pair Encoding",
+    "text": "Byte Pair Encoding\n\nByte Pair Encoding (BPE) is a simple, greedy algorithm that builds a vocabulary by repeatedly merging the most frequent pair of tokens.\nBPE proceeds by repeatedly identifying the most frequently occurring pair of symbols and replacing all occurrences of this pair with a new symbol, thereby shortening the text.\nThe new symbols, together with the pairs they replace, are stored in a lookup-table, which allows the reconstruction of the original text."
+  },
+  {
+    "objectID": "lectures/embeddings.html#bpe",
+    "href": "lectures/embeddings.html#bpe",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BPE",
+    "text": "BPE\n\nBPE is widely used in the preprocessing stage of training large language models\nOriginally introduced as a compression algorithm that repeatedly identifies the most frequently occurring pair of symbols and replaces all occurrences of this pair with a new symbol, thereby shortening the text.\n\n\\[\n\\begin{alignat}{3}\n\\mathrm{aabaaaba} &\\to \\mathrm{XbXaba} &&\\to \\mathrm{YXaba} &&\\to \\mathrm{Zaba} \\\\\n\\mathrm{aabaaaba} &\\to \\mathrm{aXaaXa} &&\\to \\phantom{\\mathrm{Y}}\\mathrm{YaYa} &&\\to \\mathrm{ZZ}\n\\end{alignat}\n\\]\n\nInput \\(s= \\mathrm{aabaaaba}\\)\nTop: BPE merge sequence (\\(\\mathrm{aa} \\to \\mathrm{X}\\), \\(\\mathrm{Xb} \\to \\mathrm {Y}\\), \\(\\mathrm{YX}\\to \\mathrm{Z}\\))\nBottom: BPE merge sequence (\\(\\mathrm{ab} \\to \\mathrm{X}\\), \\(\\mathrm{aX} \\to \\mathrm {Y}\\), \\(\\mathrm{Ya}\\to \\mathrm{Z}\\))\nCompression utility of \\(\\mathrm{aabaaaba} \\to \\mathrm{Zaba}\\) is \\(8- 4= 4\\)\nCompression utility of \\(\\mathrm{aabaaaba} \\to \\mathrm{ZZ}\\) is \\(8-2=6\\)"
+  },
+  {
+    "objectID": "lectures/embeddings.html#problem-definition",
+    "href": "lectures/embeddings.html#problem-definition",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Problem definition",
+    "text": "Problem definition\n\nConsider an input string \\(s\\) over an alphabet \\(\\Sigma\\)\nRepresent the concatenation of strings \\(a\\) and \\(b\\) as \\(a\\cdot b\\) (somes we will show simply \\(ab\\) when clear from context)\nThe length of a string \\(a\\): \\(|a|\\), the \\(i^{th}\\) character of the string is \\(a[i]\\), and the substring \\(a[i]\\cdot a[i+1]\\cdot\\cdot\\cdot a[j]\\) is \\(a[i:j]\\)\nA replacement rule is a function \\(\\mathrm{replace}_{x\\to y}\\) that transforms a string \\(s\\) by replacing all occurrences of the string \\(x\\) in \\(s\\) with the string \\(y\\).\n\nIf \\(s\\) does not contain \\(x\\) then \\(\\mathrm{replace}_{x\\to y}(s) = s\\)\nOtherwise \\[\\mathrm{replace}_{x\\to y}(s) = s[1:i]\\cdot y\\cdot \\mathrm{replace}_{x\\to y}(s[i+|x| + 1:|s|)\\] where i is the smallest index for which \\(s[i + 1 : i + |x|] = x\\)"
+  },
+  {
+    "objectID": "lectures/embeddings.html#probem-definition-2",
+    "href": "lectures/embeddings.html#probem-definition-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Probem definition (2)",
+    "text": "Probem definition (2)\n\nA sequence of replacement rules \\(\\mathbb{R} = (\\mathbb{R}_1,\\ldots ,\\mathbb{R}_k)\\) with \\(\\mathbb{R}_i = \\mathrm{replace}_{a_ib_i\\to c_i}\\) , where \\(a_i, b_i\\), and \\(c_i\\) are symbols, is called a merge sequence of length \\(k\\). Denoting \\(s^{\\prime} =(\\mathbb{R}_k \\circ \\ldots \\circ \\mathbb{R}_1)(s)\\), where \\(\\circ\\) is function composition, we refer to \\(|s^{\\prime}|\\) as the compressed length, and \\(|s| − |s^{\\prime}|\\) as the utility of\\(\\mathbb{R}\\) for \\(s\\).\nBPE starts with the input string \\(s\\), it performs \\(k\\) locally optimal full merge steps, always choosing a pair whose replacement maximizes compression utility\nThis leads to a vocabulary of \\(k\\) tokens (why?)"
+  },
+  {
+    "objectID": "lectures/embeddings.html#bpe-algorithm",
+    "href": "lectures/embeddings.html#bpe-algorithm",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BPE algorithm",
+    "text": "BPE algorithm\nChoose a desired \\(k\\) (vocabulary size) and the input text corpus \\(s\\)\n\nLet \\(s^{(0)} = s\\)\nLet \\(s^{(i)} = \\mathbb{R}_i(s^{(i-1)})\\) for \\(i\\in k\\)\nOutput \\(\\mathbb{R} = (\\mathbb{R}_1,\\ldots ,\\mathbb{R}_k)\\) with \\(\\mathbb{R}_i = \\mathrm{replace}_{a_ib_i\\to c_i}\\)\nEach \\(c_i\\) is a new symbol not occuring in \\(s^{(j)}\\) for \\(j&lt;i\\)\nThe pair \\(a_ib_i\\) is chosen so that \\(|\\mathbb{R}_i((s^{(i-1)})|\\) is minimal\n\nHOMEWORK You will implement a version of BPE"
+  },
+  {
+    "objectID": "lectures/embeddings.html#bpe-applications",
+    "href": "lectures/embeddings.html#bpe-applications",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BPE Applications",
+    "text": "BPE Applications\n\nLLMs and BPE\nVirutally every major LLM uses BPE to transform input text into number (tokens) that are processed by the model\n\nGPE\nLlama\nMistral\nClaude"
+  },
+  {
+    "objectID": "lectures/embeddings.html#bpe-applications-1",
+    "href": "lectures/embeddings.html#bpe-applications-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BPE Applications",
+    "text": "BPE Applications\n\nBalances between character-level (too slow, results in long sequences) and word-level (too many parameters for rare words, poor generalization).\nBPE handles rare words (e.g., not in training vocabulary) by falling back to smaller subwords or individual characters/bytes.\nModels learn morphological patterns (e.g., “ing”, “ed”, “tion”, “pre”, “un”) which may help with analysis of grammar\nCross-lingual: May help with relating synonymous words in different languages (Produktion, production, producíon,…)"
+  },
+  {
+    "objectID": "lectures/embeddings.html#bpe-applications-2",
+    "href": "lectures/embeddings.html#bpe-applications-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BPE Applications",
+    "text": "BPE Applications\n\nBetter parameter efficiency: Model spends capacity on meaningful patterns rather than memorizing every word variant.\nConsider the German word “Abwasserbehandlungsanlage”\n\nIf a model created a single token for this word, it would need to learn the meaning of the token from relatively rare mentions in the training data\nIf the model splits this into “Abwasser”, “Behandlung(s)” and “Anlage”, the meanings of these three tokens are inferred from a much richer context in the training data\n\nConsider word families:\n\n“happy”: happy, happier, happiest, happily, happiness, unhappy, unhappier, unhappiest, unhappily, unhappiness\n“nation”: nations, national, nationally, nationalist, nationalists, nationalism, nationalistic, nationality, nationalities, nationalize, nationalized, nationalization, international, internationally, transnational, multinational.\n\nBPE often will extract a common root from families such as this – the model learns one embedding for the shared root and separate embeddings for the inflectional/derivational endings\n\n\nSennrich, R, et al. (2016) Neural Machine Translation of Rare Words with Subword Units"
   },
   {
     "objectID": "lectures/embeddings.html#sources",
     "href": "lectures/embeddings.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\nThe sources used to prepare this lecture include\n\nGoldberg Y and Levy O (2014) word2vec Explained: deriving Mikolov et al.’s negative-sampling word-embedding method, arXiv 1402.3722"
+    "text": "Sources\nThe sources used to prepare this lecture include\n\nGoldberg Y and Levy O (2014) word2vec Explained: deriving Mikolov et al.’s negative-sampling word-embedding method, arXiv 1402.3722\nKozma L and Voderholzer J (2024) Theoretical Analysis of Byte-Pair Encoding, arXiv 2411.08671\nMikolov, T. et al. (2013) Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781\nMikolov, T. et al. (2013) Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546"
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",
