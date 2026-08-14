@@ -232,7 +232,7 @@ multiclass predictors in neural networks
 - word2vec  maps each word to a fixed-length vector, and these vectors can better express the similarity and analogy relationship among different words. 
 
 ::: {.small-text}
-- Mikolov, T. et al. (2013) [Efficient Estimation of Word Representations in Vector Space". arXiv:1301.3781](https://arxiv.org/abs/1301.3781)
+- Mikolov, T. et al. (2013) [Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781](https://arxiv.org/abs/1301.3781)
 - Mikolov, T. et al. (2013) [Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546](https://arxiv.org/abs/1310.4546)
 :::
 
@@ -1060,12 +1060,114 @@ plt.show()
 ::::
 
 
-##  Bytecode algorithm {#part-4}
+##  Byte Pair Encoding {#part-4}
 
-- TODO
+- Byte Pair Encoding (BPE) is a simple, greedy algorithm that builds a vocabulary by repeatedly merging the most frequent pair of tokens.
+- BPE proceeds by repeatedly identifying the most frequently occurring pair of symbols
+and replacing all occurrences of this pair with a new symbol, thereby shortening the text.
+-  The
+new symbols, together with the pairs they replace, are stored in a lookup-table, which allows the
+reconstruction of the original text. 
+
+## BPE 
+
+- BPE is widely used in the preprocessing stage of training large language models 
+- Originally introduced as a compression algorithm that repeatedly identifies the most frequently occurring pair of symbols
+and replaces all occurrences of this pair with a new symbol, thereby shortening the text.
+
+$$
+\begin{alignat}{3}
+\mathrm{aabaaaba} &\to \mathrm{XbXaba} &&\to \mathrm{YXaba} &&\to \mathrm{Zaba} \\
+\mathrm{aabaaaba} &\to \mathrm{aXaaXa} &&\to \phantom{\mathrm{Y}}\mathrm{YaYa} &&\to \mathrm{ZZ}
+\end{alignat}
+$$
+
+- Input $s= \mathrm{aabaaaba}$
+- Top: BPE merge sequence ($\mathrm{aa} \to \mathrm{X}$, $\mathrm{Xb} \to \mathrm {Y}$, $\mathrm{YX}\to \mathrm{Z}$)
+- Bottom: BPE merge sequence ($\mathrm{ab} \to \mathrm{X}$, $\mathrm{aX} \to \mathrm {Y}$, $\mathrm{Ya}\to \mathrm{Z}$)
+- Compression utility of $\mathrm{aabaaaba} \to \mathrm{Zaba}$ is $8- 4= 4$
+- Compression utility of $\mathrm{aabaaaba} \to \mathrm{ZZ}$ is $8-2=6$
+
+## Problem definition
+
+- Consider an input string $s$ over an alphabet $\Sigma$
+- Represent the concatenation of strings $a$ and $b$ as $a\cdot b$ (somes we will show simply $ab$ when clear from context)
+- The length of a string $a$: $|a|$, the $i^{th}$ character of the string is $a[i]$, and the substring $a[i]\cdot a[i+1]\cdot\cdot\cdot a[j]$ is $a[i:j]$
+- A replacement rule is a function $\mathrm{replace}_{x\to y}$ that transforms a string $s$ by replacing all occurrences
+of the string $x$ in $s$ with the string $y$. 
+  - If $s$ does not contain $x$ then $\mathrm{replace}_{x\to y}(s) = s$
+  - Otherwise $$\mathrm{replace}_{x\to y}(s) = s[1:i]\cdot y\cdot \mathrm{replace}_{x\to y}(s[i+|x| + 1:|s|)$$ where i is the smallest index for
+which $s[i + 1 : i + |x|] = x$
+
+## Probem definition (2)
+
+- A sequence of replacement rules $\mathbb{R} = (\mathbb{R}_1,\ldots ,\mathbb{R}_k)$ with $\mathbb{R}_i = \mathrm{replace}_{a_ib_i\to c_i}$
+, where $a_i, b_i$, and $c_i$ are symbols, is called a merge sequence of length $k$. 
+Denoting $s^{\prime} =(\mathbb{R}_k \circ \ldots \circ \mathbb{R}_1)(s)$, where $\circ$ is function composition, we refer to $|s^{\prime}|$
+ as the compressed length, and $|s| − |s^{\prime}|$ as the utility of$\mathbb{R}$ for $s$. 
+
+- BPE starts with the input string $s$, it performs $k$ locally optimal full merge steps, always choosing a pair whose
+replacement maximizes compression utility
+- This leads to a vocabulary of $k$ tokens (why?)
+
+## BPE algorithm
+
+Choose a desired $k$ (vocabulary size) and the input text corpus $s$
+
+- Let $s^{(0)} = s$
+- Let $s^{(i)} = \mathbb{R}_i(s^{(i-1)})$ for $i\in k$
+- Output $\mathbb{R} = (\mathbb{R}_1,\ldots ,\mathbb{R}_k)$ with $\mathbb{R}_i = \mathrm{replace}_{a_ib_i\to c_i}$
+- Each $c_i$ is a new symbol not occuring in $s^{(j)}$ for $j<i$
+- The pair $a_ib_i$ is chosen so that $|\mathbb{R}_i((s^{(i-1)})|$ is minimal
+
+[HOMEWORK]{.hw-badge} You will implement a version of BPE
+
+## BPE Applications
+
+::: {.mybox}
+### LLMs and BPE
+
+Virutally every major LLM uses BPE to transform input text into number (tokens) that are processed by the model
+
+- GPE
+- Llama
+- Mistral
+- Claude
+:::
+
+
+## BPE Applications
+
+- Balances between character-level (too slow, results in long sequences) and word-level (too many parameters for rare words, poor generalization).
+- BPE handles rare words (e.g., not in training vocabulary) by falling back to smaller subwords or individual characters/bytes.
+- Models learn morphological patterns (e.g., “ing”, “ed”, “tion”, “pre”, “un”) which may help with analysis of grammar
+- Cross-lingual: May help with relating synonymous words in different languages (Produktion, production, producíon,...)
+
+## BPE Applications
+
+- Better parameter efficiency: Model spends capacity on meaningful patterns rather than memorizing every word variant.
+- Consider the German word "Abwasserbehandlungsanlage"
+  - If a model created a single token for this word, it would need to learn the meaning of the token from relatively rare mentions in the training data
+  - If the model splits this into "Abwasser", "Behandlung(s)" and "Anlage", the meanings of these three tokens are inferred from a much richer context in the training data 
+- Consider word families:
+  - "happy": happy, happier, happiest, happily, happiness, unhappy, unhappier, unhappiest, unhappily, unhappiness
+  - "nation": nations, national, nationally, nationalist, nationalists, nationalism, nationalistic, nationality, nationalities, nationalize, nationalized, nationalization, international, internationally, transnational, multinational.
+- BPE often will extract a common root from families such as this -- the model learns one embedding for the shared root and separate embeddings for the inflectional/derivational endings
+
+:::{.tiny-credit}
+Sennrich, R, et al. (2016) [Neural Machine Translation of Rare Words with Subword Units](https://aclanthology.org/P16-1162/)
+:::
+
+
+
 
 ## Sources
 
 The sources used to prepare this lecture include
 
 - Goldberg Y and Levy O (2014) [word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding method, arXiv 1402.3722](https://arxiv.org/abs/1402.3722)
+- Kozma L and Voderholzer J (2024) [Theoretical Analysis of Byte-Pair Encoding, arXiv  2411.08671](https://arxiv.org/abs/2411.08671)
+- Mikolov, T. et al. (2013) [Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781](https://arxiv.org/abs/1301.3781)
+- Mikolov, T. et al. (2013) [Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546](https://arxiv.org/abs/1310.4546)
+
+
