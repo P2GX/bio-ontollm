@@ -30,7 +30,9 @@ This lecture provides an introduction to the transformer architecture with a foc
 
 - [Embeddings](#embeddings) (See also [Lecture 8, Embeddings and Tokens](./embeddings.qmd))
 - [Positional encodings](#positional)
-- [Multi-head attention](#multihead-attention)
+- [Attention](#attention)
+- [Layer Normalization](#layernorm)
+- [Feed-Forward Network (FFN)](#ffn)
 
 
 
@@ -71,6 +73,16 @@ This lecture provides an introduction to the transformer architecture with a foc
 :::
 
 ::::
+
+## Tokenization & Embedding
+
+::: {.mybox}
+### Tokenization
+- Transforms raw text (sequence of words) into smaller parts called tokens. 
+- Tokens can be characters, parts of words, or full words
+- Tokens are mapped into indices (token IDs) to be used as input to the neural network
+- The embedding layer ttransforms the tokens into "meaningful" vector representations
+:::
 
 
 ## The Embedding Mapping
@@ -151,6 +163,17 @@ $$
 
 :::
 
+## Positional encoding
+
+::: {.mybox}
+### Positional encoding
+- The attention mechanism has no built-in concept of order 
+- Transformers do not process input one token at a time (as do RNNs)
+- The attention mechanis treats each data point as independent of the others. 
+- Positional encodings encode position information directly into the input embeddings 
+:::
+
+
 
 ## Positional Encodings: RNNs vs Encoders 
 
@@ -187,163 +210,64 @@ Vaswani A et al. (2017) [Attention Is All You Need. arXiv 1706.03762](https://ar
 - Self-attention computes $\mathbf{QK}^T$ purely from token content (embeddings) — swapping two input tokens just swaps the corresponding outputs, with no other change. This property is called permutation equivariance.
 - Consequence: without extra information, "I am an automaton" and "automaton an am I" would produce identical (permuted) attention patterns — word order carries no signal.
 - Positional encodings break this symmetry by injecting position-dependent information into each token's representation before attention is computed.
-:::
 
-## Calculating positional encodings (PEs)
 
-- Positional encodings use an index $i\in {0,1,\ldots,\frac{d}{2}-1}$ that indexes **pairs** of dimensions:
-    - $2i$ (sine)
-    - $2i+1$ (cosine)
-- Both the sine and the cosine dimensions for $i$ use the same frequency $\omega_{i} = (\frac{1}{10000})^{2i/d}$
-- For sine (output dimension slot $2i$):
-$$
-\mathrm{PE}(pos,2i) = \sin\left(\dfrac{pos}{10000^{\frac{2i}{d}}}\right)
-$$
+## Sinusoidal Positional Encoding
 
-- For cosine (output dimension slot $2i+1$):
+- The original Transformer publication uses sinusoidal functions to encode positions. 
+- For a sequence of length $n$, the positional encoding for position $i$ is a vector $\mathbf{p}_i$ defined as
 
 $$
-\mathrm{PE}(pos,2i+1) = \cos\left(\dfrac{pos}{10000^{\frac{2i}{d}}}\right)
+\mathbf{p}_i = \left[\sin\left(\frac{i}{10000^{\frac{2j}{d}}}\right), \cos\left(\frac{i}{10000^{\frac{2j}{d}}}\right) \right]_{j=0}^{\frac{d}{2}-1}
 $$
 
+- where:
+    - $i$ is the position index (Position in the input text)
+    - $j$ is the dimension index (Position in the positional vector)
+    - $d$ is the dimensionality (Length of positional vector - which must be the same as that of the word embedding)
+- Both the sine and the cosine dimensions for $j$ use the same frequency $\omega_{j} = (\frac{1}{10000})^{2j/d}$
 
-## Understanding the PE Matrix (1)
+
+
+## Understanding the PE Matrix
 
 A positional encoding has the same dimension as an embedding, and calculates a value for each dimension using the sine and cosine formulas.
 
-::: {.small-table}
-```{python}
-#| echo: false
-import pandas as pd
-import numpy as np
-
-tokens = ["I", "am", "an", "automaton"]
-d_model = 4
-n = 100
-rows = []
-
-for k in range(len(tokens)):
-    row = [tokens[k], k]
-    for j in range(d_model // 2):
-        denom_val = n**(2 * j / d_model)
-        denom_str = f"{int(denom_val)}" if denom_val == int(denom_val) else f"{denom_val:.0f}"
-        sin_expr = f"sin({k}/{denom_str})"
-        cos_expr = f"cos({k}/{denom_str})"
-        sin_val = np.sin(k / denom_val)
-        cos_val = np.cos(k / denom_val)
-
-        row.append(f"{sin_expr} = <span style='color: #a52a2a;'><b>{sin_val:.2f}</b></span>")
-        row.append(f"{cos_expr} = <span style='color: #a52a2a;'><b>{cos_val:.2f}</b></span>")
-    rows.append(row)
-
-headers = ["Sequence", "k"]
-for j in range(d_model // 2):
-    headers.extend([f"i={j} (sine)", f"i={j} (cosine)"])
-
-df = pd.DataFrame(rows, columns=headers)
-
-styled_df = df.style.set_properties(**{
-    'text-align': 'left',
-    'padding': '2px',
-    'font-size': '0.5',
-    'border': '1px solid #ddd',
-    'line-height': '1.1'
-}).set_table_styles([
-    {'selector': 'th', 'props': [('background-color', '#f2f2f2'), ('font-weight', 'bold')]},
-    {'selector': 'td:nth-child(1)', 'props': [('background-color', 'white'), ('font-weight', '500')]},
-    {'selector': 'td:nth-child(2)', 'props': [('background-color', '#f9f9f9')]}
-]).hide(axis="index")
-
-styled_df
-``` 
-
+:::{.small-text}
+$$
+\mathbf{p}_i = \left[\sin\left(\frac{i}{10000^{\frac{2j}{d}}}\right), \cos\left(\frac{i}{10000^{\frac{2j}{d}}}\right) \right]_{j=0}^{\frac{d}{2}-1}
+$$
 :::
 
+- example ("I", "am", "an", "automaton" and $d = 4$): 
 
 :::{.small-text}
-- example: **first word** ($k=0$)
-  - $k=0, i=0$, <span style="color:blue">$2i=0$</span>; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{0}{100^{\frac{0}{4}}}\right) = \sin(0)=0$
-  - $k=0, i=0$, <span style="color:blue">$2i + 1=1$</span>; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{0}{100^{\frac{0}{4}}}\right) = \cos(0)= 1$
-  - $k=0, i=1$, <span style="color:blue">$2i=2$</span>; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{0}{100^{\frac{2}{4}}}\right) =\sin(0)=0$
-  - $k=0, i=1$, <span style="color:blue">$2i+1=3$</span>; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{0}{100^{\frac{2}{4}}}\right) = \cos(0)= 1$
-- The slot (e.g., $2i$ or $2i+1$) determines the index in the positional encoding vector
-- $k$ is the index in the original sequence
+$$
+\begin{align}
+\mathbf{p}_0 &=  \left[\sin\left(\frac{0}{10000^{\frac{0}{4}}}\right), \cos\left(\frac{0}{10000^{\frac{0}{4}}}\right),
+ \sin\left(\frac{0}{10000^{\frac{1}{2}}}\right), \cos\left(\frac{0}{10000^{\frac{1}{2}}}\right) \right] 
+  =\left[0,1, 0, 1\right]  \\
+  \mathbf{p}_1 &=  \left[\sin\left(\frac{1}{10000^{\frac{0}{4}}}\right), \cos\left(\frac{1}{10000^{\frac{0}{4}}}\right),
+ \sin\left(\frac{1}{10000^{\frac{1}{2}}}\right), \cos\left(\frac{1}{10000^{\frac{1}{2}}}\right)\right] 
+  = \left[0.8415, 0.5403, 0.0100, 0.9999\right]  \\
+\mathbf{p}_2 &=  \left[\sin\left(\frac{2}{10000^{\frac{0}{4}}}\right), \cos\left(\frac{2}{10000^{\frac{0}{4}}}\right),
+ \sin\left(\frac{2}{10000^{\frac{1}{2}}}\right), \cos\left(\frac{2}{10000^{\frac{1}{2}}}\right)\right] 
+  = \left[0.9093, −0.4161, 0.0200, 0.9998\right]  \\
+  \mathbf{p}_3 &=  \left[\sin\left(\frac{3}{10000^{\frac{0}{4}}}\right), \cos\left(\frac{3}{10000^{\frac{0}{4}}}\right),
+ \sin\left(\frac{2}{10000^{\frac{1}{2}}}\right), \cos\left(\frac{2}{10000^{\frac{1}{2}}}\right)\right] 
+  = \left[0.1411, −0.9900, 0.0300, 0.9996\right]  \\
+\end{align}
+$$
+:::
+
 - The embedding dimension $d$ is set to 4 in this example but is generally much larger (e.g., 768 for BERT)
-:::
 
-## Understanding the PE Matrix (2)
-
-- Continuing our example with the second word "am"
-
-::: {.small-table}
-```{python}
-#| echo: false
-import pandas as pd
-import numpy as np
-
-tokens = ["I", "am", "an", "automaton"]
-d_model = 4
-n = 100
-rows = []
-
-for k in range(len(tokens)):
-    row = [tokens[k], k]
-    for j in range(d_model // 2):
-        denom_val = n**(2 * j / d_model)
-        denom_str = f"{int(denom_val)}" if denom_val == int(denom_val) else f"{denom_val:.0f}"
-        sin_expr = f"sin({k}/{denom_str})"
-        cos_expr = f"cos({k}/{denom_str})"
-        sin_val = np.sin(k / denom_val)
-        cos_val = np.cos(k / denom_val)
-
-        row.append(f"{sin_expr} = <span style='color: #a52a2a;'><b>{sin_val:.2f}</b></span>")
-        row.append(f"{cos_expr} = <span style='color: #a52a2a;'><b>{cos_val:.2f}</b></span>")
-    rows.append(row)
-
-headers = ["Sequence", "k"]
-for j in range(d_model // 2):
-    headers.extend([f"i={j} (sine)", f"i={j} (cosine)"])
-
-df = pd.DataFrame(rows, columns=headers)
-
-styled_df = df.style.set_properties(**{
-    'text-align': 'left',
-    'padding': '2px',
-    'font-size': '0.5',
-    'border': '1px solid #ddd',
-    'line-height': '1.1'
-}).set_table_styles([
-    {'selector': 'th', 'props': [('background-color', '#f2f2f2'), ('font-weight', 'bold')]},
-    {'selector': 'td:nth-child(1)', 'props': [('background-color', 'white'), ('font-weight', '500')]},
-    {'selector': 'td:nth-child(2)', 'props': [('background-color', '#f9f9f9')]}
-]).hide(axis="index")
-
-styled_df
-``` 
-:::
-
-:::{.small-text}
-- example: **second word** ($k=1$)
-  - $k=1, i=0$, <span style="color:blue">$2i=0$</span>; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{1}{100^{\frac{0}{4}}}\right) = \sin(1)=0.8415$
-  - $k=1, i=0$, <span style="color:blue">$2i+1=1$</span>;; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{1}{100^{\frac{0}{4}}}\right) = \cos(1)= 0.5403$
-  - $k=1, i=1$, <span style="color:blue">$2i=2$</span>;; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{1}{100^{\frac{2}{4}}}\right) =\sin(1/10)=0.0998$
-  - $k=1, i=1$, <span style="color:blue">$2i+1=3$</span>;; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{1}{100^{\frac{2}{4}}}\right) = \cos(1/10)= 0.9950$
-:::
-
-
-## Understanding the PE Matrix (3)
-
-The denominator of the formula contains the "magic number" 100:
-$$
-\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) 
-$$
-
-- In the worked example above we used $n=100$ for clarity. The original "Attention Is All You Need" paper^[Vaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)] uses $n=10000$.
-- This base creates a geometric progression of "frequencies" across dimension pairs.
+::: {.small-text}
 - At $i=0$ (smallest wavelength): the exponent $2i/d = 0$, so the denominator is $n^0 = 1$ regardless of $n$ — the wave oscillates fastest.
-- At $i = d/2$ (largest wavelength): the exponent $2i/d = 1$, so the denominator is $n^1 = n$ — with $n=100$ that's $100$; with the paper's $n=10000$ that's $10000$. The wave oscillates slowest.
+- At $i = d/2$ (largest wavelength): the exponent $2i/d = 1$, so the denominator is $n^1 = n=10000$. The wave oscillates slowest.
+:::
 
-## Understanding the PE Matrix (4)
+## Understanding the PE Matrix
 
 ::: {.columns}
 ::: {.column width="60%"}
@@ -491,7 +415,7 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 
 
 
-# Section 3: Multi-head attention {#multihead-attention}
+# Section 3: Attention {#attention}
 
 :::: {.columns}
 
@@ -523,16 +447,25 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 4. Layer Normalization
 :::
 
-
 :::
 :::
 
 ::::
 
 
-## The Encoder: Multi-head attention
+## Attention
 
-::: {.columns}
+
+::: {.mybox}
+**Attention**:
+- The transformer purely relies on the attention mechanism to capture the dependency among input tokens
+- Multihead attention applies multiple heads in parallels
+- By splitting queries, keys, and values into smaller subspaces, different heads focus on distinct relationships, grammar rules, or word meanings simultaneously before combining the results
+:::
+
+## The Encoder: Attention
+
+:::: {.columns}
 ::: {.column width="50%"}
 ```{python}
 #| echo: false
@@ -541,189 +474,206 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 #| out-width: "100%"
 #| fig-align: center
 import sys
-sys.path.append('utils') 
+sys.path.append('utils')
 from llm_plots import draw_encoder_compact
 draw_encoder_compact(highlight='ffn')
 ```
 :::
 
 ::: {.column width="50%"}
-### Step 2: Position-wise FFN
-- Tokens "think" individually.
-- Two linear transformations.
-- Non-linear activation (ReLU/GELU).
+### Core encoder block
+The transformer architecture is built around a core encoder block that processes sequential data three three principle components
+
+- A self-attention mechanism
+- Layer normalization
+- A feed-forward network
 :::
-:::
+
+::::
+
+# Self-attention: Key ideas
+
+* The input to the encoder layer can be represented by a matrix $\mathbf{X}$ with $n$ tokens and $d$ features ($n \times d$):
+$$
+\mathbf{X} = \begin{bmatrix} 
+x_{1,1} & x_{1,2} & \cdots & x_{1,d} \\
+x_{2,1} & x_{2,2} & \cdots & x_{2,d} \\
+\vdots & & \ddots & \vdots  \\
+x_{n,1} & x_{n,2} & \cdots & x_{n,d} \\
+\end{bmatrix}
+$$
+
+* Each row corresponds to the embedded representation of one token: $\mathbf{x}_{i} \in \mathbb{R}^d$
+* The self-attention mechanism transforms $\mathbf{X}$ through learned weight matrices $\mathbf{W}^{Q}$, $\mathbf{W}^{K}$, and $\mathbf{W}^{V} \in \mathbb{R}^{d \times d}$ to obtain the query, key, and value matrices:
 
 
 
-## Notation
+# Self-attention: Dimensionality Check
 
 - An input sequence $\mathbf{X}$ is an $n \times d$ matrix ($n$ tokens, $d$ features).
 - Each row is a token (sum of embedding and positional matrix)
 - For each token $x_i$ (a $1 \times d$ row vector):
-$$\underbrace{q_i}_{1 \times 64} = \underbrace{x_i}_{1 \times 768} \times \underbrace{W^Q}_{768 \times 64}$$
-
-- For the entire sequence $X$:
-$$\underbrace{Q}_{n \times 64} = \underbrace{X}_{n \times 768} \times \underbrace{W^Q}_{768 \times 64}, \quad \underbrace{K}_{n \times 64} = \underbrace{X}_{n \times 768} \times \underbrace{W^K}_{768 \times 64}, \quad \underbrace{V}_{n \times 64} = \underbrace{X}_{n \times 768} \times \underbrace{W^V}_{768 \times 64}$$
-
-
-## Learning Weight Matrix $W^K$
-
-- Learned weight matrix
-- Key vectors capture features of the token that are useful for the attention mechanism
-- Helps the model to assess the relevance of each word, such as "crane" within the context of the sentence "The wattled crane is a migratory bird"
 $$
-W^K = \begin{bmatrix}
-w_{11} & w_{12} & \dots  & w_{1d_k} \\
-w_{21} & w_{22} & \dots  & w_{2d_k} \\
-\vdots & \vdots & \ddots & \vdots    \\
-w_{d1} & w_{d2} & \dots  & w_{dd_k}
-\end{bmatrix}_{d \times d_k}
+\underbrace{q_i}_{1 \times d} = \underbrace{x_i}_{1 \times d} \times \underbrace{W^Q}_{d \times d}
 $$
 
-Here, $d \times d_k = 768\times 64$ in the original implementation of BERT.
-
-
-## The Resulting Key Matrix ($K$)
+- Equivalently, we can represent the operations in matrix form
 
 $$
-K = XW^K = 
-\begin{bmatrix}
-k_{11} & k_{12} & \dots  & k_{1d_k} \\
-k_{21} & k_{22} & \dots  & k_{2d_k} \\
-\vdots & \vdots & \ddots & \vdots    \\
-k_{n1} & k_{n2} & \dots  & k_{nd_k}
-\end{bmatrix}_{n \times d_k}
+\mathbf{Q} = \mathbf{X}\mathbf{W}^{Q}, \quad \mathbf{K} = \mathbf{X}\mathbf{W}^{K}, \quad \mathbf{V} = \mathbf{X}\mathbf{W}^{V}
 $$
 
-Each row of $K$ is the "Key" for a specific token in the input.
-
-The first scalar entry of this matrix corresponds to
-$$k_{1,1} = \sum_{j=1}^{768} x_{1,j} \cdot w_{j,1}$$
-
-- $k_{1,1}$) is the first of 64 coordinates that describe token 1's "Key identity."
-- The entire Key vector for token 1 can be represented as:
-$$k_1 = [x_{1,1}, x_{1,2}, \dots, x_{1,768}] \begin{bmatrix} | & |  && | & \\ w_{col1} & w_{col2} & \dots& w_{col64} \\ | & | && | & \end{bmatrix}$$
-
-
-
-## Nomenclature
-
-- The weight matrix columns ($\mathbf{w}_j$) are referred to as __projection vectors__. 
-- Each one projects the 768-dimensional input onto a single axis of the 64-dimensional "Key space." (or "Query space")
-
-
-## Learnable Weight Matrix ($W^Q$)
-
-The query vectors are constructed in an analogous way.
 $$
-Q = XW^Q = 
-\begin{bmatrix}
-q_{11} & q_{12} & \dots  & q_{1d_k} \\
-q_{21} & q_{22} & \dots  & q_{2d_k} \\
-\vdots & \vdots & \ddots & \vdots    \\
-q_{n1} & q_{n2} & \dots  & q_{nd_k}
-\end{bmatrix}_{n \times d_k}
+\underset{(n \times d)}{\mathbf{Q}} = \underset{(n \times d)}{\mathbf{X}} \times \underset{(d \times d)}{\mathbf{W}^{Q}}
+\quad\quad \text{(etc.)}
 $$
+
+## Big picture: Attention
+
+::: {.mybox}
+**At a high level**
+
+- The token currently being predicted is mapped to a *query* vector $\mathbf{q} \in \mathbb{R}^{d_k}$
+- The tokens in the context are mapped to *key* vectors $\mathbf{k}_t \in \mathbb{R}^{d_k}$ and to *value* vectors $\mathbf{v}_t \in \mathbb{R}^{d_k}$
+- $d_v$ is the dimensionality of the query and key vectors
+- $d_v$ can differ from $d_k$; it sets the dimensionality of the attention output.
+- In practice, $d_k = d_v$ is a common simplifying choice
+:::
+
+- The inner products 
+$$
+\mathbf{q}^T\mathbf{k}_t
+$$
+are interpreted as <span style="background-color: #e0f2fe; padding: 2px 6px; border-radius: 4px;">The degree
+to which token $t\in V$ is important for predicting the current token $q$</span>.
+- $\mathbf{q}^T\mathbf{k}_t$ is a scalar number. Taken over all $t$, we obtain a distribution over the context tokens that is used to combine the value vectors
+
+
+## Attention function
+
+
+- The attention function $A(Q,K,V)$ is typically caculated in steps. First, we calculate the
+attention scores as a similarity measure between the query vectors and the key vectors.
+$$
+S_{i,j} =  \dfrac{\langle \mathbf{q}_i, \mathbf{k}_j\rangle}{\sqrt{d_k}} = \dfrac{\mathbf{q}_i^T\mathbf{k}_j}{\sqrt{d_k}} 
+$$
+
+- $ \mathbf{q}_i$: the $i^{th}$ query vector and $\mathbf{k}_j$: $j^{th}$ key vector
+- $d_k$ is the dimensionality of the key vectors
+- $\langle \mathbf{q}_i, \mathbf{k}_j\rangle$ denotes the dot product.
+- The scaling factor $\frac{1}{\sqrt{d_k}}$ is introduced to mitigate the effect of increasing dimensionality (See below)
+- The attention scores $S_{i,j}$ are then normalized using the softmax function to produce
+the attention weights:
+$$
+a_{ij} = \dfrac{e^{S_{i,j}}}{\sum_{k=1}^n e^{S_{i,k}}}
+$$
+- The $a_{ij}$ indicate the relative importance of the $j^{th}$ key vector to the $i^{th}$ query vector.
+
+## Attention function
+
+- The  output of the attention mechanism is computed as a weighted sum of the value vectors:
+$$
+\mathbf{z}_{i} = \sum_{j=1}^n a_{ij}\mathbf{v}_j
+$$
+
+- $\mathbf{v}_j$ is the $j^{th}$ value vector
+- $\mathbf{z}_{i}$ is the output vector corresponding to the  $i^{th}$ query vector. 
+- We can express this in matrix form as
+
+$$
+A(\mathbf{Q},\mathbf{K},\mathbf{V})= \mathrm{softmax}\left(\dfrac{\mathbf{QK}^T}{\sqrt{d_k}}\right)
+$$
+
+The attention mapping is
+
+- linear, allowing it to combine different sets
+of value vectors in a controlled manner
+- Invariant Under Permutations: The order of the tokens does not effect the result of the calculations (which is why the positional encodings are needed)
+- Commutative: If multiple heads are applied, the order of application does not matter (see below)
+
+
 
 ## $W^K$ versus $W^Q$
 
-The Functional RolesThey act as two different "filters" applied to the same input data:
+The Functional Roles: a useful intuition is that they act as two different "filters" applied to the same input data:
 
-- $W^K$ (The Key Matrix): Learns how to describe a word so it can be found. It extracts features that make a token an attractive match for others (e.g., "I am a verb," "I am a plural noun," "I am the subject").
-- $W^Q$ (The Query Matrix): Learns how to ask a question to find other words. It extracts features that define what the current token needs to understand its own context (e.g., "I am an adjective; where is the noun I modify?" or "I am the word 'it'; what did I refer to earlier?").
+- $W^K$ (The Key Matrix): intuitively, learns to describe a token so it can be "found" by relevant queries.
+- $W^Q$ (The Query Matrix): intuitively, learns to encode what the current token needs from its context.
 
-- [Todo: find reference/citation for above]{.neon-todo}
-
-
-## Attention Scores
-
-- The attention mechanism compares every Query to every Key.
-- Recall that our query and key vectors are both row-vectors
-- This means that the dot product of the first Query and all Keys is simply $q_1 K^\top$. 
-- The entire matrix of scores is:
-$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
-
-- We will go through this step-by-step
+- This is a simplifying explanation — $W^Q$ and $W^K$ are trained jointly and don't have separately interpretable roles in general. 
+- Empirically, it has been shown that different attention heads may specialize to recognizable syntactic/semantic relations, e.g. heads that reliably attend from verbs to their direct objects, or from determiners to nouns.^[Clark et al. (2019), "What Does BERT Look at? An Analysis of BERT's Attention," Proceedings of the 2019 ACL Workshop BlackboxNLP]
 
 
-## $QK^\top$
-
-- When we multiply $Q$ and $K^\top$, the "hidden" dimensions (64) cancel out
-- We are left with a square matrix representing the relationships between words:$$\underbrace{Q}_{n \times 64} \times \underbrace{K^\top}_{64 \times n} = \underbrace{\text{Scores}}_{n \times n}$$
-
-$$
-QK^\top = 
-\begin{bmatrix}
-q_1 \cdot k_1 & q_1 \cdot k_2 & \dots & q_1 \cdot k_n \\
-q_2 \cdot k_1 & q_2 \cdot k_2 & \dots & q_2 \cdot k_n \\
-\vdots & \vdots & \ddots & \vdots \\
-q_n \cdot k_1 & q_n \cdot k_2 & \dots & q_n \cdot k_n
-\end{bmatrix}_{n \times n}
-$$
-
-## Visualizing the $n \times n$ Matrix
 
 
-$$\underbrace{\text{Attention Scores}}_{n \times n} = 
-\underbrace{
-\begin{bmatrix} 
-\dots & q_1 & \dots \\
-\dots & q_2 & \dots \\
- & \vdots & \\
-\dots & q_n & \dots 
-\end{bmatrix}
-}_{n \times 64}
-\times
-\underbrace{
-\begin{bmatrix} 
-\vdots & \vdots & & \vdots \\
-k_1^\top & k_2^\top & \dots & k_n^\top \\
-\vdots & \vdots & & \vdots 
-\end{bmatrix}
-}_{64 \times n}
-$$
-
-If we look at a single scalar in this resulting $n \times n$ matrix, it is the dot product:$$\text{Score}_{i,j} = q_i \cdot k_j = \sum_{m=1}^{64} q_{i,m} k_{j,m}$$
-- $i$: The query token.
-- $j$: The key token.
-- If  $i$ aligns with  $j$, this score will be high.
 
 
 ## The scaling factor
 
 - The scaling factor $\frac{1}{\sqrt{d_k}}$ is needed to keep the gradients in a good range
-- Assume your $Q$ and $K$ components are independent random variables with a mean of 0 and a variance of 1. 
-- When you take their dot product:
-  
-    -  $\mathbb{E}(q \cdot k)=0\quad\quad$ (Mean).
-    - The Variance of $q \cdot k$ becomes $d_k$ (which is 64).
-    - The high variance will often lead to very large positive numbers or very large negative numbers.
+- We will derive a simplified/intuitive explanation of why this tends to work
+- Assume  $q_1, q_2, \ldots, q_{d_k}, k_1,k_2,\ldots, k_{d_k}$ are mutually independent random variables, each with mean 0 and variance 1. with dimension $d_k=64$ 
+* Thus, $\mathbf{q}_i \perp \mathbf{k}_j$ (query and key are independent of each other): this implies that $\mathbb{E}[\mathbf{q}_i \mathbf{k}_j]=0$ and that $\mathbb{E}[\mathbf{q}_i^2 \mathbf{k}_j^2]=\mathbb{E}[\mathbf{q}_i^2]\mathbb{E}[\mathbf{k}_j^2]$
+
+
+::: {.tiny-credit}
+Derivation from [Vaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762](https://arxiv.org/abs/1706.03762)
+:::
+
 
 ## Proof
 
-
 The dot product $q \cdot k$ for $d_k$ dimensions is defined as:
 
-$$S = \sum_{i=1}^{d_k} q_i k_i$$
+$$
+S = \sum_{i=1}^{d_k} q_i k_i
+$$
+
+::: {tiny-credit}
+This is the same computation as a single entry  $\mathrm{score}_{i,j}$ 
+of the  $QK^T$ matrix — here we drop the token indices $i,j$
+since the variance argument holds for any single query–key pair.
+:::
 
 To find the variance of $S$, we first look at the variance of a single term $q_i k_i$:$$Var(q_i k_i) = E[(q_i k_i)^2] - (E[q_i k_i])^2$$Mean of the product: Since $q_i$ and $k_i$ are independent, $E[q_i k_i] = E[q_i]E[k_i] = 0 \cdot 0 = 0$.
 
 - Expected value of the square: $E[q_i^2 k_i^2] = E[q_i^2]E[k_i^2]$. Since $Var(X) = E[X^2] - (E[X])^2$, and $E[X]=0$, then $E[X^2] = Var(X) = 1$. 
-- Thus, $E[q_i^2 k_i^2] = 1 \cdot 1 = 1$.Variance of one term: $Var(q_i k_i) = 1 - 0 = 1$.
+- Thus, $E[q_i^2 k_i^2] = 1 \cdot 1 = 1$.
+- Variance of one term: $Var(q_i k_i) = 1 - 0 = 1$.
 
-Now, because the components are independent, the variance of the sum is the sum of the variances:
+## Proof (2)
 
-$$Var(S) = Var\left(\sum_{i=1}^{d_k} q_i k_i\right) = \sum_{i=1}^{d_k} Var(q_i k_i) = \sum_{i=1}^{d_k} 1 = d_k$$
+**Why variance adds under independence.** For any two random variables $X, Y$:
+$$
+\text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y) + 2\,\text{Cov}(X,Y)
+$$
+The covariance term vanishes when $X$ and $Y$ are independent, since $\text{Cov}(X,Y) = \mathbb{E}[XY]-\mathbb{E}[X]\mathbb{E}[Y] = 0$ whenever $X \perp Y$. This extends to a sum of $d_k$ mutually independent terms: all cross-covariance terms vanish, leaving only the individual variances.
 
-For BERT-Base, where $d_k = 64$, the variance of the raw dot product is 64.
+- Because $q_1,\ldots,q_{d_k}$ and $k_1,\ldots,k_{d_k}$ are mutually independent (by assumption ), the products $q_m k_m$ for different $m$ are independent, and their covariances are all 0.
+- So the variance of the sum collapses to the sum of the variances:
 
-## Scaling
+$$
+\text{Var}(S) = \text{Var}\left(\sum_{m=1}^{d_k} q_m k_m\right) = \sum_{m=1}^{d_k} \text{Var}(q_m k_m) = \sum_{m=1}^{d_k} 1 = d_k
+$$
 
-- If we scale by $\dfrac{1}{\sqrt{d_k}}$, the expected variance is 1, which mitigates the problem of exploding/vanishing gradients
+## Proof (3): Dividing by $\sqrt{d_k}$
 
-## Softmax
+Recall the scaling rule for variance: for a constant $c$, $\text{Var}(cX) = c^2\,\text{Var}(X)$.
+
+- Applying this with $c = \dfrac{1}{\sqrt{d_k}}$ and $X = S$:
+
+$$
+\text{Var}\left(\frac{S}{\sqrt{d_k}}\right) = \left(\frac{1}{\sqrt{d_k}}\right)^2 \text{Var}(S) = \frac{1}{d_k}\cdot d_k = 1
+$$
+
+- So dividing the raw dot product by $\sqrt{d_k}$ (not $d_k$ itself) exactly restores unit variance, regardless of $d_k$.
+- This keeps the inputs to softmax in a stable range: without scaling, large-magnitude scores push softmax into extremely peaked (near one-hot) distributions, where gradients with respect to the inputs vanish almost everywhere — the "exploding/vanishing gradients" problem.
+
+
+
+## Softmax and attention
+
+Recall the definition of softmax:
 
 $$
 \begin{bmatrix} 
@@ -744,10 +694,6 @@ $$
 0.02
 \end{bmatrix}
 $$
-
-- The softmax function transforms a set of inputs into a probability-like distribution
-
-## Softmax and attention
 
 - Each row in the $QK^\top$ matrix represents a single word's "view" of the entire sentence.
 - Row 1: How much Word 1 cares about [Word 1, Word 2, ..., Word $n$].
@@ -794,48 +740,62 @@ In this resulting matrix:
 
 - Value vectors contain detailed information about each token
 - They are transformed embeddings that are weighted and summed based on the attention scores
-- Intuitively, the value vector contains the potential meanings of a word, and the attention scores determine which meanings are most relevant withint a given context
+- Intuitively, the value vector contains the potential meanings of a word, and the attention scores determine which meanings are most relevant within a given context
 - We get the value vectors analogously from a learned $W^V$
 
 $$
 V = XW^V = 
 \begin{bmatrix}
-v_{11} & v_{12} & \dots  & v_{1d_k} \\
-v_{21} & v_{22} & \dots  & v_{2d_k} \\
+v_{11} & v_{12} & \dots  & v_{1d_v} \\
+v_{21} & v_{22} & \dots  & v_{2d_v} \\
 \vdots & \vdots & \ddots & \vdots    \\
-v_{n1} & v_{n2} & \dots  & v_{nd_k}
-\end{bmatrix}_{n \times d_k}
+v_{n1} & v_{n2} & \dots  & v_{nd_v}
+\end{bmatrix}_{n \times d_v}
 $$
 
 ## Calculating Values
 Now that we have a matrix of Attention Weights ($\alpha$), we use them to take a weighted average of the information stored in the Value matrix ($V$).
 
-1. The Value Matrix ($V$)Just like $Q$ and $K$, the Value matrix is created by projecting the input $X$ through a learnable weight matrix $W^V$:
-$$\underbrace{V}_{n \times 64} = \underbrace{X}_{n \times 768} \times \underbrace{W^V}_{768 \times 64}$$
+* **The Value Matrix ($V$)**: Just like $Q$ and $K$, the Value matrix is created by projecting the input $X$ through a learnable weight matrix $W^V$:
+$$\underbrace{V}_{n \times d_v} = \underbrace{X}_{n \times d} \times \underbrace{W^V}_{d \times d_v}$$
 
-The Value represents the actual "content" of the word. 
+- $d$ is the dimension of the input embeddings (typically, $d>d_k$)
+- The output dimension of attention is $d_v$, i.e., attention's output width is set entirely by the Value projection
+- The Value represents the actual "content" of the word. 
 
 ## The Weighted Sum
 
-We take our $n \times n$ attention weights and multiply them by our $n \times 64$ Values.
+We take our $n \times n$ attention weights and multiply them by our $n \times d_v$ Values.
 
-$$\text{Output} = \underbrace{\text{Softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)}_{n \times n} \times \underbrace{V}_{n \times 64}$$
+$$\text{Output} = \underbrace{\text{Softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)}_{n \times n} \times \underbrace{V}_{n \times d_v}$$
 
 To see what happens to Word 1, look at the first row of the multiplication:
 
 $$\text{Output}_1 = \alpha_{1,1}v_1 + \alpha_{1,2}v_2 + \dots + \alpha_{1,n}v_n$$   
 
-- The Final Output is a $n \times 64$ matrix representing the context-aware version of each token.
+- The Final Output is a $n \times d_v$ matrix representing the context-aware version of each token.
+
+## Attention: Example
+
+![](./img/attention-law.png){width="40%" fig-align="center"}
+
+- Many of the attention heads attend to a distant dependency of
+the verb ‘making’, completing the phrase ‘making...more difficult’. Attentions here shown only for
+the word ‘making’.
+
+::: {.tiny-credit}
+[Vaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762](https://arxiv.org/abs/1706.03762)
+:::
 
 ## Multi-Head Assembly
 
-
-In BERT-Base, this happens 12 times in parallel (12 heads). Each head produces an $n \times 64$ output. We concatenate them all together:$$12 \times 64 = 768$$This brings us back to the original $768$ dimensions, which is why the output can be passed directly into the next layer!
-
-- [Todo: Decide where to talk about multi-head stuff]{.neon-todo}
+![](./img/multihead-att.png){width="40%" fig-align="center"}
 
 
-# Section 4: Layer Normalization
+- We will cover multihead attention in the section lecture on transformers
+
+
+# Section 4: Layer Normalization {#layernorm}
 
 :::: {.columns}
 
@@ -872,39 +832,51 @@ In BERT-Base, this happens 12 times in parallel (12 heads). Each head produces a
 
 ::::
 
+## Layer Normalization
 
+::: {.mybox}
+**Layer normalization**:
+
+- a technique that normalizes the activations within each layer
+of the network, ensuring that they have a consistent distribution.
+:::
+
+
+- For an input to a layer $\mathbf{x} = \left[x_1, x_2, \ldots, x_d \right]$ where $d$ is the dimensionality
+- The mean is $\mu_x = \frac{1}{d}\sum_{i=1}^d x_i$
+- The variance is $\sigma^2 = \frac{1}{d}\sum_{i=1}^d (x_i-\mu_x)^2$
+- $\hat{x}_i = \frac{x_i-\mu_x}{\sqrt{\sigma^2+\epsilon}}$ ($\epsilon$ is a small constant for numerical stability)
+- $\mathrm{LayerNorm}(\mathbf{x}) = \gamma \odot \hat{x}_i + \beta$
+- $\gamma$ and $\beta$ are learnable parameters that scale and shift the normalized output
+
+::: {.tiny-credit}
+Ba JL et al. (2016) [Layer Normalization. arXiv 1607.06450](https://arxiv.org/abs/1607.06450)
+:::
 
 ## Layer Normalization (LN)
 
-For any fixed offset $\Delta k$, the encoding at a shifted position can be represented as a linear transformation of the original:
-
-LN greatly contributes to stabilizing training and optimizing performance in deep learning models, especially in transformers. It works by normalizing the activations at each layer, ensuring a more consistent gradient flow during training. 
+- LN greatly contributes to stabilizing training and optimizing performance in deep learning models, especially in transformers. It works by normalizing the activations at each layer, ensuring a more consistent gradient flow during training. 
 
 
 __Two flavors__:
 
 - Post-LN transformer applies normalization after the addition of the layer’s output with the residual connection’s output.^[Vaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)]
-- Pre-LN transformers [Xiong et al., 2020] apply normalization before self-attention and feed-forward layers. This configuration is used in modern architectures such as GPT, Llama, and Vision Transformers.^[Xiong R, et al., On layer normalization in the transformer architecture. In International Conference on Machine Learning, PMLR, 2020.]
+- Pre-LN transformers apply normalization before self-attention and feed-forward layers. This configuration is used in modern architectures such as GPT, Llama, and Vision Transformers.^[Xiong R, et al., On layer normalization in the transformer architecture. In International Conference on Machine Learning, PMLR, 2020.]
 
 
 ## LN step 1: Add
 
-The "Add" part is a Residual Connection (also called a Skip Connection). 
+The layer performs an Add and Norm operation:
 
-::: {.callout-note icon=false, title="Add"}
+* **Add** is a Residual Connection (also called a Skip Connection). 
+* **Output**: $$\text{Output} = X + Sublayer(X)$$
 
-Instead of a layer outputting $Sublayer(X)$, it outputs:
 
-$$\text{Output} = X + Sublayer(X)$$
-
-:::
-
-- strictly element-wise addition
-- For instance,  token $i$ and feature $j$ (out of the 768 features):
+- strictly element-wise addition, e.g., for token $i$ and feature $j$:
 
 $$\text{Output}_{i,j} = x_{i,j} + \text{Sublayer}(X)_{i,j}$$
 
-- Intuition. This operation can be regarded as $X + f(X)$. During backpropagation, we calculate the first derivative as
+- **Intuition**: This operation can be regarded as $X + f(X)$. During backpropagation, we calculate the first derivative as
 
 $$\frac{\partial(X + f(X))}{\partial X} = 1 + f'(X)$$
 
@@ -920,17 +892,28 @@ $$ \text{LayerNorm}(Z) = \gamma \odot \left( \frac{Z - \mu}{\sqrt{\sigma^2 + \ep
 
 :::
 
-- Mean ($\mu$): Average of the 768 values for a specific token.
+- Mean ($\mu$): Average of the $d$ values for a specific token.
 - Variance ($\sigma^2$): Corresponding variance.
 - Standardization: mean of 0 and a variance of 1. Before this step, values can be highly divergent which would lead to softmax saturation problems
-- $\gamma$  and $\beta$ are learnable parameters. They are vectors of size 768:
+- $\gamma$  and $\beta$ are learnable parameters. They are vectors of size $d$ (same dimension as the input embedding):
 
 $$\text{Output}_j = (\gamma_j \cdot \hat{x}_j) + \beta_j$$
 
 - Before training, all $\gamma$ values are initialized to 1 and all $\beta$ values are initialized to 0.
 
+## LN: Effects
 
-# Section 5: Feed-Forward Network (FFN)
+- In a transformer model, layer normalization is applied after the multi-head atten-
+tion mechanism and after the feedforward network. 
+- This ensures that the outputs of these components have a stable distribution, which is crucial for the model’s ability
+to learn effectively.
+
+
+::: {.tiny-credit}
+Singh P and Raman B (2025) The Geometry of Intelligence: Foundations of Transformer Networks in Deep Learning. January 2025.  ISBN: 978-981-96-4705-7.
+:::
+
+# Section 5: Feed-Forward Network (FFN) {#ffn}
 
 ::: {.columns}
 
@@ -1224,3 +1207,4 @@ Sources for this lecture include
 
 - [Vaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762](https://arxiv.org/abs/1706.03762)
 - [Wang et al. (2018), On the Dimensionality of Word Embeddings, (NeurIPS 2018)](https://arxiv.org/abs/1812.04224)
+- Singh P and Raman B (2025) The Geometry of Intelligence: Foundations of Transformer Networks in Deep Learning. January 2025.  ISBN: 978-981-96-4705-7.
