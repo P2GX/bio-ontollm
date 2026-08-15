@@ -22,7 +22,7 @@ def plot_activations(show_gelu=False):
     ax.set_aspect('equal') # Prevents the "squeezed" look
     ax.legend()
     ax.grid(True, alpha=0.3)
-    plt.show()
+
 
 def draw_gelu_block():
     """
@@ -50,7 +50,6 @@ def draw_gelu_block():
         ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
                     arrowprops=dict(arrowstyle='->', lw=2))
 
-    plt.show()
 
 
 def draw_encoder_compact(highlight=None):
@@ -104,5 +103,3 @@ def draw_encoder_compact(highlight=None):
     # Output
     ax.annotate('', xy=(5, 7.5), xytext=(5, 6.6), arrowprops=dict(arrowstyle='->', lw=1.5))
     ax.text(5, 7.8, "Output to Next Layer", ha='center', fontsize=9, fontweight='bold')
-
-    plt.show()

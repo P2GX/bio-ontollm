@@ -1,0 +1,100 @@
+---
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #??: Transformer Architecture: BERT"
+author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
+jupyter: python3
+format: 
+  revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
+    slide-number: true
+    show-slide-number: all
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.1
+    embed-resources: true
+    transition: fade
+    background-transition: convex
+    controls: true
+---
+
+## BERT
+
+-- todo
+
+
+
+## FFN Expansion-Contraction
+
+::: {.columns}
+::: {.column width="50%"}
+```{python}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 6
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from llm_plots import draw_gelu_block
+
+draw_gelu_block()
+```
+
+:::
+
+::: {.column width="50%"}
+
+- In BERT-Base, the FFN consists of two linear transformations with a non-linear activation (GELU) in between. 
+- Expansion-Contraction architecture
+- Input $x$: $1 \times 768$
+- $W_1$: $768 \times 3072$ (The "Expansion" weights)
+- $b_1$: $1 \times 3072$ (The first bias)
+- $W_2$: $3072 \times 768$ (The "Projection" weights)
+- $b_2$: $1 \times 768$ (The second bias)
+
+:::
+:::
+
+
+
+## BERT's FFN Block
+
+
+::: {.columns}
+::: {.column width="50%"}
+
+```{python}
+#| echo: false
+#| out-height: "65vh"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from llm_plots import draw_gelu_block
+
+draw_gelu_block()
+```
+
+:::
+
+::: {.column width="50%"}
+- Coming back to the FFN architexture, BERT takes the  $768$-dimensional vector from the Add & Norm layer and expands to  into a $3072$-dimensional space before applying the GELU activation function, following which it projects it back to  $768$-dimensional for further processing
+
+$$
+\underbrace{1 \times 768}_{\text{Input}} 
+\xrightarrow{W_1, b_1} 
+\underbrace{1 \times 3072}_{\text{Linear Expansion}} 
+\xrightarrow{\text{GELU}} 
+\underbrace{1 \times 3072}_{\text{Non-linear Activation}} 
+\xrightarrow{W_2, b_2} 
+\underbrace{1 \times 768}_{\text{Output}}
+$$
+
+:::
+
+- [Todo: explain FFN architexture based on BERT paper - what advantage is there for expanding etc?)]{.neon-todo}
+
+:::
