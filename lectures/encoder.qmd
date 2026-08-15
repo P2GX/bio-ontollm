@@ -1,65 +1,87 @@
 ---
-title: "Transformer Architecture: Encoders"
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #9: Transformer Architecture: Encoders"
 author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
 jupyter: python3
 format: 
   revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
+    slide-number: true
+    show-slide-number: all
     incremental: false 
     html-math-method: mathjax
-    margin: 0.05
+    margin: 0.1
     embed-resources: true
-    css: /style/styles.css
+    transition: fade
+    background-transition: convex
+    controls: true
 ---
 
-## Overview: Lecture 1
+## Overview
 
 ::: {.callout-note}
 ## Game plan
-This lecture is the first of ??? about the transformer algorithm and selected applications. We will start with a top-level overview to provide some context and will then explain the mathematics of each section in detail. The practical sessions will involve the coding of a "toy" LLM.
+This lecture provides an introduction to the transformer architecture with a focus on the encoder. 
 :::
 
-::: {.columns}
+- [Embeddings](#embeddings) (See also [Lecture 8, Embeddings and Tokens](./embeddings.qmd))
+- [Positional encodings](#positional)
+- [Multi-head attention](#multihead-attention)
 
-::: {.column width="33%"}
-### Lecture 1
-**Foundations**
 
-* Top-level overview
-* Embeddings
-* Positional encodings
+
+
+## Section 1: Tokenization and Embeddings 
+
+:::: {.columns}
+
+::: {.column width="45%"}
+::: {.hl-container}
+![](https://d2l.ai/_images/transformer.svg){width="100%"}
+
+::: {.hl-box style="top: 81%; left: 10%; width: 35%; height: 4.5%;"}
+:::
+:::
 :::
 
-::: {.column .dimmed width="33%"}
-### Lecture 2
-**Architecture**
+::: {.column width="55%"}
+::: {.toc-list style="margin-top: 50px;"}
 
-* Multi-Head Attention
-* Residual Connections
-* Layer Norm
+::: {.toc-item .toc-active}
+1. Tokenization and Embeddings
 :::
 
-::: {.column .dimmed width="33%"}
-### Lecture 3
-**Applications**
+::: {.toc-item}
+2. Positional Encodings
+:::
 
-* Training & Data
-* Fine-tuning
-* Toy LLM Coding
+::: {.toc-item}
+3. Multi-head attention
+:::
+
+::: {.toc-item}
+4. Layer Normalization
 :::
 
 :::
+:::
 
----
+::::
 
 
 ## The Embedding Mapping
 
 The embedding process transforms discrete tokens into a continuous vector space $\mathcal{V} \to \mathbb{R}^d$.
 
+$$
 \begin{equation}
 \mathbf{e}_i = \text{embed}(w_i) = \mathbf{x}_i^\top \mathbf{W}_e
 \end{equation}
-
+$$
 Where:
 
 :::: {.columns}
@@ -79,24 +101,19 @@ $$
 \leftarrow & \mathbf{e}_{V-1} & \rightarrow 
 \end{bmatrix}
 $$
-
 :::
+
 ::::
 
-
-## Embeddings
-
-
+::: {.small-text}
 - $\mathbf{x}_i^\top \mathbf{W}_e$ just picks out the $i^{th}$ row of $\mathbf{W}_e$.
-
 - The dimension of the embeddings is adjustable. For instance, SBERT has embeddings with a dimension of 768.
-
 - The embedding matrix is initialized to random values and learned during training by back-propagation
+- See lecture 8 for more background
+:::
 
-- [Todo: explain learning procedure (or refer to previous slides)]{.neon-todo}
 
-
-## Section 2: Positional Encodings {visibility="uncounted"}
+## Section 2: Positional Encodings {#positional}
 
 ::: {.columns}
 
@@ -134,18 +151,24 @@ $$
 
 :::
 
-## RNNs vs Encoders
+
+## Positional Encodings: RNNs vs Encoders 
 
 
 - Recurrent neural networks process one token at a time (serial), which transformer-based encoders process an entire sequence of tokens at once (parallel).
 - Positional encodings are needed for the encoder to keep track of the relative and absolute positions of tokens
-- [Todo: explain RNNs/exploding gradients in previous lecture]{.neon-todo}
 
 ![RNN vs Encoder](img/rnn_vs_transformer.svg){#fig-rnn-vs-transform width=80% fig-align="center"}
 
+::: {.small-text}
+See [lecture 7: RNNs and LSTMs](./lstm.qmd) for background on RNNs
+:::
+
+
 ## Positional information
 - Transformers process entire sequence in parallel
-- They lack inherent information about the positions of tokens
+- Therefore, they lack inherent information about the relative positions of tokens
+- self-attention, on its own, is permutation-equivariant — it has **no built-in notion of token order**.
 - Positional encodings are added to embeddings to provide position information
 - Example for sentence, "I am an automaton" we have four embedding vectors: $\left[E_{\mathrm{I}}, E_{\mathrm{am}}, E_{\mathrm{an}}, E_{\mathrm{automaton}}\right]$
 - We calculate four position encodings $\left[P_0,P_1,P_2,P_3\right]$
@@ -155,20 +178,34 @@ $$
 \left[E_{\mathrm{I}}+P_0, E_{\mathrm{am}}+P_1,E_{\mathrm{an}}+P_2, E_{\mathrm{automaton}}+P_3\right]
 $$
 
+:::{.tiny-credit}
+Vaswani A et al. (2017) [Attention Is All You Need. arXiv 1706.03762](https://arxiv.org/abs/1706.03762)
+:::
+
+## Positional information
+
+- Self-attention computes $\mathbf{QK}^T$ purely from token content (embeddings) — swapping two input tokens just swaps the corresponding outputs, with no other change. This property is called permutation equivariance.
+- Consequence: without extra information, "I am an automaton" and "automaton an am I" would produce identical (permuted) attention patterns — word order carries no signal.
+- Positional encodings break this symmetry by injecting position-dependent information into each token's representation before attention is computed.
+:::
+
 ## Calculating positional encodings (PEs)
 
-For even indices (e.g., $i=0,2,4,\ldots$):
+- Positional encodings use an index $i\in {0,1,\ldots,\frac{d}{2}-1}$ that indexes **pairs** of dimensions:
+    - $2i$ (sine)
+    - $2i+1$ (cosine)
+- Both the sine and the cosine dimensions for $i$ use the same frequency $\omega_{i} = (\frac{1}{10000})^{2i/d}$
+- For sine (output dimension slot $2i$):
+$$
+\mathrm{PE}(pos,2i) = \sin\left(\dfrac{pos}{10000^{\frac{2i}{d}}}\right)
+$$
+
+- For cosine (output dimension slot $2i+1$):
 
 $$
-\mathrm{PE}(pos,2i) = \sin\left(\dfrac{pos}{100^{\frac{2i}{d}}}\right)
+\mathrm{PE}(pos,2i+1) = \cos\left(\dfrac{pos}{10000^{\frac{2i}{d}}}\right)
 $$
 
-and for odd indices (e.g., $i=1,3,5,\ldots$):
-
-$$
-\mathrm{PE}(pos,2i+1) = \cos\left(\dfrac{pos}{100^{\frac{2i}{d}}}\right)
-$$
-Note that the $i$ in these equations is separate for even and odd...
 
 ## Understanding the PE Matrix (1)
 
@@ -199,7 +236,7 @@ for k in range(len(tokens)):
         row.append(f"{cos_expr} = <span style='color: #a52a2a;'><b>{cos_val:.2f}</b></span>")
     rows.append(row)
 
-headers = ["Sequence", "Index (k)"]
+headers = ["Sequence", "k"]
 for j in range(d_model // 2):
     headers.extend([f"i={j} (sine)", f"i={j} (cosine)"])
 
@@ -221,20 +258,22 @@ styled_df
 ``` 
 
 :::
-::: {.slide-footer}
-Note: $n=100$ is used for visualization; standard models typically use $n=10,000$.
-:::
 
-- dimension ($d$): 4 in this example, generally much larger (e.g., 768 for BERT)
-- example: first word (position -- $k=0$)
-  - $k=0, i=0 (\mathrm{even})$; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{0}{100^{\frac{0}{4}}}\right) = \sin(0)=0$
-  - $k=0, i=0 (\mathrm{odd})$; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{0}{100^{\frac{0}{4}}}\right) = \cos(0)= 1$
-  - $k=0, i=1 (\mathrm{even})$; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{0}{100^{\frac{2}{4}}}\right) =\sin(0)=0$
-  - $k=0, i=1 (\mathrm{odd})$; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{0}{100^{\frac{2}{4}}}\right) = \cos(0)= 1$
+
+:::{.small-text}
+- example: **first word** ($k=0$)
+  - $k=0, i=0$, <span style="color:blue">$2i=0$</span>; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{0}{100^{\frac{0}{4}}}\right) = \sin(0)=0$
+  - $k=0, i=0$, <span style="color:blue">$2i + 1=1$</span>; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{0}{100^{\frac{0}{4}}}\right) = \cos(0)= 1$
+  - $k=0, i=1$, <span style="color:blue">$2i=2$</span>; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{0}{100^{\frac{2}{4}}}\right) =\sin(0)=0$
+  - $k=0, i=1$, <span style="color:blue">$2i+1=3$</span>; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{0}{100^{\frac{2}{4}}}\right) = \cos(0)= 1$
+- The slot (e.g., $2i$ or $2i+1$) determines the index in the positional encoding vector
+- $k$ is the index in the original sequence
+- The embedding dimension $d$ is set to 4 in this example but is generally much larger (e.g., 768 for BERT)
+:::
 
 ## Understanding the PE Matrix (2)
 
-A positional encoding has the same dimension as an embedding, and calculates a value for each dimension using the sine and cosine formulas.
+- Continuing our example with the second word "am"
 
 ::: {.small-table}
 ```{python}
@@ -261,7 +300,7 @@ for k in range(len(tokens)):
         row.append(f"{cos_expr} = <span style='color: #a52a2a;'><b>{cos_val:.2f}</b></span>")
     rows.append(row)
 
-headers = ["Sequence", "Index (k)"]
+headers = ["Sequence", "k"]
 for j in range(d_model // 2):
     headers.extend([f"i={j} (sine)", f"i={j} (cosine)"])
 
@@ -283,79 +322,51 @@ styled_df
 ``` 
 :::
 
-- dimension ($d$): 4 in this example, generally much larger (e.g., 768 for BERT)
-- example: second word (position -- $k=1$)
-  - $k=1, i=0 (\mathrm{even})$; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{1}{100^{\frac{0}{4}}}\right) = \sin(1)=0.8415$
-  - $k=1, i=0 (\mathrm{odd})$; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{1}{100^{\frac{0}{4}}}\right) = \cos(1)= 0.5403$
-  - $k=1, i=1 (\mathrm{even})$; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{1}{100^{\frac{2}{4}}}\right) =\sin(1/10)=0.0998$
-  - $k=1, i=1 (\mathrm{odd})$; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{1}{100^{\frac{2}{4}}}\right) = \cos(1/10)= 0.9950$
+:::{.small-text}
+- example: **second word** ($k=1$)
+  - $k=1, i=0$, <span style="color:blue">$2i=0$</span>; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{1}{100^{\frac{0}{4}}}\right) = \sin(1)=0.8415$
+  - $k=1, i=0$, <span style="color:blue">$2i+1=1$</span>;; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{1}{100^{\frac{0}{4}}}\right) = \cos(1)= 0.5403$
+  - $k=1, i=1$, <span style="color:blue">$2i=2$</span>;; $\mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \sin\left(\frac{1}{100^{\frac{2}{4}}}\right) =\sin(1/10)=0.0998$
+  - $k=1, i=1$, <span style="color:blue">$2i+1=3$</span>;; $\mathrm{PE}(k,2i+1) = \cos\left(\frac{k}{100^{\frac{2i}{d}}}\right) = \cos\left(\frac{1}{100^{\frac{2}{4}}}\right) = \cos(1/10)= 0.9950$
+:::
+
 
 ## Understanding the PE Matrix (3)
 
-The denominator of the formula contains the "magic number" 10,000:
+The denominator of the formula contains the "magic number" 100:
 $$
 \mathrm{PE}(k,2i) = \sin\left(\frac{k}{100^{\frac{2i}{d}}}\right) 
 $$
 
-- A heuristic choice made by the authors of the original "Attention Is All You Need" paper.^[Vaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)]
-- creates a geometric progression of "frequencies."
-- At $i=0$ (Smallest wavelength): The denominator is $10000^0 = 1$. The wave oscillates very quickly.
-- At $i = d_{model}/2$ (Largest wavelength): The denominator is $10000^1 = 10000$. The wave oscillates very slowly.
-
+- In the worked example above we used $n=100$ for clarity. The original "Attention Is All You Need" paper^[Vaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)] uses $n=10000$.
+- This base creates a geometric progression of "frequencies" across dimension pairs.
+- At $i=0$ (smallest wavelength): the exponent $2i/d = 0$, so the denominator is $n^0 = 1$ regardless of $n$ — the wave oscillates fastest.
+- At $i = d/2$ (largest wavelength): the exponent $2i/d = 1$, so the denominator is $n^1 = n$ — with $n=100$ that's $100$; with the paper's $n=10000$ that's $10000$. The wave oscillates slowest.
 
 ## Understanding the PE Matrix (4)
 
 ::: {.columns}
 ::: {.column width="60%"}
+
 ```{python}
 #| echo: false
-#| out-width: "70%"
-#| fig-align: "center"
+#| fig-align: center
+import sys
 import matplotlib.pyplot as plt
-import numpy as np
 
-# Setup
-n = 100
-d_model = 8  # Supporting i=0, 1, 2, 3 (each i has sin/cos)
-i_values = [0, 1, 2, 3]
-colors = ['#1f77b4', '#a52a2a', '#2ca02c', '#9467bd']
-pos = np.linspace(0, 10, 500) # Smooth line
+sys.path.append('utils') 
+from encoder_plots import frequency_plot
 
-fig, ax = plt.subplots(figsize=(10, 5), dpi=120)
-
-for idx, i in enumerate(i_values):
-    denom = n**(2 * i / d_model)
-    y_sin = np.sin(pos / denom)
-    
-    # Plot Sin as solid, Cos as dashed
-    ax.plot(pos, y_sin, color=colors[idx], lw=2, 
-            label=f"i={i} (λ={denom:.1f})")
-    # Optional: uncomment below if you want to show the cosine pairs too
-    # ax.plot(pos, np.cos(pos / denom), color=colors[idx], lw=1.5, ls='--', alpha=0.4)
-
-# Formatting
-ax.set_title(f"Positional Encoding Frequencies (n={n}, d=8)", fontsize=14, pad=15)
-ax.set_xlabel("Position Index (k)", fontsize=12)
-ax.set_ylabel("Encoding Value", fontsize=12)
-ax.set_ylim(-1.1, 1.1)
-ax.grid(True, linestyle=':', alpha=0.6)
-ax.axhline(0, color='black', lw=1, alpha=0.3)
-
-# Add vertical markers for the first few integer positions (tokens)
-for k in range(5):
-    ax.axvline(x=k, color='gray', lw=1, ls='-', alpha=0.1)
-    ax.text(k, -1.05, f"k={k}", ha='center', fontsize=9, color='gray')
-
-ax.legend(title="Dimension Index", bbox_to_anchor=(1.05, 1), loc='upper left')
-plt.tight_layout()
-plt.show()
+frequency_plot()
+plt.plot()
 ```
+
 
 :::
 ::: {.column width="40%"}
 
 - If the constant $n$ were too small (e.g., 50), the sine waves would repeat their cycles every 50 tokens. The model wouldn't be able to tell the difference between position 5 and position 55 because their encoding vectors would look identical.
-- $n=10000$ ensures that for any sequence length a Transformer is likely to see (e.g., 512 to 8,192 tokens), every single position has a unique combination of high-frequency and low-frequency signals.
+- $n=10000$ ensures that for any sequence length a transformer is likely to see (e.g., 512 to 8,192 tokens), every single position has a unique combination of high-frequency and low-frequency signals.
 
 :::
 :::
@@ -373,35 +384,53 @@ $$PE_{pos + \Delta k} = \mathbf{M}_{\Delta k} \cdot PE_{pos}$$
 To prove this, recall the  Angle Addition Formulas that specify how to compute trig functions of sums or differences of angles.
 
 - $sin(\alpha + \beta) = \sin(\alpha)\cos(\beta)+\cos(\alpha)\sin(\beta)$
-- $cos(\alpha + \beta) = \cos(\alpha)\cos(\beta)-\cos(\alpha)\cos(\beta)$
+- $cos(\alpha + \beta) = \cos(\alpha)\cos(\beta)-\sin(\alpha)\sin(\beta)$
 
 To prove that $PE_{pos+k}$ is a linear transformation of $PE_{pos}$, we need to show that there exists a fixed matrix $M_k$ (that only depends on the offset $k$, not the position $pos$) such that:
 $$PE_{pos+k} = M_k \cdot PE_{pos}$$
 
 ## Properties of the Positional Encoding (2)
 
-For any dimension $i$, the positional encoding is a pair of $(\sin, \cos)$ values. Let's define $\omega_i = \frac{1}{10000^{2i/d_{model}}}$ to simplify the notation.The encoding at position $pos$ is:
-
-$$\begin{bmatrix} \sin(\omega_i \cdot pos) \\ \cos(\omega_i \cdot pos) \end{bmatrix}$$
-
+::: {.small-text}
+- For any dimension $i$, the positional encoding is a pair of $(\sin, \cos)$ values. Let's define $\omega_i = \frac{1}{10000^{2i/d_{model}}}$ to simplify the notation.The encoding at position $pos$ is:
+- Our goal is to show that $\sin(\omega_i(pos +k))$ and $\cos(\omega_i(pos +k))$ can be rewritten purely in terms of 
+$\sin(\omega_i\cdot pos))$, $\cos(\omega_i\cdot pos))$, and constants depending only on $k$, allowing us to express the operation in
+terms of a matrix multiplication (in the following form
+$$
+\begin{bmatrix} \sin(\omega_i \cdot pos) \\ \cos(\omega_i \cdot pos) \end{bmatrix}
+$$
+:::
 We want to find the encoding at $pos + k$:
 
 $$\sin(\omega_i(pos + k)) = \sin(\omega_i \cdot pos + \omega_i \cdot k)$$$$\cos(\omega_i(pos + k)) = \cos(\omega_i \cdot pos + \omega_i \cdot k)$$
 
 Plugging into the Angle Addition Formulas:
 
-$$\sin(\omega_i \cdot pos + \omega_i \cdot k) = \sin(\omega_i \cdot pos)\cos(\omega_i \cdot k) + \cos(\omega_i \cdot pos)\sin(\omega_i \cdot k)$$$$\cos(\omega_i \cdot pos + \omega_i \cdot k) = \cos(\omega_i \cdot pos)\cos(\omega_i \cdot k) - \sin(\omega_i \cdot pos)\sin(\omega_i \cdot k)$$
+$$
+\begin{align}
+\sin(\omega_i \cdot pos + \omega_i \cdot k) &= \sin(\omega_i \cdot pos)\cos(\omega_i \cdot k) + \cos(\omega_i \cdot pos)\sin(\omega_i \cdot k)\\
+\cos(\omega_i \cdot pos + \omega_i \cdot k) &= \cos(\omega_i \cdot pos)\cos(\omega_i \cdot k) - \sin(\omega_i \cdot pos)\sin(\omega_i \cdot k)
+\end{align}
+$$
 
 
 
 ## Properties of the Positional Encoding (3)
 
-Notice that the terms $\cos(\omega_i \cdot k)$ and $\sin(\omega_i \cdot k)$ are constants once we pick a fixed distance $k$. We can rewrite the equations above as a matrix multiplication:$$\begin{bmatrix} \sin(\omega_i(pos+k)) \\ \cos(\omega_i(pos+k)) \end{bmatrix} = \begin{bmatrix} \cos(\omega_i k) & \sin(\omega_i k) \\ -\sin(\omega_i k) & \cos(\omega_i k) \end{bmatrix} \begin{bmatrix} \sin(\omega_i pos) \\ \cos(\omega_i pos) \end{bmatrix}$$
+- Notice that the terms $\cos(\omega_i \cdot k)$ and $\sin(\omega_i \cdot k)$ are constants once we pick a fixed distance $k$. 
+- We can rewrite the equations above as a matrix multiplication:
+$$
+\begin{align}
+\begin{bmatrix} \sin(\omega_i(pos+k)) \\ \cos(\omega_i(pos+k)) \end{bmatrix} &= \begin{bmatrix} \cos(\omega_i k) & \sin(\omega_i k) \\ -\sin(\omega_i k) & \cos(\omega_i k) \end{bmatrix} \begin{bmatrix} \sin(\omega_i pos) \\ \cos(\omega_i pos) \end{bmatrix}\\
+&= \begin{bmatrix}\cos(\omega_i k) \sin(\omega_i pos) +\sin(\omega_i k)  \cos(\omega_i pos)\\
+-\sin(\omega_i k)\sin(\omega_i pos) +\cos(\omega_i k)\cos(\omega_i pos) 
+\end{bmatrix}
+\end{align}
+$$
 
-The matrix $M_k=\begin{bmatrix} \sin(\omega_i(pos+k)) \\ \cos(\omega_i(pos+k)) \end{bmatrix}$ is a __rotation matrix__.
-
-- The "rotation" required to move from position 2 to position 5 is the exact same rotation required to move from position 100 to 103.
-- The neural network's attention layers can easily "learn" this rotation. It can learn to say: "To find the noun that usually appears 3 words after this adjective, I just need to apply the '3-step' rotation to my current query vector."
+- Define $M_k = \begin{bmatrix} \cos(\omega_i k) & \sin(\omega_i k) \\ -\sin(\omega_i k) & \cos(\omega_i k) \end{bmatrix}$, so that $PE_{pos+k} = M_k \cdot PE_{pos}$.
+- $M_k$ is a **rotation matrix**: $\det(M_k) = \cos^2(\omega_i k) + \sin^2(\omega_i k) = 1$, and $M_k M_k^\top = I$, so $M_k$ is orthogonal with determinant 1.
+- Crucially, $M_k$ depends only on the offset $k$ (and frequency $\omega_i$) — and not on the absolute position $pos$.
 
 ## Distance (1)
 
@@ -425,10 +454,14 @@ This results in four distinct terms
 3. $P_i \cdot E_j$ (Position-Content): Does position $i$ look for specific types of words?
 4. $P_i \cdot P_j$ (Position-Position): Pure distance component.
 
+- The cross-terms are often small in practice
+- To gain intuition, we will focus on the content-content and position-position terms in the next slide
 
 ## How the Model Separates "Meaning" from "Distance"?
 
-- __High Dimensionality__: In a 512 or 1024-dimensional space, there is a lot of "room." The model can learn to use certain dimensions primarily for semantic meaning and other dimensions primarily for positional signal.^[Wang et al. (2018), "On the Dimensionality of Word Embeddings, (NeurIPS 2018)]
+- __High Dimensionality__: In a 512 or 1024-dimensional space, there is a lot of "room." 
+- The model the model has room to partially separate certain dimensions primarily for semantic meaning and other dimensions primarily for positional signal.
+
 
 - __Learned Projections__: The weight matrices ($W_Q, W_K, W_V$) act as filters.^[We will look closely at these matrices later on] Through training, the model learns to project the "summed" vector into a subspace where the positional information is amplified when it needs to know distance, and the semantic information is amplified when it needs to know meaning. 
 
@@ -440,7 +473,7 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 
 ## Rotary Position Embedding
 
-::: {.columns}
+:::: {.columns}
 ::: {.column width="40%"}
 - Rotary Positional Embeddings (RoPE)
 - Instead of adding a "position vector" to it, RoPE applies a rotation matrix.    
@@ -452,16 +485,15 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 - Approach adopted by many major LLMs including Llama (Meta), PaLM (Google), and Mistral.^[Su (2024) RoFormer: : Enhanced transformer with Rotary Position Embedding. Neurocomput]
 :::
 ::: {.column width="60%"}
-::: {style="text-align: center;"}
 ![RoPE](img/RoPE.svg){#fig-rnn-vs-transform width=80% fig-align="center"}
 :::
-:::
-:::
+::::
 
 
-# Section 3: Multi-head attention
 
-::: {.columns}
+# Section 3: Multi-head attention {#multihead-attention}
+
+:::: {.columns}
 
 ::: {.column width="45%"}
 ::: {.hl-container}
@@ -495,8 +527,7 @@ $$(E_{v} + P_v) \cdot (E_{w} + P_w) \approx \underbrace{(E_{v} \cdot E_{w})}_{\t
 :::
 :::
 
-:::
-
+::::
 
 
 ## The Encoder: Multi-head attention
@@ -806,7 +837,7 @@ In BERT-Base, this happens 12 times in parallel (12 heads). Each head produces a
 
 # Section 4: Layer Normalization
 
-::: {.columns}
+:::: {.columns}
 
 ::: {.column width="45%"}
 ::: {.hl-container}
@@ -839,7 +870,7 @@ In BERT-Base, this happens 12 times in parallel (12 heads). Each head produces a
 :::
 :::
 
-:::
+::::
 
 
 
@@ -970,7 +1001,7 @@ draw_gelu_block()
 - $W_2$: $3072 \times 768$ (The "Projection" weights)
 - $b_2$: $1 \times 768$ (The second bias)
 
-::: 
+:::
 :::
 
 ## FFN layer
@@ -1177,7 +1208,7 @@ Similar to the previous add & norm layer, this one has two purposes
 
 ## Conclusion
 
-::: {.callout-note icon=false title: "Take home"}
+::: {.callout-note icon=false title="Take home"}
 
 This lecture introduced the Encoder architecture as it is implemented in BERT. In the next lecture, we will introduce the decoder architecture and discuss how these models are trained.
 
@@ -1186,3 +1217,10 @@ This lecture introduced the Encoder architecture as it is implemented in BERT. I
 - [Todo: Talk about some of the BERT use cases]{.neon-todo}
 - [Todo: Homework, using BERT to do something]{.neon-todo}
 - [Todo: Talk about some of the variations of BERT]{.neon-todo}
+
+## Sources
+
+Sources for this lecture include
+
+- [Vaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762](https://arxiv.org/abs/1706.03762)
+- [Wang et al. (2018), On the Dimensionality of Word Embeddings, (NeurIPS 2018)](https://arxiv.org/abs/1812.04224)
