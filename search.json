@@ -1535,591 +1535,615 @@
     "text": "Sources\nSources for this lecture include\n\nDan Jurafsky and James H. Martin (2026) Speech and Language Processing (3rd ed. draft) https://web.stanford.edu/~jurafsky/\nAlex Sherstinsky (2020) Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network, Physica D: Nonlinear Phenomena, Volume 404,132306\nAndrej Karpathy and Justin Johnson and Li Fei-Fei (2015) Visualizing and Understanding Recurrent Networks, arXiv, https://arxiv.org/abs/1506.02078\nAurélien Géron (2025) Hands-On Machine Learning with Scikit-Learn and PyTorch, O’Reilly"
   },
   {
-    "objectID": "lectures/encoder.html#overview-lecture-1",
-    "href": "lectures/encoder.html#overview-lecture-1",
-    "title": "Transformer Architecture: Encoders",
-    "section": "Overview: Lecture 1",
-    "text": "Overview: Lecture 1\n\n\n\n\n\n\nGame plan\n\n\nThis lecture is the first of ??? about the transformer algorithm and selected applications. We will start with a top-level overview to provide some context and will then explain the mathematics of each section in detail. The practical sessions will involve the coding of a “toy” LLM.\n\n\n\n\n\nLecture 1\nFoundations\n\nTop-level overview\nEmbeddings\nPositional encodings\n\n\nLecture 2\nArchitecture\n\nMulti-Head Attention\nResidual Connections\nLayer Norm\n\n\nLecture 3\nApplications\n\nTraining & Data\nFine-tuning\nToy LLM Coding",
+    "objectID": "lectures/encoder.html#overview",
+    "href": "lectures/encoder.html#overview",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Overview",
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the transformer architecture with a focus on the encoder.\n\n\n\n\nEmbeddings (See also Lecture 8, Embeddings and Tokens)\nPositional encodings\nMulti-head attention",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/encoder.html#section-1-tokenization-and-embeddings",
+    "href": "lectures/encoder.html#section-1-tokenization-and-embeddings",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Section 1: Tokenization and Embeddings",
+    "text": "Section 1: Tokenization and Embeddings\n\n\n\n\n\n\n\n\n\n\n\n\nTokenization and Embeddings\n\n\n\n\nPositional Encodings\n\n\n\n\nMulti-head attention\n\n\n\n\nLayer Normalization",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#the-embedding-mapping",
     "href": "lectures/encoder.html#the-embedding-mapping",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "The Embedding Mapping",
-    "text": "The Embedding Mapping\nThe embedding process transforms discrete tokens into a continuous vector space \\(\\mathcal{V} \\to \\mathbb{R}^d\\).\n\\[\\begin{equation}\n\\mathbf{e}_i = \\text{embed}(w_i) = \\mathbf{x}_i^\\top \\mathbf{W}_e\n\\end{equation}\\]\nWhere:\n\n\n\nOne-hot vector: \\(\\mathbf{x}_i \\in \\{0,1\\}^V\\), where \\(V\\) is the vocabulary size.\nWeight Matrix: \\(\\mathbf{W}_e \\in \\mathbb{R}^{V \\times d}\\) contains the learnable parameters.\nProjection: The result \\(\\mathbf{e}_i\\) is the \\(i\\)-th row of the matrix \\(\\mathbf{W}_e\\).\n\n\n\\[\n\\mathbf{W}_e = \\begin{bmatrix}\n\\leftarrow & \\mathbf{e}_0 & \\rightarrow \\\\\n\\leftarrow & \\mathbf{e}_1 & \\rightarrow \\\\\n& \\vdots & \\\\\n\\leftarrow & \\mathbf{e}_{V-1} & \\rightarrow\n\\end{bmatrix}\n\\]",
+    "text": "The Embedding Mapping\nThe embedding process transforms discrete tokens into a continuous vector space \\(\\mathcal{V} \\to \\mathbb{R}^d\\).\n\\[\n\\begin{equation}\n\\mathbf{e}_i = \\text{embed}(w_i) = \\mathbf{x}_i^\\top \\mathbf{W}_e\n\\end{equation}\n\\] Where:\n\n\n\nOne-hot vector: \\(\\mathbf{x}_i \\in \\{0,1\\}^V\\), where \\(V\\) is the vocabulary size.\nWeight Matrix: \\(\\mathbf{W}_e \\in \\mathbb{R}^{V \\times d}\\) contains the learnable parameters.\nProjection: The result \\(\\mathbf{e}_i\\) is the \\(i\\)-th row of the matrix \\(\\mathbf{W}_e\\).\n\n\n\\[\n\\mathbf{W}_e = \\begin{bmatrix}\n\\leftarrow & \\mathbf{e}_0 & \\rightarrow \\\\\n\\leftarrow & \\mathbf{e}_1 & \\rightarrow \\\\\n& \\vdots & \\\\\n\\leftarrow & \\mathbf{e}_{V-1} & \\rightarrow\n\\end{bmatrix}\n\\]\n\n\n\n\\(\\mathbf{x}_i^\\top \\mathbf{W}_e\\) just picks out the \\(i^{th}\\) row of \\(\\mathbf{W}_e\\).\nThe dimension of the embeddings is adjustable. For instance, SBERT has embeddings with a dimension of 768.\nThe embedding matrix is initialized to random values and learned during training by back-propagation\nSee lecture 8 for more background",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
-    "objectID": "lectures/encoder.html#embeddings",
-    "href": "lectures/encoder.html#embeddings",
-    "title": "Transformer Architecture: Encoders",
-    "section": "Embeddings",
-    "text": "Embeddings\n\n\\(\\mathbf{x}_i^\\top \\mathbf{W}_e\\) just picks out the \\(i^{th}\\) row of \\(\\mathbf{W}_e\\).\nThe dimension of the embeddings is adjustable. For instance, SBERT has embeddings with a dimension of 768.\nThe embedding matrix is initialized to random values and learned during training by back-propagation\nTodo: explain learning procedure (or refer to previous slides)",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Transformer Architecture: Encoders"
-    ]
-  },
-  {
-    "objectID": "lectures/encoder.html#section-2-positional-encodings",
-    "href": "lectures/encoder.html#section-2-positional-encodings",
-    "title": "Transformer Architecture: Encoders",
+    "objectID": "lectures/encoder.html#positional",
+    "href": "lectures/encoder.html#positional",
+    "title": "Approaches to biomedical knowledge",
     "section": "Section 2: Positional Encodings",
     "text": "Section 2: Positional Encodings\n\n\n\n\n\n\n\n\n\n\n\n\nTokenization and Embeddings\n\n\n\n\nPositional Encodings\n\n\n\n\nMulti-head attention\n\n\n\n\nLayer Normalization",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
-    "objectID": "lectures/encoder.html#rnns-vs-encoders",
-    "href": "lectures/encoder.html#rnns-vs-encoders",
-    "title": "Transformer Architecture: Encoders",
-    "section": "RNNs vs Encoders",
-    "text": "RNNs vs Encoders\n\nRecurrent neural networks process one token at a time (serial), which transformer-based encoders process an entire sequence of tokens at once (parallel).\nPositional encodings are needed for the encoder to keep track of the relative and absolute positions of tokens\nTodo: explain RNNs/exploding gradients in previous lecture\n\n\n\nFigure 1: RNN vs Encoder",
+    "objectID": "lectures/encoder.html#positional-encodings-rnns-vs-encoders",
+    "href": "lectures/encoder.html#positional-encodings-rnns-vs-encoders",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Positional Encodings: RNNs vs Encoders",
+    "text": "Positional Encodings: RNNs vs Encoders\n\nRecurrent neural networks process one token at a time (serial), which transformer-based encoders process an entire sequence of tokens at once (parallel).\nPositional encodings are needed for the encoder to keep track of the relative and absolute positions of tokens\n\n\n\nFigure 1: RNN vs Encoder\n\nSee lecture 7: RNNs and LSTMs for background on RNNs",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#positional-information",
     "href": "lectures/encoder.html#positional-information",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Positional information",
-    "text": "Positional information\n\nTransformers process entire sequence in parallel\nThey lack inherent information about the positions of tokens\nPositional encodings are added to embeddings to provide position information\nExample for sentence, “I am an automaton” we have four embedding vectors: \\(\\left[E_{\\mathrm{I}}, E_{\\mathrm{am}}, E_{\\mathrm{an}}, E_{\\mathrm{automaton}}\\right]\\)\nWe calculate four position encodings \\(\\left[P_0,P_1,P_2,P_3\\right]\\)\nThese are then combined by elementwise addition:\n\n\\[\n\\left[E_{\\mathrm{I}}+P_0, E_{\\mathrm{am}}+P_1,E_{\\mathrm{an}}+P_2, E_{\\mathrm{automaton}}+P_3\\right]\n\\]",
+    "text": "Positional information\n\nTransformers process entire sequence in parallel\nTherefore, they lack inherent information about the relative positions of tokens\nself-attention, on its own, is permutation-equivariant — it has no built-in notion of token order.\nPositional encodings are added to embeddings to provide position information\nExample for sentence, “I am an automaton” we have four embedding vectors: \\(\\left[E_{\\mathrm{I}}, E_{\\mathrm{am}}, E_{\\mathrm{an}}, E_{\\mathrm{automaton}}\\right]\\)\nWe calculate four position encodings \\(\\left[P_0,P_1,P_2,P_3\\right]\\)\nThese are then combined by elementwise addition:\n\n\\[\n\\left[E_{\\mathrm{I}}+P_0, E_{\\mathrm{am}}+P_1,E_{\\mathrm{an}}+P_2, E_{\\mathrm{automaton}}+P_3\\right]\n\\]\n\nVaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/encoder.html#positional-information-1",
+    "href": "lectures/encoder.html#positional-information-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Positional information",
+    "text": "Positional information\n\nSelf-attention computes \\(\\mathbf{QK}^T\\) purely from token content (embeddings) — swapping two input tokens just swaps the corresponding outputs, with no other change. This property is called permutation equivariance.\nConsequence: without extra information, “I am an automaton” and “automaton an am I” would produce identical (permuted) attention patterns — word order carries no signal.\nPositional encodings break this symmetry by injecting position-dependent information into each token’s representation before attention is computed. :::",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#calculating-positional-encodings-pes",
     "href": "lectures/encoder.html#calculating-positional-encodings-pes",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Calculating positional encodings (PEs)",
-    "text": "Calculating positional encodings (PEs)\nFor even indices (e.g., \\(i=0,2,4,\\ldots\\)):\n\\[\n\\mathrm{PE}(pos,2i) = \\sin\\left(\\dfrac{pos}{100^{\\frac{2i}{d}}}\\right)\n\\]\nand for odd indices (e.g., \\(i=1,3,5,\\ldots\\)):\n\\[\n\\mathrm{PE}(pos,2i+1) = \\cos\\left(\\dfrac{pos}{100^{\\frac{2i}{d}}}\\right)\n\\] Note that the \\(i\\) in these equations is separate for even and odd…",
+    "text": "Calculating positional encodings (PEs)\n\nPositional encodings use an index \\(i\\in {0,1,\\ldots,\\frac{d}{2}-1}\\) that indexes pairs of dimensions:\n\n\\(2i\\) (sine)\n\\(2i+1\\) (cosine)\n\nBoth the sine and the cosine dimensions for \\(i\\) use the same frequency \\(\\omega_{i} = (\\frac{1}{10000})^{2i/d}\\)\nFor sine (output dimension slot \\(2i\\)): \\[\n\\mathrm{PE}(pos,2i) = \\sin\\left(\\dfrac{pos}{10000^{\\frac{2i}{d}}}\\right)\n\\]\nFor cosine (output dimension slot \\(2i+1\\)):\n\n\\[\n\\mathrm{PE}(pos,2i+1) = \\cos\\left(\\dfrac{pos}{10000^{\\frac{2i}{d}}}\\right)\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#understanding-the-pe-matrix-1",
     "href": "lectures/encoder.html#understanding-the-pe-matrix-1",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Understanding the PE Matrix (1)",
-    "text": "Understanding the PE Matrix (1)\nA positional encoding has the same dimension as an embedding, and calculates a value for each dimension using the sine and cosine formulas.\n\n\n\n\n\n\n\n\nSequence\nIndex (k)\ni=0 (sine)\ni=0 (cosine)\ni=1 (sine)\ni=1 (cosine)\n\n\n\n\nI\n0\nsin(0/1) = 0.00\ncos(0/1) = 1.00\nsin(0/10) = 0.00\ncos(0/10) = 1.00\n\n\nam\n1\nsin(1/1) = 0.84\ncos(1/1) = 0.54\nsin(1/10) = 0.10\ncos(1/10) = 1.00\n\n\nan\n2\nsin(2/1) = 0.91\ncos(2/1) = -0.42\nsin(2/10) = 0.20\ncos(2/10) = 0.98\n\n\nautomaton\n3\nsin(3/1) = 0.14\ncos(3/1) = -0.99\nsin(3/10) = 0.30\ncos(3/10) = 0.96\n\n\n\n\n\n\n\nNote: \\(n=100\\) is used for visualization; standard models typically use \\(n=10,000\\).\n\n\ndimension (\\(d\\)): 4 in this example, generally much larger (e.g., 768 for BERT)\nexample: first word (position – \\(k=0\\))\n\n\\(k=0, i=0 (\\mathrm{even})\\); \\(\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\sin\\left(\\frac{0}{100^{\\frac{0}{4}}}\\right) = \\sin(0)=0\\)\n\\(k=0, i=0 (\\mathrm{odd})\\); \\(\\mathrm{PE}(k,2i+1) = \\cos\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\cos\\left(\\frac{0}{100^{\\frac{0}{4}}}\\right) = \\cos(0)= 1\\)\n\\(k=0, i=1 (\\mathrm{even})\\); \\(\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\sin\\left(\\frac{0}{100^{\\frac{2}{4}}}\\right) =\\sin(0)=0\\)\n\\(k=0, i=1 (\\mathrm{odd})\\); \\(\\mathrm{PE}(k,2i+1) = \\cos\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\cos\\left(\\frac{0}{100^{\\frac{2}{4}}}\\right) = \\cos(0)= 1\\)",
+    "text": "Understanding the PE Matrix (1)\nA positional encoding has the same dimension as an embedding, and calculates a value for each dimension using the sine and cosine formulas.\n\n\n\n\n\n\n\n\nSequence\nk\ni=0 (sine)\ni=0 (cosine)\ni=1 (sine)\ni=1 (cosine)\n\n\n\n\nI\n0\nsin(0/1) = 0.00\ncos(0/1) = 1.00\nsin(0/10) = 0.00\ncos(0/10) = 1.00\n\n\nam\n1\nsin(1/1) = 0.84\ncos(1/1) = 0.54\nsin(1/10) = 0.10\ncos(1/10) = 1.00\n\n\nan\n2\nsin(2/1) = 0.91\ncos(2/1) = -0.42\nsin(2/10) = 0.20\ncos(2/10) = 0.98\n\n\nautomaton\n3\nsin(3/1) = 0.14\ncos(3/1) = -0.99\nsin(3/10) = 0.30\ncos(3/10) = 0.96\n\n\n\n\n\n\n\n\nexample: first word (\\(k=0\\))\n\n\\(k=0, i=0\\), \\(2i=0\\); \\(\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\sin\\left(\\frac{0}{100^{\\frac{0}{4}}}\\right) = \\sin(0)=0\\)\n\\(k=0, i=0\\), \\(2i + 1=1\\); \\(\\mathrm{PE}(k,2i+1) = \\cos\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\cos\\left(\\frac{0}{100^{\\frac{0}{4}}}\\right) = \\cos(0)= 1\\)\n\\(k=0, i=1\\), \\(2i=2\\); \\(\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\sin\\left(\\frac{0}{100^{\\frac{2}{4}}}\\right) =\\sin(0)=0\\)\n\\(k=0, i=1\\), \\(2i+1=3\\); \\(\\mathrm{PE}(k,2i+1) = \\cos\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\cos\\left(\\frac{0}{100^{\\frac{2}{4}}}\\right) = \\cos(0)= 1\\)\n\nThe slot (e.g., \\(2i\\) or \\(2i+1\\)) determines the index in the positional encoding vector\n\\(k\\) is the index in the original sequence\nThe embedding dimension \\(d\\) is set to 4 in this example but is generally much larger (e.g., 768 for BERT)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#understanding-the-pe-matrix-2",
     "href": "lectures/encoder.html#understanding-the-pe-matrix-2",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Understanding the PE Matrix (2)",
-    "text": "Understanding the PE Matrix (2)\nA positional encoding has the same dimension as an embedding, and calculates a value for each dimension using the sine and cosine formulas.\n\n\n\n\n\n\n\n\nSequence\nIndex (k)\ni=0 (sine)\ni=0 (cosine)\ni=1 (sine)\ni=1 (cosine)\n\n\n\n\nI\n0\nsin(0/1) = 0.00\ncos(0/1) = 1.00\nsin(0/10) = 0.00\ncos(0/10) = 1.00\n\n\nam\n1\nsin(1/1) = 0.84\ncos(1/1) = 0.54\nsin(1/10) = 0.10\ncos(1/10) = 1.00\n\n\nan\n2\nsin(2/1) = 0.91\ncos(2/1) = -0.42\nsin(2/10) = 0.20\ncos(2/10) = 0.98\n\n\nautomaton\n3\nsin(3/1) = 0.14\ncos(3/1) = -0.99\nsin(3/10) = 0.30\ncos(3/10) = 0.96\n\n\n\n\n\n\n\ndimension (\\(d\\)): 4 in this example, generally much larger (e.g., 768 for BERT)\nexample: second word (position – \\(k=1\\))\n\n\\(k=1, i=0 (\\mathrm{even})\\); \\(\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\sin\\left(\\frac{1}{100^{\\frac{0}{4}}}\\right) = \\sin(1)=0.8415\\)\n\\(k=1, i=0 (\\mathrm{odd})\\); \\(\\mathrm{PE}(k,2i+1) = \\cos\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\cos\\left(\\frac{1}{100^{\\frac{0}{4}}}\\right) = \\cos(1)= 0.5403\\)\n\\(k=1, i=1 (\\mathrm{even})\\); \\(\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\sin\\left(\\frac{1}{100^{\\frac{2}{4}}}\\right) =\\sin(1/10)=0.0998\\)\n\\(k=1, i=1 (\\mathrm{odd})\\); \\(\\mathrm{PE}(k,2i+1) = \\cos\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\cos\\left(\\frac{1}{100^{\\frac{2}{4}}}\\right) = \\cos(1/10)= 0.9950\\)",
+    "text": "Understanding the PE Matrix (2)\n\nContinuing our example with the second word “am”\n\n\n\n\n\n\n\n\n\nSequence\nk\ni=0 (sine)\ni=0 (cosine)\ni=1 (sine)\ni=1 (cosine)\n\n\n\n\nI\n0\nsin(0/1) = 0.00\ncos(0/1) = 1.00\nsin(0/10) = 0.00\ncos(0/10) = 1.00\n\n\nam\n1\nsin(1/1) = 0.84\ncos(1/1) = 0.54\nsin(1/10) = 0.10\ncos(1/10) = 1.00\n\n\nan\n2\nsin(2/1) = 0.91\ncos(2/1) = -0.42\nsin(2/10) = 0.20\ncos(2/10) = 0.98\n\n\nautomaton\n3\nsin(3/1) = 0.14\ncos(3/1) = -0.99\nsin(3/10) = 0.30\ncos(3/10) = 0.96\n\n\n\n\n\n\n\n\nexample: second word (\\(k=1\\))\n\n\\(k=1, i=0\\), \\(2i=0\\); \\(\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\sin\\left(\\frac{1}{100^{\\frac{0}{4}}}\\right) = \\sin(1)=0.8415\\)\n\\(k=1, i=0\\), \\(2i+1=1\\);; \\(\\mathrm{PE}(k,2i+1) = \\cos\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\cos\\left(\\frac{1}{100^{\\frac{0}{4}}}\\right) = \\cos(1)= 0.5403\\)\n\\(k=1, i=1\\), \\(2i=2\\);; \\(\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\sin\\left(\\frac{1}{100^{\\frac{2}{4}}}\\right) =\\sin(1/10)=0.0998\\)\n\\(k=1, i=1\\), \\(2i+1=3\\);; \\(\\mathrm{PE}(k,2i+1) = \\cos\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right) = \\cos\\left(\\frac{1}{100^{\\frac{2}{4}}}\\right) = \\cos(1/10)= 0.9950\\)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#understanding-the-pe-matrix-3",
     "href": "lectures/encoder.html#understanding-the-pe-matrix-3",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Understanding the PE Matrix (3)",
-    "text": "Understanding the PE Matrix (3)\nThe denominator of the formula contains the “magic number” 10,000: \\[\n\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right)\n\\]\n\nA heuristic choice made by the authors of the original “Attention Is All You Need” paper.1\ncreates a geometric progression of “frequencies.”\nAt \\(i=0\\) (Smallest wavelength): The denominator is \\(10000^0 = 1\\). The wave oscillates very quickly.\nAt \\(i = d_{model}/2\\) (Largest wavelength): The denominator is \\(10000^1 = 10000\\). The wave oscillates very slowly.\n\nVaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)",
+    "text": "Understanding the PE Matrix (3)\nThe denominator of the formula contains the “magic number” 100: \\[\n\\mathrm{PE}(k,2i) = \\sin\\left(\\frac{k}{100^{\\frac{2i}{d}}}\\right)\n\\]\n\nIn the worked example above we used \\(n=100\\) for clarity. The original “Attention Is All You Need” paper1 uses \\(n=10000\\).\nThis base creates a geometric progression of “frequencies” across dimension pairs.\nAt \\(i=0\\) (smallest wavelength): the exponent \\(2i/d = 0\\), so the denominator is \\(n^0 = 1\\) regardless of \\(n\\) — the wave oscillates fastest.\nAt \\(i = d/2\\) (largest wavelength): the exponent \\(2i/d = 1\\), so the denominator is \\(n^1 = n\\) — with \\(n=100\\) that’s \\(100\\); with the paper’s \\(n=10000\\) that’s \\(10000\\). The wave oscillates slowest.\n\nVaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#understanding-the-pe-matrix-4",
     "href": "lectures/encoder.html#understanding-the-pe-matrix-4",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Understanding the PE Matrix (4)",
-    "text": "Understanding the PE Matrix (4)\n\n\n\n\n\n\n\n\n\n\n\n\n\nIf the constant \\(n\\) were too small (e.g., 50), the sine waves would repeat their cycles every 50 tokens. The model wouldn’t be able to tell the difference between position 5 and position 55 because their encoding vectors would look identical.\n\\(n=10000\\) ensures that for any sequence length a Transformer is likely to see (e.g., 512 to 8,192 tokens), every single position has a unique combination of high-frequency and low-frequency signals.",
+    "text": "Understanding the PE Matrix (4)\n\n\n\n\n\n\n\n\n\n\n\n\n\nIf the constant \\(n\\) were too small (e.g., 50), the sine waves would repeat their cycles every 50 tokens. The model wouldn’t be able to tell the difference between position 5 and position 55 because their encoding vectors would look identical.\n\\(n=10000\\) ensures that for any sequence length a transformer is likely to see (e.g., 512 to 8,192 tokens), every single position has a unique combination of high-frequency and low-frequency signals.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#properties-of-the-positional-encoding-1",
     "href": "lectures/encoder.html#properties-of-the-positional-encoding-1",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Properties of the Positional Encoding (1)",
-    "text": "Properties of the Positional Encoding (1)\n\n\n\n\n\n\n\nThe Linearity Property (Relative Positioning)\n\n\nFor any fixed offset \\(\\Delta k\\), the encoding at a shifted position can be represented as a linear transformation of the original:\n\\[PE_{pos + \\Delta k} = \\mathbf{M}_{\\Delta k} \\cdot PE_{pos}\\]\n\n\n\n\nTo prove this, recall the Angle Addition Formulas that specify how to compute trig functions of sums or differences of angles.\n\n\\(sin(\\alpha + \\beta) = \\sin(\\alpha)\\cos(\\beta)+\\cos(\\alpha)\\sin(\\beta)\\)\n\\(cos(\\alpha + \\beta) = \\cos(\\alpha)\\cos(\\beta)-\\cos(\\alpha)\\cos(\\beta)\\)\n\nTo prove that \\(PE_{pos+k}\\) is a linear transformation of \\(PE_{pos}\\), we need to show that there exists a fixed matrix \\(M_k\\) (that only depends on the offset \\(k\\), not the position \\(pos\\)) such that: \\[PE_{pos+k} = M_k \\cdot PE_{pos}\\]",
+    "text": "Properties of the Positional Encoding (1)\n\n\n\n\n\n\n\nThe Linearity Property (Relative Positioning)\n\n\nFor any fixed offset \\(\\Delta k\\), the encoding at a shifted position can be represented as a linear transformation of the original:\n\\[PE_{pos + \\Delta k} = \\mathbf{M}_{\\Delta k} \\cdot PE_{pos}\\]\n\n\n\n\nTo prove this, recall the Angle Addition Formulas that specify how to compute trig functions of sums or differences of angles.\n\n\\(sin(\\alpha + \\beta) = \\sin(\\alpha)\\cos(\\beta)+\\cos(\\alpha)\\sin(\\beta)\\)\n\\(cos(\\alpha + \\beta) = \\cos(\\alpha)\\cos(\\beta)-\\sin(\\alpha)\\sin(\\beta)\\)\n\nTo prove that \\(PE_{pos+k}\\) is a linear transformation of \\(PE_{pos}\\), we need to show that there exists a fixed matrix \\(M_k\\) (that only depends on the offset \\(k\\), not the position \\(pos\\)) such that: \\[PE_{pos+k} = M_k \\cdot PE_{pos}\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#properties-of-the-positional-encoding-2",
     "href": "lectures/encoder.html#properties-of-the-positional-encoding-2",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Properties of the Positional Encoding (2)",
-    "text": "Properties of the Positional Encoding (2)\nFor any dimension \\(i\\), the positional encoding is a pair of \\((\\sin, \\cos)\\) values. Let’s define \\(\\omega_i = \\frac{1}{10000^{2i/d_{model}}}\\) to simplify the notation.The encoding at position \\(pos\\) is:\n\\[\\begin{bmatrix} \\sin(\\omega_i \\cdot pos) \\\\ \\cos(\\omega_i \\cdot pos) \\end{bmatrix}\\]\nWe want to find the encoding at \\(pos + k\\):\n\\[\\sin(\\omega_i(pos + k)) = \\sin(\\omega_i \\cdot pos + \\omega_i \\cdot k)\\]\\[\\cos(\\omega_i(pos + k)) = \\cos(\\omega_i \\cdot pos + \\omega_i \\cdot k)\\]\nPlugging into the Angle Addition Formulas:\n\\[\\sin(\\omega_i \\cdot pos + \\omega_i \\cdot k) = \\sin(\\omega_i \\cdot pos)\\cos(\\omega_i \\cdot k) + \\cos(\\omega_i \\cdot pos)\\sin(\\omega_i \\cdot k)\\]\\[\\cos(\\omega_i \\cdot pos + \\omega_i \\cdot k) = \\cos(\\omega_i \\cdot pos)\\cos(\\omega_i \\cdot k) - \\sin(\\omega_i \\cdot pos)\\sin(\\omega_i \\cdot k)\\]",
+    "text": "Properties of the Positional Encoding (2)\n\n\nFor any dimension \\(i\\), the positional encoding is a pair of \\((\\sin, \\cos)\\) values. Let’s define \\(\\omega_i = \\frac{1}{10000^{2i/d_{model}}}\\) to simplify the notation.The encoding at position \\(pos\\) is:\nOur goal is to show that \\(\\sin(\\omega_i(pos +k))\\) and \\(\\cos(\\omega_i(pos +k))\\) can be rewritten purely in terms of \\(\\sin(\\omega_i\\cdot pos))\\), \\(\\cos(\\omega_i\\cdot pos))\\), and constants depending only on \\(k\\), allowing us to express the operation in terms of a matrix multiplication (in the following form \\[\n\\begin{bmatrix} \\sin(\\omega_i \\cdot pos) \\\\ \\cos(\\omega_i \\cdot pos) \\end{bmatrix}\n\\]\n\n\nWe want to find the encoding at \\(pos + k\\):\n\\[\\sin(\\omega_i(pos + k)) = \\sin(\\omega_i \\cdot pos + \\omega_i \\cdot k)\\]\\[\\cos(\\omega_i(pos + k)) = \\cos(\\omega_i \\cdot pos + \\omega_i \\cdot k)\\]\nPlugging into the Angle Addition Formulas:\n\\[\n\\begin{align}\n\\sin(\\omega_i \\cdot pos + \\omega_i \\cdot k) &= \\sin(\\omega_i \\cdot pos)\\cos(\\omega_i \\cdot k) + \\cos(\\omega_i \\cdot pos)\\sin(\\omega_i \\cdot k)\\\\\n\\cos(\\omega_i \\cdot pos + \\omega_i \\cdot k) &= \\cos(\\omega_i \\cdot pos)\\cos(\\omega_i \\cdot k) - \\sin(\\omega_i \\cdot pos)\\sin(\\omega_i \\cdot k)\n\\end{align}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#properties-of-the-positional-encoding-3",
     "href": "lectures/encoder.html#properties-of-the-positional-encoding-3",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Properties of the Positional Encoding (3)",
-    "text": "Properties of the Positional Encoding (3)\nNotice that the terms \\(\\cos(\\omega_i \\cdot k)\\) and \\(\\sin(\\omega_i \\cdot k)\\) are constants once we pick a fixed distance \\(k\\). We can rewrite the equations above as a matrix multiplication:\\[\\begin{bmatrix} \\sin(\\omega_i(pos+k)) \\\\ \\cos(\\omega_i(pos+k)) \\end{bmatrix} = \\begin{bmatrix} \\cos(\\omega_i k) & \\sin(\\omega_i k) \\\\ -\\sin(\\omega_i k) & \\cos(\\omega_i k) \\end{bmatrix} \\begin{bmatrix} \\sin(\\omega_i pos) \\\\ \\cos(\\omega_i pos) \\end{bmatrix}\\]\nThe matrix \\(M_k=\\begin{bmatrix} \\sin(\\omega_i(pos+k)) \\\\ \\cos(\\omega_i(pos+k)) \\end{bmatrix}\\) is a rotation matrix.\n\nThe “rotation” required to move from position 2 to position 5 is the exact same rotation required to move from position 100 to 103.\nThe neural network’s attention layers can easily “learn” this rotation. It can learn to say: “To find the noun that usually appears 3 words after this adjective, I just need to apply the ‘3-step’ rotation to my current query vector.”",
+    "text": "Properties of the Positional Encoding (3)\n\nNotice that the terms \\(\\cos(\\omega_i \\cdot k)\\) and \\(\\sin(\\omega_i \\cdot k)\\) are constants once we pick a fixed distance \\(k\\).\nWe can rewrite the equations above as a matrix multiplication: \\[\n\\begin{align}\n\\begin{bmatrix} \\sin(\\omega_i(pos+k)) \\\\ \\cos(\\omega_i(pos+k)) \\end{bmatrix} &= \\begin{bmatrix} \\cos(\\omega_i k) & \\sin(\\omega_i k) \\\\ -\\sin(\\omega_i k) & \\cos(\\omega_i k) \\end{bmatrix} \\begin{bmatrix} \\sin(\\omega_i pos) \\\\ \\cos(\\omega_i pos) \\end{bmatrix}\\\\\n&= \\begin{bmatrix}\\cos(\\omega_i k) \\sin(\\omega_i pos) +\\sin(\\omega_i k)  \\cos(\\omega_i pos)\\\\\n-\\sin(\\omega_i k)\\sin(\\omega_i pos) +\\cos(\\omega_i k)\\cos(\\omega_i pos)\n\\end{bmatrix}\n\\end{align}\n\\]\nDefine \\(M_k = \\begin{bmatrix} \\cos(\\omega_i k) & \\sin(\\omega_i k) \\\\ -\\sin(\\omega_i k) & \\cos(\\omega_i k) \\end{bmatrix}\\), so that \\(PE_{pos+k} = M_k \\cdot PE_{pos}\\).\n\\(M_k\\) is a rotation matrix: \\(\\det(M_k) = \\cos^2(\\omega_i k) + \\sin^2(\\omega_i k) = 1\\), and \\(M_k M_k^\\top = I\\), so \\(M_k\\) is orthogonal with determinant 1.\nCrucially, \\(M_k\\) depends only on the offset \\(k\\) (and frequency \\(\\omega_i\\)) — and not on the absolute position \\(pos\\).",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#distance-1",
     "href": "lectures/encoder.html#distance-1",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Distance (1)",
     "text": "Distance (1)\n\nIn the Attention mechanism, the model calculates the similarity between tokens using a dot product.\nBecause of the way these waves overlap, the dot product between the encodings of two tokens decays as the distance between them increases\nWhen we add the positional vector (\\(P\\)) to the word embedding (\\(E\\)), the resulting vector is \\(X = E + P\\).\nWhen the attention mechanism calculates the dot product between a Query (\\(Q\\)) and a Key (\\(K\\)) a combination of semantics (word embeddings) and location (positional encodings) is taken into account.\nTo gain intuition, let’s ignore the weight matrices \\(W_Q\\) and \\(W_K\\) for now.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#distance-2",
     "href": "lectures/encoder.html#distance-2",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Distance (2)",
-    "text": "Distance (2)\n\nThe dot product between two tokens at positions \\(i\\) and \\(j\\) looks like this:\n\n\\[X_i\\cdot X_j = (E_i + P_i) \\cdot (E_j + P_j)\\]\nThis results in four distinct terms\n\n\\(E_i \\cdot E_j\\) (Content-Content): How much the meaning of word \\(i\\) relates to the meaning of word \\(j\\).\n\\(E_i \\cdot P_j\\) (Content-Position): Does word \\(i\\) tend to look at position \\(j\\)? (e.g., “The” looking for a noun in the next slot).\n\\(P_i \\cdot E_j\\) (Position-Content): Does position \\(i\\) look for specific types of words?\n\\(P_i \\cdot P_j\\) (Position-Position): Pure distance component.",
+    "text": "Distance (2)\n\nThe dot product between two tokens at positions \\(i\\) and \\(j\\) looks like this:\n\n\\[X_i\\cdot X_j = (E_i + P_i) \\cdot (E_j + P_j)\\]\nThis results in four distinct terms\n\n\\(E_i \\cdot E_j\\) (Content-Content): How much the meaning of word \\(i\\) relates to the meaning of word \\(j\\).\n\\(E_i \\cdot P_j\\) (Content-Position): Does word \\(i\\) tend to look at position \\(j\\)? (e.g., “The” looking for a noun in the next slot).\n\\(P_i \\cdot E_j\\) (Position-Content): Does position \\(i\\) look for specific types of words?\n\\(P_i \\cdot P_j\\) (Position-Position): Pure distance component.\n\n\nThe cross-terms are often small in practice\nTo gain intuition, we will focus on the content-content and position-position terms in the next slide",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#how-the-model-separates-meaning-from-distance",
     "href": "lectures/encoder.html#how-the-model-separates-meaning-from-distance",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "How the Model Separates “Meaning” from “Distance”?",
-    "text": "How the Model Separates “Meaning” from “Distance”?\n\nHigh Dimensionality: In a 512 or 1024-dimensional space, there is a lot of “room.” The model can learn to use certain dimensions primarily for semantic meaning and other dimensions primarily for positional signal.1\nLearned Projections: The weight matrices (\\(W_Q, W_K, W_V\\)) act as filters.2 Through training, the model learns to project the “summed” vector into a subspace where the positional information is amplified when it needs to know distance, and the semantic information is amplified when it needs to know meaning.\nThe cross-terms (like \\(E_{v} \\cdot P_v\\)) tend to be very close to zero because “meaning” vectors and “position” vectors are nearly orthogonal in high-dimensional space\nLet \\(v\\) be the token at position \\(P_v\\) and \\(w\\) be the token at position \\(P_w\\). Then in most cases we have\n\n\\[(E_{v} + P_v) \\cdot (E_{w} + P_w) \\approx \\underbrace{(E_{v} \\cdot E_{w})}_{\\text{Do these words relate?}} + \\underbrace{(P_v \\cdot P_w)}_{\\text{Are they close together?}}\\]\nWang et al. (2018), “On the Dimensionality of Word Embeddings, (NeurIPS 2018)We will look closely at these matrices later on",
+    "text": "How the Model Separates “Meaning” from “Distance”?\n\nHigh Dimensionality: In a 512 or 1024-dimensional space, there is a lot of “room.”\nThe model the model has room to partially separate certain dimensions primarily for semantic meaning and other dimensions primarily for positional signal.\nLearned Projections: The weight matrices (\\(W_Q, W_K, W_V\\)) act as filters.1 Through training, the model learns to project the “summed” vector into a subspace where the positional information is amplified when it needs to know distance, and the semantic information is amplified when it needs to know meaning.\nThe cross-terms (like \\(E_{v} \\cdot P_v\\)) tend to be very close to zero because “meaning” vectors and “position” vectors are nearly orthogonal in high-dimensional space\nLet \\(v\\) be the token at position \\(P_v\\) and \\(w\\) be the token at position \\(P_w\\). Then in most cases we have\n\n\\[(E_{v} + P_v) \\cdot (E_{w} + P_w) \\approx \\underbrace{(E_{v} \\cdot E_{w})}_{\\text{Do these words relate?}} + \\underbrace{(P_v \\cdot P_w)}_{\\text{Are they close together?}}\\]\nWe will look closely at these matrices later on",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#rotary-position-embedding",
     "href": "lectures/encoder.html#rotary-position-embedding",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Rotary Position Embedding",
-    "text": "Rotary Position Embedding\n\n\n\nRotary Positional Embeddings (RoPE)\nInstead of adding a “position vector” to it, RoPE applies a rotation matrix.\n\nToken at Position 0: No rotation.\nToken at Position 1: Rotate by \\(1\\theta\\).\nToken at Position 2: Rotate by \\(2\\theta\\).\n\\(\\ldots\\)\n\nWe will not discuss this further here.\nApproach adopted by many major LLMs including Llama (Meta), PaLM (Google), and Mistral.1\n\n\n\n\n\n\n\n\n\nFigure 2: RoPE\n\n\n\n\n\nSu (2024) RoFormer: : Enhanced transformer with Rotary Position Embedding. Neurocomput",
+    "text": "Rotary Position Embedding\n\n\n\nRotary Positional Embeddings (RoPE)\nInstead of adding a “position vector” to it, RoPE applies a rotation matrix.\n\nToken at Position 0: No rotation.\nToken at Position 1: Rotate by \\(1\\theta\\).\nToken at Position 2: Rotate by \\(2\\theta\\).\n\\(\\ldots\\)\n\nWe will not discuss this further here.\nApproach adopted by many major LLMs including Llama (Meta), PaLM (Google), and Mistral.1\n\n\n\n\n\n\n\n\nFigure 2: RoPE\n\n\n\n\nSu (2024) RoFormer: : Enhanced transformer with Rotary Position Embedding. Neurocomput",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#the-encoder-multi-head-attention",
     "href": "lectures/encoder.html#the-encoder-multi-head-attention",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "The Encoder: Multi-head attention",
     "text": "The Encoder: Multi-head attention\n\n\n\n\n\n\n\n\n\n\n\n\nStep 2: Position-wise FFN\n\nTokens “think” individually.\nTwo linear transformations.\nNon-linear activation (ReLU/GELU).",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#notation",
     "href": "lectures/encoder.html#notation",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Notation",
     "text": "Notation\n\nAn input sequence \\(\\mathbf{X}\\) is an \\(n \\times d\\) matrix (\\(n\\) tokens, \\(d\\) features).\nEach row is a token (sum of embedding and positional matrix)\nFor each token \\(x_i\\) (a \\(1 \\times d\\) row vector): \\[\\underbrace{q_i}_{1 \\times 64} = \\underbrace{x_i}_{1 \\times 768} \\times \\underbrace{W^Q}_{768 \\times 64}\\]\nFor the entire sequence \\(X\\): \\[\\underbrace{Q}_{n \\times 64} = \\underbrace{X}_{n \\times 768} \\times \\underbrace{W^Q}_{768 \\times 64}, \\quad \\underbrace{K}_{n \\times 64} = \\underbrace{X}_{n \\times 768} \\times \\underbrace{W^K}_{768 \\times 64}, \\quad \\underbrace{V}_{n \\times 64} = \\underbrace{X}_{n \\times 768} \\times \\underbrace{W^V}_{768 \\times 64}\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#learning-weight-matrix-wk",
     "href": "lectures/encoder.html#learning-weight-matrix-wk",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Learning Weight Matrix \\(W^K\\)",
     "text": "Learning Weight Matrix \\(W^K\\)\n\nLearned weight matrix\nKey vectors capture features of the token that are useful for the attention mechanism\nHelps the model to assess the relevance of each word, such as “crane” within the context of the sentence “The wattled crane is a migratory bird” \\[\nW^K = \\begin{bmatrix}\nw_{11} & w_{12} & \\dots  & w_{1d_k} \\\\\nw_{21} & w_{22} & \\dots  & w_{2d_k} \\\\\n\\vdots & \\vdots & \\ddots & \\vdots    \\\\\nw_{d1} & w_{d2} & \\dots  & w_{dd_k}\n\\end{bmatrix}_{d \\times d_k}\n\\]\n\nHere, \\(d \\times d_k = 768\\times 64\\) in the original implementation of BERT.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#the-resulting-key-matrix-k",
     "href": "lectures/encoder.html#the-resulting-key-matrix-k",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "The Resulting Key Matrix (\\(K\\))",
     "text": "The Resulting Key Matrix (\\(K\\))\n\\[\nK = XW^K =\n\\begin{bmatrix}\nk_{11} & k_{12} & \\dots  & k_{1d_k} \\\\\nk_{21} & k_{22} & \\dots  & k_{2d_k} \\\\\n\\vdots & \\vdots & \\ddots & \\vdots    \\\\\nk_{n1} & k_{n2} & \\dots  & k_{nd_k}\n\\end{bmatrix}_{n \\times d_k}\n\\]\nEach row of \\(K\\) is the “Key” for a specific token in the input.\nThe first scalar entry of this matrix corresponds to \\[k_{1,1} = \\sum_{j=1}^{768} x_{1,j} \\cdot w_{j,1}\\]\n\n\\(k_{1,1}\\)) is the first of 64 coordinates that describe token 1’s “Key identity.”\nThe entire Key vector for token 1 can be represented as: \\[k_1 = [x_{1,1}, x_{1,2}, \\dots, x_{1,768}] \\begin{bmatrix} | & |  && | & \\\\ w_{col1} & w_{col2} & \\dots& w_{col64} \\\\ | & | && | & \\end{bmatrix}\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#nomenclature",
     "href": "lectures/encoder.html#nomenclature",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Nomenclature",
     "text": "Nomenclature\n\nThe weight matrix columns (\\(\\mathbf{w}_j\\)) are referred to as projection vectors.\nEach one projects the 768-dimensional input onto a single axis of the 64-dimensional “Key space.” (or “Query space”)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#learnable-weight-matrix-wq",
     "href": "lectures/encoder.html#learnable-weight-matrix-wq",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Learnable Weight Matrix (\\(W^Q\\))",
     "text": "Learnable Weight Matrix (\\(W^Q\\))\nThe query vectors are constructed in an analogous way. \\[\nQ = XW^Q =\n\\begin{bmatrix}\nq_{11} & q_{12} & \\dots  & q_{1d_k} \\\\\nq_{21} & q_{22} & \\dots  & q_{2d_k} \\\\\n\\vdots & \\vdots & \\ddots & \\vdots    \\\\\nq_{n1} & q_{n2} & \\dots  & q_{nd_k}\n\\end{bmatrix}_{n \\times d_k}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#wk-versus-wq",
     "href": "lectures/encoder.html#wk-versus-wq",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "\\(W^K\\) versus \\(W^Q\\)",
     "text": "\\(W^K\\) versus \\(W^Q\\)\nThe Functional RolesThey act as two different “filters” applied to the same input data:\n\n\\(W^K\\) (The Key Matrix): Learns how to describe a word so it can be found. It extracts features that make a token an attractive match for others (e.g., “I am a verb,” “I am a plural noun,” “I am the subject”).\n\\(W^Q\\) (The Query Matrix): Learns how to ask a question to find other words. It extracts features that define what the current token needs to understand its own context (e.g., “I am an adjective; where is the noun I modify?” or “I am the word ‘it’; what did I refer to earlier?”).\nTodo: find reference/citation for above",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#attention-scores",
     "href": "lectures/encoder.html#attention-scores",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Attention Scores",
     "text": "Attention Scores\n\nThe attention mechanism compares every Query to every Key.\nRecall that our query and key vectors are both row-vectors\nThis means that the dot product of the first Query and all Keys is simply \\(q_1 K^\\top\\).\nThe entire matrix of scores is: \\[\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)V\\]\nWe will go through this step-by-step",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#qktop",
     "href": "lectures/encoder.html#qktop",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "\\(QK^\\top\\)",
     "text": "\\(QK^\\top\\)\n\nWhen we multiply \\(Q\\) and \\(K^\\top\\), the “hidden” dimensions (64) cancel out\nWe are left with a square matrix representing the relationships between words:\\[\\underbrace{Q}_{n \\times 64} \\times \\underbrace{K^\\top}_{64 \\times n} = \\underbrace{\\text{Scores}}_{n \\times n}\\]\n\n\\[\nQK^\\top =\n\\begin{bmatrix}\nq_1 \\cdot k_1 & q_1 \\cdot k_2 & \\dots & q_1 \\cdot k_n \\\\\nq_2 \\cdot k_1 & q_2 \\cdot k_2 & \\dots & q_2 \\cdot k_n \\\\\n\\vdots & \\vdots & \\ddots & \\vdots \\\\\nq_n \\cdot k_1 & q_n \\cdot k_2 & \\dots & q_n \\cdot k_n\n\\end{bmatrix}_{n \\times n}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#visualizing-the-n-times-n-matrix",
     "href": "lectures/encoder.html#visualizing-the-n-times-n-matrix",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Visualizing the \\(n \\times n\\) Matrix",
     "text": "Visualizing the \\(n \\times n\\) Matrix\n\\[\\underbrace{\\text{Attention Scores}}_{n \\times n} =\n\\underbrace{\n\\begin{bmatrix}\n\\dots & q_1 & \\dots \\\\\n\\dots & q_2 & \\dots \\\\\n& \\vdots & \\\\\n\\dots & q_n & \\dots\n\\end{bmatrix}\n}_{n \\times 64}\n\\times\n\\underbrace{\n\\begin{bmatrix}\n\\vdots & \\vdots & & \\vdots \\\\\nk_1^\\top & k_2^\\top & \\dots & k_n^\\top \\\\\n\\vdots & \\vdots & & \\vdots\n\\end{bmatrix}\n}_{64 \\times n}\n\\]\nIf we look at a single scalar in this resulting \\(n \\times n\\) matrix, it is the dot product:\\[\\text{Score}_{i,j} = q_i \\cdot k_j = \\sum_{m=1}^{64} q_{i,m} k_{j,m}\\] - \\(i\\): The query token. - \\(j\\): The key token. - If \\(i\\) aligns with \\(j\\), this score will be high.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#the-scaling-factor",
     "href": "lectures/encoder.html#the-scaling-factor",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "The scaling factor",
     "text": "The scaling factor\n\nThe scaling factor \\(\\frac{1}{\\sqrt{d_k}}\\) is needed to keep the gradients in a good range\nAssume your \\(Q\\) and \\(K\\) components are independent random variables with a mean of 0 and a variance of 1.\nWhen you take their dot product:\n\n\\(\\mathbb{E}(q \\cdot k)=0\\quad\\quad\\) (Mean).\nThe Variance of \\(q \\cdot k\\) becomes \\(d_k\\) (which is 64).\nThe high variance will often lead to very large positive numbers or very large negative numbers.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#proof",
     "href": "lectures/encoder.html#proof",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Proof",
     "text": "Proof\nThe dot product \\(q \\cdot k\\) for \\(d_k\\) dimensions is defined as:\n\\[S = \\sum_{i=1}^{d_k} q_i k_i\\]\nTo find the variance of \\(S\\), we first look at the variance of a single term \\(q_i k_i\\):\\[Var(q_i k_i) = E[(q_i k_i)^2] - (E[q_i k_i])^2\\]Mean of the product: Since \\(q_i\\) and \\(k_i\\) are independent, \\(E[q_i k_i] = E[q_i]E[k_i] = 0 \\cdot 0 = 0\\).\n\nExpected value of the square: \\(E[q_i^2 k_i^2] = E[q_i^2]E[k_i^2]\\). Since \\(Var(X) = E[X^2] - (E[X])^2\\), and \\(E[X]=0\\), then \\(E[X^2] = Var(X) = 1\\).\nThus, \\(E[q_i^2 k_i^2] = 1 \\cdot 1 = 1\\).Variance of one term: \\(Var(q_i k_i) = 1 - 0 = 1\\).\n\nNow, because the components are independent, the variance of the sum is the sum of the variances:\n\\[Var(S) = Var\\left(\\sum_{i=1}^{d_k} q_i k_i\\right) = \\sum_{i=1}^{d_k} Var(q_i k_i) = \\sum_{i=1}^{d_k} 1 = d_k\\]\nFor BERT-Base, where \\(d_k = 64\\), the variance of the raw dot product is 64.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#scaling",
     "href": "lectures/encoder.html#scaling",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Scaling",
     "text": "Scaling\n\nIf we scale by \\(\\dfrac{1}{\\sqrt{d_k}}\\), the expected variance is 1, which mitigates the problem of exploding/vanishing gradients",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#softmax",
     "href": "lectures/encoder.html#softmax",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Softmax",
     "text": "Softmax\n\\[\n\\begin{bmatrix}\n1.3 \\\\\n5.1\\\\\n2.2 \\\\\n0.7 \\\\\n1.1\n\\end{bmatrix}\n\\rightarrow\n\\dfrac{e^{z_i}}{\\sum_{j=1}^K e^{z_j}}\n\\rightarrow\n\\begin{bmatrix}\n0.02 \\\\\n0.90\\\\\n0.05 \\\\\n0.01 \\\\\n0.02\n\\end{bmatrix}\n\\]\n\nThe softmax function transforms a set of inputs into a probability-like distribution",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#softmax-and-attention",
     "href": "lectures/encoder.html#softmax-and-attention",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Softmax and attention",
     "text": "Softmax and attention\n\nEach row in the \\(QK^\\top\\) matrix represents a single word’s “view” of the entire sentence.\nRow 1: How much Word 1 cares about [Word 1, Word 2, …, Word \\(n\\)].\nRow 2: How much Word 2 cares about [Word 1, Word 2, …, Word \\(n\\)].\netc.\nSince we want each word to “distribute” its attention across the sentence, the scores in each row must sum to 1.0.\n\n\\[\n\\text{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#softmax-and-attention-2",
     "href": "lectures/encoder.html#softmax-and-attention-2",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Softmax and attention (2)",
     "text": "Softmax and attention (2)\n\nIn detail, the operation looks like this:\n\n\\[\n\\text{Softmax} \\left(\n\\frac{1}{\\sqrt{d_k}} \\times\n\\underbrace{\n\\begin{bmatrix}\nq_1 \\cdot k_1 & q_1 \\cdot k_2 & \\dots & q_1 \\cdot k_n \\\\\nq_2 \\cdot k_1 & q_2 \\cdot k_2 & \\dots & q_2 \\cdot k_n \\\\\n\\vdots & \\vdots & \\ddots & \\vdots \\\\\nq_n \\cdot k_1 & q_n \\cdot k_2 & \\dots & q_n \\cdot k_n\n\\end{bmatrix}\n}_{\\text{Raw Scores } (n \\times n)}\n\\right) =\n\\underbrace{\n\\begin{bmatrix}\n\\alpha_{1,1} & \\alpha_{1,2} & \\dots & \\alpha_{1,n} \\\\\n\\alpha_{2,1} & \\alpha_{2,2} & \\dots & \\alpha_{2,n} \\\\\n\\vdots & \\vdots & \\ddots & \\vdots \\\\\n\\alpha_{n,1} & \\alpha_{n,2} & \\dots & \\alpha_{n,n}\n\\end{bmatrix}\n}_{\\text{Attention Weights } (n \\times n)}\n\\]\nIn this resulting matrix:\n\n\\(\\sum_{j=1}^{n} \\alpha_{i,j} = 1\\) (Each row sums to 1).\n\\(\\alpha_{1,2}\\) is the percentage of attention Word 1 pays to Word 2.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#value-vectors",
     "href": "lectures/encoder.html#value-vectors",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Value Vectors",
     "text": "Value Vectors\n\nValue vectors contain detailed information about each token\nThey are transformed embeddings that are weighted and summed based on the attention scores\nIntuitively, the value vector contains the potential meanings of a word, and the attention scores determine which meanings are most relevant withint a given context\nWe get the value vectors analogously from a learned \\(W^V\\)\n\n\\[\nV = XW^V =\n\\begin{bmatrix}\nv_{11} & v_{12} & \\dots  & v_{1d_k} \\\\\nv_{21} & v_{22} & \\dots  & v_{2d_k} \\\\\n\\vdots & \\vdots & \\ddots & \\vdots    \\\\\nv_{n1} & v_{n2} & \\dots  & v_{nd_k}\n\\end{bmatrix}_{n \\times d_k}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#calculating-values",
     "href": "lectures/encoder.html#calculating-values",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Calculating Values",
     "text": "Calculating Values\nNow that we have a matrix of Attention Weights (\\(\\alpha\\)), we use them to take a weighted average of the information stored in the Value matrix (\\(V\\)).\n\nThe Value Matrix (\\(V\\))Just like \\(Q\\) and \\(K\\), the Value matrix is created by projecting the input \\(X\\) through a learnable weight matrix \\(W^V\\): \\[\\underbrace{V}_{n \\times 64} = \\underbrace{X}_{n \\times 768} \\times \\underbrace{W^V}_{768 \\times 64}\\]\n\nThe Value represents the actual “content” of the word.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#the-weighted-sum",
     "href": "lectures/encoder.html#the-weighted-sum",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "The Weighted Sum",
     "text": "The Weighted Sum\nWe take our \\(n \\times n\\) attention weights and multiply them by our \\(n \\times 64\\) Values.\n\\[\\text{Output} = \\underbrace{\\text{Softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)}_{n \\times n} \\times \\underbrace{V}_{n \\times 64}\\]\nTo see what happens to Word 1, look at the first row of the multiplication:\n\\[\\text{Output}_1 = \\alpha_{1,1}v_1 + \\alpha_{1,2}v_2 + \\dots + \\alpha_{1,n}v_n\\]\n\nThe Final Output is a \\(n \\times 64\\) matrix representing the context-aware version of each token.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#multi-head-assembly",
     "href": "lectures/encoder.html#multi-head-assembly",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Multi-Head Assembly",
     "text": "Multi-Head Assembly\nIn BERT-Base, this happens 12 times in parallel (12 heads). Each head produces an \\(n \\times 64\\) output. We concatenate them all together:\\[12 \\times 64 = 768\\]This brings us back to the original \\(768\\) dimensions, which is why the output can be passed directly into the next layer!\n\nTodo: Decide where to talk about multi-head stuff",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#layer-normalization-ln",
     "href": "lectures/encoder.html#layer-normalization-ln",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Layer Normalization (LN)",
     "text": "Layer Normalization (LN)\nFor any fixed offset \\(\\Delta k\\), the encoding at a shifted position can be represented as a linear transformation of the original:\nLN greatly contributes to stabilizing training and optimizing performance in deep learning models, especially in transformers. It works by normalizing the activations at each layer, ensuring a more consistent gradient flow during training.\nTwo flavors:\n\nPost-LN transformer applies normalization after the addition of the layer’s output with the residual connection’s output.1\nPre-LN transformers [Xiong et al., 2020] apply normalization before self-attention and feed-forward layers. This configuration is used in modern architectures such as GPT, Llama, and Vision Transformers.2\n\nVaswani et al. (2017) 31st Conference on Neural Information Processing Systems (NIPS)Xiong R, et al., On layer normalization in the transformer architecture. In International Conference on Machine Learning, PMLR, 2020.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#ln-step-1-add",
     "href": "lectures/encoder.html#ln-step-1-add",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "LN step 1: Add",
     "text": "LN step 1: Add\nThe “Add” part is a Residual Connection (also called a Skip Connection).\n\n\n\n\n\n\n\nAdd\n\n\nInstead of a layer outputting \\(Sublayer(X)\\), it outputs:\n\\[\\text{Output} = X + Sublayer(X)\\]\n\n\n\n\n\nstrictly element-wise addition\nFor instance, token \\(i\\) and feature \\(j\\) (out of the 768 features):\n\n\\[\\text{Output}_{i,j} = x_{i,j} + \\text{Sublayer}(X)_{i,j}\\]\n\nIntuition. This operation can be regarded as \\(X + f(X)\\). During backpropagation, we calculate the first derivative as\n\n\\[\\frac{\\partial(X + f(X))}{\\partial X} = 1 + f'(X)\\]\n\nEven if the sublayer’s gradient \\(f'(X)\\) is near zero (the “vanishing gradient” problem), the total gradient is still at least \\(1\\).1\n\nHe K, et al., Deep Residual Learning for Image Recognition, 2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#ln-step-2-norm",
     "href": "lectures/encoder.html#ln-step-2-norm",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "LN step 2: Norm",
     "text": "LN step 2: Norm\n\n\n\n\n\n\n\nNorm\n\n\nThe normalization step ensures that values do no not explode1\n\\[ \\text{LayerNorm}(Z) = \\gamma \\odot \\left( \\frac{Z - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} \\right) + \\beta\\]\n\n\n\n\n\nMean (\\(\\mu\\)): Average of the 768 values for a specific token.\nVariance (\\(\\sigma^2\\)): Corresponding variance.\nStandardization: mean of 0 and a variance of 1. Before this step, values can be highly divergent which would lead to softmax saturation problems\n\\(\\gamma\\) and \\(\\beta\\) are learnable parameters. They are vectors of size 768:\n\n\\[\\text{Output}_j = (\\gamma_j \\cdot \\hat{x}_j) + \\beta_j\\]\n\nBefore training, all \\(\\gamma\\) values are initialized to 1 and all \\(\\beta\\) values are initialized to 0.\n\nThe \\(\\odot\\) symbol represents element-wise multiplication.",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#ffn-expansion-contraction",
     "href": "lectures/encoder.html#ffn-expansion-contraction",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "FFN Expansion-Contraction",
     "text": "FFN Expansion-Contraction\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn BERT-Base, the FFN consists of two linear transformations with a non-linear activation (GELU) in between.\nExpansion-Contraction architecture\nInput \\(x\\): \\(1 \\times 768\\)\n\\(W_1\\): \\(768 \\times 3072\\) (The “Expansion” weights)\n\\(b_1\\): \\(1 \\times 3072\\) (The first bias)\n\\(W_2\\): \\(3072 \\times 768\\) (The “Projection” weights)\n\\(b_2\\): \\(1 \\times 768\\) (The second bias)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#ffn-layer",
     "href": "lectures/encoder.html#ffn-layer",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "FFN layer",
     "text": "FFN layer\n\\[FFN(x) = \\text{GELU}(xW_1 + b_1)W_2 + b_2\\]",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#relu-vs-gelu",
     "href": "lectures/encoder.html#relu-vs-gelu",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "ReLU vs GeLU",
     "text": "ReLU vs GeLU\n\n\n\nactivation functions\n\n\nAfter matrix multiplication (linear), a non-linear activation function is applied, which makes the neural network a non-linear function, allowing it to achieve complex behavior. ReLu is the most widely use activation function (simple, fast to compute)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#rectified-linear-unit-relu",
     "href": "lectures/encoder.html#rectified-linear-unit-relu",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Rectified Linear Unit (ReLU)",
     "text": "Rectified Linear Unit (ReLU)\n\nThe Rectified Linear Unit (ReLU) outputs the input if positive; otherwise, it outputs zero.\n\n\n\n\\[\n\\mathrm{ReLU}(x) = \\max(0,x)\n\\]\nThe first derivative of ReLU is\n\\[\n\\dfrac{d}{dx}\\mathrm{ReLU}(x) =\n\\begin{cases}\nx &gt; 0 & 1 \\\\\nx &lt; 0 & 0 \\\\\nx = 0 & \\text{undefined but usually set to zero in code}\\\\\n\\end{cases}\n\\]\n\nthe ReLU function may suffer from the dying ReLU problem, where a large fraction of the neurons can become inactive and unresponsive, hindering the learning process1\nLeaky ReLU: \\(f(x) = max(\\alpha \\cdot x, x)\\), where \\(\\alpha\\) is a small value such as 0.01. Leaky ReLU enables a small, non-zero gradient for negative values.\n\n\n\n\n\n\n\n\n\n\n\n\nLu, L, et al. (2019). Dying ReLU and Initialization: Theory and Numerical Examples.. https://doi.org/10.48550/arxiv.1903.06733",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#gaussian-error-linear-unit-gelu",
     "href": "lectures/encoder.html#gaussian-error-linear-unit-gelu",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Gaussian Error Linear Unit (GELU)",
     "text": "Gaussian Error Linear Unit (GELU)\n\n\n\nGELU has several desirable attributes: smoothness, differentiability, and ability to approximate the widely used ReLU function.\nGELU is used in many tools including BERT and GPT\nGELU weights the input by its magnitude\n\n\\[\\text{GELU}(x) = x \\Phi(x) \\approx 0.5x \\left( 1 + \\tanh \\left( \\sqrt{\\frac{2}{\\pi}} (x + 0.044715x^3) \\right) \\right)\\]\n\n\\(\\Phi(x)\\) is the Cumulative Distribution Function (CDF) of the standard normal distribution. The BERT paper uses a fast approximation (shown on right)1\n\n\n\n\n\n\n\n\n\n\n\n\nLee, M, Mathematical Analysis and Performance Evaluation of the GELU Activation Function in Deep Learning, Journal of Mathematics, 2023",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#berts-ffn-block",
     "href": "lectures/encoder.html#berts-ffn-block",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "BERT’s FFN Block",
     "text": "BERT’s FFN Block\n\n\n\n\n\n\n\n\n\n\n\n\n\nComing back to the FFN architexture, BERT takes the \\(768\\)-dimensional vector from the Add & Norm layer and expands to into a \\(3072\\)-dimensional space before applying the GELU activation function, following which it projects it back to \\(768\\)-dimensional for further processing\n\n\\[\n\\underbrace{1 \\times 768}_{\\text{Input}}\n\\xrightarrow{W_1, b_1}\n\\underbrace{1 \\times 3072}_{\\text{Linear Expansion}}\n\\xrightarrow{\\text{GELU}}\n\\underbrace{1 \\times 3072}_{\\text{Non-linear Activation}}\n\\xrightarrow{W_2, b_2}\n\\underbrace{1 \\times 768}_{\\text{Output}}\n\\]\n\nTodo: explain FFN architexture based on BERT paper - what advantage is there for expanding etc?)",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#layer-normalization-2",
     "href": "lectures/encoder.html#layer-normalization-2",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Layer Normalization (2)",
     "text": "Layer Normalization (2)\n\nThe First Add & Norm stabilized the Communication (Attention).\nThis Second Add & Norm stabilizes the Computation (FFN).\n\n\\[\\text{Layer Output} = \\text{LayerNorm} \\left( \\underbrace{X_{\\text{post-attn}}}_{\\text{The \"Base\" Knowledge}} + \\underbrace{\\text{FFN}(X_{\\text{post-attn}})}_{\\text{The \"New\" Insights}} \\right)\\]\nSimilar to the previous add & norm layer, this one has two purposes - The “Add” (Residual): This ensures that even if the FFN didn’t learn anything useful for a particular word (like a common “the” or “a”), the original context from the attention layer is preserved perfectly. - The “Norm” (LayerNorm): This resets the “electrical signals” of the 768 features. It ensures that the numbers don’t get progressively larger as they move from Layer 1 to Layer 12. - The output of this final Norm is exactly the same shape as the input at the very beginning of the layer (\\(n \\times 768\\))\n\nTodo: explain what is BERT specific here",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
     ]
   },
   {
     "objectID": "lectures/encoder.html#conclusion",
     "href": "lectures/encoder.html#conclusion",
-    "title": "Transformer Architecture: Encoders",
+    "title": "Approaches to biomedical knowledge",
     "section": "Conclusion",
-    "text": "Conclusion\n::: {.callout-note icon=false title: “Take home”}\nThis lecture introduced the Encoder architecture as it is implemented in BERT. In the next lecture, we will introduce the decoder architecture and discuss how these models are trained.\n:::\n\nTodo: Talk about some of the BERT use cases\nTodo: Homework, using BERT to do something\nTodo: Talk about some of the variations of BERT",
+    "text": "Conclusion\n\n\n\n\nTake home\n\n\nThis lecture introduced the Encoder architecture as it is implemented in BERT. In the next lecture, we will introduce the decoder architecture and discuss how these models are trained.\n\n\n\n\n\nTodo: Talk about some of the BERT use cases\nTodo: Homework, using BERT to do something\nTodo: Talk about some of the variations of BERT",
     "crumbs": [
       "Home",
       "Lectures",
-      "Transformer Architecture: Encoders"
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/encoder.html#sources",
+    "href": "lectures/encoder.html#sources",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sources",
+    "text": "Sources\nSources for this lecture include\n\nVaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762\nWang et al. (2018), On the Dimensionality of Word Embeddings, (NeurIPS 2018)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
     ]
   },
   {
