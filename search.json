@@ -4,7 +4,7 @@
     "href": "lectures/transformer2.html#overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview",
-    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the transformer architecture with a focus on the decoder.\n\n\n\nImportant: - https://arxiv.org/pdf/2305.17026\n\nTransformer models (recap)\nDecoder models\nMultihead attention\nOutput generation\nTraining LLMs"
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the transformer architecture with a focus on the decoder.\n\n\n\nImportant: - https://arxiv.org/pdf/2305.17026\n\nTransformer models (recap)\nDecoder models\nMultihead attention\nOutput generation\nTraining LLMs\nKV Cache"
   },
   {
     "objectID": "lectures/transformer2.html#recap",
@@ -172,63 +172,140 @@
     "href": "lectures/transformer2.html#masked-self-attention",
     "title": "Approaches to biomedical knowledge",
     "section": "Masked Self-Attention",
-    "text": "Masked Self-Attention\n\nRecall: \\(\\text{Attention}(Q,K,V) = \\text{softmax}\\left(\\dfrac{QK^\\top}{\\sqrt{d_k}}\\right)V\\)\nWe modify this by adding a mask matrix \\(M\\) to the scores, before the softmax step:\n\n\\[\n\\text{MaskedAttention}(Q,K,V) = \\text{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}} + M\\right)V\n\\]\n\n\\(M\\) is an \\(n\\times n\\) matrix, defined entrywise as:\n\n\\[\nM_{i,j} = \\begin{cases} 0 & j \\le i \\quad \\text{(allowed: current or past token)} \\\\ -\\infty & j &gt; i \\quad \\text{(disallowed: future token)} \\end{cases}\n\\]\n\nAdding \\(-\\infty\\) to a score, then applying softmax, sends that entry’s contribution to exactly \\(0\\) — the future token is mathematically removed from the weighted sum, not just “discouraged.”\nIn practice, implementations use a large negative finite number (e.g. \\(-10^9\\)) instead of literal \\(-\\infty\\), for numerical stability — the same spirit as the \\(\\epsilon\\) we added inside LayerNorm in Part 1.1\n\nPhuong M, Hutter M (2022) Formal Algorithms for Transformers. arXiv:2207.09238"
+    "text": "Masked Self-Attention\n\nRecall: \\(\\text{Attention}(Q,K,V) = \\text{softmax}\\left(\\dfrac{QK^\\top}{\\sqrt{d_k}}\\right)V\\)\nWe modify this by adding a mask matrix \\(M\\) to the scores, before the softmax step:\n\n\\[\n\\text{MaskedAttention}(Q,K,V) = \\text{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}} + M\\right)V\n\\]\n\n\\(M\\) is an \\(n\\times n\\) matrix, defined entrywise as:\n\n\\[\nM_{i,j} = \\begin{cases} 0 & j \\le i \\quad \\text{(allowed: current or past token)} \\\\ -\\infty & j &gt; i \\quad \\text{(disallowed: future token)} \\end{cases}\n\\]\n\nAdding \\(-\\infty\\) to a score, then applying softmax, transforms the entry tp exactly \\(0\\).\n\n\n\nIn practice, implementations use a large negative finite number (e.g. \\(-10^9\\)) instead of literal \\(-\\infty\\), for numerical stability — the same spirit as the \\(\\epsilon\\) we added inside LayerNorm in Part 1.1\n\n\nPhuong M, Hutter M (2022) Formal Algorithms for Transformers. arXiv:2207.09238"
   },
   {
     "objectID": "lectures/transformer2.html#worked-example-the-mask-matrix",
     "href": "lectures/transformer2.html#worked-example-the-mask-matrix",
     "title": "Approaches to biomedical knowledge",
     "section": "Worked Example: The Mask Matrix",
-    "text": "Worked Example: The Mask Matrix\n\nFor our 4-token sentence “I am an automaton” (\\(n=4\\)), the mask matrix is:\n\n\\[\nM = \\begin{bmatrix}\n0 & -\\infty & -\\infty & -\\infty \\\\\n0 & 0 & -\\infty & -\\infty \\\\\n0 & 0 & 0 & -\\infty \\\\\n0 & 0 & 0 & 0\n\\end{bmatrix}\n\\]\n\nRow \\(i\\) corresponds to the query token; column \\(j\\) to the key token.\nRow 0 (“I”): only column 0 is unmasked — the first token can only attend to itself.\nRow 3 (“automaton”): all four columns are unmasked — the last token can attend to the entire sequence, since nothing comes after it.\nThis lower-triangular pattern (0 on and below the diagonal, \\(-\\infty\\) above) is why causal masking is often just called “triangular masking.”"
+    "text": "Worked Example: The Mask Matrix\n\nFor our 4-token sentence “I am an automaton” (\\(n=4\\)), the mask matrix is:\n\n\\[\nM = \\begin{bmatrix}\n0 & -\\infty & -\\infty & -\\infty \\\\\n0 & 0 & -\\infty & -\\infty \\\\\n0 & 0 & 0 & -\\infty \\\\\n0 & 0 & 0 & 0\n\\end{bmatrix}\n\\]\n\nRow \\(i\\) corresponds to the query token; column \\(j\\) to the key token.\nRow 0 (“I”): only column 0 is unmasked — the first token can only attend to itself.\nRow 3 (“automaton”): all four columns are unmasked — the last token can attend to the entire sequence, since nothing comes after it.\nCausal masking is often just called “triangular masking.”"
   },
   {
     "objectID": "lectures/transformer2.html#worked-example-from-raw-scores-to-masked-attention-weights",
     "href": "lectures/transformer2.html#worked-example-from-raw-scores-to-masked-attention-weights",
     "title": "Approaches to biomedical knowledge",
     "section": "Worked Example: From Raw Scores to Masked Attention Weights",
-    "text": "Worked Example: From Raw Scores to Masked Attention Weights\nSuppose the raw attention scores \\(\\frac{QK^\\top}{\\sqrt{d_k}}\\) for our sentence are:\n\\[\nS = \\begin{bmatrix}\n0.9 & 0.2 & -0.1 & 0.4 \\\\\n0.3 & 1.1 & 0.5 & -0.2 \\\\\n0.1 & 0.4 & 1.3 & 0.6 \\\\\n-0.2 & 0.3 & 0.7 & 1.5\n\\end{bmatrix}\n\\]\nAdding the mask \\(M\\) and applying softmax row-by-row:\n\n\n\n\n\n\n\n\n\n\nI\nam\nan\nautomaton\n\n\n\n\nI\n1.000\n0.000\n0.000\n0.000\n\n\nam\n0.310\n0.690\n0.000\n0.000\n\n\nan\n0.176\n0.238\n0.586\n0.000\n\n\nautomaton\n0.094\n0.156\n0.232\n0.517\n\n\n\n\n\n\n\n\n\nRow “I”: weight \\([1.000, 0, 0, 0]\\) — with only itself unmasked, softmax trivially assigns it all the probability mass.\nRow “am”: weight \\(\\approx[0.310, 0.690, 0, 0]\\) — splits attention only between “I” and “am”.\nRow “automaton”: weight \\(\\approx[0.095, 0.156, 0.233, 0.517]\\) — the only row using the full softmax, since nothing is masked.\nNotice the upper triangle is exactly \\(0\\) in every row — this is the visual signature of causal masking, and it directly mirrors the \\(n\\times n\\) score matrix from Part 1’s “Visualizing the \\(n\\times n\\) Matrix” slide, just with the upper triangle zeroed out."
+    "text": "Worked Example: From Raw Scores to Masked Attention Weights\nSuppose the raw attention scores \\(S =\\frac{QK^\\top}{\\sqrt{d_k}}\\) for our sentence. - The masking procedure is as follows\n\n\\[\n\\mathbf{S} + \\mathbf{M} = \\begin{bmatrix}\n0.9 & 0.2 & -0.1 & 0.4 \\\\\n0.3 & 1.1 & 0.5 & -0.2 \\\\\n0.1 & 0.4 & 1.3 & 0.6 \\\\\n-0.2 & 0.3 & 0.7 & 1.5\n\\end{bmatrix} + \\begin{bmatrix}\n0 & -\\infty & -\\infty & -\\infty \\\\\n0 & 0 & -\\infty & -\\infty \\\\\n0 & 0 & 0 & -\\infty \\\\\n0 & 0 & 0 & 0\n\\end{bmatrix}\n=\n\\begin{bmatrix}\n0.9 & -\\infty & -\\infty & -\\infty \\\\\n0.3 & 1.1 & -\\infty & -\\infty \\\\\n0.1 & 0.4 & 1.3 &-\\infty \\\\\n-0.2 & 0.3 & 0.7 & 1.5\n\\end{bmatrix}\n\\]\n\nApplying softmax row-by-row yields\n\n\\[\n\\mathrm{softmax}(\\mathbf{S} + \\mathbf{M}) =\n\\begin{bmatrix}\n1.0 & 0 & 0 & 0 \\\\\n0.31 & 0,690 & 0 & 0 \\\\\n0.176 & 0.238 & 0.586 &0 \\\\\n0.094 & 0.156 & 0.232 & 0.517\n\\end{bmatrix}\n\\]\n\n\nRow “I”: weight \\([1.000, 0, 0, 0]\\) — with only itself unmasked, softmax trivially assigns it all the probability mass.\nRow “am”: weight \\(\\approx[0.310, 0.690, 0, 0]\\) — splits attention only between “I” and “am”.\nRow “automaton”: weight \\(\\approx[0.095, 0.156, 0.233, 0.517]\\) — the only row using the full softmax, since nothing is masked.\nNotice the upper triangle is exactly \\(0\\) in every row"
   },
   {
-    "objectID": "lectures/transformer2.html#connecting-back-to-part-1",
-    "href": "lectures/transformer2.html#connecting-back-to-part-1",
+    "objectID": "lectures/transformer2.html#pretraining",
+    "href": "lectures/transformer2.html#pretraining",
     "title": "Approaches to biomedical knowledge",
-    "section": "Connecting Back to Part 1",
-    "text": "Connecting Back to Part 1\n\nThe scaling factor \\(\\frac{1}{\\sqrt{d_k}}\\), the softmax normalization, the variance argument for why we scale — none of that changes. Everything from Part 1’s derivation still applies row-by-row.\nThe only new ingredient is the additive mask \\(M\\), applied before softmax.\nThis is a general pattern worth remembering: masking-before-softmax is how transformers implement any kind of “this token may not attend to that token” constraint — causal masking is the decoder’s specific use of it, but the same mechanism (additive \\(-\\infty\\) mask) shows up elsewhere too (e.g. padding masks for variable-length sequences)."
+    "section": "Pretraining",
+    "text": "Pretraining\n\nTraditional ML:\n\ntrain a separate model for each task from scratch\n\n\n\nSome ML tasks are similar. For instance\n\nSpam detection\nsentiment Analysis\nmachine translation\n\nAll three tasks require the model to understand natural language\nThe transfer learning approach reused a trained model for a new task by “tuning” the previously trained model\nLLMs take this approach to an extreme: Pretraining"
   },
   {
-    "objectID": "lectures/transformer2.html#section-3-cross-attention-if-covering-encoder-decoder",
-    "href": "lectures/transformer2.html#section-3-cross-attention-if-covering-encoder-decoder",
+    "objectID": "lectures/transformer2.html#pretraining-1",
+    "href": "lectures/transformer2.html#pretraining-1",
     "title": "Approaches to biomedical knowledge",
-    "section": "Section 3: Cross-Attention (if covering encoder-decoder)",
-    "text": "Section 3: Cross-Attention (if covering encoder-decoder)\nWhere Q, K, V come from: Q from the decoder’s own representations, K/V from the encoder’s output — the one place two different sequences interact. Diagram: decoder block showing self-attention → cross-attention → FFN, contrasted with encoder’s self-attention → FFN. (Skip this section entirely if you’re scoping the lecture to decoder-only models — flag this as a scope decision to make early, since it affects how much of the rest you need.)"
+    "section": "Pretraining",
+    "text": "Pretraining\n\nPre-training is the foundation for the power of Large Language Models (LLMs)\nTrain by predicting the next work (token) on large collections of text data\nMost LLMs are trained on general data (“all” web pages, “all” books, etc.)\nConversation text may help LLMs get better at chatting (train on social media data, e.g., Reddit)\nBooks: May help LLMs “understand” complicated topics better than webpages/social media\nStack exchange/GitHub: Help LLMs “understand” code"
   },
   {
-    "objectID": "lectures/transformer2.html#section-4-the-training-objective",
-    "href": "lectures/transformer2.html#section-4-the-training-objective",
+    "objectID": "lectures/transformer2.html#pretraining-2",
+    "href": "lectures/transformer2.html#pretraining-2",
     "title": "Approaches to biomedical knowledge",
-    "section": "Section 4: The Training Objective",
-    "text": "Section 4: The Training Objective\nCausal language modeling objective: next-token prediction, autoregressive factorization: - Loss function: cross-entropy against the true next token, teacher forcing during training. - Contrast slide: causal LM (GPT) vs. masked LM (BERT) objectives, side by side — good callback to your Part 1 deck’s BERT-centric framing.1 Optimizer/schedule details (optional, if you want concrete training mechanics): Adam with warmup + decay, label smoothing, dropout — from the original paper.2\nDevlin et al. (2019) BERTVaswani et al. (2017)"
+    "section": "Pretraining",
+    "text": "Pretraining\n\nSize of training data\n\n\n\n\nLLM\nParam count\nSize\n\n\n\n\nGPT-3 (2020)\n175 billion\n\\(\\sim\\) 350 GB\n\n\n LLaMA-2 (2023)\n7B, 13B, 70B\n\\(\\sim\\) 14 GB–140 GB\n\n\n Llama 3\n  15 trillion tokens\n\\(\\sim\\) 60 TB\n\n\n GPT-4\n (Estimated)~1.8 trillion\n Proprietary"
   },
   {
-    "objectID": "lectures/transformer2.html#section-5-decoding-generating-text-at-inference-time",
-    "href": "lectures/transformer2.html#section-5-decoding-generating-text-at-inference-time",
+    "objectID": "lectures/transformer2.html#pretraining-size-matters",
+    "href": "lectures/transformer2.html#pretraining-size-matters",
     "title": "Approaches to biomedical knowledge",
-    "section": "Section 5: Decoding — Generating Text at Inference Time",
-    "text": "Section 5: Decoding — Generating Text at Inference Time\n\nThe problem: a trained model gives a distribution over next tokens — how do you actually pick one?\nGreedy decoding: always take argmax — simple, deterministic, often degenerate/repetitive.\nBeam search: track top-k partial sequences — better than greedy, still prone to blandness/repetition for open-ended generation.\nSampling strategies: temperature scaling, top-k, and nucleus (top-p) sampling — motivate with the “degeneration” problem.1 -Live/visual comparison (optional): show the same prompt under greedy vs. nucleus sampling, if you want a demo-style slide — good candidate for a {python} code cell like your existing plotting slides.\n\nHoltzman et al. (2020) The Curious Case of Neural Text Degeneration. ICLR 2020"
+    "section": "Pretraining: Size matters",
+    "text": "Pretraining: Size matters\n\n\nLanguage modeling performance improves smoothly as we increase the model size, datasetset size, and amount of compute2 used for training.\nCoversely, the authors found very weak dependence on many architectural and optimization hyperparameters.\n\n\nKaplan J et al. (2020) Scaling Laws for Neural Language Models. arXiv 2001.08361"
   },
   {
-    "objectID": "lectures/transformer2.html#section-6-scale-why-bigger-models-more-data",
-    "href": "lectures/transformer2.html#section-6-scale-why-bigger-models-more-data",
+    "objectID": "lectures/transformer2.html#optimal-model-size",
+    "href": "lectures/transformer2.html#optimal-model-size",
     "title": "Approaches to biomedical knowledge",
-    "section": "Section 6: Scale — Why Bigger Models, More Data",
-    "text": "Section 6: Scale — Why Bigger Models, More Data\n\nScaling laws: loss as a smooth function of parameters/data/compute.1\nCompute-optimal training (“Chinchilla”): revised guidance on the parameter/data trade-off — good “science evolves” moment, paired directly against the Kaplan slide.2\nTakeaway slide: what this means practically (data quality/quantity matters as much as parameter count).\n\nKaplan et al. (2020) Scaling Laws for Neural Language Models. arXiv:2001.08361 — verify citation details before useHoffmann et al. (2022) Training Compute-Optimal Large Language Models. arXiv:2203.15556"
+    "section": "Optimal model size",
+    "text": "Optimal model size\n\nOn the other hand, what if we have a fixed compute budget and cannot increase the number of parameters or the amount of data without limit?\nThe authors investigatef the optimal model size and number of tokens for training a transformer language model under a given compute budget.\nThey found that current large language models are significantly undertrained, a consequence of the recent focus on scaling language models whilst keeping the amount of training data constant.\n\n\n\nHoffmann J et al. (2022) Training Compute-Optimal Large Language Models. arXiv 2203.15556"
   },
   {
-    "objectID": "lectures/transformer2.html#conclusion",
-    "href": "lectures/transformer2.html#conclusion",
+    "objectID": "lectures/transformer2.html#pretraining-learning-parameters",
+    "href": "lectures/transformer2.html#pretraining-learning-parameters",
     "title": "Approaches to biomedical knowledge",
-    "section": "Conclusion",
-    "text": "Conclusion\nRecap: decoder = causal self-attention + (optional cross-attention) + autoregressive training objective + inference-time decoding choices."
+    "section": "Pretraining: Learning parameters",
+    "text": "Pretraining: Learning parameters\n\nCausal language modeling\n\nA decoder is trained to predict each token given only the tokens that came before it.\nThe basic back-propagation from previous lectures is used to train LLM parameters as well\nAn Adam optimizer is most frequently used to implement gradient descent\nThis is an autoregressive factorization of the joint probability of a sequence:\n\n\\[\nP(x_1,\\ldots,x_n) = \\prod_{t=1}^n P(x_t \\mid x_1,\\ldots,x_{t-1})\n\\]\n\n\nThe model doesn’t predict the whole sentence at once — it predicts one conditional distribution per position, and the chain rule of probability guarantees these conditionals multiply out to the joint probability of the full sequence.\nThis factorization is exactly why causal masking (Section 2) is needed: each factor \\(P(x_t \\mid x_1,\\ldots,x_{t-1})\\) must only depend on the past, or the factorization isn’t valid."
+  },
+  {
+    "objectID": "lectures/transformer2.html#the-loss-function",
+    "href": "lectures/transformer2.html#the-loss-function",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Loss Function",
+    "text": "The Loss Function\n\nTraining uses cross-entropy loss between the predicted next-token distribution and the true next token.\nFor a single position \\(t\\), with true token \\(x_t\\) and predicted probability \\(\\hat{P}(x_t \\mid x_{&lt;t})\\):\n\n\\[\n\\mathcal{L}_t = -\\log \\hat{P}(x_t \\mid x_1,\\ldots,x_{t-1})\n\\]\n\nThe total loss for a sequence is the sum (or mean) over all positions:\n\n\\[\n\\mathcal{L} = -\\sum_{t=1}^n \\log \\hat{P}(x_t \\mid x_1,\\ldots,x_{t-1})\n\\]"
+  },
+  {
+    "objectID": "lectures/transformer2.html#teacher-forcing",
+    "href": "lectures/transformer2.html#teacher-forcing",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Teacher forcing",
+    "text": "Teacher forcing\n\nTeacher forcing: during training, the true previous tokens are fed as input at every position — not the model’s own (possibly wrong) predictions.\nThis is what makes it possible to compute the loss for all \\(n\\) positions in a single parallel forward pass, using the causal mask from Section 2 to prevent each position from seeing its own answer.\nAt inference time there is no ground truth to feed back in — this is exactly the “Append and reprocess” loop from our decoding-steps diagram, where each new token is the model’s own prediction, fed back as input for the next step.\n\n\n\nImage: https://www.deeplearning.ai/"
+  },
+  {
+    "objectID": "lectures/transformer2.html#worked-example-cross-entropy-loss",
+    "href": "lectures/transformer2.html#worked-example-cross-entropy-loss",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Worked Example: Cross-Entropy Loss",
+    "text": "Worked Example: Cross-Entropy Loss\nContinuing “I am an automaton” — suppose after “I am an” the model’s predicted distribution over the next token is:\n\n\n\ntoken\nP(token)\n\n\n\n\nautomaton\n0.55\n\n\napple\n0.05\n\n\nidea\n0.15\n\n\nthe\n0.25\n\n\n\n\nThe true next token is “automaton,” with predicted probability \\(0.55\\).\nThe loss at this position is \\(-\\log(0.55) \\approx 0.598\\).\nIf the model had instead assigned “automaton” a probability of, say, \\(0.01\\), the loss would jump to \\(-\\log(0.01)\\approx 4.6\\) — cross-entropy penalizes confident wrong predictions much more heavily than uncertain ones."
+  },
+  {
+    "objectID": "lectures/transformer2.html#kvcache",
+    "href": "lectures/transformer2.html#kvcache",
+    "title": "Approaches to biomedical knowledge",
+    "section": "KV Cache",
+    "text": "KV Cache\n\nLet us return to the input processing (prefill) for decoder-only transformers\n\nInputs (tokenized prompt) are embedded and positionally encoded\nMultihead attention (MHA) computes keys and values (KV)\nLots of matrix multiplications, high usage of hardware accelerator on the GPU\n\nOutput is sequential (one token at a time)\n\nGenerated token is appended to previous input, …, again and again\nMHA process is repeated each time\nsequential means we cannot parallelize much!"
+  },
+  {
+    "objectID": "lectures/transformer2.html#kv-cache",
+    "href": "lectures/transformer2.html#kv-cache",
+    "title": "Approaches to biomedical knowledge",
+    "section": "KV Cache",
+    "text": "KV Cache\n\nCan we avoid recomputing KV values again and again?\nWe only really need to compute KV values for the newly generated token\nThe KV Cache stores the keys and values for all tokens we have previously generated\n\n\n\n\n\n\n\n\nWe do not need to regenerate keys or values for “I” and “love” when we generate a new token “tofu”\nQueries are never cached and never reused, for any token, at any step.\n\na query is only ever used once, at the moment its own token is being generated, to compute that token’s output.\n\nWe need to compute: Q, K, V for the new token “tofu”: all three must be computed fresh — Q because it’s a brand-new token needing its own query, and K/V because “tofu” also needs to contribute its own key/value pair to the cache for future tokens to attend to."
+  },
+  {
+    "objectID": "lectures/transformer2.html#kv-cache-1",
+    "href": "lectures/transformer2.html#kv-cache-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "KV Cache",
+    "text": "KV Cache\n\n\n\n\n\n\nWhen processing \\(\\mathrm{token}[k]\\), we only need the \\(k^{th}\\) row of \\(\\mathbf{Q}\\).\nWhen processing \\(\\mathrm{token}[k]\\), we need the full \\(K\\) and \\(V\\) tensons, but we can mostly reuse the cached values\nAdd the value for \\(k+1\\) as we go along\n\n\nImage credit: Generative LLM inference with Neuron (https://awsdocs-neuron.readthedocs-hosted.com/)"
+  },
+  {
+    "objectID": "lectures/transformer2.html#kv-cache-size",
+    "href": "lectures/transformer2.html#kv-cache-size",
+    "title": "Approaches to biomedical knowledge",
+    "section": "KV Cache: Size",
+    "text": "KV Cache: Size\n\nThe Cache size (FP16) can be calculated as\n\n\\[\n2\\times 2\\times\\text{batch-size}\\times\\text{seq-length}\\times\\text{num-layers}\\times\\text{embedding dimension}\n\\] - We need to multiply by 2 because we have \\(K\\) and \\(V\\) - We need to multiply by 2 again because we have 16 bits (FP16) - Usually gigabytes of memory required - Many different attempts to shrink cache size to allow the batch size to be increased\n\nHBM:\n\nThe data for the KV Cache is typically stored in the High-Bandwidth Memory, which is off GPU\nQuadratic complexity for KV Cache access"
+  },
+  {
+    "objectID": "lectures/transformer2.html#multihead-latent-attention",
+    "href": "lectures/transformer2.html#multihead-latent-attention",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Multihead latent attention",
+    "text": "Multihead latent attention\n\nIntroduced by DeepSeek for version 2\n\n\n\nSome previous approaches to reduce size of KV Cache used fewer keys and values (CQA, MQA)\nMLA\n\nDoes not cache K and V\nuses a low-rank representation that is learned during training and cached\nalso learn a projection matrix to shring K and V during training\nMuch lower KV cache usage (90%+ savings)\n5-6x inference speedup\nHgher accuracy than vanilla MHA"
+  },
+  {
+    "objectID": "lectures/transformer2.html#multihead-latent-attention-1",
+    "href": "lectures/transformer2.html#multihead-latent-attention-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Multihead latent attention",
+    "text": "Multihead latent attention\n\n\n\n\nTensor\n\n\nDimension\n\n\nExample\n\n\nExplanation\n\n\n\n\n\n\n\\(\\mathbf{X}\\): input embeddings\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nEmbedded input tokens\n\n\n\n\n\\(\\mathbf{W}^{Q_i}\\): query weights \\(\\mathbf{W}^{K_i}\\): key weights \\(\\mathbf{W}^{V_i}\\): value weights\n\n\n\\(d_{hidden}\\times d_{mha}\\)\n\n\n\\(512\\times 64\\)\n\n\n\\(d_{mha}=d_{hidden}/h\\), where \\(h\\) is the number of heads each head has its own weight matrices\n\n\n\n\n\\(W_{down}\\): down-projection matrix\\(W_{up}\\): up-projection matrix\n\n\n\\(d_{mha}\\times d_{mha-latent}\\)\\(d_{latent}\\times d_{hidden}\\)\n\n\n\\(64\\times 4\\)\\(32\\times 512\\)\n\n\n\\(d_{latent}\\) should be much smaller than \\(d_{hidden}\\) (here, \\(d_{latent}=32\\) and \\(d_{hidden}=512\\)) \\(d_{mha-latent} = d_{latent}/h\\) where \\(h\\) is the number of attention heads (e.g. \\(8\\))\n\n\n\n\n\\(\\mathbf{Q}_i=\\mathbf{XW}^{Q_i}\\): query matrix \\(\\mathbf{K}_i=\\mathbf{XW}^{K_i}\\mathbf{W}_{down}\\): key matrix \\(\\mathbf{V}_i=\\mathbf{XW}^{V_i}\\mathbf{W}_{down}\\): value matrix\n\n\n\\(N\\times d_{mha}\\)\\(N\\times d_{mha-latent}\\)\n\n\n\\(11\\times 64\\)\\(11\\times 4\\)\\(11\\times 4\\)\n\n\nall heads run in parallel\n\n\n\n\n\\(\\mathbf{Q}_i\\mathbf{W}_{down}\\mathbf{K}_i^T\\): attention scores\n\n\n\\(N\\times N\\)\n\n\n\\(11\\times 11\\)\n\n\nAll heads run in parallel. \\(Q\\) is down-projected for this calculation only and not cached.\n\n\n\n\n\\(\\mathrm{softmax}\\left(\\dfrac{\\mathbf{Q}_i\\mathbf{W}_{down}\\mathbf{K}_i^T}{\\sqrt{d_k}}\\right)\\mathbf{V}_i\\)\n\n\n\\(N\\times d_{mha-latent}\\)\n\n\n\\(11\\times 4\\)\n\n\nAttention weights applied to Values — all heads run this in parallel\n\n\n\n\nConcatenate head outputs\n\n\n\\(N\\times d_{latent}\\)\n\n\n\\(11\\times 32\\)\n\n\n\n\n\n\n\\(\\mathrm{Outputs}\\times \\mathbf{W}_{up}\\)\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nProject output back to original dimension\n\n\n\n\nRemaining steps\n\n\n\\(\\ldots\\)\n\n\n\\(\\ldots\\)\n\n\nas before\n\n\n\n\n\n\nThe \\(d_{hidden}\\) dimension is hurting us. Let’s downproject from 512 to 32.\nBecause we are doing multihead attention, we project 64 to 4 (same factor)\nK and V are stored in KV cache and are \\(d_{hidden}/d_{latent}\\) times smaller–\\(512/32=16\\)\nThe tradeoff is that there is an extra matmut to compute \\(K_i\\) and \\(V_i\\)\n\\(Q\\) is not changed because it is not cached!\n\n\n\nDeepSeek-AI (2024) DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model. arXiv 2405.04434"
+  },
+  {
+    "objectID": "lectures/transformer2.html#lora",
+    "href": "lectures/transformer2.html#lora",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LORA",
+    "text": "LORA\n\nWe will return to low-rank approximation (LORA) in a subsequent lecture\n\n\n\nLu J (2024) Low-Rank Approximation, Adaptation, and Other Tales. arXiv 2408.05883"
+  },
+  {
+    "objectID": "lectures/transformer2.html#sources",
+    "href": "lectures/transformer2.html#sources",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sources",
+    "text": "Sources\n\nVaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762\nTurner RE (2026) An Introduction to Transformers. arXiv 2304.10557\nAllamar J (Blog) The Illustrated GPT-2 (Visualizing Transformer Language Models)\nSimon J Decoder-only inference: A step-by-step dive (video)"
   },
   {
     "objectID": "lectures/overview.html#course-overview",
@@ -2184,6 +2261,13 @@
     "title": "Approaches to biomedical knowledge",
     "section": "BERT’s FFN Block",
     "text": "BERT’s FFN Block\n\n\n\n\n\n\n\n\n\n\n\n\n\nComing back to the FFN architexture, BERT takes the \\(768\\)-dimensional vector from the Add & Norm layer and expands to into a \\(3072\\)-dimensional space before applying the GELU activation function, following which it projects it back to \\(768\\)-dimensional for further processing\n\n\\[\n\\underbrace{1 \\times 768}_{\\text{Input}}\n\\xrightarrow{W_1, b_1}\n\\underbrace{1 \\times 3072}_{\\text{Linear Expansion}}\n\\xrightarrow{\\text{GELU}}\n\\underbrace{1 \\times 3072}_{\\text{Non-linear Activation}}\n\\xrightarrow{W_2, b_2}\n\\underbrace{1 \\times 768}_{\\text{Output}}\n\\]\n\nTodo: explain FFN architexture based on BERT paper - what advantage is there for expanding etc?)"
+  },
+  {
+    "objectID": "lectures/bert.html#causal-lm-vs.-masked-lm",
+    "href": "lectures/bert.html#causal-lm-vs.-masked-lm",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Causal LM vs. Masked LM",
+    "text": "Causal LM vs. Masked LM\nTwo different pretraining objectives, both covered in this course:\n\n\n\n\n\n\n\n\n\nCausal LM (GPT-style)\nMasked LM (BERT-style)\n\n\n\n\nDirection\nLeft-to-right only\nBidirectional\n\n\nAttention\nCausal mask (Section 2)\nNo mask — full self-attention\n\n\nPredicts\nNext token, given all past tokens\nRandomly masked tokens, given surrounding context (past and future)\n\n\nNatural use\nText generation\nUnderstanding/representation tasks (classification, extraction)\n\n\nReference\nRadford et al. (2018)1\nDevlin et al. (2019)2\n\n\n\n\nRecall from Part 1: BERT’s masked LM objective randomly replaces ~15% of input tokens with a [MASK] token and asks the model to predict the original — this requires no causal mask, since the model is allowed to look in both directions to fill in the blank.\nA causal LM, by contrast, is never shown a “gap” to fill — it always predicts the next token, and structurally cannot look ahead due to the mask.\nThis is why BERT is well-suited to tasks like classification or span extraction (it builds rich bidirectional representations), while GPT-style\n\n\n\nRadford A, et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAIDevlin J, et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. NAACL-HLT"
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",

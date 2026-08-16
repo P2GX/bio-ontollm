@@ -1237,7 +1237,7 @@ Peter N Robinson
 <h2>FFN Expansion-Contraction</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div id="5c7913c5" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="1">
+<div id="a0918f1d" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1262,7 +1262,7 @@ Peter N Robinson
 <h2>BERT’s FFN Block</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div id="04fb422d" class="cell" data-execution_count="2">
+<div id="85ed8f5b" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1288,9 +1288,60 @@ Peter N Robinson
 <li><span class="neon-todo">Todo: explain FFN architexture based on BERT paper - what advantage is there for expanding etc?)</span></li>
 </ul>
 </div>
-
-
 </section>
+<section id="causal-lm-vs.-masked-lm" class="slide level2">
+<h2>Causal LM vs. Masked LM</h2>
+<p>Two different pretraining objectives, both covered in this course:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Causal LM (GPT-style)</strong></th>
+<th><strong>Masked LM (BERT-style)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Direction</td>
+<td>Left-to-right only</td>
+<td>Bidirectional</td>
+</tr>
+<tr class="even">
+<td>Attention</td>
+<td>Causal mask (Section 2)</td>
+<td>No mask — full self-attention</td>
+</tr>
+<tr class="odd">
+<td>Predicts</td>
+<td>Next token, given all past tokens</td>
+<td>Randomly masked tokens, given surrounding context (past <strong>and</strong> future)</td>
+</tr>
+<tr class="even">
+<td>Natural use</td>
+<td>Text generation</td>
+<td>Understanding/representation tasks (classification, extraction)</td>
+</tr>
+<tr class="odd">
+<td>Reference</td>
+<td>Radford et al. (2018)<sup>1</sup></td>
+<td>Devlin et al. (2019)<sup>2</sup></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Recall from Part 1: BERT’s masked LM objective randomly replaces ~15% of input tokens with a <code>[MASK]</code> token and asks the model to predict the original — this requires <em>no</em> causal mask, since the model is allowed to look in both directions to fill in the blank.</li>
+<li>A causal LM, by contrast, is never shown a “gap” to fill — it always predicts the <em>next</em> token, and structurally cannot look ahead due to the mask.</li>
+<li>This is why BERT is well-suited to tasks like classification or span extraction (it builds rich bidirectional representations), while GPT-style</li>
+</ul>
+
+
+<aside><ol class="aside-footnotes"><li id="fn1"><p>Radford A, et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAI</p></li><li id="fn2"><p>Devlin J, et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. NAACL-HLT</p></li></ol></aside></section>
+
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
