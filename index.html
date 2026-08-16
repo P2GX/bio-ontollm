@@ -4205,7 +4205,26 @@ animation: none !important;
 .mybox h3 {
 margin-top: 0;
 }
-</style>
+.reveal tr.fragment {
+opacity: 0;
+visibility: hidden;
+transition: all .2s ease;
+}
+.reveal tr.fragment.visible {
+opacity: 1;
+visibility: visible;
+}
+table.small-table {
+font-size: 0.5em; 
+}
+tr.greyrow {
+background-color: #f2f2f2 !important; 
+color: #666666 !important; 
+}
+table.small-table tr.greyrow td.greycell,
+table.small-table td.greycell {
+background-color: #f2f2f2 !important;
+color: #666666 !important; }</style>
 </head>
 
 <body class="nav-sidebar docked nav-fixed fullcontent quarto-light">
@@ -4304,11 +4323,8 @@ margin-top: 0;
   </div>
 </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lectures/encoder.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Approaches to biomedical knowledge</span></a>
-  </div>
-</li>
+ <span class="menu-text">lectures/encoder.qmd</span>
+  </li>
       </ul>
   </li>
     </ul>
@@ -4382,9 +4398,9 @@ margin-top: 0;
 <li><a href="./lectures/neural.html">Lecture 6: Neural networks</a></li>
 <li><a href="./lectures/lstm.html">Lecture 7: RNNs and LSTMs</a></li>
 <li><a href="./lectures/embeddings.html">Lecture 8: Embeddings and Tokens</a></li>
-<li><a href="./lectures/encoder.html">Lecture 9: Encoders</a></li>
-<li>Lecture 10: BERT and Sentence BERT (to do)</li>
-<li>Lecture 11: Decoder architecture (to do)</li>
+<li><a href="./lectures/transformer.html">Lecture 9: Transformers</a></li>
+<li><a href="./lectures/transformer2.html">Lecture 10: Transformers (continued)</a></li>
+<li>Lecture 11: BERT and Sentence BERT (to do)</li>
 <li>Lecture 12: Reinforcement learning and LLMs (to do)</li>
 <li>Lecture 13: RAG, Fine tuning, Structured Outputs (to do)</li>
 <li>Lecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)</li>

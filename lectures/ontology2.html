@@ -759,7 +759,26 @@ animation: none !important;
 .mybox h3 {
 margin-top: 0;
 }
-</style>
+.reveal tr.fragment {
+opacity: 0;
+visibility: hidden;
+transition: all .2s ease;
+}
+.reveal tr.fragment.visible {
+opacity: 1;
+visibility: visible;
+}
+table.small-table {
+font-size: 0.5em; 
+}
+tr.greyrow {
+background-color: #f2f2f2 !important; 
+color: #666666 !important; 
+}
+table.small-table tr.greyrow td.greycell,
+table.small-table td.greycell {
+background-color: #f2f2f2 !important;
+color: #666666 !important; }</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1747,7 +1766,7 @@ P(k,n,p) = \binom{n}{k} p^k(1-p)^{n-k}
 <li>the probability of <span class="math inline">\(k=1,\ldots,10\)</span> “heads” in ten coin tosses using a fair coin (<span class="math inline">\(p=0.5\)</span>).</li>
 <li>Probability of <span class="math inline">\(k=1,\ldots,10\)</span> “heads” in ten coin tosses using a biased coin (<span class="math inline">\(p=0.1\)</span>).</li>
 </ol>
-<div id="c166e93b" class="cell" data-execution_count="1">
+<div id="6c491cda" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1814,7 +1833,7 @@ k^p\left(n-k\right)^{1-p}.
 <li>P-value Calculation: In order to calculate a <span class="math inline">\(p\)</span>-value, we add up the probabilities for observing <span class="math inline">\(k=30, 31, \ldots, 250\)</span> genes annotated to <span class="math inline">\(t\)</span> in the DE set.</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div id="1b6a5790" class="cell" data-execution_count="2">
+<div id="8a63146b" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1827,7 +1846,7 @@ k^p\left(n-k\right)^{1-p}.
 </section>
 <section id="go-overrepresentation-with-the-binomial-distribution-5" class="slide level2">
 <h2>GO Overrepresentation with the Binomial Distribution</h2>
-<div id="c751b72f" class="cell" data-execution_count="3">
+<div id="c357bf78" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2084,7 +2103,7 @@ P_{miss}(S,i) = \sum_{\substack{j \le i \\ g_j \notin S}}\dfrac{1}{N-N_H}
 </section>
 <section id="gsea-running-sum-1" class="slide level2">
 <h2>GSEA: Running Sum</h2>
-<div id="d2790632" class="cell" data-execution_count="4">
+<div id="acd0fe7b" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

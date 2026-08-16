@@ -694,7 +694,26 @@ animation: none !important;
 .mybox h3 {
 margin-top: 0;
 }
-</style>
+.reveal tr.fragment {
+opacity: 0;
+visibility: hidden;
+transition: all .2s ease;
+}
+.reveal tr.fragment.visible {
+opacity: 1;
+visibility: visible;
+}
+table.small-table {
+font-size: 0.5em; 
+}
+tr.greyrow {
+background-color: #f2f2f2 !important; 
+color: #666666 !important; 
+}
+table.small-table tr.greyrow td.greycell,
+table.small-table td.greycell {
+background-color: #f2f2f2 !important;
+color: #666666 !important; }</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1270,7 +1289,7 @@ Peter N Robinson
 </div>
 </div>
 </div>
-<div id="e4ce9c73" class="cell" data-execution_count="1">
+<div id="8dd30dfe" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1571,7 +1590,7 @@ P(the, man, his, dog \mid loves) = P(the \mid loves) \cdot P(man\mid loves) \cdo
 <h2>Semantic vector space of cars</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="589f943f" class="cell" data-execution_count="2">
+<div id="49c5c150" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1608,7 +1627,7 @@ P(the, man, his, dog \mid loves) = P(the \mid loves) \cdot P(man\mid loves) \cdo
 </section>
 <section id="word-embeddings" class="slide level2">
 <h2>Word embeddings</h2>
-<div id="5aaac4fc" class="cell" data-execution_count="3">
+<div id="7feaf432" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

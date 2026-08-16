@@ -759,7 +759,26 @@ animation: none !important;
 .mybox h3 {
 margin-top: 0;
 }
-</style>
+.reveal tr.fragment {
+opacity: 0;
+visibility: hidden;
+transition: all .2s ease;
+}
+.reveal tr.fragment.visible {
+opacity: 1;
+visibility: visible;
+}
+table.small-table {
+font-size: 0.5em; 
+}
+tr.greyrow {
+background-color: #f2f2f2 !important; 
+color: #666666 !important; 
+}
+table.small-table tr.greyrow td.greycell,
+table.small-table td.greycell {
+background-color: #f2f2f2 !important;
+color: #666666 !important; }</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre

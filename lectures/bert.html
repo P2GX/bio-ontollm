@@ -694,7 +694,26 @@ animation: none !important;
 .mybox h3 {
 margin-top: 0;
 }
-</style>
+.reveal tr.fragment {
+opacity: 0;
+visibility: hidden;
+transition: all .2s ease;
+}
+.reveal tr.fragment.visible {
+opacity: 1;
+visibility: visible;
+}
+table.small-table {
+font-size: 0.5em; 
+}
+tr.greyrow {
+background-color: #f2f2f2 !important; 
+color: #666666 !important; 
+}
+table.small-table tr.greyrow td.greycell,
+table.small-table td.greycell {
+background-color: #f2f2f2 !important;
+color: #666666 !important; }</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1218,7 +1237,7 @@ Peter N Robinson
 <h2>FFN Expansion-Contraction</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div id="9db0f88f" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="1">
+<div id="e658ccbb" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1243,7 +1262,7 @@ Peter N Robinson
 <h2>BERT’s FFN Block</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div id="d5bd7d1e" class="cell" data-execution_count="2">
+<div id="e64c43a9" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

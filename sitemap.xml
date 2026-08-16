@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://P2GX.github.io/bio-ontollm/lectures/transformer2.html</loc>
+    <lastmod>2026-08-16T08:30:49.553Z</lastmod>
+  </url>
+  <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/overview.html</loc>
-    <lastmod>2026-08-15T14:39:13.432Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.553Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/ontology3.html</loc>
-    <lastmod>2026-08-15T14:39:13.432Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.552Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/ontology1.html</loc>
-    <lastmod>2026-08-15T14:39:13.432Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.552Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/lstm.html</loc>
-    <lastmod>2026-08-15T14:39:13.431Z</lastmod>
-  </url>
-  <url>
-    <loc>https://P2GX.github.io/bio-ontollm/lectures/encoder2.html</loc>
-    <lastmod>2026-08-15T14:39:13.369Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.552Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/embeddings.html</loc>
-    <lastmod>2026-08-15T14:39:13.369Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.479Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/index.html</loc>
-    <lastmod>2026-08-15T14:39:13.368Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.479Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/bert.html</loc>
-    <lastmod>2026-08-15T14:39:13.369Z</lastmod>
-  </url>
-  <url>
-    <loc>https://P2GX.github.io/bio-ontollm/lectures/encoder.html</loc>
-    <lastmod>2026-08-15T14:39:13.369Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.479Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/logreg.html</loc>
-    <lastmod>2026-08-15T14:39:13.431Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.552Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/neural.html</loc>
-    <lastmod>2026-08-15T14:39:13.431Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.552Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/ontology2.html</loc>
-    <lastmod>2026-08-15T14:39:13.432Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.552Z</lastmod>
   </url>
   <url>
     <loc>https://P2GX.github.io/bio-ontollm/lectures/ontology4.html</loc>
-    <lastmod>2026-08-15T14:39:13.432Z</lastmod>
+    <lastmod>2026-08-16T08:30:49.553Z</lastmod>
+  </url>
+  <url>
+    <loc>https://P2GX.github.io/bio-ontollm/lectures/transformer.html</loc>
+    <lastmod>2026-08-16T08:30:49.553Z</lastmod>
   </url>
 </urlset>
