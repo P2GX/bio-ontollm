@@ -4,60 +4,53 @@
     "href": "lectures/transformer2.html#overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview",
-    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the transformer architecture with a focus on the decoder.\n\n\n\nImportant: - https://arxiv.org/pdf/2305.17026"
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the transformer architecture with a focus on the decoder.\n\n\n\nImportant: - https://arxiv.org/pdf/2305.17026\n\nTransformer models (recap)\nDecoder models\nMultihead attention\nOutput generation\nTraining LLMs"
+  },
+  {
+    "objectID": "lectures/transformer2.html#recap",
+    "href": "lectures/transformer2.html#recap",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Transformer models",
+    "text": "Transformer models\n\n\nAmatriain X et al. (2024) Transformer models: an introduction and catalog. arXiv 2302.07730"
   },
   {
     "objectID": "lectures/transformer2.html#transformer-models",
     "href": "lectures/transformer2.html#transformer-models",
     "title": "Approaches to biomedical knowledge",
     "section": "Transformer models",
-    "text": "Transformer models\n\n\nAmatriain X et al. (2024) Transformer models: an introduction and catalog. arXiv 2302.07730"
-  },
-  {
-    "objectID": "lectures/transformer2.html#transformer-models-1",
-    "href": "lectures/transformer2.html#transformer-models-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Transformer models",
     "text": "Transformer models\n\nAn embarassment of riches\n\nAs can be seen in the previous slide, a large number of different transformer models have been developed\nThey can be grouped largerly in encoder-decoder, encoder-only, and decoder-only\n\n\n\nThe original paper, “Attention is all you need…”, described an encoder-decoder transformer\nThis architecture is well suited for sequence-to-sequence tasks such as machine translation\nLast week, we focused on an introduction to the encoder model\nThis week, we will provide additional detail and focus mainly on decoder-only models and on training"
   },
   {
-    "objectID": "lectures/transformer2.html#section-1-from-encoder-to-decoder",
-    "href": "lectures/transformer2.html#section-1-from-encoder-to-decoder",
+    "objectID": "lectures/transformer2.html#decoders",
+    "href": "lectures/transformer2.html#decoders",
     "title": "Approaches to biomedical knowledge",
-    "section": "Section 1: From Encoder to Decoder",
-    "text": "Section 1: From Encoder to Decoder\n\nA decoder-only transformer is an autoregressive neural network architecture that uses masked causal self-attention to predict the next token in a sequence.\n\n\n\n\nInput processing:\n\nGPT-like models are decoder-only models\nInputs (i.e., tokenized prompt) are embedded and encoded\nPositional encodings are added to the input embeddings\nAttention calculation, similar to previously described\nLarge matrix multiplications, heavy usage of GPU hardward accelerator\nParallel process\n\n\n\n\n\n\nimage: Perez L et al. (2021)Automatic Code Generation using Pre-Trained Language Models. arXiv 2102.10535"
+    "section": "Decoder models",
+    "text": "Decoder models\n\nA decoder-only transformer is an autoregressive neural network architecture that uses masked causal self-attention to predict the next token in a sequence.\n\n\n\n\nInput processing:\n\nGPT-like models are decoder-only models\nInputs (i.e., tokenized prompt) are embedded and encoded\nPositional encodings are added to the input embeddings\nAttention calculation, similar to previously described\nLarge matrix multiplications, heavy usage of GPU hardward accelerator\nParallel process\n\n\n\n\n\n\nimage: Perez L et al. (2021)Automatic Code Generation using Pre-Trained Language Models. arXiv 2102.10535"
   },
   {
-    "objectID": "lectures/transformer2.html#output-generation",
-    "href": "lectures/transformer2.html#output-generation",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Output generation",
-    "text": "Output generation\n\nUnlike input generation, output generation is a sequential process\n\nThe answer is generated one token at a time\nEach generated token is appended to the previous input\nProcess repeated until we get an \\(\\langle \\mathrm{EOS}\\rangle\\) token1 or the maximum length is reached\nLet us first recap the general steps of the transformer and then we will review the decoder-specific items\n\n\nEOS=end of sequence"
-  },
-  {
-    "objectID": "lectures/transformer2.html#recap",
-    "href": "lectures/transformer2.html#recap",
+    "objectID": "lectures/transformer2.html#recap-1",
+    "href": "lectures/transformer2.html#recap-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Recap",
     "text": "Recap\n\nRecall encoder algorithm from the previous lecture:\n\n\n\n\n\nTensor\n\n\nDimension\n\n\nExample\n\n\nExplanation\n\n\n\n\n\n\nInput sequence [BOS] The quick brown fox jumps over the lazy dog [EOS]\n\n\n\n\n\n\nInput tokens with additional beginning/end of sequence tokens\n\n\n\n\nTokenized Input sequence [50256, 791, 4062, 14198, 39935, 35308, 927, 279, 16053, 5679, 50256]\n\n\n\\(N\\)\n\n\n\\(11\\)\n\n\nNumber of tokens, including [BOS]/[EOS]\n\n\n\n\n\\(\\mathbf{X}\\): Input embeddings\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\n\\(d_{hidden}\\) is the embedding dimension\n\n\n\n\n\\(\\mathbf{W}^Q\\): query weights \\(\\mathbf{W}^K\\): key weights \\(\\mathbf{W}^V\\): value weights\n\n\n\\(d_{hidden}\\times d_{hidden}\\)\n\n\n\\(512\\times 512\\)\n\n\nLearnable model weights (single-head attention, so \\(d_k=d_{hidden}\\))\n\n\n\n\n\\(\\mathbf{Q}=\\mathbf{XW}^Q\\): query matrix \\(\\mathbf{K}=\\mathbf{XW}^K\\): key matrix \\(\\mathbf{V}=\\mathbf{XW}^V\\): value matrix\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\n\\(\\mathbf{Q}\\): What each token needs to know from others \\(\\mathbf{K}\\): What information each token provides \\(\\mathbf{V}\\): Content each token shares when attended to\n\n\n\n\n\\(\\mathbf{QK}^T\\): attention scores\n\n\n\\(N\\times N\\)\n\n\n\\(11\\times 11\\)\n\n\nHow well each token’s query matches the keys of the other tokens\n\n\n\n\n\\(\\mathrm{softmax}\\left(\\dfrac{\\mathbf{QK}^T}{\\sqrt{d_k}}\\right)\\mathbf{V}\\)\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nAttention weights applied to Values — context-aware token representations\n\n\n\n\n\\(\\times\\ \\mathbf{W}^O\\): output projection (optional here)\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nRequired to combine multiple heads back to \\(d_{hidden}\\); with a single head the shape already matches, so \\(W^O\\) is optional (often kept anyway for extra learnable capacity)\n\n\n\n\nAdd & Norm\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nResidual connection + LayerNorm (see Part 1)\n\n\n\n\nFFN: \\(\\text{GELU}(\\mathbf{X}W_1+b_1)W_2+b_2\\)\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nPosition-wise, applied independently per token; expands to \\(d_{ff}\\) (e.g. \\(2048\\)) and projects back (see Part 1)\n\n\n\n\n\nThis recap shows single-head attention, so \\(d_k=d_{hidden}\\)\n\n\nAdapted from: Simon J Decoder-only inference: A step-by-step dive (video)"
+  },
+  {
+    "objectID": "lectures/transformer2.html#multihead",
+    "href": "lectures/transformer2.html#multihead",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Multihead attention",
+    "text": "Multihead attention\n\n\n\n\n\nScaled dot-product attention\n\n\n\n\n\n\nMultihead attention – several attention layers running in parallel\n\n\n\n\nVaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762"
   },
   {
     "objectID": "lectures/transformer2.html#multihead-attention",
     "href": "lectures/transformer2.html#multihead-attention",
     "title": "Approaches to biomedical knowledge",
     "section": "Multihead attention",
-    "text": "Multihead attention\n\n\n\n\n\nScaled dot-product attention\n\n\n\n\n\n\nMultihead attention – several attention layers running in parallel\n\n\n\n\nVaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762"
+    "text": "Multihead attention\n\nInstead of performing a single attention function with \\(d_{hidden}\\)-dimensional keys, queries, and values\nIt is beneficial to linearly project the queries, keys, and values \\(h\\) times with different linear Projections\nThe results are concatenated and once again projected resulting in the final values\n\n\\[\n\\mathrm{MultiHead}(Q,K,V) = \\mathrm{Concat}(\\mathrm{head}_1, \\ldots,\\mathrm{head}_h)\\mathrm{W}^{O}\n\\] where \\[\n\\mathrm{head}_i = \\mathrm{Attention}(QW_i^Q, KW_i^K, VW_i^V)\n\\]\n\nIn the original paper, the authors use \\(h=8\\) (8 heads)\nThen, \\(d_k=d_v=d_{hidden}/h = 64\\) because \\(d_{hidden} =512\\) (In the paper \\(d_{hidden}\\) is called \\(d_{model}\\))\ndimension check: \\(W_i^Q\\) and \\(W_i^K\\) are \\(d_{hidden}\\times d_k\\), \\(W_i^V\\) is \\(d_{hidden}\\times d_v\\), and \\(\\mathrm{W}^{O}\\) is \\(hd_v \\times d_{hidden}\\)"
   },
   {
     "objectID": "lectures/transformer2.html#multihead-attention-1",
     "href": "lectures/transformer2.html#multihead-attention-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Multihead attention",
-    "text": "Multihead attention\n\nInstead of performing a single attention function with \\(d_{hidden}\\)-dimensional keys, queries, and values\nIt is beneficial to linearly project the queries, keys, and values \\(h\\) times with different linear Projections\nThe results are concatenated and once again projected resulting in the final values\n\n\\[\n\\mathrm{MultiHead}(Q,K,V) = \\mathrm{Concat}(\\mathrm{head}_1, \\ldots,\\mathrm{head}_h)\\mathrm{W}^{O}\n\\] where \\[\n\\mathrm{head}_i = \\mathrm{Attention}(QW_i^Q, KW_i^K, VW_i^V)\n\\]\n\nIn the original paper, the authors use \\(h=8\\) (8 heads)\nThen, \\(d_k=d_v=d_{hidden}/h = 64\\) because \\(d_{hidden} =512\\) (In the paper \\(d_{hidden}\\) is called \\(d_{model}\\))\ndimension check: \\(W_i^Q\\) and \\(W_i^K\\) are \\(d_{hidden}\\times d_k\\), \\(W_i^V\\) is \\(d_{hidden}\\times d_v\\), and \\(\\mathrm{W}^{O}\\) is \\(hd_v \\times d_{hidden}\\)"
-  },
-  {
-    "objectID": "lectures/transformer2.html#multihead-attention-2",
-    "href": "lectures/transformer2.html#multihead-attention-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Multihead attention",
     "text": "Multihead attention\n\n\n\n\n\nAll heads get the full input sequence, but only see a subset of the embedding dimensions\nEach head has its own Q,K,V matrices\nAll heads compute attention scores in parallel\nMain benefit: Multihead attention allows the model to jointly attend to information from different representation subspaces at different positions. With a single attention head, averaging inhibits this.\ni.e., MHA yields better models!\n\n\n\nVaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762"
@@ -68,6 +61,13 @@
     "title": "Approaches to biomedical knowledge",
     "section": "MHA step by step",
     "text": "MHA step by step\n\n\n\n\nTensor\n\n\nDimension\n\n\nExample\n\n\nExplanation\n\n\n\n\n\n\nInput sequence [BOS] The quick brown fox jumps over the lazy dog [EOS]\n\n\n\n\n\n\nInput tokens with additional beginning/end of sequence tokens\n\n\n\n\nTokenized Input sequence [50256, 791, 4062, 14198, 39935, 35308, 927, 279, 16053, 5679, 50256]\n\n\n\\(N\\)\n\n\n\\(11\\)\n\n\nNumber of tokens, including [BOS]/[EOS]\n\n\n\n\n\\(\\mathbf{X}\\): Input embeddings\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\n\\(d_{hidden}\\) is the embedding dimension\n\n\n\n\n\\(\\mathbf{W}^{Q_i}\\): query weights \\(\\mathbf{W}^{K_i}\\): key weights \\(\\mathbf{W}^{V_i}\\): value weights\n\n\n\\(d_{hidden}\\times d_{mha}\\)\n\n\n\\(512\\times 64\\)\n\n\n\\(d_{mha}=d_{hidden}/h\\), where \\(h\\) is the number of heads each head has its own weight matrices\n\n\n\n\n\\(\\mathbf{Q}_i=\\mathbf{XW}^{Q_i}\\): query matrix \\(\\mathbf{K}_i=\\mathbf{XW}^{K_i}\\): key matrix \\(\\mathbf{V}_i=\\mathbf{XW}^{V_i}\\): value matrix\n\n\n\\(N\\times d_{mha}\\)\n\n\n\\(11\\times 64\\)\n\n\nall heads run in parallel\n\n\n\n\n\\(\\mathbf{Q}_i\\mathbf{K}_i^T\\): attention scores\n\n\n\\(N\\times N\\)\n\n\n\\(11\\times 11\\)\n\n\nHow well each token’s query matches the keys of the other tokens\n\n\n\n\n\\(\\mathrm{softmax}\\left(\\dfrac{\\mathbf{Q}_i\\mathbf{K}^T}{\\sqrt{d_k}}\\right)\\mathbf{V}_i\\)\n\n\n\\(N\\times d_{mha}\\)\n\n\n\\(11\\times 64\\)\n\n\nAttention weights applied to Values — context-aware token representations\n\n\n\n\nConcatenate head outputs\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nAttention weights applied to Values — context-aware token representations\n\n\n\n\n\\(\\times\\ \\mathbf{W}^O\\): output projection (optional here)\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nRequired to combine multiple heads back to \\(d_{hidden}\\); with a single head the shape already matches, so \\(W^O\\) is optional (often kept anyway for extra learnable capacity)\n\n\n\n\nAdd & Norm\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nResidual connection + LayerNorm (see Part 1)\n\n\n\n\nFFN: \\(\\text{GELU}(\\mathbf{X}W_1+b_1)W_2+b_2\\)\n\n\n\\(N\\times d_{hidden}\\)\n\n\n\\(11\\times 512\\)\n\n\nPosition-wise, applied independently per token; expands to \\(d_{ff}\\) (e.g. \\(2048\\)) and projects back (see Part 1)\n\n\n\n\n\nGray background: Identical to single-head attention case\n\n\nAdapted from: Simon J Decoder-only inference: A step-by-step dive (video)"
+  },
+  {
+    "objectID": "lectures/transformer2.html#outputgen",
+    "href": "lectures/transformer2.html#outputgen",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Output generation",
+    "text": "Output generation\n\nUnlike input generation, output generation is a sequential process\n\nThe answer is generated one token at a time\nEach generated token is appended to the previous input\nProcess repeated until we get an \\(\\langle \\mathrm{EOS}\\rangle\\) token1 or the maximum length is reached\n\n\nEOS=end of sequence"
   },
   {
     "objectID": "lectures/transformer2.html#autoregressive-text-generation",
@@ -154,11 +154,46 @@
     "text": "x\n\nDecoder-only vs. encoder-decoder: two architectural families — the original Transformer’s encoder-decoder (translation-style, with cross-attention) vs. the decoder-only GPT family. Worth being explicit that most modern LLMs are decoder-only, so that’s where you’ll spend most of the lecture.1\nWhy a decoder needs masking: motivate the core mechanical difference before showing the math — a decoder must not “see the future” when predicting the next token, or training becomes trivial/cheats.\n\nVaswani et al. (2017); Radford et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAI"
   },
   {
-    "objectID": "lectures/transformer2.html#section-2-causal-masked-self-attention",
-    "href": "lectures/transformer2.html#section-2-causal-masked-self-attention",
+    "objectID": "lectures/transformer2.html#training",
+    "href": "lectures/transformer2.html#training",
     "title": "Approaches to biomedical knowledge",
-    "section": "Section 2: Causal (Masked) Self-Attention",
-    "text": "Section 2: Causal (Masked) Self-Attention\n\n“what happens if token 3 attends to token 5?” The mask, mathematically: show the mask matrix added to scores before softmax — set disallowed (future) positions to so they vanish after softmax:\nMaskedAttention\n\nWorked example: small \\(4 \\times 4\\) mask matrix + resulting attention weight matrix (upper triangle zeroed out) — visually reuses the “Visualizing the \\(n \\times n\\) Matrix” style from Part 1. Connects back: note this is the same softmax/scaling machinery from Part 1 — only the additive mask is new."
+    "section": "Training LLMs",
+    "text": "Training LLMs\n\nThe next sections will cover several aspects of how to train LLMs\nFor the most part, LLMs are synonymous with decoder-only transformers; from now on we will say LLM for conciseness."
+  },
+  {
+    "objectID": "lectures/transformer2.html#training-llms-causal-masked-self-attention",
+    "href": "lectures/transformer2.html#training-llms-causal-masked-self-attention",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training LLMs: Causal (Masked) Self-Attention",
+    "text": "Training LLMs: Causal (Masked) Self-Attention\n\nThe problem\n\nEncoder self-attention lets every token attend to every other token — including tokens that come later in the sequence.\nA decoder predicts tokens one at a time, left to right. If some token \\(i\\) can attend to a token \\(j\\) during training with \\(j&gt;i\\), the model can simply “read the answer” instead of learning to predict it.\n\n\n\nThis would make the training loss trivially low — the model learns nothing about actually predicting the future, since the future is already visible.\nWe need a mechanism that lets us train on the full sequence in parallel (for efficiency), while still preventing this kind of “leakage.”"
+  },
+  {
+    "objectID": "lectures/transformer2.html#masked-self-attention",
+    "href": "lectures/transformer2.html#masked-self-attention",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Masked Self-Attention",
+    "text": "Masked Self-Attention\n\nRecall: \\(\\text{Attention}(Q,K,V) = \\text{softmax}\\left(\\dfrac{QK^\\top}{\\sqrt{d_k}}\\right)V\\)\nWe modify this by adding a mask matrix \\(M\\) to the scores, before the softmax step:\n\n\\[\n\\text{MaskedAttention}(Q,K,V) = \\text{softmax}\\left(\\frac{QK^\\top}{\\sqrt{d_k}} + M\\right)V\n\\]\n\n\\(M\\) is an \\(n\\times n\\) matrix, defined entrywise as:\n\n\\[\nM_{i,j} = \\begin{cases} 0 & j \\le i \\quad \\text{(allowed: current or past token)} \\\\ -\\infty & j &gt; i \\quad \\text{(disallowed: future token)} \\end{cases}\n\\]\n\nAdding \\(-\\infty\\) to a score, then applying softmax, sends that entry’s contribution to exactly \\(0\\) — the future token is mathematically removed from the weighted sum, not just “discouraged.”\nIn practice, implementations use a large negative finite number (e.g. \\(-10^9\\)) instead of literal \\(-\\infty\\), for numerical stability — the same spirit as the \\(\\epsilon\\) we added inside LayerNorm in Part 1.1\n\nPhuong M, Hutter M (2022) Formal Algorithms for Transformers. arXiv:2207.09238"
+  },
+  {
+    "objectID": "lectures/transformer2.html#worked-example-the-mask-matrix",
+    "href": "lectures/transformer2.html#worked-example-the-mask-matrix",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Worked Example: The Mask Matrix",
+    "text": "Worked Example: The Mask Matrix\n\nFor our 4-token sentence “I am an automaton” (\\(n=4\\)), the mask matrix is:\n\n\\[\nM = \\begin{bmatrix}\n0 & -\\infty & -\\infty & -\\infty \\\\\n0 & 0 & -\\infty & -\\infty \\\\\n0 & 0 & 0 & -\\infty \\\\\n0 & 0 & 0 & 0\n\\end{bmatrix}\n\\]\n\nRow \\(i\\) corresponds to the query token; column \\(j\\) to the key token.\nRow 0 (“I”): only column 0 is unmasked — the first token can only attend to itself.\nRow 3 (“automaton”): all four columns are unmasked — the last token can attend to the entire sequence, since nothing comes after it.\nThis lower-triangular pattern (0 on and below the diagonal, \\(-\\infty\\) above) is why causal masking is often just called “triangular masking.”"
+  },
+  {
+    "objectID": "lectures/transformer2.html#worked-example-from-raw-scores-to-masked-attention-weights",
+    "href": "lectures/transformer2.html#worked-example-from-raw-scores-to-masked-attention-weights",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Worked Example: From Raw Scores to Masked Attention Weights",
+    "text": "Worked Example: From Raw Scores to Masked Attention Weights\nSuppose the raw attention scores \\(\\frac{QK^\\top}{\\sqrt{d_k}}\\) for our sentence are:\n\\[\nS = \\begin{bmatrix}\n0.9 & 0.2 & -0.1 & 0.4 \\\\\n0.3 & 1.1 & 0.5 & -0.2 \\\\\n0.1 & 0.4 & 1.3 & 0.6 \\\\\n-0.2 & 0.3 & 0.7 & 1.5\n\\end{bmatrix}\n\\]\nAdding the mask \\(M\\) and applying softmax row-by-row:\n\n\n\n\n\n\n\n\n\n\nI\nam\nan\nautomaton\n\n\n\n\nI\n1.000\n0.000\n0.000\n0.000\n\n\nam\n0.310\n0.690\n0.000\n0.000\n\n\nan\n0.176\n0.238\n0.586\n0.000\n\n\nautomaton\n0.094\n0.156\n0.232\n0.517\n\n\n\n\n\n\n\n\n\nRow “I”: weight \\([1.000, 0, 0, 0]\\) — with only itself unmasked, softmax trivially assigns it all the probability mass.\nRow “am”: weight \\(\\approx[0.310, 0.690, 0, 0]\\) — splits attention only between “I” and “am”.\nRow “automaton”: weight \\(\\approx[0.095, 0.156, 0.233, 0.517]\\) — the only row using the full softmax, since nothing is masked.\nNotice the upper triangle is exactly \\(0\\) in every row — this is the visual signature of causal masking, and it directly mirrors the \\(n\\times n\\) score matrix from Part 1’s “Visualizing the \\(n\\times n\\) Matrix” slide, just with the upper triangle zeroed out."
+  },
+  {
+    "objectID": "lectures/transformer2.html#connecting-back-to-part-1",
+    "href": "lectures/transformer2.html#connecting-back-to-part-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Connecting Back to Part 1",
+    "text": "Connecting Back to Part 1\n\nThe scaling factor \\(\\frac{1}{\\sqrt{d_k}}\\), the softmax normalization, the variance argument for why we scale — none of that changes. Everything from Part 1’s derivation still applies row-by-row.\nThe only new ingredient is the additive mask \\(M\\), applied before softmax.\nThis is a general pattern worth remembering: masking-before-softmax is how transformers implement any kind of “this token may not attend to that token” constraint — causal masking is the decoder’s specific use of it, but the same mechanism (additive \\(-\\infty\\) mask) shows up elsewhere too (e.g. padding masks for variable-length sequences)."
   },
   {
     "objectID": "lectures/transformer2.html#section-3-cross-attention-if-covering-encoder-decoder",
