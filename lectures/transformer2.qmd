@@ -37,6 +37,7 @@ Important:
 - [Multihead attention](#multihead)
 - [Output generation](#outputgen)
 - [Training LLMs](#training)
+- [KV Cache](#kvcache)
 
 ## Transformer models {#recap}
 
@@ -591,7 +592,7 @@ Kaplan J et al. (2020) [Scaling Laws for Neural Language Models. arXiv 2001.0836
 - The authors investigatef the optimal model size and number of tokens for training a transformer language model under a given compute budget. 
 - They found that current large language models are significantly undertrained, a consequence of the recent focus on scaling language models whilst keeping the amount of training data constant.
 
-![](./img/chinchilla.png){width=80%}
+![](./img/chinchilla.png){width=80% fig-align="center"}
 
 ::: {.tiny-credit}
 Hoffmann J et al. (2022) [Training Compute-Optimal Large Language Models. arXiv 2203.15556](https://arxiv.org/abs/2203.15556)
@@ -599,17 +600,12 @@ Hoffmann J et al. (2022) [Training Compute-Optimal Large Language Models. arXiv 
 
 ## Pretraining: Learning parameters
 
-- The basic back-propagation from previous lectures is used to train LLM parameters as well
-- An Adam optimizer is most frequently used to implement gradient descent
-
-
-
-## Section 4: The Training Objective
-
 ::: {.mybox}
 **Causal language modeling**
 
 - A decoder is trained to predict each token given only the tokens that came before it.
+- The basic back-propagation from previous lectures is used to train LLM parameters as well
+- An Adam optimizer is most frequently used to implement gradient descent
 - This is an **autoregressive** factorization of the joint probability of a sequence:
 
 $$
@@ -642,7 +638,7 @@ $$
 -  This is what makes it possible to compute the loss for all $n$ positions in a single parallel forward pass, using the causal mask from Section 2 to prevent each position from seeing its own answer.
 - At inference time there is no ground truth to feed back in — this is exactly the "Append and reprocess" loop from our decoding-steps diagram, where each new token is the model's own prediction, fed back as input for the next step.
 
-![](./img/teacher-forcing.png){width=100%}
+![](./img/teacher-forcing.png){width=100% fig-align="center"}
 
 :::{.tiny-credit}
 Image: https://www.deeplearning.ai/
@@ -664,20 +660,136 @@ Continuing "I am an automaton" — suppose after "I am an" the model's predicted
 - The loss at this position is $-\log(0.55) \approx 0.598$.
 - If the model had instead assigned "automaton" a probability of, say, $0.01$, the loss would jump to $-\log(0.01)\approx 4.6$ — cross-entropy penalizes confident wrong predictions much more heavily than uncertain ones.
 
+## KV Cache {#kvcache}
+
+- Let us return to the input processing (prefill) for decoder-only transformers
+  - Inputs (tokenized prompt) are embedded and positionally encoded
+  - Multihead attention (MHA) computes keys and values (KV)
+  - Lots of matrix multiplications, high usage of hardware accelerator on the GPU
+- Output is sequential (one token at a time)
+  - Generated token is appended to previous input, ..., again and again
+  - MHA process is repeated each time
+  - sequential means we cannot parallelize much!
+
+## KV Cache
+
+- Can we avoid recomputing KV values again and again?
+- We only really need to compute KV values for the newly generated token
+- The KV Cache stores the keys and values for all tokens we have previously generated
+
+![](./img/kvcache.png){.nostretch width="50%" fig-align="center"}
+
+::: {.small-text}
+- We do not need to regenerate **keys** or **values** for "I" and "love" when we generate a new token "tofu"
+- **Queries** are never cached and never reused, for any token, at any step.  
+  - a query is only ever used once, at the moment its own token is being generated, to compute that token's output.
+- We need to compute: Q, K, V for the new token "tofu": all three must be computed fresh — Q because it's a brand-new token needing its own query, and K/V because "tofu" also needs to contribute its own key/value pair to the cache for future tokens to attend to.
+:::
 
 
+## KV Cache
+![](./img/kvcache2.png){.nostretch width="75%" fig-align="center"}
 
-## Section 5: Decoding — Generating Text at Inference Time
-- The problem: a trained model gives a distribution over next tokens — how do you actually pick one?
-- Greedy decoding: always take argmax — simple, deterministic, often degenerate/repetitive.
-- Beam search: track top-k partial sequences — better than greedy, still prone to blandness/repetition for open-ended generation.
-- Sampling strategies: temperature scaling, top-k, and nucleus (top-p) sampling — motivate with the "degeneration" problem.^[Holtzman et al. (2020) The Curious Case of Neural Text Degeneration. ICLR 2020]
--Live/visual comparison (optional): show the same prompt under greedy vs. nucleus sampling, if you want a demo-style slide — good candidate for a {python} code cell like your existing plotting slides.
+- When processing $\mathrm{token}[k]$, we only need the $k^{th}$ row of $\mathbf{Q}$.
+- When processing $\mathrm{token}[k]$, we need the full $K$ and $V$ tensons, but we can mostly reuse the cached values
+- Add the value for $k+1$ as we go along
 
-## Section 6: Scale — Why Bigger Models, More Data
-- Scaling laws: loss as a smooth function of parameters/data/compute.^[Kaplan et al. (2020) Scaling Laws for Neural Language Models. arXiv:2001.08361 — verify citation details before use]
-- Compute-optimal training ("Chinchilla"): revised guidance on the parameter/data trade-off — good "science evolves" moment, paired directly against the Kaplan slide.^[Hoffmann et al. (2022) Training Compute-Optimal Large Language Models. arXiv:2203.15556]
-- Takeaway slide: what this means practically (data quality/quantity matters as much as parameter count).
+::: {.tiny-credit}
+Image credit: Generative LLM inference with Neuron (https://awsdocs-neuron.readthedocs-hosted.com/)
+:::
 
-## Conclusion
-Recap: decoder = causal self-attention + (optional cross-attention) + autoregressive training objective + inference-time decoding choices.
+## KV Cache: Size
+
+
+- The Cache size (FP16) can be calculated as
+
+$$
+2\times 2\times\text{batch-size}\times\text{seq-length}\times\text{num-layers}\times\text{embedding dimension}
+$$
+- We need to multiply by 2 because we have $K$ and $V$
+- We need to multiply by 2 again because we have 16 bits (FP16)
+- Usually gigabytes of memory required
+- Many different attempts to shrink cache size to allow the batch size to be increased
+
+::: {.mybox}
+**HBM**:
+
+- The data for the KV Cache is typically stored in the High-Bandwidth Memory, which is **off GPU**
+- Quadratic complexity for KV Cache access
+:::
+
+## Multihead latent attention
+
+- Introduced by DeepSeek for version 2
+
+![](./img/dsattn.png){width=100% }
+
+- Some previous approaches to reduce size of KV Cache used fewer keys and values  (CQA, MQA)
+- MLA 
+  - Does not cache K and V
+  - uses a low-rank representation that is learned during training and cached
+  - also learn a projection matrix to shring K and V during training
+  - Much lower KV cache usage (90%+ savings)
+  - 5-6x inference speedup
+  - Hgher accuracy than vanilla MHA
+
+## Multihead latent attention
+
+
+<table class="reveal-table small-table">
+  <thead>
+    <tr><th>Tensor</th><th>Dimension</th><th>Example</th><th>Explanation</th></tr>
+  </thead>
+  <tbody>
+    <tr class="fragment greyrow"><td class="greycell">$\mathbf{X}$: input embeddings</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Embedded input tokens</td></tr>
+    <tr class="fragment greyrow"><td class="greycell">$\mathbf{W}^{Q_i}$: query weights<br/>
+    $\mathbf{W}^{K_i}$: key weights<br/>
+    $\mathbf{W}^{V_i}$: value weights</td><td>$d_{hidden}\times d_{mha}$</td><td>$512\times 64$</td><td>$d_{mha}=d_{hidden}/h$, where $h$ is the number of heads<br/>
+    each head has its own weight matrices</td></tr>
+    <tr class="fragment">
+    <td>$W_{down}$: down-projection matrix<br/>$W_{up}$: up-projection matrix</td>
+    <td>$d_{mha}\times d_{mha-latent}$<br/>$d_{latent}\times d_{hidden}$</td>
+    <td>$64\times 4$<br/>$32\times 512$</td>
+     <td>$d_{latent}$ should be much smaller than $d_{hidden}$ (here, $d_{latent}=32$ and $d_{hidden}=512$)<br/>
+    $d_{mha-latent} = d_{latent}/h$ where $h$ is the number of attention heads (e.g. $8$)</td></tr>
+    <tr class="fragment"><td>$\mathbf{Q}_i=\mathbf{XW}^{Q_i}$: query matrix<br/>
+    $\mathbf{K}_i=\mathbf{XW}^{K_i}\mathbf{W}_{down}$: key matrix<br/>
+    $\mathbf{V}_i=\mathbf{XW}^{V_i}\mathbf{W}_{down}$: value matrix</td><td>$N\times d_{mha}$<br/>$N\times d_{mha-latent}$</td><td>$11\times 64$<br/>$11\times 4$<br/>$11\times 4$</td><td>
+    all heads run in parallel</td></tr>
+    <tr class="fragment"><td>$\mathbf{Q}_i\mathbf{W}_{down}\mathbf{K}_i^T$: attention scores</td><td>$N\times N$</td><td>$11\times 11$</td><td>All heads run in parallel. $Q$ is down-projected for this calculation only and not cached.</td></tr>
+     <tr class="fragment"><td>$\mathrm{softmax}\left(\dfrac{\mathbf{Q}_i\mathbf{W}_{down}\mathbf{K}_i^T}{\sqrt{d_k}}\right)\mathbf{V}_i$</td><td>$N\times d_{mha-latent}$</td><td>$11\times 4$</td><td>Attention weights applied to Values — all heads run this in parallel</td></tr>
+    <tr class="fragment"><td>Concatenate head outputs</td><td>$N\times d_{latent}$</td><td>$11\times 32$</td><td></td></tr>
+    <tr class="fragment"><td>$\mathrm{Outputs}\times \mathbf{W}_{up}$</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Project output back to original dimension</td></tr>
+<tr class="fragment greyrow"><td class="greycell">Remaining steps</td><td>$\ldots$</td><td>$\ldots$</td><td>as before</td></tr>
+
+</tbody>
+</table>
+
+::: {.small-text}
+- The $d_{hidden}$ dimension is hurting us. Let's downproject from 512 to 32.
+- Because we are doing multihead attention, we project 64 to 4 (same factor)
+- K and V are stored in KV cache and are $d_{hidden}/d_{latent}$ times smaller--$512/32=16$
+- The tradeoff is that there is an extra matmut to compute $K_i$ and $V_i$
+- $Q$ is not changed because it is not cached!
+:::
+
+::: {.tiny-credit}
+DeepSeek-AI (2024) [DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model. arXiv 2405.04434](https://arxiv.org/abs/2405.04434)
+:::
+
+## LORA
+
+- We will return to low-rank approximation (LORA) in a subsequent lecture
+
+![](./img/lora.png)
+
+::: {.tiny-credit}
+Lu J (2024) [Low-Rank Approximation, Adaptation, and Other Tales. arXiv 2408.05883](https://arxiv.org/abs/2408.05883)
+:::
+
+## Sources
+
+- Vaswani A et al. (2017) [Attention Is All You Need. arXiv 1706.03762](https://arxiv.org/abs/1706.03762)
+- Turner RE (2026) [An Introduction to Transformers. arXiv 2304.10557](https://arxiv.org/abs/2304.10557 )
+- Allamar J (Blog) [The Illustrated GPT-2 (Visualizing Transformer Language Models)](https://jalammar.github.io/illustrated-gpt2/)
+- Simon J Decoder-only inference: A step-by-step dive ([video](https://www.youtube.com/watch?v=cl3MAhAr9-M))
