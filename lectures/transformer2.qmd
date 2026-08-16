@@ -1,0 +1,467 @@
+---
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #9: Transformer Architecture (Continued)"
+author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
+jupyter: python3
+format: 
+  revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
+    slide-number: true
+    show-slide-number: all
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.1
+    embed-resources: true
+    transition: fade
+    background-transition: convex
+    controls: true
+---
+
+
+## Overview
+
+::: {.callout-note}
+## Game plan
+This lecture provides an introduction to the transformer architecture with a focus on the decoder. 
+:::
+
+Important:
+- https://arxiv.org/pdf/2305.17026
+
+## Transformer models
+
+
+![](./img/transformer-evolution.png){width="40%" fig-align="center"}
+
+::: {.tiny-credit}
+Amatriain X et al. (2024) [Transformer models: an introduction and catalog. arXiv 2302.07730](https://arxiv.org/abs/2302.07730)
+:::
+
+## Transformer models
+
+::: {.mybox}
+**An embarassment of riches**
+
+- As can be seen in the previous slide, a large number of different transformer models have been developed
+- They can be grouped largerly in encoder-decoder, encoder-only, and decoder-only
+:::
+
+- The original paper, "Attention is all you need...", described an encoder-decoder transformer 
+- This architecture is well suited for sequence-to-sequence tasks such as machine translation 
+- Last week, we focused on an introduction to the encoder model
+- This week, we will provide additional detail and focus mainly on decoder-only models and on training
+
+## Section 1: From Encoder to Decoder
+
+::: {.mybox}
+A **decoder-only transformer** is an autoregressive neural network architecture that uses masked causal 
+self-attention to predict the next token in a sequence.
+:::
+
+
+
+:::: {.columms}
+::: { .column width=70%}
+
+* **Input processing**:
+  - GPT-like models are decoder-only models
+  - Inputs (i.e., tokenized prompt) are embedded and encoded
+  - Positional encodings are added to the input embeddings
+  - Attention calculation, similar to previously described
+  - Large matrix multiplications, heavy usage of GPU hardward accelerator
+  - Parallel process
+:::
+
+::: { .column width=30%}
+![](./img/gpt-arch.png){width=80%}
+
+
+:::
+::::
+
+::: {.tiny-credit}
+image: Perez L et al. (2021)[Automatic Code Generation using Pre-Trained Language Models. arXiv 2102.10535](https://arxiv.org/abs/2102.10535)
+:::
+
+## Output generation
+
+- Unlike input generation, output generation is a sequential process
+  - The answer is generated one token at a time
+  - Each generated token is appended to the previous input
+  - Process repeated until we get an $\langle \mathrm{EOS}\rangle$ token^[EOS=end of sequence] or the maximum length is reached
+  - Let us first recap the general steps of the transformer and then we will review the decoder-specific items
+
+## Recap
+
+* Recall encoder algorithm from the previous lecture:
+
+
+<table class="reveal-table small-table">
+  <thead>
+    <tr><th>Tensor</th><th>Dimension</th><th>Example</th><th>Explanation</th></tr>
+  </thead>
+  <tbody>
+    <tr class="fragment"><td>Input sequence <br/>[BOS] The quick brown fox jumps over the lazy dog [EOS]</td><td></td><td></td><td>Input tokens with additional beginning/end of sequence tokens</td></tr>
+    <tr class="fragment"><td>Tokenized Input sequence <br/>[50256, 791, 4062, 14198, 39935, 35308, 927, 279, 16053, 5679, 50256]</td><td>$N$</td><td>$11$</td><td>Number of tokens, including [BOS]/[EOS]</td></tr>
+    <tr class="fragment"><td>$\mathbf{X}$: Input embeddings</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>$d_{hidden}$ is the embedding dimension</td></tr>
+    <tr class="fragment">
+    <td>$\mathbf{W}^Q$: query weights<br/>
+    $\mathbf{W}^K$: key weights<br/>
+    $\mathbf{W}^V$: value weights</td><td>$d_{hidden}\times d_{hidden}$</td><td>$512\times 512$</td><td>Learnable model weights (single-head attention, so $d_k=d_{hidden}$)</td></tr>
+    <tr class="fragment"><td>$\mathbf{Q}=\mathbf{XW}^Q$: query matrix<br/>
+    $\mathbf{K}=\mathbf{XW}^K$: key matrix<br/>
+    $\mathbf{V}=\mathbf{XW}^V$: value matrix</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>
+    $\mathbf{Q}$: What each token needs to know from others<br/>
+    $\mathbf{K}$: What information each token provides<br/>
+    $\mathbf{V}$: Content each token shares when attended to</td></tr>
+    <tr class="fragment"><td>$\mathbf{QK}^T$: attention scores</td><td>$N\times N$</td><td>$11\times 11$</td><td>How well each token's query matches the keys of the other tokens</td></tr>
+    <tr class="fragment"><td>$\mathrm{softmax}\left(\dfrac{\mathbf{QK}^T}{\sqrt{d_k}}\right)\mathbf{V}$</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Attention weights applied to Values — context-aware token representations</td></tr>
+    <tr class="fragment"><td>$\times\ \mathbf{W}^O$: output projection <em>(optional here)</em></td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Required to combine multiple heads back to $d_{hidden}$; with a single head the shape already matches, so $W^O$ is optional (often kept anyway for extra learnable capacity)</td></tr>
+    <tr class="fragment"><td>Add &amp; Norm</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Residual connection + LayerNorm (see Part 1)</td></tr>
+    <tr class="fragment"><td>FFN: $\text{GELU}(\mathbf{X}W_1+b_1)W_2+b_2$</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Position-wise, applied independently per token; expands to $d_{ff}$ (e.g. $2048$) and projects back (see Part 1)</td></tr>
+</tbody>
+</table>
+
+::: {.small-text}
+This recap shows single-head attention, so $d_k=d_{hidden}$
+:::
+
+
+::: {.tiny-credit}
+Adapted from: Simon J Decoder-only inference: A step-by-step dive ([video](https://www.youtube.com/watch?v=cl3MAhAr9-M))
+:::
+
+
+## Multihead attention
+
+:::: {.columns}
+::: {.column width=50%}
+![](./img/single-head-attn.png){width=40%}
+
+:::{.small-text}
+* Scaled dot-product attention
+:::
+:::
+::: {.column width=50%}
+![](./img/multihead-attn.png){width=60%}
+
+:::{.small-text}
+* Multihead attention -- several attention layers running in parallel
+:::
+:::
+::::
+
+::: {.tiny-credit}
+[Vaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762](https://arxiv.org/abs/1706.03762)
+:::
+
+## Multihead attention
+
+- Instead of performing a single attention function with $d_{hidden}$-dimensional keys, queries, and values 
+- It is beneficial to linearly project the queries, keys, and values $h$ times with different linear Projections
+- The results are concatenated and once again projected resulting in the final values
+
+$$
+\mathrm{MultiHead}(Q,K,V) = \mathrm{Concat}(\mathrm{head}_1, \ldots,\mathrm{head}_h)\mathrm{W}^{O}
+$$
+where
+$$
+\mathrm{head}_i = \mathrm{Attention}(QW_i^Q, KW_i^K, VW_i^V)
+$$
+
+* In the original paper, the authors use $h=8$ (8 heads)
+* Then, $d_k=d_v=d_{hidden}/h = 64$ because $d_{hidden} =512$ (In the paper $d_{hidden}$ is called $d_{model}$)
+* dimension check: $W_i^Q$ and $W_i^K$ are $d_{hidden}\times d_k$, $W_i^V$ is $d_{hidden}\times d_v$, and $\mathrm{W}^{O}$ is $hd_v \times d_{hidden}$
+
+## Multihead attention
+
+
+:::: {.columns}
+::: {.column width=35%}
+![](./img/multihead-attn.png){width=60%}
+
+
+:::
+::: {.column width=60%}
+
+- All heads get the full input sequence, but only see a subset of the embedding dimensions
+- Each head has its own Q,K,V matrices
+- All heads compute attention scores in parallel 
+- Main benefit: Multihead attention allows the model to jointly attend to information from different representation subspaces at different positions. With a single attention head, averaging inhibits this.
+- i.e., MHA yields better models!
+
+:::
+::::
+
+::: {.tiny-credit}
+[Vaswani A et al. (2017) Attention Is All You Need. arXiv 1706.03762](https://arxiv.org/abs/1706.03762)
+:::
+
+## MHA step by step
+
+<table class="reveal-table small-table">
+  <thead>
+    <tr><th>Tensor</th><th>Dimension</th><th>Example</th><th>Explanation</th></tr>
+  </thead>
+  <tbody>
+    <tr class="fragment greyrow"><td class="greycell">Input sequence <br/>[BOS] The quick brown fox jumps over the lazy dog [EOS]</td><td></td><td></td><td>Input tokens with additional beginning/end of sequence tokens</td></tr>
+    <tr class="fragment greyrow"><td class="greycell">Tokenized Input sequence <br/>[50256, 791, 4062, 14198, 39935, 35308, 927, 279, 16053, 5679, 50256]</td><td>$N$</td><td>$11$</td><td>Number of tokens, including [BOS]/[EOS]</td></tr>
+    <tr class="fragment greyrow"><td class="greycell">$\mathbf{X}$: Input embeddings</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>$d_{hidden}$ is the embedding dimension</td></tr>
+    <tr class="fragment">
+    <td>$\mathbf{W}^{Q_i}$: query weights<br/>
+    $\mathbf{W}^{K_i}$: key weights<br/>
+    $\mathbf{W}^{V_i}$: value weights</td><td>$d_{hidden}\times d_{mha}$</td><td>$512\times 64$</td><td>$d_{mha}=d_{hidden}/h$, where $h$ is the number of heads<br/>
+    each head has its own weight matrices</td></tr>
+    <tr class="fragment"><td>$\mathbf{Q}_i=\mathbf{XW}^{Q_i}$: query matrix<br/>
+    $\mathbf{K}_i=\mathbf{XW}^{K_i}$: key matrix<br/>
+    $\mathbf{V}_i=\mathbf{XW}^{V_i}$: value matrix</td><td>$N\times d_{mha}$</td><td>$11\times 64$</td><td>
+    all heads run in parallel</td></tr>
+    <tr class="fragment"><td>$\mathbf{Q}_i\mathbf{K}_i^T$: attention scores</td><td>$N\times N$</td><td>$11\times 11$</td><td>How well each token's query matches the keys of the other tokens</td></tr>
+    <tr class="fragment"><td>$\mathrm{softmax}\left(\dfrac{\mathbf{Q}_i\mathbf{K}^T}{\sqrt{d_k}}\right)\mathbf{V}_i$</td><td>$N\times d_{mha}$</td><td>$11\times 64$</td><td>Attention weights applied to Values — context-aware token representations</td></tr>
+    <tr class="fragment"><td>Concatenate head outputs</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Attention weights applied to Values — context-aware token representations</td></tr>
+    <tr class="fragment greyrow"><td class="greycell">$\times\ \mathbf{W}^O$: output projection <em>(optional here)</em></td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Required to combine multiple heads back to $d_{hidden}$; with a single head the shape already matches, so $W^O$ is optional (often kept anyway for extra learnable capacity)</td></tr>
+    <tr class="fragment greyrow"><td class="greycell">Add &amp; Norm</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Residual connection + LayerNorm (see Part 1)</td></tr>
+    <tr class="fragment greyrow"><td class="greycell">FFN: $\text{GELU}(\mathbf{X}W_1+b_1)W_2+b_2$</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>Position-wise, applied independently per token; expands to $d_{ff}$ (e.g. $2048$) and projects back (see Part 1)</td></tr>
+</tbody>
+</table>
+
+- Gray background: Identical to single-head attention case
+
+
+
+::: {.tiny-credit}
+Adapted from: Simon J Decoder-only inference: A step-by-step dive ([video](https://www.youtube.com/watch?v=cl3MAhAr9-M))
+:::
+
+
+
+## Autoregressive text generation
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from llm_plots import decoder_loop
+decoder_loop()
+```
+:::{.small-text}
+- Output is generated one token at a time
+:::
+
+
+## Text generation: step by step
+
+
+<table class="reveal-table small-table">
+  <thead>
+    <tr><th>Tensor</th><th>Dimension</th><th>Example</th><th>Explanation</th></tr>
+  </thead>
+  <tbody>
+    <tr class="fragment"><td>Attention output for the input sequence <br/>(aka prefill)</td><td>$N\times d_{hidden}$</td><td>$11\times 512$</td><td>This matrix represets the input embeddings that have been **updated** to consider the context of other tokens</td></tr>
+    <tr class="fragment"><td>Attention output for the **last** token</td><td>$1\times d_{hidden}$ </td><td>$11\times 512$</td><td> </td></tr>
+    <tr class="fragment"><td>$\mathbf{W}_{out}$: linear layer<br/>(aka project layer)</td><td>$V\times d_{hidden}$ </td><td>$100,000\times 512$ </td><td>$V$ is the vocabulary size, i.e., number of tokens </td></tr>
+    <tr class="fragment"><td>$\text{Logits} = \text{attention output}\times \mathbf{W}_{out}^T$</td><td>$1\times V$</td><td>$1\times 100,000$ </td><td>Raw scores for all tokens </td></tr>
+     <tr class="fragment"><td>$\text{softmax}(\text{Logits})$</td><td>$1\times V$</td><td>$1\times 100,000$ </td><td> token probabilities</td></tr>
+     <tr class="fragment"><td>Decode the token</td><td>1 token</td><td>1</td><td>outside the model; see next page</td></tr>
+</tbody>
+</table>
+
+
+## Token decoding: Deterministic Methods
+
+::: {.mybox}
+
+**Deterministic methods**:
+
+- generate text by selecting the continuation with the highest probability determined by the LM.
+:::
+
+- Deterministic methods may lead to model degeneration
+  - output becomes "unnatural"
+  - output is marked repetitive and overly predictable language. 
+  - text lacks variety and fails to reflect natural human expression.
+
+## Token decoding: greedy search
+
+*  Greedy search selects the word with the highest probability as its next word at each timestep
+
+$$
+\arg \max_w P(w\mid w_1:w_{t-1})
+$$
+
+* Greedy search continues in this way until reaching either an end-of-sequence (EOS) token or
+a maximum timestep $T$.
+* Greedy search may overlook high-probability words that are accessible only after a lower-probability word. 
+* As a result, greedy decoding does not formally guarantee a global optimum of the decoding objective, as its choices are only locally optimal. 
+
+::: {.small-text}
+- Other deterministic methods include beam search and contrastive search
+:::
+
+::: {.tiny-credit}
+Wang, Haoran et al. (2026) [Beyond Tokens: A Survey on Decoding Methods for Large Language and Vision-Language Models. SIGKDD Explor. Newsl. 28:1931-0145](https://doi.org/10.1145/3820356.3820357)
+:::
+
+## Token decoding: Stochastic methods
+
+::: {.mybox}
+**Stochastic methods**:
+
+Human-generated text exhibits greater variance in token probabilities, reflecting a diverse range of word choices, often unexpected. 
+
+In contrast, the output from deterministic methods shows minimal variance, resulting in more predictable and potentially repetitive text. 
+:::
+
+- Stochastic approaches introduce randomness during the decoding process, leading to more diverse and natural text generation.
+
+## Token decoding: Top-$k$ sampling
+
+- The $k$ most probable next words are selected^[$k$ is typically to chosen to be a number such as 10, i.e., much less than the full token count]
+- The probability of the $k$ top words is redistributed to form a new distribution, i.e., the probabilities of these k tokens are
+then normalized to sum to 1, resulting in a truncated distribution. 
+- A token is then randomly sampled from this distribution and appended to the current sequence. 
+- This process is repeated iteratively until a termination condition is satisfied. 
+
+
+::: {.tiny-credit}
+Fan A (2018) [Hierarchical Neural Story Generation. arXiv 1805.04833]https://arxiv.org/abs/1805.04833)
+:::
+
+## Token decoding: Top-$p$ (Nucleus) Sampling
+
+- Selects the smallest set of words whose cumulative probability meets or exceeds a predefined threshold $p$.
+- Rather than sampling exclusively from the top $k$ most probable words, Top-$p$ redistributes the probability mass across
+this dynamic set. 
+- This adaptive approach allows the size of the word set (i.e., the number of included words) to increase
+or decrease based on the shape of the next-token probability distribution.
+- Rest of approach is identical
+
+::: {.tiny-credit}
+Holtzman A (2020) [The Curious Case of Neural Text Degeneration. arXiv 1904.09751]https://arxiv.org/abs/1904.09751)
+:::
+
+## Token decoding: Temperature Sampling
+
+- The core idea of temperature sampling is to control the “sharpness” of the probability distribution by introducing a temperature parameter $t$. 
+- This parameter is applied in the softmax function after the transformer’s final layer to compute token probabilities. 
+- The temperature t directly influences the level of randomness in the sampling process, with higher values increasing randomness and lower values reducing it.
+
+## Token decoding: Temperature Sampling
+
+- The core idea of temperature sampling is to control the "sharpness" of the probability distribution by introducing a temperature parameter $t$.
+- This parameter is applied in the softmax function after the transformer's final layer to compute token probabilities.
+- The temperature $t$ directly influences the level of randomness in the sampling process, with higher values increasing randomness and lower values reducing it.^[Hinton G, Vinyals O, Dean J (2015) Distilling the Knowledge in a Neural Network. arXiv:1503.02531]
+
+$$
+P(x_i) = \frac{\exp(z_i / t)}{\sum_j \exp(z_j / t)}
+$$
+
+- $t=1$: standard softmax (no change)
+- $t<1$: sharper distribution — closer to greedy/argmax as $t\to 0$
+- $t>1$: flatter distribution — closer to uniform as $t\to\infty$
+
+## Temperature: worked example
+
+- Let the following be the logits for the next token after "The cat sat on the":
+
+| token | logit $z_i$ |
+|---|---|
+| mat | 2.0 |
+| floor | 1.0 |
+| bed | 0.1 |
+| couch | -1.0 |
+
+::: {.small-table}
+```{python}
+#| echo: false
+import numpy as np
+import pandas as pd
+
+tokens = ["mat", "floor", "bed", "couch"]
+logits = np.array([2.0, 1.0, 0.1, -1.0])
+
+def softmax_temp(z, t):
+    scaled = z / t
+    exp_z = np.exp(scaled - scaled.max())  # for numerical stability
+    return exp_z / exp_z.sum()
+
+temps = [0.5, 1.0, 2.0]
+rows = []
+for t in temps:
+    probs = softmax_temp(logits, t)
+    rows.append([f"t={t}"] + [f"{p:.3f}" for p in probs])
+
+df = pd.DataFrame(rows, columns=["Temperature"] + tokens)
+df
+```
+:::
+
+- At $t=0.5$: "mat" dominates (≈0.86) — the model behaves almost deterministically
+- At $t=1.0$: the raw model distribution (≈0.64 for "mat")
+- At $t=2.0$: much flatter (≈0.45 for "mat") — "couch" and "floor" become far more likely than under the original distribution
+
+## Combining temperature with top-$k$ / top-$p$
+
+- Temperature and truncation (top-$k$, top-$p$) are typically applied together, in sequence:
+    1. Scale logits by $1/t$
+    2. Apply softmax to get the temperature-adjusted distribution
+    3. Truncate: keep only the top-$k$ tokens, or the smallest set whose cumulative probability exceeds $p$ (nucleus sampling)^[Holtzman A, et al. (2020) The Curious Case of Neural Text Degeneration. ICLR 2020]
+    4. Renormalize the remaining probabilities to sum to 1
+    5. Sample from the renormalized distribution
+- Example: applying top-$k=2$ after $t=0.5$ scaling keeps only {mat: 0.862, floor: 0.117}, renormalized to {mat: 0.880, floor: 0.120} — "bed" and "couch" are excluded entirely
+- Intuition: 
+  - temperature reshapes *how peaked* the whole distribution is
+  - top-$k$/top-$p$ decide *how much of the tail* is eligible for sampling at all.
+- Many chat APIs expose both `temperature` and `top_p` as independent parameters.
+
+
+## x
+- Decoder-only vs. encoder-decoder: two architectural families — the original Transformer's encoder-decoder (translation-style, with cross-attention) vs. the decoder-only GPT family. Worth being explicit that most modern LLMs are decoder-only, so that's where you'll spend most of the lecture.^[Vaswani et al. (2017); Radford et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAI]
+- Why a decoder needs masking: motivate the core mechanical difference before showing the math — a decoder must not "see the future" when predicting the next token, or training becomes trivial/cheats.
+
+## Section 2: Causal (Masked) Self-Attention
+-  "what happens if token 3 attends to token 5?"
+**The mask, mathematically**: show the mask matrix added to scores *before* softmax — 
+set disallowed (future) positions to  so they vanish after softmax:
+* MaskedAttention
+
+
+
+Worked example: small 
+$4 \times 4$ mask matrix + resulting attention weight matrix (upper triangle zeroed out) 
+— visually reuses the "Visualizing the $n \times n$ Matrix" style from Part 1.
+Connects back: note this is the same softmax/scaling machinery from Part 1 — only the additive mask is new.
+
+## Section 3: Cross-Attention (if covering encoder-decoder)
+Where Q, K, V come from: Q from the decoder's own representations, K/V from the encoder's output — the one place two different sequences interact.
+Diagram: decoder block showing self-attention → cross-attention → FFN, contrasted with encoder's self-attention → FFN.
+(Skip this section entirely if you're scoping the lecture to decoder-only models — flag this as a scope decision to make early, since it affects how much of the rest you need.)
+
+## Section 4: The Training Objective
+Causal language modeling objective: next-token prediction, autoregressive factorization:
+- Loss function: cross-entropy against the true next token, teacher forcing during training.
+- Contrast slide: causal LM (GPT) vs. masked LM (BERT) objectives, side by side — good callback to your Part 1 deck's BERT-centric framing.^[Devlin et al. (2019) BERT]
+Optimizer/schedule details (optional, if you want concrete training mechanics): Adam with warmup + decay, label smoothing, dropout — from the original paper.^[Vaswani et al. (2017)]
+
+## Section 5: Decoding — Generating Text at Inference Time
+- The problem: a trained model gives a distribution over next tokens — how do you actually pick one?
+- Greedy decoding: always take argmax — simple, deterministic, often degenerate/repetitive.
+- Beam search: track top-k partial sequences — better than greedy, still prone to blandness/repetition for open-ended generation.
+- Sampling strategies: temperature scaling, top-k, and nucleus (top-p) sampling — motivate with the "degeneration" problem.^[Holtzman et al. (2020) The Curious Case of Neural Text Degeneration. ICLR 2020]
+-Live/visual comparison (optional): show the same prompt under greedy vs. nucleus sampling, if you want a demo-style slide — good candidate for a {python} code cell like your existing plotting slides.
+
+## Section 6: Scale — Why Bigger Models, More Data
+- Scaling laws: loss as a smooth function of parameters/data/compute.^[Kaplan et al. (2020) Scaling Laws for Neural Language Models. arXiv:2001.08361 — verify citation details before use]
+- Compute-optimal training ("Chinchilla"): revised guidance on the parameter/data trade-off — good "science evolves" moment, paired directly against the Kaplan slide.^[Hoffmann et al. (2022) Training Compute-Optimal Large Language Models. arXiv:2203.15556]
+- Takeaway slide: what this means practically (data quality/quantity matters as much as parameter count).
+
+## Conclusion
+Recap: decoder = causal self-attention + (optional cross-attention) + autoregressive training objective + inference-time decoding choices.
