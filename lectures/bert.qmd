@@ -98,3 +98,20 @@ $$
 - [Todo: explain FFN architexture based on BERT paper - what advantage is there for expanding etc?)]{.neon-todo}
 
 :::
+
+
+## Causal LM vs. Masked LM
+
+Two different pretraining objectives, both covered in this course:
+
+| | **Causal LM (GPT-style)** | **Masked LM (BERT-style)** |
+|---|---|---|
+| Direction | Left-to-right only | Bidirectional |
+| Attention | Causal mask (Section 2) | No mask — full self-attention |
+| Predicts | Next token, given all past tokens | Randomly masked tokens, given surrounding context (past **and** future) |
+| Natural use | Text generation | Understanding/representation tasks (classification, extraction) |
+| Reference | Radford et al. (2018)^[Radford A, et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAI] | Devlin et al. (2019)^[Devlin J, et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. NAACL-HLT] |
+
+- Recall from Part 1: BERT's masked LM objective randomly replaces ~15% of input tokens with a `[MASK]` token and asks the model to predict the original — this requires *no* causal mask, since the model is allowed to look in both directions to fill in the blank.
+- A causal LM, by contrast, is never shown a "gap" to fill — it always predicts the *next* token, and structurally cannot look ahead due to the mask.
+- This is why BERT is well-suited to tasks like classification or span extraction (it builds rich bidirectional representations), while GPT-style

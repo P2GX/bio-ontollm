@@ -467,9 +467,11 @@ $$
 M_{i,j} = \begin{cases} 0 & j \le i \quad \text{(allowed: current or past token)} \\ -\infty & j > i \quad \text{(disallowed: future token)} \end{cases}
 $$
 
-- Adding $-\infty$ to a score, then applying softmax, sends that entry's contribution to exactly $0$ — the future token is mathematically removed from the weighted sum, not just "discouraged."
-- In practice, implementations use a large negative finite number (e.g. $-10^9$) instead of literal $-\infty$, for numerical stability — the same spirit as the $\epsilon$ we added inside LayerNorm in Part 1.^[Phuong M, Hutter M (2022) Formal Algorithms for Transformers. arXiv:2207.09238]
+- Adding $-\infty$ to a score, then applying softmax, transforms the entry tp exactly $0$.
 
+::: {.tiny-credit}
+- In practice, implementations use a large negative finite number (e.g. $-10^9$) instead of literal $-\infty$, for numerical stability — the same spirit as the $\epsilon$ we added inside LayerNorm in Part 1.^[Phuong M, Hutter M (2022) Formal Algorithms for Transformers. arXiv:2207.09238]
+:::
 
 ## Worked Example: The Mask Matrix
 
@@ -487,82 +489,183 @@ $$
 - Row $i$ corresponds to the query token; column $j$ to the key token.
 - Row 0 ("I"): only column 0 is unmasked — the first token can only attend to itself.
 - Row 3 ("automaton"): all four columns are unmasked — the last token can attend to the entire sequence, since nothing comes after it.
-- This lower-triangular pattern (0 on and below the diagonal, $-\infty$ above) is why causal masking is often just called "triangular masking."
+- Causal masking is often just called "triangular masking."
 
 
 ## Worked Example: From Raw Scores to Masked Attention Weights
 
-Suppose the raw attention scores $\frac{QK^\top}{\sqrt{d_k}}$ for our sentence are:
+Suppose the raw attention scores $S =\frac{QK^\top}{\sqrt{d_k}}$ for our sentence.
+- The masking procedure is as follows
 
+::: {.small-text}
 $$
-S = \begin{bmatrix}
+\mathbf{S} + \mathbf{M} = \begin{bmatrix}
 0.9 & 0.2 & -0.1 & 0.4 \\
 0.3 & 1.1 & 0.5 & -0.2 \\
 0.1 & 0.4 & 1.3 & 0.6 \\
 -0.2 & 0.3 & 0.7 & 1.5
+\end{bmatrix} + \begin{bmatrix}
+0 & -\infty & -\infty & -\infty \\
+0 & 0 & -\infty & -\infty \\
+0 & 0 & 0 & -\infty \\
+0 & 0 & 0 & 0
 \end{bmatrix}
+=
+ \begin{bmatrix}
+0.9 & -\infty & -\infty & -\infty \\
+0.3 & 1.1 & -\infty & -\infty \\
+0.1 & 0.4 & 1.3 &-\infty \\
+-0.2 & 0.3 & 0.7 & 1.5
+\end{bmatrix} 
 $$
 
-Adding the mask $M$ and applying softmax row-by-row:
+- Applying softmax row-by-row yields
 
-::: {.small-table}
-```{python}
-#| echo: false
-import numpy as np
-import pandas as pd
-
-tokens = ["I", "am", "an", "automaton"]
-S = np.array([
-    [0.9, 0.2, -0.1, 0.4],
-    [0.3, 1.1, 0.5, -0.2],
-    [0.1, 0.4, 1.3, 0.6],
-    [-0.2, 0.3, 0.7, 1.5],
-])
-n = len(tokens)
-
-# Build the causal mask: 0 on/below diagonal, -inf above
-M = np.triu(np.full((n, n), -np.inf), k=1)
-np.fill_diagonal(M, 0)
-M = np.tril(np.zeros((n, n))) + np.triu(M, k=1)
-
-masked_scores = S + M
-
-# Row-wise softmax (ignoring -inf entries)
-weights = np.zeros_like(S)
-for i in range(n):
-    row = masked_scores[i]
-    finite = np.isfinite(row)
-    exp_row = np.zeros_like(row)
-    exp_row[finite] = np.exp(row[finite] - row[finite].max())
-    weights[i] = exp_row / exp_row.sum()
-
-df = pd.DataFrame(weights, index=tokens, columns=tokens).round(3)
-df
-```
+$$
+\mathrm{softmax}(\mathbf{S} + \mathbf{M}) =
+ \begin{bmatrix}
+1.0 & 0 & 0 & 0 \\
+0.31 & 0,690 & 0 & 0 \\
+0.176 & 0.238 & 0.586 &0 \\
+0.094 & 0.156 & 0.232 & 0.517
+\end{bmatrix} 
+$$
 :::
 
 - Row "I": weight $[1.000, 0, 0, 0]$ — with only itself unmasked, softmax trivially assigns it all the probability mass.
 - Row "am": weight $\approx[0.310, 0.690, 0, 0]$ — splits attention only between "I" and "am".
 - Row "automaton": weight $\approx[0.095, 0.156, 0.233, 0.517]$ — the only row using the **full** softmax, since nothing is masked.
-- Notice the upper triangle is exactly $0$ in every row — this is the visual signature of causal masking, and it directly mirrors the $n\times n$ score matrix from Part 1's "Visualizing the $n\times n$ Matrix" slide, just with the upper triangle zeroed out.
+- Notice the upper triangle is exactly $0$ in every row 
+
+## Pretraining
+
+::: {.mybox}
+**Traditional ML**:
+
+- train a separate model for each task from scratch
+:::
+
+- Some ML tasks are similar. For instance
+  - Spam detection
+  - sentiment Analysis
+  - machine translation
+- All three tasks require the model to understand natural language
+- The `transfer learning` approach reused a trained model for a new task by "tuning" the previously trained model
+- LLMs take this approach to an extreme: Pretraining
+
+## Pretraining
+
+- Pre-training is the foundation for the power of Large Language Models (LLMs)
+- Train by predicting the next work (token) on large collections of text data
+- Most LLMs are trained on general data ("all" web pages, "all" books, etc.)
+- Conversation text may help LLMs get better at chatting (train on social media data, e.g., Reddit)
+- Books: May help LLMs "understand" complicated topics better than webpages/social media
+- Stack exchange/GitHub: Help LLMs "understand" code
+
+## Pretraining
+
+- Size of training data
+
+| LLM    | Param count  | Size    |
+| ------ | -----        | ------- |
+| GPT-3 (2020) | 175 billion | $\sim$ 350 GB |
+| LLaMA-2 (2023) | 7B, 13B, 70B|$\sim$ 14 GB--140 GB |
+| Llama 3 |  15 trillion tokens | $\sim$ 60 TB | 
+| GPT-4 | (Estimated)~1.8 trillion | Proprietary |
+
+## Pretraining: Size matters
+
+![](./img/scaling-laws.png){width=80%}
+
+- Language modeling performance improves smoothly as we increase the model size, datasetset
+size, and amount of compute2 used for training.
+- Coversely, the authors found very weak dependence on many architectural and optimization hyperparameters. 
+
+:::{.tiny-credit}
+Kaplan J et al. (2020) [Scaling Laws for Neural Language Models. arXiv 2001.08361](https://arxiv.org/abs/2001.08361)
+:::
+
+## Optimal model size
+
+- On the other hand, what if we have a fixed compute budget and cannot increase the number of parameters or the amount of data without limit?
+- The authors investigatef the optimal model size and number of tokens for training a transformer language model under a given compute budget. 
+- They found that current large language models are significantly undertrained, a consequence of the recent focus on scaling language models whilst keeping the amount of training data constant.
+
+![](./img/chinchilla.png){width=80%}
+
+::: {.tiny-credit}
+Hoffmann J et al. (2022) [Training Compute-Optimal Large Language Models. arXiv 2203.15556](https://arxiv.org/abs/2203.15556)
+:::
+
+## Pretraining: Learning parameters
+
+- The basic back-propagation from previous lectures is used to train LLM parameters as well
+- An Adam optimizer is most frequently used to implement gradient descent
 
 
-## Connecting Back to Part 1
-
-- The scaling factor $\frac{1}{\sqrt{d_k}}$, the softmax normalization, the variance argument for why we scale — **none of that changes**. Everything from Part 1's derivation still applies row-by-row.
-- The *only* new ingredient is the additive mask $M$, applied **before** softmax.
-- This is a general pattern worth remembering: masking-before-softmax is how transformers implement *any* kind of "this token may not attend to that token" constraint — causal masking is the decoder's specific use of it, but the same mechanism (additive $-\infty$ mask) shows up elsewhere too (e.g. padding masks for variable-length sequences).
-
-## Section 3: Cross-Attention (if covering encoder-decoder)
-Where Q, K, V come from: Q from the decoder's own representations, K/V from the encoder's output — the one place two different sequences interact.
-Diagram: decoder block showing self-attention → cross-attention → FFN, contrasted with encoder's self-attention → FFN.
-(Skip this section entirely if you're scoping the lecture to decoder-only models — flag this as a scope decision to make early, since it affects how much of the rest you need.)
 
 ## Section 4: The Training Objective
-Causal language modeling objective: next-token prediction, autoregressive factorization:
-- Loss function: cross-entropy against the true next token, teacher forcing during training.
-- Contrast slide: causal LM (GPT) vs. masked LM (BERT) objectives, side by side — good callback to your Part 1 deck's BERT-centric framing.^[Devlin et al. (2019) BERT]
-Optimizer/schedule details (optional, if you want concrete training mechanics): Adam with warmup + decay, label smoothing, dropout — from the original paper.^[Vaswani et al. (2017)]
+
+::: {.mybox}
+**Causal language modeling**
+
+- A decoder is trained to predict each token given only the tokens that came before it.
+- This is an **autoregressive** factorization of the joint probability of a sequence:
+
+$$
+P(x_1,\ldots,x_n) = \prod_{t=1}^n P(x_t \mid x_1,\ldots,x_{t-1})
+$$
+:::
+
+- The model doesn't predict the whole sentence at once — it predicts one conditional distribution per position, and the chain rule of probability guarantees these conditionals multiply out to the joint probability of the full sequence.
+- This factorization is exactly *why* causal masking (Section 2) is needed: each factor $P(x_t \mid x_1,\ldots,x_{t-1})$ must only depend on the past, or the factorization isn't valid.
+
+
+## The Loss Function
+
+- Training uses **cross-entropy loss** between the predicted next-token distribution and the true next token.
+- For a single position $t$, with true token $x_t$ and predicted probability $\hat{P}(x_t \mid x_{<t})$:
+
+$$
+\mathcal{L}_t = -\log \hat{P}(x_t \mid x_1,\ldots,x_{t-1})
+$$
+
+- The total loss for a sequence is the sum (or mean) over all positions:
+
+$$
+\mathcal{L} = -\sum_{t=1}^n \log \hat{P}(x_t \mid x_1,\ldots,x_{t-1})
+$$
+
+## Teacher forcing
+
+- **Teacher forcing**: during training, the *true* previous tokens are fed as input at every position — not the model's own (possibly wrong) predictions.
+-  This is what makes it possible to compute the loss for all $n$ positions in a single parallel forward pass, using the causal mask from Section 2 to prevent each position from seeing its own answer.
+- At inference time there is no ground truth to feed back in — this is exactly the "Append and reprocess" loop from our decoding-steps diagram, where each new token is the model's own prediction, fed back as input for the next step.
+
+![](./img/teacher-forcing.png){width=100%}
+
+:::{.tiny-credit}
+Image: https://www.deeplearning.ai/
+:::
+
+## Worked Example: Cross-Entropy Loss
+
+Continuing "I am an automaton" — suppose after "I am an" the model's predicted distribution over the next token is:
+
+| token    | P(token)   |
+| ------ | -----        |
+|automaton| 0.55|
+|apple | 0.05|
+|idea| 0.15|
+|the| 0.25|
+
+
+- The true next token is "automaton," with predicted probability $0.55$.
+- The loss at this position is $-\log(0.55) \approx 0.598$.
+- If the model had instead assigned "automaton" a probability of, say, $0.01$, the loss would jump to $-\log(0.01)\approx 4.6$ — cross-entropy penalizes confident wrong predictions much more heavily than uncertain ones.
+
+
+
 
 ## Section 5: Decoding — Generating Text at Inference Time
 - The problem: a trained model gives a distribution over next tokens — how do you actually pick one?
