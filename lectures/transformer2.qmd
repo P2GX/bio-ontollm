@@ -32,7 +32,13 @@ This lecture provides an introduction to the transformer architecture with a foc
 Important:
 - https://arxiv.org/pdf/2305.17026
 
-## Transformer models
+- [Transformer models (recap)](#recap)
+- [Decoder models](#decoders)
+- [Multihead attention](#multihead)
+- [Output generation](#outputgen)
+- [Training LLMs](#training)
+
+## Transformer models {#recap}
 
 
 ![](./img/transformer-evolution.png){width="40%" fig-align="center"}
@@ -55,7 +61,7 @@ Amatriain X et al. (2024) [Transformer models: an introduction and catalog. arXi
 - Last week, we focused on an introduction to the encoder model
 - This week, we will provide additional detail and focus mainly on decoder-only models and on training
 
-## Section 1: From Encoder to Decoder
+## Decoder models {#decoders}
 
 ::: {.mybox}
 A **decoder-only transformer** is an autoregressive neural network architecture that uses masked causal 
@@ -87,13 +93,6 @@ self-attention to predict the next token in a sequence.
 image: Perez L et al. (2021)[Automatic Code Generation using Pre-Trained Language Models. arXiv 2102.10535](https://arxiv.org/abs/2102.10535)
 :::
 
-## Output generation
-
-- Unlike input generation, output generation is a sequential process
-  - The answer is generated one token at a time
-  - Each generated token is appended to the previous input
-  - Process repeated until we get an $\langle \mathrm{EOS}\rangle$ token^[EOS=end of sequence] or the maximum length is reached
-  - Let us first recap the general steps of the transformer and then we will review the decoder-specific items
 
 ## Recap
 
@@ -136,7 +135,7 @@ Adapted from: Simon J Decoder-only inference: A step-by-step dive ([video](https
 :::
 
 
-## Multihead attention
+## Multihead attention {#multihead}
 
 :::: {.columns}
 ::: {.column width=50%}
@@ -237,6 +236,12 @@ $$
 Adapted from: Simon J Decoder-only inference: A step-by-step dive ([video](https://www.youtube.com/watch?v=cl3MAhAr9-M))
 :::
 
+## Output generation {#outputgen}
+
+- Unlike input generation, output generation is a sequential process
+  - The answer is generated one token at a time
+  - Each generated token is appended to the previous input
+  - Process repeated until we get an $\langle \mathrm{EOS}\rangle$ token^[EOS=end of sequence] or the maximum length is reached
 
 
 ## Autoregressive text generation
@@ -427,18 +432,126 @@ df
 - Decoder-only vs. encoder-decoder: two architectural families — the original Transformer's encoder-decoder (translation-style, with cross-attention) vs. the decoder-only GPT family. Worth being explicit that most modern LLMs are decoder-only, so that's where you'll spend most of the lecture.^[Vaswani et al. (2017); Radford et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAI]
 - Why a decoder needs masking: motivate the core mechanical difference before showing the math — a decoder must not "see the future" when predicting the next token, or training becomes trivial/cheats.
 
-## Section 2: Causal (Masked) Self-Attention
--  "what happens if token 3 attends to token 5?"
-**The mask, mathematically**: show the mask matrix added to scores *before* softmax — 
-set disallowed (future) positions to  so they vanish after softmax:
-* MaskedAttention
+
+## Training LLMs {#training}
+
+- The next sections will cover several aspects of how to train LLMs
+- For the most part, LLMs are synonymous with decoder-only transformers; from now on we will say LLM for conciseness.
 
 
+## Training LLMs: Causal (Masked) Self-Attention
 
-Worked example: small 
-$4 \times 4$ mask matrix + resulting attention weight matrix (upper triangle zeroed out) 
-— visually reuses the "Visualizing the $n \times n$ Matrix" style from Part 1.
-Connects back: note this is the same softmax/scaling machinery from Part 1 — only the additive mask is new.
+::: {.mybox}
+**The problem**
+
+- Encoder self-attention lets every token attend to every other token — including tokens that come *later* in the sequence.
+- A decoder predicts tokens one at a time, left to right. If some token $i$ can attend to a token $j$ during training with $j>i$, the model can simply "read the answer" instead of learning to predict it.
+:::
+
+- This would make the training loss trivially low — the model learns nothing about actually predicting the future, since the future is already visible.
+- We need a mechanism that lets us train on the full sequence in parallel (for efficiency), while still preventing this kind of "leakage."
+
+
+## Masked Self-Attention
+
+- Recall: $\text{Attention}(Q,K,V) = \text{softmax}\left(\dfrac{QK^\top}{\sqrt{d_k}}\right)V$
+- We modify this by adding a **mask matrix** $M$ to the scores, *before* the softmax step:
+
+$$
+\text{MaskedAttention}(Q,K,V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}} + M\right)V
+$$
+
+- $M$ is an $n\times n$ matrix, defined entrywise as:
+
+$$
+M_{i,j} = \begin{cases} 0 & j \le i \quad \text{(allowed: current or past token)} \\ -\infty & j > i \quad \text{(disallowed: future token)} \end{cases}
+$$
+
+- Adding $-\infty$ to a score, then applying softmax, sends that entry's contribution to exactly $0$ — the future token is mathematically removed from the weighted sum, not just "discouraged."
+- In practice, implementations use a large negative finite number (e.g. $-10^9$) instead of literal $-\infty$, for numerical stability — the same spirit as the $\epsilon$ we added inside LayerNorm in Part 1.^[Phuong M, Hutter M (2022) Formal Algorithms for Transformers. arXiv:2207.09238]
+
+
+## Worked Example: The Mask Matrix
+
+- For our 4-token sentence "I am an automaton" ($n=4$), the mask matrix is:
+
+$$
+M = \begin{bmatrix}
+0 & -\infty & -\infty & -\infty \\
+0 & 0 & -\infty & -\infty \\
+0 & 0 & 0 & -\infty \\
+0 & 0 & 0 & 0
+\end{bmatrix}
+$$
+
+- Row $i$ corresponds to the query token; column $j$ to the key token.
+- Row 0 ("I"): only column 0 is unmasked — the first token can only attend to itself.
+- Row 3 ("automaton"): all four columns are unmasked — the last token can attend to the entire sequence, since nothing comes after it.
+- This lower-triangular pattern (0 on and below the diagonal, $-\infty$ above) is why causal masking is often just called "triangular masking."
+
+
+## Worked Example: From Raw Scores to Masked Attention Weights
+
+Suppose the raw attention scores $\frac{QK^\top}{\sqrt{d_k}}$ for our sentence are:
+
+$$
+S = \begin{bmatrix}
+0.9 & 0.2 & -0.1 & 0.4 \\
+0.3 & 1.1 & 0.5 & -0.2 \\
+0.1 & 0.4 & 1.3 & 0.6 \\
+-0.2 & 0.3 & 0.7 & 1.5
+\end{bmatrix}
+$$
+
+Adding the mask $M$ and applying softmax row-by-row:
+
+::: {.small-table}
+```{python}
+#| echo: false
+import numpy as np
+import pandas as pd
+
+tokens = ["I", "am", "an", "automaton"]
+S = np.array([
+    [0.9, 0.2, -0.1, 0.4],
+    [0.3, 1.1, 0.5, -0.2],
+    [0.1, 0.4, 1.3, 0.6],
+    [-0.2, 0.3, 0.7, 1.5],
+])
+n = len(tokens)
+
+# Build the causal mask: 0 on/below diagonal, -inf above
+M = np.triu(np.full((n, n), -np.inf), k=1)
+np.fill_diagonal(M, 0)
+M = np.tril(np.zeros((n, n))) + np.triu(M, k=1)
+
+masked_scores = S + M
+
+# Row-wise softmax (ignoring -inf entries)
+weights = np.zeros_like(S)
+for i in range(n):
+    row = masked_scores[i]
+    finite = np.isfinite(row)
+    exp_row = np.zeros_like(row)
+    exp_row[finite] = np.exp(row[finite] - row[finite].max())
+    weights[i] = exp_row / exp_row.sum()
+
+df = pd.DataFrame(weights, index=tokens, columns=tokens).round(3)
+df
+```
+:::
+
+- Row "I": weight $[1.000, 0, 0, 0]$ — with only itself unmasked, softmax trivially assigns it all the probability mass.
+- Row "am": weight $\approx[0.310, 0.690, 0, 0]$ — splits attention only between "I" and "am".
+- Row "automaton": weight $\approx[0.095, 0.156, 0.233, 0.517]$ — the only row using the **full** softmax, since nothing is masked.
+- Notice the upper triangle is exactly $0$ in every row — this is the visual signature of causal masking, and it directly mirrors the $n\times n$ score matrix from Part 1's "Visualizing the $n\times n$ Matrix" slide, just with the upper triangle zeroed out.
+
+
+## Connecting Back to Part 1
+
+- The scaling factor $\frac{1}{\sqrt{d_k}}$, the softmax normalization, the variance argument for why we scale — **none of that changes**. Everything from Part 1's derivation still applies row-by-row.
+- The *only* new ingredient is the additive mask $M$, applied **before** softmax.
+- This is a general pattern worth remembering: masking-before-softmax is how transformers implement *any* kind of "this token may not attend to that token" constraint — causal masking is the decoder's specific use of it, but the same mechanism (additive $-\infty$ mask) shows up elsewhere too (e.g. padding masks for variable-length sequences).
 
 ## Section 3: Cross-Attention (if covering encoder-decoder)
 Where Q, K, V come from: Q from the decoder's own representations, K/V from the encoder's output — the one place two different sequences interact.
