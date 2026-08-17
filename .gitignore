@@ -152,3 +152,4 @@ _site/
 *.quarto_ipynb_*
 **.log
 lectures/encoder_files/
+lectures/lstm_files/

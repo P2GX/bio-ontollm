@@ -357,6 +357,18 @@ $$
 - $M_k$ is a **rotation matrix**: $\det(M_k) = \cos^2(\omega_i k) + \sin^2(\omega_i k) = 1$, and $M_k M_k^\top = I$, so $M_k$ is orthogonal with determinant 1.
 - Crucially, $M_k$ depends only on the offset $k$ (and frequency $\omega_i$) — and not on the absolute position $pos$.
 
+## PE Encodings: Review
+
+![](./img/pe-diagram.png){width=80% fig-align="center"}
+
+- The positional encodings are computed once and reused for every sentence (training and test/inference)
+
+
+::: {.tiny-credit}
+image: https://github.com/hkproj/bert-from-scratch
+:::
+
+
 ## Distance (1)
 
 

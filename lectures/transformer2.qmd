@@ -429,11 +429,6 @@ df
 - Many chat APIs expose both `temperature` and `top_p` as independent parameters.
 
 
-## x
-- Decoder-only vs. encoder-decoder: two architectural families — the original Transformer's encoder-decoder (translation-style, with cross-attention) vs. the decoder-only GPT family. Worth being explicit that most modern LLMs are decoder-only, so that's where you'll spend most of the lecture.^[Vaswani et al. (2017); Radford et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAI]
-- Why a decoder needs masking: motivate the core mechanical difference before showing the math — a decoder must not "see the future" when predicting the next token, or training becomes trivial/cheats.
-
-
 ## Training LLMs {#training}
 
 - The next sections will cover several aspects of how to train LLMs
@@ -781,7 +776,7 @@ DeepSeek-AI (2024) [DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-
 
 - We will return to low-rank approximation (LORA) in a subsequent lecture
 
-![](./img/lora.png)
+![](./img/lora.png){fig-align="center"}
 
 ::: {.tiny-credit}
 Lu J (2024) [Low-Rank Approximation, Adaptation, and Other Tales. arXiv 2408.05883](https://arxiv.org/abs/2408.05883)
