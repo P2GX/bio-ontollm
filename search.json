@@ -147,13 +147,6 @@
     "text": "Combining temperature with top-\\(k\\) / top-\\(p\\)\n\nTemperature and truncation (top-\\(k\\), top-\\(p\\)) are typically applied together, in sequence:\n\nScale logits by \\(1/t\\)\nApply softmax to get the temperature-adjusted distribution\nTruncate: keep only the top-\\(k\\) tokens, or the smallest set whose cumulative probability exceeds \\(p\\) (nucleus sampling)1\nRenormalize the remaining probabilities to sum to 1\nSample from the renormalized distribution\n\nExample: applying top-\\(k=2\\) after \\(t=0.5\\) scaling keeps only {mat: 0.862, floor: 0.117}, renormalized to {mat: 0.880, floor: 0.120} — “bed” and “couch” are excluded entirely\nIntuition:\n\ntemperature reshapes how peaked the whole distribution is\ntop-\\(k\\)/top-\\(p\\) decide how much of the tail is eligible for sampling at all.\n\nMany chat APIs expose both temperature and top_p as independent parameters.\n\nHoltzman A, et al. (2020) The Curious Case of Neural Text Degeneration. ICLR 2020"
   },
   {
-    "objectID": "lectures/transformer2.html#x",
-    "href": "lectures/transformer2.html#x",
-    "title": "Approaches to biomedical knowledge",
-    "section": "x",
-    "text": "x\n\nDecoder-only vs. encoder-decoder: two architectural families — the original Transformer’s encoder-decoder (translation-style, with cross-attention) vs. the decoder-only GPT family. Worth being explicit that most modern LLMs are decoder-only, so that’s where you’ll spend most of the lecture.1\nWhy a decoder needs masking: motivate the core mechanical difference before showing the math — a decoder must not “see the future” when predicting the next token, or training becomes trivial/cheats.\n\nVaswani et al. (2017); Radford et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAI"
-  },
-  {
     "objectID": "lectures/transformer2.html#training",
     "href": "lectures/transformer2.html#training",
     "title": "Approaches to biomedical knowledge",
@@ -2246,28 +2239,287 @@
     "href": "lectures/bert.html#bert",
     "title": "Approaches to biomedical knowledge",
     "section": "BERT",
-    "text": "BERT\n– todo"
+    "text": "BERT\n\n** Bidirectional Encoder Representations from Transformers(BERT)**: - Developed in 2018 by researchers at Google AI Language - A swiss army knife solution to many common language tasks, such as sentiment analysis and named entity recognition.\n\n\nBERT was trained on Wikipedia (~2.5B words) and Google’s BooksCorpus (~800M words).\nTrained at Google on 64 TPUs (Tensor Processing Units - roughly speaking, Google’s version of the GPU) over 4 days\nMany other versions of BERT have been trained for various purposes\n\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805"
+  },
+  {
+    "objectID": "lectures/bert.html#causal-vs-masked-language-modeling",
+    "href": "lectures/bert.html#causal-vs-masked-language-modeling",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Causal vs masked language modeling",
+    "text": "Causal vs masked language modeling\n\n\nPredecessors modelled language unidirectionally – train on predicting the next word\nBERT is designed to extract bidirectional representations: predict the masked word given both left and right context\n\n\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805"
+  },
+  {
+    "objectID": "lectures/bert.html#bert-unidirectional-vs-bidirectional",
+    "href": "lectures/bert.html#bert-unidirectional-vs-bidirectional",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BERT: unidirectional vs bidirectional",
+    "text": "BERT: unidirectional vs bidirectional\n\nThe authors argue that the unidirectionality of models such as GPT limit the choice of architectures that can be used during pre-training because every token can only attend to previous tokens in the self-attention layers of the Transformer.\nSuch restrictions are sub-optimal for sentence-level tasks, and could be very harmful when applying finetuning based approaches to token-level tasks such as question answering, where it is crucial to incorporate context from both directions\n\n\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805"
+  },
+  {
+    "objectID": "lectures/bert.html#bert-training",
+    "href": "lectures/bert.html#bert-training",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BERT training",
+    "text": "BERT training\n\nBERT is an encoder-only transformer and the training is similar to what was described in previous lectures.\n\n\n\n\n\n\n\n\n\n\n\n\n\nTransformer\nLayers\n Hidden Size\nAttention Heads\nParameters\nProcessing\nLength of Training\n\n\n\n\nBERTbase\n12\n768\n12\n110M\n4 TPUs\n4 days\n\n\nBERTlarge\n24\n1024\n16\n340M\n16 TPUs\n4 days"
+  },
+  {
+    "objectID": "lectures/bert.html#bert-architecture",
+    "href": "lectures/bert.html#bert-architecture",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BERT Architecture",
+    "text": "BERT Architecture\n\n\n\nThe dimension of the FFN is 3072\nThere are 12 attention heads in the multihead attention block (BERTbase – 16 for BERTlarge).\nThe transformer block is repeated Nx times (12 for BERTbase and 24 for BERTlarge), that is, the output of one block is used as input for the next\nThe output of the final block is used as input for the linear layer\nDifferences to the original transformer:\n\nThe embedding vector is 768 (BERTbase) or 1024 (BERTlarge) dimensional rather than 512\nPositional embeddings are absolute and learnt during training (limited to 512 positions)1\nThe linear layer head changes according to the application\nUses WordPiece tokenizer\n\n\n\n\n\nThus, BERT cannot handle sentences longer than 512 tokens"
+  },
+  {
+    "objectID": "lectures/bert.html#bert-vs.-gpt",
+    "href": "lectures/bert.html#bert-vs.-gpt",
+    "title": "Approaches to biomedical knowledge",
+    "section": "BERT vs. GPT",
+    "text": "BERT vs. GPT\n\nMajor differences:\n\nGPT handles specific tasks using specific prompts. BERT needs to be fine tuned.\nGPT is trained using unidirectional context, BERT bidirectional\nBERT is not designed to generate text (this is a decoder task)\n\n\n\nWe will provide some examples below"
+  },
+  {
+    "objectID": "lectures/bert.html#masked-language-modeling-mlm",
+    "href": "lectures/bert.html#masked-language-modeling-mlm",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Masked Language Modeling (MLM)",
+    "text": "Masked Language Modeling (MLM)\n\n\n\nCore Objective\n\n\nMLM: Predict the correct word given both the left and right bidirectional context.\n\n\n\n\nBERT is forced to utilize words on either side of the token simultaneously to predict the missing mask.\nComparing bidirectional reasoning capabilities across different sentence structures:\n\n\n\nLeft Context Task\n\n“An elephant’s trunk can be used to grasp yellow [?].”\n\n\nFull Context MLM Task\n\n“An elephant’s [?] can be used to grasp yellow bananas.”"
+  },
+  {
+    "objectID": "lectures/bert.html#left-and-right-context-in-bert",
+    "href": "lectures/bert.html#left-and-right-context-in-bert",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Left and right context in BERT",
+    "text": "Left and right context in BERT\nRecall the definition of the attention output\n\\[\n\\underbrace{\\mathrm{Attention}(\\mathbf{Q},\\mathbf{K},\\mathbf{V})}_{N\\times N}\n=\n\\mathrm{softmax}\\left(\n  \\frac{\n\\underbrace{\\mathbf{Q}}_{N\\times d_{hidden}} \\times\n\\underbrace{\\mathbf{K}^T}_{d_{hidden}\\times N}}\n{\\sqrt{d_{k}}}\n\\right)\n\\]\n\nRecall that for the masked attention in the decoder, we mask words to “zero out” interactions of tokens with other subsequent tokens"
+  },
+  {
+    "objectID": "lectures/bert.html#left-and-right-context-in-bert-1",
+    "href": "lectures/bert.html#left-and-right-context-in-bert-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Left and right context in BERT",
+    "text": "Left and right context in BERT\n\nIn contrast, with BERT there is no mask\nEach token therefore attends to other tokens to the left and the right\nThe pretraining procedure instead selects 15% of the tokens from the sentence to be masked\n\n80% of the time, the token is replaced by [MASK]: Berlin is the [MASK] of Germany\n10% of the time, the token is replaced by a random word: Berlin is the hedgehog of Germany\n10% of the time, the token is not replaced: Berlin is the capital of Germany\n\n\n\nThe motivation for not always replacing the token with [MASK] is that this would created a mismatch between pre-training and fine-tuning, since the [MASK] token does not appear during fine-tuning. Using the random/unchanged tokens mitigates this mismatch."
+  },
+  {
+    "objectID": "lectures/bert.html#loss-bert",
+    "href": "lectures/bert.html#loss-bert",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Loss: BERT",
+    "text": "Loss: BERT\n\n\nLike any encoder, the BERT model produces embeddings as output.\nWe focus on the output for the masked position to calculate the loss\nBackpropation and gradient descent are as usual"
+  },
+  {
+    "objectID": "lectures/bert.html#loss-bert-1",
+    "href": "lectures/bert.html#loss-bert-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Loss: BERT",
+    "text": "Loss: BERT\n\nIn detail,\nThe LM head takes the output of the final transformation layer \\(L\\), multiplies it by the unemedding layer and uses softmax to transform the output into probabilities\n\n\\[\n\\begin{align}\n\\mathbf{u}_i &= \\mathbf{h}_i^L \\mathbf{E}^T \\\\\n\\mathbf{y}_i &= \\mathrm{softmax}(\\mathbf{u}_i)\n\\end{align}\n\\]\n\nIn our example, the \\(x_i\\) that corresponds to “capital”, the loss is the probability of the correct word “capital” given the output \\[\nL_{MLM}(x_i) = -\\log P(x_i\\mid \\mathbf{h}_i^L)\n\\]\nGradients are obtained by taking the average loss over a batch\n\n\\[\n-\\frac{1}{M}\\sum_{m=1}^M \\log P(x_i\\mid \\mathbf{h}_i^L)\n\\]"
+  },
+  {
+    "objectID": "lectures/bert.html#next-sentence-prediction-nsp",
+    "href": "lectures/bert.html#next-sentence-prediction-nsp",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Next-sentence prediction (NSP)",
+    "text": "Next-sentence prediction (NSP)\n\nNSP:\n\nMany downstream applications involve learning relationships between sentences rather than single words (tokens)\n\n\n\nBERT is therefore also trained on the next-sentence prediction task\n50% of the time, correct pairs of sentence are chosen\n\n\nWhy did the chicken cross the road? To get to the other side\n\n\n50% of the time, incorrect pairs of sentence are chosen\n\n\nWhy did the chicken cross the road? The climate crisis is driven by burning fossil fuels."
+  },
+  {
+    "objectID": "lectures/bert.html#next-sentence-prediction-nsp-1",
+    "href": "lectures/bert.html#next-sentence-prediction-nsp-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Next-sentence prediction (NSP)",
+    "text": "Next-sentence prediction (NSP)\n\nNSP:\n\nThere are two problems:\n\nHow do we encode these two sentences as input for BERT?\nHow should BERT reply that a sentence does (IsNext) or does not (NotNext) follow another sentence?"
+  },
+  {
+    "objectID": "lectures/bert.html#next-sentence-prediction",
+    "href": "lectures/bert.html#next-sentence-prediction",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Next-sentence prediction",
+    "text": "Next-sentence prediction\n\n\nBERT introduces two special tokens:\n\n[CLS]\n[SEP]\n\nWe encode the input as follows \\[\n\\mathrm{[CLS]} \\bullet \\text{first sentence }\\bullet \\mathrm{[SEP]}\\bullet \\text{second  sentence }\\bullet \\mathrm{[SEP]}\n\\]"
+  },
+  {
+    "objectID": "lectures/bert.html#next-sentence-prediction-1",
+    "href": "lectures/bert.html#next-sentence-prediction-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Next-sentence prediction",
+    "text": "Next-sentence prediction\n\n\nAs discussed previously, if we only provide the tokens for \\(\\mathrm{[CLS]} \\bullet \\text{first sentence }\\bullet \\mathrm{[SEP]}\\bullet \\text{second  sentence }\\bullet \\mathrm{[SEP]}\\) as input to BERT\n\nBERT would not be able to know that dog is from the first and play is from the second sentence\nThe segment embeddings \\(\\mathbf{E}_A\\) and \\(\\mathbf{E}_B\\) encode whether a token belongs to sentence A or B."
+  },
+  {
+    "objectID": "lectures/bert.html#nsp",
+    "href": "lectures/bert.html#nsp",
+    "title": "Approaches to biomedical knowledge",
+    "section": "NSP",
+    "text": "NSP\n\n\n\n\n\n\n\n\n\n\nPass output for first token (corresponding to [CLS]) to linear layer – with only two output features, next and notNext, and pass through softmax.\ncalculate the cross-entropy loss, perform backprop, update weights"
+  },
+  {
+    "objectID": "lectures/bert.html#nsp-1",
+    "href": "lectures/bert.html#nsp-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "NSP",
+    "text": "NSP\n\nThe CLS token interacts with every other token (no mask) – it “captures” information about all other tokens as needed for the classification task \n\n\n\ne.g., cell (1,1) of the attn output is the dot product of the first row of the attention matrix (for CLS) with the first column of \\(\\mathbf{V}\\)\ncell (1,2) of the attn output is the dot product of the first row of the attention matrix (for CLS) with the second column of \\(\\mathbf{V}\\)\n\\(\\ldots\\)\ncell (1,768) of the attn output is the dot product of the first row of the attention matrix (for CLS) with the \\(768^{th}\\) column of \\(\\mathbf{V}\\)\nThus, the CLS has aggregated information from the entire \\(\\mathbf{V}\\) matrix for the purposes of classification\nFor classification, we are only interested in the first row of the attention output"
+  },
+  {
+    "objectID": "lectures/bert.html#the-sep-token-and-sentence-pairs",
+    "href": "lectures/bert.html#the-sep-token-and-sentence-pairs",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The [SEP] Token and Sentence Pairs",
+    "text": "The [SEP] Token and Sentence Pairs\n\nSome tasks require two input sentences at once (e.g., “do these two sentences mean the same thing?”).\nBERT handles this with a [SEP] token separating the two sentences, plus a learned segment embedding added to each token indicating which sentence it belongs to:\n\n\\[\n\\text{[CLS]} \\ \\text{Sentence A} \\ \\text{[SEP]} \\ \\text{Sentence B} \\ \\text{[SEP]}\n\\]\n\nSegment embeddings are added elementwise to the token + positional embeddings, the same way positional encodings were added in Part 1 — just one more term in the sum.\nThis sentence-pair format is what BERT’s own pretraining uses, and it’s directly relevant to Section 3, where we’ll see why comparing two full sentences this way becomes a computational bottleneck."
+  },
+  {
+    "objectID": "lectures/bert.html#mlm-and-nsp",
+    "href": "lectures/bert.html#mlm-and-nsp",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MLM and NSP",
+    "text": "MLM and NSP\n\nFor every training example, BERT builds one input (a sentence pair with some tokens replaced by [MASK]) and runs it through a single forward pass.\nThat one pass produces both:\n\nMLM predictions: output vectors at each masked position, fed into a softmax over the vocabulary to predict the original token.\nNSP prediction: the output vector at [CLS], fed into the binary classifier to predict IsNext/NotNext.\n\nThe two losses are then just added together \\[\n\\mathcal{L} = \\mathcal{L}_{MLM} + \\mathcal{L}_{NSP}\n\\]\nThe combined loss is backpropagated through the shared BERT weights in one update step.\n\n\n\nSubsequently, it was found that the NSP objective could be dropped, and that training the model loger with a few other adjustments actually yielded better performance\nLiu Y et al. (2019) RoBERTa: A Robustly Optimized BERT Pretraining Approach. arXiv 1907.11692"
   },
   {
     "objectID": "lectures/bert.html#ffn-expansion-contraction",
     "href": "lectures/bert.html#ffn-expansion-contraction",
     "title": "Approaches to biomedical knowledge",
     "section": "FFN Expansion-Contraction",
-    "text": "FFN Expansion-Contraction\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn BERT-Base, the FFN consists of two linear transformations with a non-linear activation (GELU) in between.\nExpansion-Contraction architecture\nInput \\(x\\): \\(1 \\times 768\\)\n\\(W_1\\): \\(768 \\times 3072\\) (The “Expansion” weights)\n\\(b_1\\): \\(1 \\times 3072\\) (The first bias)\n\\(W_2\\): \\(3072 \\times 768\\) (The “Projection” weights)\n\\(b_2\\): \\(1 \\times 768\\) (The second bias)"
+    "text": "FFN Expansion-Contraction\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn BERT-Base, each encoder block’s FFN is two linear transformations with a non-linear activation (GELU) in between — applied independently, position-wise, to every token\nAn expansion–contraction (bottleneck-in-reverse) architecture\nInput \\(x\\): \\(1 \\times 768\\)\n\\(W_1\\): \\(768 \\times 3072\\) — the expansion weights\n\\(b_1\\): \\(1 \\times 3072\\) — first bias\n\\(W_2\\): \\(3072 \\times 768\\) — the projection weights\n\\(b_2\\): \\(1 \\times 768\\) — second bias"
   },
   {
     "objectID": "lectures/bert.html#berts-ffn-block",
     "href": "lectures/bert.html#berts-ffn-block",
     "title": "Approaches to biomedical knowledge",
     "section": "BERT’s FFN Block",
-    "text": "BERT’s FFN Block\n\n\n\n\n\n\n\n\n\n\n\n\n\nComing back to the FFN architexture, BERT takes the \\(768\\)-dimensional vector from the Add & Norm layer and expands to into a \\(3072\\)-dimensional space before applying the GELU activation function, following which it projects it back to \\(768\\)-dimensional for further processing\n\n\\[\n\\underbrace{1 \\times 768}_{\\text{Input}}\n\\xrightarrow{W_1, b_1}\n\\underbrace{1 \\times 3072}_{\\text{Linear Expansion}}\n\\xrightarrow{\\text{GELU}}\n\\underbrace{1 \\times 3072}_{\\text{Non-linear Activation}}\n\\xrightarrow{W_2, b_2}\n\\underbrace{1 \\times 768}_{\\text{Output}}\n\\]\n\nTodo: explain FFN architexture based on BERT paper - what advantage is there for expanding etc?)"
+    "text": "BERT’s FFN Block\n\n\n\n\n\n\n\n\n\n\n\n\n\nComing back to the FFN: BERT takes the 768-dimensional vector out of the Add & Norm layer, expands it into a 3072-dimensional space, applies GELU, then projects it back down to 768 dimensions for the next block\n\n\\[\n\\underbrace{1 \\times 768}_{\\text{Input}}\n\\xrightarrow{W_1, b_1}\n\\underbrace{1 \\times 3072}_{\\text{Linear Expansion}}\n\\xrightarrow{\\text{GELU}}\n\\underbrace{1 \\times 3072}_{\\text{Non-linear Activation}}\n\\xrightarrow{W_2, b_2}\n\\underbrace{1 \\times 768}_{\\text{Output}}\n\\]"
   },
   {
-    "objectID": "lectures/bert.html#causal-lm-vs.-masked-lm",
-    "href": "lectures/bert.html#causal-lm-vs.-masked-lm",
+    "objectID": "lectures/bert.html#berts-ffn-block-1",
+    "href": "lectures/bert.html#berts-ffn-block-1",
     "title": "Approaches to biomedical knowledge",
-    "section": "Causal LM vs. Masked LM",
-    "text": "Causal LM vs. Masked LM\nTwo different pretraining objectives, both covered in this course:\n\n\n\n\n\n\n\n\n\nCausal LM (GPT-style)\nMasked LM (BERT-style)\n\n\n\n\nDirection\nLeft-to-right only\nBidirectional\n\n\nAttention\nCausal mask (Section 2)\nNo mask — full self-attention\n\n\nPredicts\nNext token, given all past tokens\nRandomly masked tokens, given surrounding context (past and future)\n\n\nNatural use\nText generation\nUnderstanding/representation tasks (classification, extraction)\n\n\nReference\nRadford et al. (2018)1\nDevlin et al. (2019)2\n\n\n\n\nRecall from Part 1: BERT’s masked LM objective randomly replaces ~15% of input tokens with a [MASK] token and asks the model to predict the original — this requires no causal mask, since the model is allowed to look in both directions to fill in the blank.\nA causal LM, by contrast, is never shown a “gap” to fill — it always predicts the next token, and structurally cannot look ahead due to the mask.\nThis is why BERT is well-suited to tasks like classification or span extraction (it builds rich bidirectional representations), while GPT-style\n\n\n\nRadford A, et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAIDevlin J, et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. NAACL-HLT"
+    "section": "BERT’s FFN Block",
+    "text": "BERT’s FFN Block\n\nWhy expand 4×? The attention sub-layer only mixes information that’s already there — it computes weighted averages of existing token vectors, which is a linear-ish operation with no added representational capacity. The FFN is where the model gets nonlinear capacity: projecting up to a much higher-dimensional space before the GELU gives that nonlinearity more “room” to carve out complex feature combinations, and the 4× ratio (\\(3072 = 4 \\times 768\\)) is the ratio Vaswani et al. (2017) fixed in the original Transformer — BERT simply inherits it.\nThe FFN is applied identically and independently at every position (same \\(W_1, b_1, W_2, b_2\\) for every token) — it’s often described as two \\(1\\times1\\) convolutions, and it’s the main place per-token nonlinear processing happens, complementing attention’s role of moving information between positions.\nIn parameter terms, the FFN dominates the model: for BERT-Base, \\(2 \\times 768 \\times 3072 \\approx 4.7M\\) parameters per block just for \\(W_1\\) and \\(W_2\\) combined — roughly two-thirds of each encoder block’s parameters live in the FFN, not the attention heads."
+  },
+  {
+    "objectID": "lectures/bert.html#causal-lm-vs.-masked-lm-recap",
+    "href": "lectures/bert.html#causal-lm-vs.-masked-lm-recap",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Causal LM vs. Masked LM (recap)",
+    "text": "Causal LM vs. Masked LM (recap)\n\n\n\n\n\n\n\n\n\nCausal LM (GPT-style)\nMasked LM (BERT-style)\n\n\n\n\nDirection\nLeft-to-right only\nBidirectional\n\n\nAttention\nCausal mask (Section 2)\nNo mask — full self-attention\n\n\nPredicts\nNext token, given all past tokens\nRandomly masked tokens, given surrounding context (past and future)\n\n\nNatural use\nText generation\nUnderstanding/representation tasks (classification, extraction)\n\n\nReference\nRadford et al. (2018)1\nDevlin et al. (2019)2\n\n\n\nRadford A, et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAIDevlin J, et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. NAACL-HLT"
+  },
+  {
+    "objectID": "lectures/bert.html#fine-tuning-bert-for-text-classification",
+    "href": "lectures/bert.html#fine-tuning-bert-for-text-classification",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Fine-tuning BERT for text classification",
+    "text": "Fine-tuning BERT for text classification\n\nFine-tuning: Adapting the pretrained weights through additional training for a particular task.\nThe pretraining is self-supervised but the fine-tuning is supervised, i.e., we need to have human-curated labels\nPretraining BERT typically might involve billions of examples. Fine-tuning might involve a few thousand labeled examples (six orders of magnitude difference!).\ndemocratization: No individual or university research group has the resources to train a model such as BERT, but are able to develop sophisticated ML models by fine-tuning"
+  },
+  {
+    "objectID": "lectures/bert.html#fine-tuning-bert-for-text-classification-1",
+    "href": "lectures/bert.html#fine-tuning-bert-for-text-classification-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Fine-tuning BERT for text classification",
+    "text": "Fine-tuning BERT for text classification\n\nNext-sentence prediction is an example of binary text classification (isNext, notNext)\nIn general, we can classify text using more categories."
+  },
+  {
+    "objectID": "lectures/bert.html#text-classification-python",
+    "href": "lectures/bert.html#text-classification-python",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Text-classification (Python)",
+    "text": "Text-classification (Python)\n\nWe will demonstrate a Python script to classify text as PHISHING or SAFE\nSetup:\n\npython -m pip install datasets, transformers, evaluate\npython -m pip install \"accelerate&gt;=1.1.0\"\nImport libraries (datasets, evaluate, and transformers are from huggingface)\nfrom datasets import DatasetDict, Dataset\nfrom transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer\nimport evaluate\nimport numpy as np\nfrom transformers import DataCollatorWithPadding\n\nGet datasets (3000 examples with training: 70%; 15%: testing; 15%: validation )\n\nfrom datasets import load_dataset\n# available on huggingface dataset hub\ndataset_dict = load_dataset(\"shawhin/phishing-site-classification\") \n\nadapted from Shaw Talebi Fine-Tuning BERT for Text Classification YouTube"
+  },
+  {
+    "objectID": "lectures/bert.html#google-bertbert-base-uncased",
+    "href": "lectures/bert.html#google-bertbert-base-uncased",
+    "title": "Approaches to biomedical knowledge",
+    "section": "google-bert/bert-base-uncased",
+    "text": "google-bert/bert-base-uncased\n\nThis is the Hugging Face Hub identifier for the original BERT-base model Google released alongside the 2018 paper.\nThe “base” (smaller) model with 12 transformer encoder blocks, hidden size 768, 12 attention heads, FFN inner dimension 3072\nuncased: text is lowercased and accent-stripped before tokenization\n\nmodel_path = \"google-bert/bert-base-uncased\"\ntokenizer = AutoTokenizer.from_pretrained(model_path)\n\nid2label = { 0: \"Safe\", 1: \"Phishing\"}\nlabel2id = { \"Safe\": 0, \"Phishing\": 1}\nmodel = AutoModelForSequenceClassification.from_pretrained(model_path,\n                                                           num_labels=2,\n                                                           id2label=id2label,\n                                                           label2id=label2id,\n                                                           attn_implementation=\"eager\")\n\nThe AutoModelForSequenceClassification class adds a binary classification head to the BERT base model.\nattn_implementation=\"eager\" is needed to avoid the fused SDPA kernel, which is not available from PyTorch’s MPS (Apple GPU) backend1.\n\nYou may not need this on other hardware"
+  },
+  {
+    "objectID": "lectures/bert.html#parameters",
+    "href": "lectures/bert.html#parameters",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Parameters",
+    "text": "Parameters\n\nBy default, all of the model’s parameters (ca. 110,000,000 in this case) are trainable.\nFine-tuning all of them is computationally expensive and, with a small dataset, risks overfitting.\nTo reduce cost and (likely) improve generalization, we freeze the entire pretrained encoder (all 12 transformer blocks) and train only:\n\nthe pooler — a single dense layer + tanh applied to the [CLS] token, still part of base_model, which we explicitly unfreeze, and\nthe classification head added by AutoModelForSequenceClassification — untouched by the loop below since it lives outside base_model, and trainable simply because it’s newly initialized.\n\nNet effect: only 4 parameter tensors update during training (pooler weight/bias, classifier weight/bias)\n\nfor name, param in model.base_model.named_parameters():\n    if \"pooler\" in name:\n        param.requires_grad = True\n    else:\n        param.requires_grad = False"
+  },
+  {
+    "objectID": "lectures/bert.html#preprocess-input-data",
+    "href": "lectures/bert.html#preprocess-input-data",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Preprocess input data",
+    "text": "Preprocess input data\nWe set up a tokenizer and tokenize the input texts.\ndef preprocess_function(examples):\n    return tokenizer(examples[\"text\"], truncation=True)\n\ntokenized_data = dataset_dict.map(preprocess_function, batched=True)\n\nThe Data collator ensures all the examples in a batch have the same length\n\ndata_collator = DataCollatorWithPadding(tokenizer=tokenizer)"
+  },
+  {
+    "objectID": "lectures/bert.html#evaluation",
+    "href": "lectures/bert.html#evaluation",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Evaluation",
+    "text": "Evaluation\naccuracy = evaluate.load(\"accuracy\")\nauc_score = evaluate.load(\"roc_auc\")\n\ndef compute_metrics(eval_pred):\n    # logits and ground truth labels\n    predictions, labels = eval_pred\n    # softmax\n    probabilities = np.exp(predictions)/np.exp(predictions).sum(-1, keepdims=True)\n    positive_class_probs = probabilities[:,1]\n    auc = np.round(auc_score.compute(prediction_scores=positive_class_probs, references=labels)['roc_auc'], 3)\n    predicted_classes = np.argmax(predictions, axis=1)\n    acc = np.round(accuracy.compute(predictions=predicted_classes, references=labels)['accuracy'], 3)\n    return {\"Accuracy\": acc, \"AUC\": auc}\n\nstandard way to evaluate accuracy"
+  },
+  {
+    "objectID": "lectures/bert.html#training-parameters",
+    "href": "lectures/bert.html#training-parameters",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training parameters",
+    "text": "Training parameters\nlr = 2e-4\nbatch_size = 8\nnum_epochs = 10\n\ntraining_args = TrainingArguments(\n    output_dir=\"bert_phishing-classifier_teacher\",\n    learning_rate=lr,\n    per_device_eval_batch_size=batch_size,\n    per_device_train_batch_size=batch_size,\n    num_train_epochs=num_epochs,\n    logging_strategy=\"epoch\",\n    eval_strategy=\"epoch\",\n    save_strategy=\"epoch\",\n    load_best_model_at_end=True\n)"
+  },
+  {
+    "objectID": "lectures/bert.html#fine-tune-model",
+    "href": "lectures/bert.html#fine-tune-model",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Fine-tune model",
+    "text": "Fine-tune model\ntrainer = Trainer(\n    model=model,\n    args=training_args,\n    train_dataset=tokenized_data[\"train\"],\n    eval_dataset=tokenized_data[\"test\"],\n    data_collator=data_collator,\n    compute_metrics=compute_metrics\n)\n\ntrainer.train()"
+  },
+  {
+    "objectID": "lectures/bert.html#results",
+    "href": "lectures/bert.html#results",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Results",
+    "text": "Results\n\n\nThe results on the independent validation set were: Accuracy: 88.7%, AUC94.6%"
+  },
+  {
+    "objectID": "lectures/bert.html#three-task-types-one-encoder",
+    "href": "lectures/bert.html#three-task-types-one-encoder",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Three Task Types, One Encoder",
+    "text": "Three Task Types, One Encoder\n\nAll three tasks below reuse the same pretrained BERT encoder — only the head on top, and which output positions it reads, differ.\n\n\n\n\n\n\n\n\n\nTask type\nReads from\nHead\n\n\n\n\nSentence classification\n[CLS] only\n1 linear layer → softmax over classes\n\n\nToken classification\nevery token\n1 linear layer (shared) → softmax per token\n\n\nQuestion answering (span extraction)\nevery token, over the context\n2 linear layers (start / end logits)"
+  },
+  {
+    "objectID": "lectures/bert.html#task-1-sentence-classification",
+    "href": "lectures/bert.html#task-1-sentence-classification",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Task 1: Sentence Classification",
+    "text": "Task 1: Sentence Classification\n\nExample: sentiment classification — “The movie was great” → {positive, negative}\nInput: [CLS] The movie was great [SEP]\nOnly the [CLS] position’s final hidden state \\(\\mathbf{h}_{\\texttt{[CLS]}} \\in \\mathbb{R}^{d}\\) is used:\n\n\\[\nP(\\text{class}) = \\text{softmax}(\\mathbf{h}_{\\texttt{[CLS]}} W_{\\text{cls}} + b_{\\text{cls}})\n\\]\n\n\\(W_{\\text{cls}} \\in \\mathbb{R}^{d \\times C}\\), where \\(C\\) is the number of classes — this is the only new set of learnable parameters introduced by fine-tuning.\nAll of BERT’s existing weights (attention, FFN, LayerNorm, …) can either be fine-tuned (updated further) or frozen (left as-is) — fine-tuning the whole model usually performs better, but freezing is cheaper."
+  },
+  {
+    "objectID": "lectures/bert.html#worked-example-sentence-classification",
+    "href": "lectures/bert.html#worked-example-sentence-classification",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Worked Example: Sentence Classification",
+    "text": "Worked Example: Sentence Classification\n\n\n\n\n\n\n\n\n\n\nToken\nUsed by classification head?\n\n\n\n\n0\n[CLS]\n✓ (used for classification)\n\n\n1\nThe\n\n\n\n2\nmovie\n\n\n\n3\nwas\n\n\n\n4\ngreat\n\n\n\n5\n[SEP]\n\n\n\n\n\n\n\n\n\n\nOnly the first row ([CLS]) feeds the classification head — the other five tokens’ final representations exist and were computed, but this task simply doesn’t use them.\nThis is different from the next task, where every token’s output matters."
+  },
+  {
+    "objectID": "lectures/bert.html#task-2-token-classification",
+    "href": "lectures/bert.html#task-2-token-classification",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Task 2: Token Classification",
+    "text": "Task 2: Token Classification\n\nExample: Named Entity Recognition (NER) — label each token as PERSON, LOCATION, ORG, or O (none)\nInput: [CLS] Peter works at Anthropic [SEP]\nNow every token position’s final hidden state \\(\\mathbf{h}_i \\in \\mathbb{R}^d\\) gets its own prediction, using the same shared linear layer applied independently at each position:\n\n\\[\nP(\\text{label}_i) = \\text{softmax}(\\mathbf{h}_i W_{\\text{tok}} + b_{\\text{tok}}), \\qquad \\text{for each token } i\n\\]\n\n\\(W_{\\text{tok}} \\in \\mathbb{R}^{d\\times L}\\), where \\(L\\) is the number of entity label types.\nUnlike sentence classification, [CLS] and [SEP] are typically excluded from the loss — they’re structural tokens, not real words with entity labels."
+  },
+  {
+    "objectID": "lectures/bert.html#worked-example-token-classification",
+    "href": "lectures/bert.html#worked-example-token-classification",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Worked Example: Token Classification",
+    "text": "Worked Example: Token Classification\n\n\n\n\n\n\n\n\n\n\nToken\nPredicted label\n\n\n\n\n0\n[CLS]\n—\n\n\n1\nPeter\nB-PERSON\n\n\n2\nworks\nO\n\n\n3\nat\nO\n\n\n4\nAnthropic\nB-ORG\n\n\n5\n[SEP]\n—\n\n\n\n\n\n\n\n\n\nEvery real token gets its own independent prediction from the shared head — “Peter” and “Anthropic” are correctly tagged as the start of a person/organization span, while “works” and “at” are tagged O (outside any entity)."
+  },
+  {
+    "objectID": "lectures/bert.html#task-3-question-answering-span-extraction",
+    "href": "lectures/bert.html#task-3-question-answering-span-extraction",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Task 3: Question Answering (Span Extraction)",
+    "text": "Task 3: Question Answering (Span Extraction)\n\nExample: given a context passage and a question, extract the exact substring of the context that answers it.\nInput: [CLS] Question [SEP] Context [SEP]\nTwo separate linear heads are applied to every token in the context portion, producing a start-logit and an end-logit per token:\n\n\\[\n\\text{start\\_logit}_i = \\mathbf{h}_i \\cdot \\mathbf{w}_{\\text{start}}, \\qquad \\text{end\\_logit}_i = \\mathbf{h}_i \\cdot \\mathbf{w}_{\\text{end}}\n\\]\n\n\\(\\mathbf{w}_{\\text{start}}, \\mathbf{w}_{\\text{end}} \\in \\mathbb{R}^d\\) are learned vectors — softmax over each set of logits gives a probability distribution over “where does the answer start” and “where does it end.”\nThe predicted answer span is the substring between \\(\\arg\\max\\) of the start distribution and \\(\\arg\\max\\) of the end distribution."
+  },
+  {
+    "objectID": "lectures/bert.html#worked-example-question-answering",
+    "href": "lectures/bert.html#worked-example-question-answering",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Worked Example: Question Answering",
+    "text": "Worked Example: Question Answering\n\nQuestion: [CLS] Where does Peter work? [SEP]\nContext: Peter works at Anthropic in San Francisco [SEP]\n\n\n\n\n\n\n\n\n\n\n\nToken\nP(start)\nP(end)\n\n\n\n\n0\nPeter\n0.02\n0.01\n\n\n1\nworks\n0.01\n0.02\n\n\n2\nat\n0.03\n0.02\n\n\n3\nAnthropic\n0.85\n0.80\n\n\n4\nin\n0.04\n0.05\n\n\n5\nSan\n0.03\n0.03\n\n\n6\nFrancisco\n0.02\n0.07\n\n\n\n\n\n\n\n\n\nHighest start probability and highest end probability both land on “Anthropic” — so the extracted answer span is just “Anthropic,” a single token.\nFor a multi-token answer (e.g. “San Francisco”), the start distribution would peak at “San” and the end distribution would peak at “Francisco,” with everything between included in the span."
+  },
+  {
+    "objectID": "lectures/bert.html#sources",
+    "href": "lectures/bert.html#sources",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sources",
+    "text": "Sources\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805\nHugging Face (blog) BERT 101 🤗 State Of The Art"
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",
@@ -4737,6 +4989,13 @@
     "title": "Approaches to biomedical knowledge",
     "section": "Properties of the Positional Encoding (3)",
     "text": "Properties of the Positional Encoding (3)\n\nNotice that the terms \\(\\cos(\\omega_i \\cdot k)\\) and \\(\\sin(\\omega_i \\cdot k)\\) are constants once we pick a fixed distance \\(k\\).\nWe can rewrite the equations above as a matrix multiplication: \\[\n\\begin{align}\n\\begin{bmatrix} \\sin(\\omega_i(pos+k)) \\\\ \\cos(\\omega_i(pos+k)) \\end{bmatrix} &= \\begin{bmatrix} \\cos(\\omega_i k) & \\sin(\\omega_i k) \\\\ -\\sin(\\omega_i k) & \\cos(\\omega_i k) \\end{bmatrix} \\begin{bmatrix} \\sin(\\omega_i pos) \\\\ \\cos(\\omega_i pos) \\end{bmatrix}\\\\\n&= \\begin{bmatrix}\\cos(\\omega_i k) \\sin(\\omega_i pos) +\\sin(\\omega_i k)  \\cos(\\omega_i pos)\\\\\n-\\sin(\\omega_i k)\\sin(\\omega_i pos) +\\cos(\\omega_i k)\\cos(\\omega_i pos)\n\\end{bmatrix}\n\\end{align}\n\\]\nDefine \\(M_k = \\begin{bmatrix} \\cos(\\omega_i k) & \\sin(\\omega_i k) \\\\ -\\sin(\\omega_i k) & \\cos(\\omega_i k) \\end{bmatrix}\\), so that \\(PE_{pos+k} = M_k \\cdot PE_{pos}\\).\n\\(M_k\\) is a rotation matrix: \\(\\det(M_k) = \\cos^2(\\omega_i k) + \\sin^2(\\omega_i k) = 1\\), and \\(M_k M_k^\\top = I\\), so \\(M_k\\) is orthogonal with determinant 1.\nCrucially, \\(M_k\\) depends only on the offset \\(k\\) (and frequency \\(\\omega_i\\)) — and not on the absolute position \\(pos\\)."
+  },
+  {
+    "objectID": "lectures/transformer.html#pe-encodings-review",
+    "href": "lectures/transformer.html#pe-encodings-review",
+    "title": "Approaches to biomedical knowledge",
+    "section": "PE Encodings: Review",
+    "text": "PE Encodings: Review\n\n\nThe positional encodings are computed once and reused for every sentence (training and test/inference)\n\n\nimage: https://github.com/hkproj/bert-from-scratch"
   },
   {
     "objectID": "lectures/transformer.html#distance-1",
