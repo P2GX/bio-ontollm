@@ -21,7 +21,24 @@ format:
     controls: true
 ---
 
-## BERT
+
+## Overview
+
+::: {.callout-note}
+## Game plan
+This lecture provides an introduction to the transformer architecture with a focus on the encoder. 
+:::
+
+- [BERT: training](#bert-training) 
+- [fine tuning](#fine-tuning)
+- [sentence classification](#classification)
+- [NER](#ner)
+
+
+
+
+
+## BERT {#bert-training} 
 
 ::: {.mybox}
 ** Bidirectional Encoder Representations from Transformers(BERT)**:
@@ -397,17 +414,25 @@ $$
 
 
 
-## Fine-tuning BERT for text classification
+## Fine-tuning BERT {#fine-tuning}
+
 - **Fine-tuning**: Adapting the pretrained weights through additional training for a **particular** task.
 - The pretraining is self-supervised but the fine-tuning is supervised, i.e., we need to have human-curated labels
 - Pretraining BERT typically might involve billions of examples. Fine-tuning might involve a few thousand labeled examples (**six orders of magnitude difference!**).
 - **democratization**: No individual or university research group has the resources to train a model such as BERT, but are able to develop sophisticated ML models by fine-tuning
+- The same pre-trained BERT model can be used for various fine tuning tasks
+
+![](img/bert-overall.png){fig-align="center"}
 
 
-## Fine-tuning BERT for text classification
+## Fine-tuning BERT for text classification {#classification}
+
 
 - Next-sentence prediction is an example of binary text classification (isNext, notNext)
+- The following example corresponds to the binary classification explanation above.
 - In general, we can classify text using more categories.
+
+![](./img/bert-single-sentence-ft.png){width="40%" fig-align="center"}
 
 ## Text-classification (Python)
 
@@ -556,56 +581,59 @@ trainer.train()
 
 * The results on the independent validation set were: Accuracy: 88.7%, AUC94.6%
 
+## Single-sentence classification, multiple categories
 
-## Three Task Types, One Encoder
+- [HOMEWORK]{.hw-badge} You will implement a multiple-category classifier
+- Sentences are given one of multiple labels
 
-- All three tasks below reuse the *same* pretrained BERT encoder — only the head on top, and which output positions it reads, differ.
+```python
+from datasets import load_dataset
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
+import evaluate
+import numpy as np
 
-| Task type | Reads from | Head |
-|---|---|---|
-| Sentence classification | `[CLS]` only | 1 linear layer → softmax over classes |
-| Token classification | every token | 1 linear layer (shared) → softmax per token |
-| Question answering (span extraction) | every token, over the context | 2 linear layers (start / end logits) |
-
-
-## Task 1: Sentence Classification
-
-- Example: sentiment classification — "The movie was great" → {positive, negative}
-- Input: `[CLS] The movie was great [SEP]`
-- Only the `[CLS]` position's final hidden state $\mathbf{h}_{\texttt{[CLS]}} \in \mathbb{R}^{d}$ is used:
-
-$$
-P(\text{class}) = \text{softmax}(\mathbf{h}_{\texttt{[CLS]}} W_{\text{cls}} + b_{\text{cls}})
-$$
-
-- $W_{\text{cls}} \in \mathbb{R}^{d \times C}$, where $C$ is the number of classes — this is the *only* new set of learnable parameters introduced by fine-tuning.
-- All of BERT's existing weights (attention, FFN, LayerNorm, ...) can either be fine-tuned (updated further) or frozen (left as-is) — fine-tuning the whole model usually performs better, but freezing is cheaper.
-
-
-## Worked Example: Sentence Classification
-
-::: {.small-table}
-```{python}
-#| echo: false
-import pandas as pd
-
-tokens = ["[CLS]", "The", "movie", "was", "great", "[SEP]"]
-used = ["✓ (used for classification)", "", "", "", "", ""]
-
-df = pd.DataFrame({"Token": tokens, "Used by classification head?": used})
-df
+dataset_name = "ag_news"
+dataset = load_dataset(dataset_name)
+# Similar code
+# To get multiple classes
+n_classes = dataset["train].features["label"].num_classes
+model = AutoModelForSequenceClassification.from_pretrained(model_path,
+                                                           num_labels=n_classes,
+                                                           attn_implementation="eager")
 ```
+
+* Four classes: 1-World, 2-Sports, 3-Business, 4-Sci/Tech
+
+::: {.small-text}
+See: https://www.kaggle.com/datasets/amananandrai/ag-news-classification-dataset
 :::
 
-- Only the first row (`[CLS]`) feeds the classification head — the other five tokens' final representations exist and were computed, but this task simply doesn't use them.
-- This is different from the next task, where *every* token's output matters.
 
 
-## Task 2: Token Classification
+## Named entity recognition {#ner}
 
-- Example: Named Entity Recognition (NER) — label each token as `PERSON`, `LOCATION`, `ORG`, or `O` (none)
-- Input: `[CLS] Peter works at Anthropic [SEP]`
-- Now **every** token position's final hidden state $\mathbf{h}_i \in \mathbb{R}^d$ gets its own prediction, using the *same* shared linear layer applied independently at each position:
+- Named-entity recognition (NER)  seeks to locate and classify named entities mentioned in unstructured text into pre-defined categories such as 
+
+:::: {.columns}
+::: {.column width=50%}
+  - person names (B-PER)
+  - organizations (B-ORG), 
+  - locations (B-LOC)
+  - **ontology codes**, e.g., B-HPO 
+  - etc.
+  - **O**: None
+:::
+::: {.column width=50%}
+
+![](./img/bert-ner.png){fig-align="center"}
+:::
+::::
+
+
+## NER (Token Classification)
+
+
+- **every** token position's final hidden state $\mathbf{h}_i \in \mathbb{R}^d$ gets its own prediction, using the *same* shared linear layer applied independently at each position:
 
 $$
 P(\text{label}_i) = \text{softmax}(\mathbf{h}_i W_{\text{tok}} + b_{\text{tok}}), \qquad \text{for each token } i
@@ -613,24 +641,58 @@ $$
 
 - $W_{\text{tok}} \in \mathbb{R}^{d\times L}$, where $L$ is the number of entity label types.
 - Unlike sentence classification, `[CLS]` and `[SEP]` are typically excluded from the loss — they're structural tokens, not real words with entity labels.
+- Part of speech tagging is analogous
+- Chunking: Find "chunks" of tokens that belong to the same entity (e.g., "Renal insufficiency")
 
+## NER in Python
 
-## Worked Example: Token Classification
+- For the most part, the Python code for NER is very similar to that for single-sentence classification
 
-::: {.small-table}
-```{python}
-#| echo: false
-import pandas as pd
+We need to tell BERT about the following classification
 
-tokens = ["[CLS]", "Peter", "works", "at", "Anthropic", "[SEP]"]
-labels = ["—", "B-PERSON", "O", "O", "B-ORG", "—"]
+```bash
+|   ID | Tag    | Description                |
+|-----:|:-------|:---------------------------|
+|    0 | O      | Outside of a named entity  |
+|    1 | B-PER  | Beginning of a PER entity  |
+|    2 | I-PER  | Inside of a PER entity     |
+|    3 | B-ORG  | Beginning of a ORG entity  |
+|    4 | I-ORG  | Inside of a ORG entity     |
+|    5 | B-LOC  | Beginning of a LOC entity  |
+|    6 | I-LOC  | Inside of a LOC entity     |
+|    7 | B-MISC | Beginning of a MISC entity |
+|    8 | I-MISC | Inside of a MISC entity    |
+``` 
 
-df = pd.DataFrame({"Token": tokens, "Predicted label": labels})
-df
+* We define the model to perform token classification rather than sentence classification
+```python
+model = AutoModelForTokenClassification.from_pretrained(model_path, num_labels=9)
 ```
-:::
+* Most of the rest of the code is the same except for book-keeping details that we will not review here
 
-- Every real token gets its own independent prediction from the shared head — "Peter" and "Anthropic" are correctly tagged as the start of a person/organization span, while "works" and "at" are tagged `O` (outside any entity).
+## NER: Results
+
+* After training the model for about 10 minutes on my laptop, it is already pretty good
+
+```python
+from transformers import pipeline
+
+nlp = pipeline("ner", model=model_fine_tuned, tokenizer=tokenizer)
+example ="Konrad Adenauer was the first Chancellor of Germany"
+ner_results = nlp(example)
+print(ner_results)
+```
+
+* NER predictions:
+
+| Token | Entity | Probability |
+|-------|--------|-------------|
+|konrad | B-PER | 0.9857714|
+| aden | I-PER | 0.9818236 |
+| ##auer | I-PER | 0.979223 |
+| germany | B-LOC | 0.9961558|
+
+
 
 
 ## Task 3: Question Answering (Span Extraction)
