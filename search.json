@@ -2235,8 +2235,15 @@
     "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Tokens\nLecture 9: Transformers\nLecture 10: Transformers (continued)\nLecture 11: BERT and Sentence BERT (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
   },
   {
-    "objectID": "lectures/bert.html#bert",
-    "href": "lectures/bert.html#bert",
+    "objectID": "lectures/bert.html#overview",
+    "href": "lectures/bert.html#overview",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Overview",
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the transformer architecture with a focus on the encoder.\n\n\n\n\nBERT: training\nfine tuning\nsentence classification\nNER"
+  },
+  {
+    "objectID": "lectures/bert.html#bert-training",
+    "href": "lectures/bert.html#bert-training",
     "title": "Approaches to biomedical knowledge",
     "section": "BERT",
     "text": "BERT\n\n** Bidirectional Encoder Representations from Transformers(BERT)**: - Developed in 2018 by researchers at Google AI Language - A swiss army knife solution to many common language tasks, such as sentiment analysis and named entity recognition.\n\n\nBERT was trained on Wikipedia (~2.5B words) and Google’s BooksCorpus (~800M words).\nTrained at Google on 64 TPUs (Tensor Processing Units - roughly speaking, Google’s version of the GPU) over 4 days\nMany other versions of BERT have been trained for various purposes\n\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805"
@@ -2256,8 +2263,8 @@
     "text": "BERT: unidirectional vs bidirectional\n\nThe authors argue that the unidirectionality of models such as GPT limit the choice of architectures that can be used during pre-training because every token can only attend to previous tokens in the self-attention layers of the Transformer.\nSuch restrictions are sub-optimal for sentence-level tasks, and could be very harmful when applying finetuning based approaches to token-level tasks such as question answering, where it is crucial to incorporate context from both directions\n\n\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805"
   },
   {
-    "objectID": "lectures/bert.html#bert-training",
-    "href": "lectures/bert.html#bert-training",
+    "objectID": "lectures/bert.html#bert-training-1",
+    "href": "lectures/bert.html#bert-training-1",
     "title": "Approaches to biomedical knowledge",
     "section": "BERT training",
     "text": "BERT training\n\nBERT is an encoder-only transformer and the training is similar to what was described in previous lectures.\n\n\n\n\n\n\n\n\n\n\n\n\n\nTransformer\nLayers\n Hidden Size\nAttention Heads\nParameters\nProcessing\nLength of Training\n\n\n\n\nBERTbase\n12\n768\n12\n110M\n4 TPUs\n4 days\n\n\nBERTlarge\n24\n1024\n16\n340M\n16 TPUs\n4 days"
@@ -2396,18 +2403,18 @@
     "text": "Causal LM vs. Masked LM (recap)\n\n\n\n\n\n\n\n\n\nCausal LM (GPT-style)\nMasked LM (BERT-style)\n\n\n\n\nDirection\nLeft-to-right only\nBidirectional\n\n\nAttention\nCausal mask (Section 2)\nNo mask — full self-attention\n\n\nPredicts\nNext token, given all past tokens\nRandomly masked tokens, given surrounding context (past and future)\n\n\nNatural use\nText generation\nUnderstanding/representation tasks (classification, extraction)\n\n\nReference\nRadford et al. (2018)1\nDevlin et al. (2019)2\n\n\n\nRadford A, et al. (2018) Improving Language Understanding by Generative Pre-Training. OpenAIDevlin J, et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. NAACL-HLT"
   },
   {
-    "objectID": "lectures/bert.html#fine-tuning-bert-for-text-classification",
-    "href": "lectures/bert.html#fine-tuning-bert-for-text-classification",
+    "objectID": "lectures/bert.html#fine-tuning",
+    "href": "lectures/bert.html#fine-tuning",
     "title": "Approaches to biomedical knowledge",
-    "section": "Fine-tuning BERT for text classification",
-    "text": "Fine-tuning BERT for text classification\n\nFine-tuning: Adapting the pretrained weights through additional training for a particular task.\nThe pretraining is self-supervised but the fine-tuning is supervised, i.e., we need to have human-curated labels\nPretraining BERT typically might involve billions of examples. Fine-tuning might involve a few thousand labeled examples (six orders of magnitude difference!).\ndemocratization: No individual or university research group has the resources to train a model such as BERT, but are able to develop sophisticated ML models by fine-tuning"
+    "section": "Fine-tuning BERT",
+    "text": "Fine-tuning BERT\n\nFine-tuning: Adapting the pretrained weights through additional training for a particular task.\nThe pretraining is self-supervised but the fine-tuning is supervised, i.e., we need to have human-curated labels\nPretraining BERT typically might involve billions of examples. Fine-tuning might involve a few thousand labeled examples (six orders of magnitude difference!).\ndemocratization: No individual or university research group has the resources to train a model such as BERT, but are able to develop sophisticated ML models by fine-tuning\nThe same pre-trained BERT model can be used for various fine tuning tasks"
   },
   {
-    "objectID": "lectures/bert.html#fine-tuning-bert-for-text-classification-1",
-    "href": "lectures/bert.html#fine-tuning-bert-for-text-classification-1",
+    "objectID": "lectures/bert.html#classification",
+    "href": "lectures/bert.html#classification",
     "title": "Approaches to biomedical knowledge",
     "section": "Fine-tuning BERT for text classification",
-    "text": "Fine-tuning BERT for text classification\n\nNext-sentence prediction is an example of binary text classification (isNext, notNext)\nIn general, we can classify text using more categories."
+    "text": "Fine-tuning BERT for text classification\n\nNext-sentence prediction is an example of binary text classification (isNext, notNext)\nThe following example corresponds to the binary classification explanation above.\nIn general, we can classify text using more categories."
   },
   {
     "objectID": "lectures/bert.html#text-classification-python",
@@ -2466,39 +2473,39 @@
     "text": "Results\n\n\nThe results on the independent validation set were: Accuracy: 88.7%, AUC94.6%"
   },
   {
-    "objectID": "lectures/bert.html#three-task-types-one-encoder",
-    "href": "lectures/bert.html#three-task-types-one-encoder",
+    "objectID": "lectures/bert.html#single-sentence-classification-multiple-categories",
+    "href": "lectures/bert.html#single-sentence-classification-multiple-categories",
     "title": "Approaches to biomedical knowledge",
-    "section": "Three Task Types, One Encoder",
-    "text": "Three Task Types, One Encoder\n\nAll three tasks below reuse the same pretrained BERT encoder — only the head on top, and which output positions it reads, differ.\n\n\n\n\n\n\n\n\n\nTask type\nReads from\nHead\n\n\n\n\nSentence classification\n[CLS] only\n1 linear layer → softmax over classes\n\n\nToken classification\nevery token\n1 linear layer (shared) → softmax per token\n\n\nQuestion answering (span extraction)\nevery token, over the context\n2 linear layers (start / end logits)"
+    "section": "Single-sentence classification, multiple categories",
+    "text": "Single-sentence classification, multiple categories\n\nHOMEWORK You will implement a multiple-category classifier\nSentences are given one of multiple labels\n\nfrom datasets import load_dataset\nfrom transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer\nimport evaluate\nimport numpy as np\n\ndataset_name = \"ag_news\"\ndataset = load_dataset(dataset_name)\n# Similar code\n# To get multiple classes\nn_classes = dataset[\"train].features[\"label\"].num_classes\nmodel = AutoModelForSequenceClassification.from_pretrained(model_path,\n                                                           num_labels=n_classes,\n                                                           attn_implementation=\"eager\")\n\nFour classes: 1-World, 2-Sports, 3-Business, 4-Sci/Tech\n\n\nSee: https://www.kaggle.com/datasets/amananandrai/ag-news-classification-dataset"
   },
   {
-    "objectID": "lectures/bert.html#task-1-sentence-classification",
-    "href": "lectures/bert.html#task-1-sentence-classification",
+    "objectID": "lectures/bert.html#ner",
+    "href": "lectures/bert.html#ner",
     "title": "Approaches to biomedical knowledge",
-    "section": "Task 1: Sentence Classification",
-    "text": "Task 1: Sentence Classification\n\nExample: sentiment classification — “The movie was great” → {positive, negative}\nInput: [CLS] The movie was great [SEP]\nOnly the [CLS] position’s final hidden state \\(\\mathbf{h}_{\\texttt{[CLS]}} \\in \\mathbb{R}^{d}\\) is used:\n\n\\[\nP(\\text{class}) = \\text{softmax}(\\mathbf{h}_{\\texttt{[CLS]}} W_{\\text{cls}} + b_{\\text{cls}})\n\\]\n\n\\(W_{\\text{cls}} \\in \\mathbb{R}^{d \\times C}\\), where \\(C\\) is the number of classes — this is the only new set of learnable parameters introduced by fine-tuning.\nAll of BERT’s existing weights (attention, FFN, LayerNorm, …) can either be fine-tuned (updated further) or frozen (left as-is) — fine-tuning the whole model usually performs better, but freezing is cheaper."
+    "section": "Named entity recognition",
+    "text": "Named entity recognition\n\nNamed-entity recognition (NER) seeks to locate and classify named entities mentioned in unstructured text into pre-defined categories such as\n\n\n\n\nperson names (B-PER)\norganizations (B-ORG),\nlocations (B-LOC)\nontology codes, e.g., B-HPO\netc.\nO: None"
   },
   {
-    "objectID": "lectures/bert.html#worked-example-sentence-classification",
-    "href": "lectures/bert.html#worked-example-sentence-classification",
+    "objectID": "lectures/bert.html#ner-token-classification",
+    "href": "lectures/bert.html#ner-token-classification",
     "title": "Approaches to biomedical knowledge",
-    "section": "Worked Example: Sentence Classification",
-    "text": "Worked Example: Sentence Classification\n\n\n\n\n\n\n\n\n\n\nToken\nUsed by classification head?\n\n\n\n\n0\n[CLS]\n✓ (used for classification)\n\n\n1\nThe\n\n\n\n2\nmovie\n\n\n\n3\nwas\n\n\n\n4\ngreat\n\n\n\n5\n[SEP]\n\n\n\n\n\n\n\n\n\n\nOnly the first row ([CLS]) feeds the classification head — the other five tokens’ final representations exist and were computed, but this task simply doesn’t use them.\nThis is different from the next task, where every token’s output matters."
+    "section": "NER (Token Classification)",
+    "text": "NER (Token Classification)\n\nevery token position’s final hidden state \\(\\mathbf{h}_i \\in \\mathbb{R}^d\\) gets its own prediction, using the same shared linear layer applied independently at each position:\n\n\\[\nP(\\text{label}_i) = \\text{softmax}(\\mathbf{h}_i W_{\\text{tok}} + b_{\\text{tok}}), \\qquad \\text{for each token } i\n\\]\n\n\\(W_{\\text{tok}} \\in \\mathbb{R}^{d\\times L}\\), where \\(L\\) is the number of entity label types.\nUnlike sentence classification, [CLS] and [SEP] are typically excluded from the loss — they’re structural tokens, not real words with entity labels.\nPart of speech tagging is analogous\nChunking: Find “chunks” of tokens that belong to the same entity (e.g., “Renal insufficiency”)"
   },
   {
-    "objectID": "lectures/bert.html#task-2-token-classification",
-    "href": "lectures/bert.html#task-2-token-classification",
+    "objectID": "lectures/bert.html#ner-in-python",
+    "href": "lectures/bert.html#ner-in-python",
     "title": "Approaches to biomedical knowledge",
-    "section": "Task 2: Token Classification",
-    "text": "Task 2: Token Classification\n\nExample: Named Entity Recognition (NER) — label each token as PERSON, LOCATION, ORG, or O (none)\nInput: [CLS] Peter works at Anthropic [SEP]\nNow every token position’s final hidden state \\(\\mathbf{h}_i \\in \\mathbb{R}^d\\) gets its own prediction, using the same shared linear layer applied independently at each position:\n\n\\[\nP(\\text{label}_i) = \\text{softmax}(\\mathbf{h}_i W_{\\text{tok}} + b_{\\text{tok}}), \\qquad \\text{for each token } i\n\\]\n\n\\(W_{\\text{tok}} \\in \\mathbb{R}^{d\\times L}\\), where \\(L\\) is the number of entity label types.\nUnlike sentence classification, [CLS] and [SEP] are typically excluded from the loss — they’re structural tokens, not real words with entity labels."
+    "section": "NER in Python",
+    "text": "NER in Python\n\nFor the most part, the Python code for NER is very similar to that for single-sentence classification\n\nWe need to tell BERT about the following classification\n|   ID | Tag    | Description                |\n|-----:|:-------|:---------------------------|\n|    0 | O      | Outside of a named entity  |\n|    1 | B-PER  | Beginning of a PER entity  |\n|    2 | I-PER  | Inside of a PER entity     |\n|    3 | B-ORG  | Beginning of a ORG entity  |\n|    4 | I-ORG  | Inside of a ORG entity     |\n|    5 | B-LOC  | Beginning of a LOC entity  |\n|    6 | I-LOC  | Inside of a LOC entity     |\n|    7 | B-MISC | Beginning of a MISC entity |\n|    8 | I-MISC | Inside of a MISC entity    |\n\nWe define the model to perform token classification rather than sentence classification\n\nmodel = AutoModelForTokenClassification.from_pretrained(model_path, num_labels=9)\n\nMost of the rest of the code is the same except for book-keeping details that we will not review here"
   },
   {
-    "objectID": "lectures/bert.html#worked-example-token-classification",
-    "href": "lectures/bert.html#worked-example-token-classification",
+    "objectID": "lectures/bert.html#ner-results",
+    "href": "lectures/bert.html#ner-results",
     "title": "Approaches to biomedical knowledge",
-    "section": "Worked Example: Token Classification",
-    "text": "Worked Example: Token Classification\n\n\n\n\n\n\n\n\n\n\nToken\nPredicted label\n\n\n\n\n0\n[CLS]\n—\n\n\n1\nPeter\nB-PERSON\n\n\n2\nworks\nO\n\n\n3\nat\nO\n\n\n4\nAnthropic\nB-ORG\n\n\n5\n[SEP]\n—\n\n\n\n\n\n\n\n\n\nEvery real token gets its own independent prediction from the shared head — “Peter” and “Anthropic” are correctly tagged as the start of a person/organization span, while “works” and “at” are tagged O (outside any entity)."
+    "section": "NER: Results",
+    "text": "NER: Results\n\nAfter training the model for about 10 minutes on my laptop, it is already pretty good\n\nfrom transformers import pipeline\n\nnlp = pipeline(\"ner\", model=model_fine_tuned, tokenizer=tokenizer)\nexample =\"Konrad Adenauer was the first Chancellor of Germany\"\nner_results = nlp(example)\nprint(ner_results)\n\nNER predictions:\n\n\n\n\nToken\nEntity\n Probability\n\n\n\n\nkonrad\nB-PER\n 0.9857714\n\n\n aden\n I-PER\n0.9818236\n\n\n##auer\nI-PER\n0.979223\n\n\ngermany\n B-LOC\n 0.9961558"
   },
   {
     "objectID": "lectures/bert.html#task-3-question-answering-span-extraction",
