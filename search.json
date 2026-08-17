@@ -2232,14 +2232,14 @@
     "href": "index.html",
     "title": "Approaches to biomedical knowledge",
     "section": "",
-    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Tokens\nLecture 9: Transformers\nLecture 10: Transformers (continued)\nLecture 11: BERT and Sentence BERT (to do)\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
+    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Tokens\nLecture 9: Transformers\nLecture 10: Transformers (continued)\nLecture 11: BERT and Sentence BERT\nLecture 12: Reinforcement learning and LLMs (to do)\nLecture 13: RAG, Fine tuning, Structured Outputs (to do)\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
   },
   {
     "objectID": "lectures/bert.html#overview",
     "href": "lectures/bert.html#overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview",
-    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the transformer architecture with a focus on the encoder.\n\n\n\n\nBERT: training\nfine tuning\nsentence classification\nNER"
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the transformer architecture with a focus on the encoder.\n\n\n\n\nBERT: training\nfine tuning\nsentence classification\nNER\nSBERT"
   },
   {
     "objectID": "lectures/bert.html#bert-training",
@@ -2508,25 +2508,74 @@
     "text": "NER: Results\n\nAfter training the model for about 10 minutes on my laptop, it is already pretty good\n\nfrom transformers import pipeline\n\nnlp = pipeline(\"ner\", model=model_fine_tuned, tokenizer=tokenizer)\nexample =\"Konrad Adenauer was the first Chancellor of Germany\"\nner_results = nlp(example)\nprint(ner_results)\n\nNER predictions:\n\n\n\n\nToken\nEntity\n Probability\n\n\n\n\nkonrad\nB-PER\n 0.9857714\n\n\n aden\n I-PER\n0.9818236\n\n\n##auer\nI-PER\n0.979223\n\n\ngermany\n B-LOC\n 0.9961558"
   },
   {
-    "objectID": "lectures/bert.html#task-3-question-answering-span-extraction",
-    "href": "lectures/bert.html#task-3-question-answering-span-extraction",
+    "objectID": "lectures/bert.html#sbert",
+    "href": "lectures/bert.html#sbert",
     "title": "Approaches to biomedical knowledge",
-    "section": "Task 3: Question Answering (Span Extraction)",
-    "text": "Task 3: Question Answering (Span Extraction)\n\nExample: given a context passage and a question, extract the exact substring of the context that answers it.\nInput: [CLS] Question [SEP] Context [SEP]\nTwo separate linear heads are applied to every token in the context portion, producing a start-logit and an end-logit per token:\n\n\\[\n\\text{start\\_logit}_i = \\mathbf{h}_i \\cdot \\mathbf{w}_{\\text{start}}, \\qquad \\text{end\\_logit}_i = \\mathbf{h}_i \\cdot \\mathbf{w}_{\\text{end}}\n\\]\n\n\\(\\mathbf{w}_{\\text{start}}, \\mathbf{w}_{\\text{end}} \\in \\mathbb{R}^d\\) are learned vectors — softmax over each set of logits gives a probability distribution over “where does the answer start” and “where does it end.”\nThe predicted answer span is the substring between \\(\\arg\\max\\) of the start distribution and \\(\\arg\\max\\) of the end distribution."
+    "section": "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks",
+    "text": "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks\n\nTo detemrine the similarity between sentences, BERT requires that both sentences are fed into the network\nFinding the most similar pair in a collection of 10,000 sentences requires about 50 million inference computations (~65 hours) with BERT.\nThe construction of BERT makes it unsuitable for semantic similarity search as well as for unsupervised tasks like clustering\n\n\n\nimage from Ortakci (2024) Revolutionary text clustering: Investigating transfer learning capacity of SBERT models through pooling techniques"
   },
   {
-    "objectID": "lectures/bert.html#worked-example-question-answering",
-    "href": "lectures/bert.html#worked-example-question-answering",
+    "objectID": "lectures/bert.html#sentence-bert",
+    "href": "lectures/bert.html#sentence-bert",
     "title": "Approaches to biomedical knowledge",
-    "section": "Worked Example: Question Answering",
-    "text": "Worked Example: Question Answering\n\nQuestion: [CLS] Where does Peter work? [SEP]\nContext: Peter works at Anthropic in San Francisco [SEP]\n\n\n\n\n\n\n\n\n\n\n\nToken\nP(start)\nP(end)\n\n\n\n\n0\nPeter\n0.02\n0.01\n\n\n1\nworks\n0.01\n0.02\n\n\n2\nat\n0.03\n0.02\n\n\n3\nAnthropic\n0.85\n0.80\n\n\n4\nin\n0.04\n0.05\n\n\n5\nSan\n0.03\n0.03\n\n\n6\nFrancisco\n0.02\n0.07\n\n\n\n\n\n\n\n\n\nHighest start probability and highest end probability both land on “Anthropic” — so the extracted answer span is just “Anthropic,” a single token.\nFor a multi-token answer (e.g. “San Francisco”), the start distribution would peak at “San” and the end distribution would peak at “Francisco,” with everything between included in the span."
+    "section": "Sentence-BERT",
+    "text": "Sentence-BERT\n\nWith standard BERT, two sentences are passed to the transformer network and the target value is predicted. -However, this setup is unsuitable for various pair regression tasks due to too many possible combinations.\nFinding in a collection of n = 10 000 sentences the pair with the highest similarity would require \\(n\\cdot(n−1)/2 = 49 995 000\\) inference computations with BERT\nA common method to address clustering and semantic search is to map each sentence to a vector space such that semantically similar sentences are close."
+  },
+  {
+    "objectID": "lectures/bert.html#sentence-vectors",
+    "href": "lectures/bert.html#sentence-vectors",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sentence vectors ?",
+    "text": "Sentence vectors ?\n\nA large disadvantage of the BERT network structure is that no independent sentence embeddings are computed, which makes it difficult to derive sentence embeddings from BERT.\nThe most commonly used approach is to average the BERT output layer (known as BERT embeddings, i.e., before the linear classification layer)\nAlternatively, by using the output of the first token (the [CLS] token).\nHowever, this common practice yields rather bad sentence embeddings"
+  },
+  {
+    "objectID": "lectures/bert.html#sbert-sentence-embeddings",
+    "href": "lectures/bert.html#sbert-sentence-embeddings",
+    "title": "Approaches to biomedical knowledge",
+    "section": "SBERT sentence embeddings",
+    "text": "SBERT sentence embeddings\n\n\nCreation of sentence vector: The linear classification layer of BERT is not used\nThe attention outputs are pooled to derive a fixed sentence embedding"
+  },
+  {
+    "objectID": "lectures/bert.html#sbert-sentence-embeddings-1",
+    "href": "lectures/bert.html#sbert-sentence-embeddings-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "SBERT sentence embeddings",
+    "text": "SBERT sentence embeddings\n\nSBERT assesses the similarity of two sentences by the cosine similarity of their vectors\n\n\\[\n\\mathrm{sim}(\\mathbf{x},\\mathbf{y}) =\n\\frac{\\mathbf{x}\\cdot \\mathbf{y}}{\\Vert \\mathbf{x} \\Vert\n\\Vert \\mathbf{y}\n\\Vert} =\n\\frac{\\sum_i A_i\\cdot B_i}{\\sqrt{\\sum_i A_i^2}\\cdot \\sqrt{\\sum_i B_i^2}}\n\\]\n\nBut nobody told BERT that the sentence embeddings it produces should be compatible with cosine similarity\nHow do we teach BERT to do this?"
+  },
+  {
+    "objectID": "lectures/bert.html#training-objective-1-classification-nli",
+    "href": "lectures/bert.html#training-objective-1-classification-nli",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training objective 1: Classification (NLI)",
+    "text": "Training objective 1: Classification (NLI)\n\nSBERT is first trained on natural language inference (NLI) data: SNLI (570,000 pairs) + MultiNLI, each pair labeled entailment, contradiction, or neutral\nThe two sentences (premise, hypothesis) are encoded independently by the siamese BERT, then mean-pooled to give sentence vectors \\(u\\) and \\(v\\)\nThese are combined into a single feature vector:\n\n\\[\n(u, v, |u-v|)\n\\]\n\n\\(|u - v|\\) is the element-wise absolute difference — it makes the relationship between the two embeddings explicit, rather than making the classifier re-derive it from \\(u\\) and \\(v\\) alone\nThis concatenated vector (size \\(3n\\), e.g. \\(3\\times768\\)) is passed through a trainable linear layer \\(W_t\\) and softmax:\n\n\\[\no = \\mathrm{softmax}\\big(W_t\\,(u, v, |u-v|)\\big)\n\\]\n\nTrained with standard cross-entropy loss against the gold label (entailment / contradiction / neutral)"
+  },
+  {
+    "objectID": "lectures/bert.html#classification-nli",
+    "href": "lectures/bert.html#classification-nli",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Classification (NLI)",
+    "text": "Classification (NLI)\n\nNLI pairs aren’t “similar sentences” in the STS sense — they’re purpose-built: crowdworkers wrote three different hypotheses (one entailed, one neutral, one contradictory) for each premise\nThis forces the model to learn fine-grained semantic distinctions — not just “same topic,” but “does this logically follow?”\n\\(W_t\\) is a training-time-only scaffold: at inference, it’s discarded — only the sentence encoder + pooling is kept\nAfter NLI training, SBERT is fine-tuned further on the STS Benchmark using the cosine-similarity + MSE objective (next slide) — NLI gives the encoder broad semantic competence, STS calibrates it for graded similarity"
+  },
+  {
+    "objectID": "lectures/bert.html#training",
+    "href": "lectures/bert.html#training",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training",
+    "text": "Training\n\n\nWe have two “copies” of the same BERT model (“siamese twins”)\nOne copy creates a sentence vector for sentence A, the other copy for sentence B\nThe cosine similarity between the two sentence embeddings u and v is computed . We use mean squared-error loss as the objective function\nThe STS Benchmark: Human annotators then rated each pair’s semantic similarity on a continuous 0–5 scale (5 = same meaning, 0 = unrelated topics)"
+  },
+  {
+    "objectID": "lectures/bert.html#rag",
+    "href": "lectures/bert.html#rag",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RAG",
+    "text": "RAG\n\nSBERT is often used to implement a step of retrieval augmented generation (RAG)\ntodo"
   },
   {
     "objectID": "lectures/bert.html#sources",
     "href": "lectures/bert.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805\nHugging Face (blog) BERT 101 🤗 State Of The Art"
+    "text": "Sources\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805\nHugging Face (blog) BERT 101 🤗 State Of The Art\nRogers A et al. (2020) A Primer in BERTology: What we know about how BERT works. arXiv 2002.12327"
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",
