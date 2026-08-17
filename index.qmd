@@ -45,7 +45,7 @@ both topics as well as several sessions in which we show how ontologies and LLMs
 *   [Lecture 8: Embeddings and Tokens](lectures/embeddings.qmd)
 *   [Lecture 9: Transformers](lectures/transformer.qmd)
 *   [Lecture 10: Transformers (continued)](lectures/transformer2.qmd)
-*   Lecture 11: BERT and Sentence BERT (to do)
+*   [Lecture 11: BERT and Sentence BERT](lectures/bert.qmd)
 *   Lecture 12: Reinforcement learning and LLMs (to do)
 *   Lecture 13: RAG, Fine tuning, Structured Outputs  (to do)
 *   Lecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)
