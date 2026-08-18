@@ -1,17 +1,24 @@
 ---
-title: "Bioontologies: Semantic Similarity"
-subtitle: "Human Phenotype Ontology: Phenomizer"
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #4: Human Phenotype Ontology and algorithms"
 author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
 jupyter: python3
 format: 
   revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
+    slide-number: true
+    show-slide-number: all
     incremental: false 
     html-math-method: mathjax
-    margin: 0.05
+    margin: 0.1
     embed-resources: true
-    css: /style/styles.css
-filters:
-  - pseudocode
+    transition: fade
+    background-transition: convex
+    controls: true
 ---
 
 
@@ -148,11 +155,11 @@ $$
 \end{aligned}
 $$
 
-::: {.callout-note title="relevance for IC"}
+::: {.callout-note title="Properties of logarithms: Review"}
 
-* **$\log 1 = 0$**: Explains why the Root node ($p=1$) always has an Information Content of $0$.
-* **$\log \frac{1}{x} = -\log x$**: This is the identity that allows us to write $IC(t) = \log \frac{1}{p(t)}$ as $IC(t) = -\log p(t)$.
-* **$\log xy = \log x + \log y $**: Useful when calculating the joint probability of independent concepts.
+* $\log 1 = 0$: Explains why the Root node ($p=1$) always has an Information Content of $0$.
+* $\log \frac{1}{x} = -\log x$: This identity implies: $IC(t) = \log \frac{1}{p(t)}$ as $IC(t) = -\log p(t)$.
+* $\log xy = \log x + \log y$.
 :::
 
 
@@ -414,30 +421,6 @@ $$
 \end{eqnarray*}
 $$
 
-# Bioinformatics
-
-*  Since the beginnings of the field of Bioinformatics in the 1960s, a central theme has been 
-the development of algorithms that calculate similarity scores between biological entities and use 
-them to rank lists
-
-::: {.columns}
-::: {.column width="50%"}
-
-![](./img/blast.jpg){fig-align="center" width=80%"}
-
-* BLAST: Find and rank homologous sequences
-
-:::
-::: {.column width="50%"}
-
-![](./img/Margaret_Oakley_Dayhoff.jpg){fig-align="center" width="70%"}
-
-
-* Margaret Dayhoff, originator of PAM matrices
-
-:::
-:::
-
 
 ## HPO
 
@@ -496,23 +479,7 @@ This lecture covers a review of artificial neural networks and backpropagation a
 ![EKG](./img/EKG.png){width="50%"}
 :::
 
-
-# What's The Problem?
-
-*  Phenotypic descriptions that are very evocative for humans:
-  - myopathic electromyography
-  - still walking 25 years after onset
-* The following descriptions mean the same thing to you: `generalized amyotrophy`, 
-`generalized muscle atrophy`, `muscular atrophy, generalized`,
-(etc)
-* Databases cannot talk to one another about phenotypes
-* Many publications have little^[or none at all] information about the actual phenotypic features seen in patients with particular diseases and variants
-
-
-<br>
-
-
-# A tale of two footballs
+## A tale of two footballs
 $$
 \begin{equation*}
 \mbox{American Football} = \mbox{Football} \neq
@@ -538,7 +505,7 @@ A football $\ldots$
 ::: 
 
 
-# A tale of two fibrillations
+## A tale of two fibrillations
 $$
 \begin{equation*}
 \mbox{muscle fibrillation} = \mbox{fibrillation} \neq
@@ -549,14 +516,14 @@ $$
 ::: {.columns}
 ::: {.column width="50%"}
 
-![](./img/muscle_fibrillation.jpg){width="30%"}
+![](./img/muscle_fibrillation.jpg){width="50%" fig-align="center"}
 
 fibrillation $\ldots$
 
 ::: 
 ::: {.column width="50%"}
 
-![](./img/ventricular_fibrillation.jpg){width="30%"}
+![](./img/ventricular_fibrillation.jpg){width="100%" fig-align="center"}
 
 fibrillation $\ldots$
 :::
@@ -588,10 +555,10 @@ Precise language (and thinking), interoperability, and improved database models 
 
 
 ::: {style="font-size: 0.45em; margin-top: 50px;"}
-Robinson PN, Webber C (2014) Phenotype ontologies and cross-species analysis for translational research. *PLoS Genet* **10**:e1004268.
+Robinson PN, Webber C (2014) [Phenotype ontologies and cross-species analysis for translational research. *PLoS Genet* **10**:e1004268](https://pubmed.ncbi.nlm.nih.gov/24699242/).
 :::
 
-# Deep Phenotyping
+## Deep Phenotyping
 The precise and comprehensive analysis of phenotypic abnormalities.
 
 - Individual components of the phenotype are observed and described using a controlled vocabulary.
@@ -601,11 +568,11 @@ The precise and comprehensive analysis of phenotypic abnormalities.
 - Scientific examination of human disease.
 
 ::: {style="font-size: 0.45em; margin-top: 50px;"}
-PN Robinson (2012) Deep phenotyping for precision medicine. *Hum Mutat* __33__: 777–780. Special Issue of Human Mutation on Deep Phenotyping
+PN Robinson (2012) [Deep phenotyping for precision medicine. *Hum Mutat* **33**:777–780](https://pubmed.ncbi.nlm.nih.gov/22504886/). Special Issue of Human Mutation on Deep Phenotyping
 :::
 
 
-# Ontologies for Medical Bioinformatics
+## Ontologies for Medicine and Translational Research
 
 ::: {.callout-note appearance="simple"}
 ### Core Purpose
@@ -616,7 +583,10 @@ PN Robinson (2012) Deep phenotyping for precision medicine. *Hum Mutat* __33__: 
 - Foundation for algorithms and computational tools
 
 
-# Ontologies: Interoperability
+![](./img/nejm-fanconi.png){fig-align="center" width="75%"}
+
+
+## Ontologies: Interoperability
  
 ::: {.columns}
 ::: {.column width="50%"}
@@ -636,11 +606,14 @@ PN Robinson (2012) Deep phenotyping for precision medicine. *Hum Mutat* __33__: 
 * Global Alliance for Genomics and Health (GA4GH) and other groups are
 defining standards to exchange and integrate information between databases
 across the globe
-** This is particularly difficult for __clinical data__!^[Brookes and Robinson (2015) Human genotype-phenotype databases: aims,
-challenges and
-opportunities, *Nature Reviews Genetics* __16__:702-15]
+* This is particularly difficult for __clinical data__!
 
-# Interoperability: What's the problem?
+::: {.tiny-credit}
+Brookes and Robinson (2015) [Human genotype-phenotype databases: aims,challenges and
+opportunities, *Nature Reviews Genetics* **16**:702-15](https://pubmed.ncbi.nlm.nih.gov/26553330/)
+:::
+
+## Interoperability: What's the problem?
 
 - Phenotypic descriptions that are very evocative for
 humans^[Unfortunately computers, being significantly dumber than humans, don't quite ``get'' it...]:
@@ -653,9 +626,8 @@ humans^[Unfortunately computers, being significantly dumber than humans, don't q
 * Many publications have little^[or none at all] information about the actual phenotypic features seen in patients with particular diseases and variants
 * Databases cannot talk to one another about phenotypes
 
-- [Todo: Mainly duplicated from above)]{.neon-todo}
 
-![](img/communication.jpg){width="50%"}
+![](img/communication.jpg){width="50%" fig-align="center"}
 
 
 ## Ontologies: Interoperability
@@ -698,9 +670,6 @@ Ontologies are used for myriad applications in biomedical research and translati
 
 ::::
 
-## Ontology-Driven Representation of Biomedical Data
-
-![](./img/nejm-fanconi.png){fig-align="center" width="75%"}
 
 
 
