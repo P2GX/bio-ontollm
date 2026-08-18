@@ -7,7 +7,7 @@ format:
   revealjs:
     theme: [default] 
     css: ../style/styles.css              
-    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
     slide-number: true
     show-slide-number: all
     incremental: false 
@@ -19,8 +19,15 @@ format:
     controls: true
 ---
 
+## Overview
 
-## Gene Ontology
+* [Gene Ontology (GO)](#go)
+* [GO Overrepresentation Analysis](#gora)
+* [Gene-Set Enrichment Analysis](#gsea)
+* [GO Causal Activity Modeling](#gocam) 
+
+
+## Gene Ontology {#go}
 
 ::: {.callout-note appearance="simple"}
 The Gene Ontology (GO) is being developed with the goal of providing a set of 
@@ -248,7 +255,7 @@ Many high-throughput analyses filter out **IEA** codes because they are automate
 :::
 
 
-## GO: Overrepresentation Analysis
+## GO: Overrepresentation Analysis {#gora}
 
 ::: {.callout-tip icon=false}
 ### The Situation
@@ -623,7 +630,7 @@ $$
 
 - [HOMEWORK]{.hw-badge} You will process several datasets with the Ontologizer to gain intuition about GO TfT analysis.
 
-## Gene set enrichment analysis
+## Gene set enrichment analysis {#gsea}
 
 - Drawbacks of GO Overrepresentation Analysis (GOOA)
     - After correcting for multiple hypotheses testing, no individual gene may meet the threshold for statistical significance, because the relevant biological differences are modest relative to the noise inherent to the microarray technology.
@@ -787,6 +794,117 @@ Sources:
 - Mootha VK, et al. (2003) PGC-1alpha-responsive genes involved in oxidative phosphorylation are coordinately downregulated in human diabetes. Nat Genet. **34**:267-73.  PMID:12808457.
 :::
 
+
+## Gene Ontology Causal Activity Modeling (GO-CAM) {#gocam}
+::: {.mybox}
+**GO-CAM**:
+
+- GO-CAM, a structured framework for linking multiple GO annotations into an integrated model of a biological system.
+:::
+
+- The development of the GO has always been tightly coupled to its use in describing the functions of genes across a wide variety of organisms.
+- However, biology is better understood as a collection of coupled pathways rather than a set of individual annotations
+
+## GO: Traditional Annotation Modeling
+
+![](./img/standard-go-annotation.png)
+
+- A standard GO annotation is a gene product associated to a GO term, using an evidence code and a supporting reference (a primary research article, for example). 
+- These are the annotations we were examining in the previous sections
+- each GO annotation is necessarily a partial functional description, and there is no representation of how different annotations for the same gene fit together into a more complete description.
+
+::: {.tiny-credit}
+Image: https://geneontology.org/docs/gocam-overview/
+:::
+
+## GO-CAM models
+
+:::: {.columns}
+::: {.column width=70%}
+
+![](./img/go-vs-gocam.png){fig-align="center" width="100%"}
+
+:::
+::: {.column width=30%}
+
+A GO-CAM model is a combination of standard GO annotations to produce a network of annotations (“model”) that is a more complete model of biological function than the separate annotations.
+- **a)**: set of disconnected GO annotations
+- **b)**: GO-CAM model links together GO annotations into a structured model of NEDD4 functions
+:::
+::::
+
+## Specification of the GO-CAM model
+:::: {.columns}
+::: {.column width=70%}
+
+![](./img/gocam-model.png){fig-align="center" width="100%"} 
+
+:::
+::: {.column width=30%}
+
+- a **molecular activity** (GO molecular function annotation) of a gene product occurs 
+- in a **location** (GO cellular component annotation) 
+- is part of a larger **biological program** (GO biological process annotation). 
+
+- In GO-CAM, relations to terms from other ontologies can provide additional specificity: 
+    - for location, a cellular component can be part of a specified cell type, 
+    - which in turn can be part of a specified anatomical structure; 
+    - an activity can occur during a specified temporal period (biological phase)
+:::
+::::
+
+
+## GO-CAMs leverage other ontologies to specify biological activities
+
+- The ontologies used to specificy entities shown in the above Figure include
+
+
+::: {.small-text}
+
+| GO-CAM element  | Ontology or identifier source(s) | Example |
+|---|---|---|
+| Molecular activity | GO molecular function | ubiquitin-protein transferase activity (GO:0004842) |
+| Biological process | GO biological process | cellular response to UV (GO:0034644) |
+| Location | GO cellular component | nucleus (GO:0005634) |
+| | Cell Type Ontology (CL) | retinal cell (CL:0009004) |
+| | anatomy ontologies, e.g. UBERON, *C. elegans* gross anatomy, EMAPA | eye (UBERON:0000970) |
+| Active entity | Gene, protein, RNA or complex identifier from a standard source, e.g. HGNC for a human gene | NEDD4 (HGNC:7727) |
+| Target entity | Same as active entity, or chemical from ChEBI | MAP2K1 (HGNC:6840) |
+| Biological phase | GO biological phase (GO:0044848) | mitotic G1 phase (GO:0000080) |
+| | Developmental phase ontology, e.g. Mouse Developmental Stage | Theiler stage 02 (MmusDv:0000005) |
+| Relations | Relations Ontology | occurs in (BFO:0000066) |
+
+:::
+
+* For instance, to browse the UBERON ontology, use the [OLS site](https://www.ebi.ac.uk/ols4/ontologies/uberon)
+
+## GO-CAM browser
+
+* negative regulation of canonical Wnt signaling pathway
+
+![](./img/gocam-broswer.png){fig-align="center" width="100%"} 
+
+::: {.small-text}
+[GOCAM Browser](https://go-cam-browser.geneontology.org/)
+:::
+
+::: {.tiny-credit}
+Thomas PD, et al. (2019) [Gene Ontology Causal Activity Modeling (GO-CAM) moves beyond GO annotations to structured descriptions of biological functions and systems. *Nat Genet* **51**:1429-1433](https://pubmed.ncbi.nlm.nih.gov/31548717/)
+:::
+
+## PAN-GO
+
+- Another fascinating resource is PAN-GO
+- explicit evolutionary modelling was applied  to all human protein-coding genes
+- into models that reconstruct the gain and loss of functional characteristics over evolutionary time
+- This allowed additional GO annotations to be inferred, with the resulting set of 68,667 integrated gene functions cover approximately 82% of human protein-coding genes
+
+![](./img/pan-go.png){fig-align="center" width="70%"} 
+
+::: {.tiny-credit}
+Feuermann M, et al. (2025) [A compendium of human gene functions derived from evolutionary modelling. *Nature* **640**:146-154](https://pubmed.ncbi.nlm.nih.gov/40011791/)
+:::
+
 ## Conclusion
 
 - A major use case for bioontologies such as GO that are used to annotate biological domains (genes and gene products) is to visualize terms (biological concepts) that are overrepresented in experimental results
@@ -794,3 +912,14 @@ Sources:
     - GO Overrepresentation Analysis (Fisher Exact Test)
     - Gene-set Enrichment Analysis
 - Both approaches typically require multiple testing correction because they perform hundreds or even thousands of individual tests
+- New approaches such as GOCAM and PAN-GO are making GO modelling more sophisticated and providing more comprehensive functional annotations
+- A foundation for understanding biology and developing bioinformatics algorithms and analysis pipelines.
+
+
+## Sources
+
+- Gene Ontology Consortium (2026) [The Gene Ontology knowledgebase in 2026. *Nucleic Acids Res* **54**:D1779-D1792](https://pubmed.ncbi.nlm.nih.gov/41413728/).
+- Bauer S, et al. (2008) Ontologizer 2.0--a multifunctional tool for GO term enrichment analysis and data exploration. *Bioinformatics* **24**:1650-1](https://pubmed.ncbi.nlm.nih.gov/18511468/) 
+- Subramanian A, et al. (2005) Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S A. **102**:15545-50 PMID: 16199517.
+- Mootha VK, et al. (2003) PGC-1alpha-responsive genes involved in oxidative phosphorylation are coordinately downregulated in human diabetes. Nat Genet. **34**:267-73.  PMID:12808457.
+- Thomas PD, et al. (2019) [Gene Ontology Causal Activity Modeling (GO-CAM) moves beyond GO annotations to structured descriptions of biological functions and systems. *Nat Genet* **51**:1429-1433](https://pubmed.ncbi.nlm.nih.gov/31548717/)
