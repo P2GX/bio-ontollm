@@ -1,19 +1,25 @@
 ---
-title: "Bioontologies: MGSA: GOing Bayesian"
-subtitle: "Model-based gene-set analysis"
+title: "Approaches to biomedical knowledge"
+subtitle: "Session #3: Model-based gene-set analysis: MGSA"
 author: "Peter N Robinson"
+institute: "Free University Berlin"
+date: 2026-04-26
 jupyter: python3
 format: 
   revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
+    slide-number: true
+    show-slide-number: all
     incremental: false 
     html-math-method: mathjax
-    margin: 0.05
+    margin: 0.1
     embed-resources: true
-    css: /style/styles.css
-filters:
-  - pseudocode
+    transition: fade
+    background-transition: convex
+    controls: true
 ---
-
 
 
 ## Problems with the term-for-term approach
@@ -101,8 +107,7 @@ The GenGO algorithm can be explained with the use of several
 categories.
 
 * $A_g$: `ON` gene node that is connected to at least one
-  `active` GO term (e.g., genes B and C in
-  @fig-gengo.
+  `active` GO term (e.g., genes B and C).
 * $A_n$: `ON` gene node that is *not* connected to any
   `active` GO term (e.g., gene A).
 * $I$: `OFF` gene node (e.g., genes D and E).
@@ -138,8 +143,9 @@ One can then define a scoring function that is to be maximized,
 whereby $C$ is the set of `active` GO terms in the current
 iteration.
 $$
-\mathcal{L}(C|p,q,G) = |A_g|\log a + |A_n|\log b   + \; |S_g|\log (1-a)
-+ |S_n| \log (1-b) - \alpha |C|
+\mathcal{L}(C|p,q,G) = \underbrace{|A_g|\log p}_{\mathrm{TP}} + \underbrace{|A_n|\log q}_{\mathrm{TN}} 
++ \; \underbrace{|S_g|\log (1-p)}_{\mathrm{FP}}
++ \underbrace{|S_n| \log (1-q)}_{\mathrm{FN}} - \underbrace{\alpha |C|}_{\sim\mathrm{regularization}}
 $$ {#eq-gengo}
 
 
@@ -148,7 +154,7 @@ $$ {#eq-gengo}
 The first four terms of @eq-gengo are equivalent to the logarithm of the following equation
 
 $$
-a^{|A_g|}b^{|A_n|}(1-a)^{|S_g|}(1-b)^{|S_n|}
+p^{|A_g|}q^{|A_n|}(1-p)^{|S_g|}(1-q)^{|S_n|}
 $$ {#eq-genGO-no-log}
 
 
@@ -180,39 +186,27 @@ GenGO performs iterations where all
 
 :::
 
-- [Todo:  pseudocode not showing - debug quarto code)]{.neon-todo}
+::: {.pseudocode}
+**Require:** study set $\mathcal{S}$, population set $\mathcal{P}$, Gene Ontology $\mathcal{G}$, annotations $\mathcal{A}$
 
+1. $C \gets \emptyset$
+2. **repeat**
+   - **for all** $t \in \mathcal{G}$ **do**
+     - $t_L \gets \operatorname{argmax}_{t \in C}\, \mathcal{L}(C \setminus \{t\})$
+     - $t_M \gets \operatorname{argmax}_{t \in \mathcal{G} \setminus C}\, \mathcal{L}(C \cup \{t\})$
+     - **if** $\mathcal{L}(C \setminus \{t_L\}) > \mathcal{L}(C \cup \{t_M\})$ **then**
+       - $C \gets C \setminus \{t_L\}$
+     - **else**
+       - $C \gets C \cup \{t_M\}$
+     - **end if**
+   - **end for**
+3. **until** no further improvement of score $\mathcal{L}(C)$
+4. **return** $C$
+:::
 
-```pseudocode
-#| html-indent-size: "1.2em"
-#| html-comment-delimiter: "//"
-#| html-line-number: true
-#| html-line-number-punc: ":"
-#| html-no-end: false
-#| pdf-placement: "htb!"
-#| pdf-line-number: true
-#| pdf-comment-delimiter: "//"
-
-\begin{algorithm}
-\begin{algorithmic}
-\Require study set $\mathcal{S}$, population set $\mathcal{P}$, Gene Ontology $\mathcal{G}$, annotations $\mathcal{A}$
-\State $C \gets \emptyset$
-\Repeat
-    \Forall{$t \in \mathcal{G}$}
-        \State $t_L = \text{argmax}_{t \in C} \mathcal{L}(C \setminus \{t\})$
-        \State $t_M = \text{argmax}_{t \in \mathcal{G} \setminus C} \mathcal{L}(C \cup \{t\})$
-        \If{$\mathcal{L}(C_L) > \mathcal{L}(C_M)$}
-            \State $C \gets C \setminus \{t\}$
-        \Else
-            \State $C \gets C \cup \{t\}$
-        \EndIf
-    \EndFor
-\Until{No further improvement of score $\mathcal{L}(C)$}
-\Return $C$
-\end{algorithmic}
-\end{algorithm}
-```
-
+::: {.tiny-credit}
+Lu Y, et al. (2008) [A probabilistic generative model for GO enrichment analysis. Nucleic Acids Res **36**:e109](https://pubmed.ncbi.nlm.nih.gov/18676451/)
+:::
  
 ## GenGO (7)
 
@@ -226,19 +220,15 @@ overrepresentation methods described in the previous chapter.
 
 
 * However, the score and the optimization algorithm are heuristics without much statistical 
-rigour
+rigor
 * It seemed possible to improve upon this result using Bayesian methodologies
-
-
-## MGSA (1)
-
 *  Model-based gene set analysis (MGSA) is similar to GenGO in that it seeks to identify an optimal combination of GO terms to ``explain'' the results of microarray or other high-throughput
 experiments. 
 *  MGSA differs from genGO in that it embeds the GO terms and
 the genes they annotate into a Bayesian network and uses probabilistic
 methods to search for the optimal combination. 
 
-## MGSA (2)
+## MGSA
 
 * Similar to genGO, MGSA assumes that the experiment attempts to detect genes that have a particular `state` (such as differential expression),
 which can be `ON` or `OFF`. The true state of any gene is hidden. 
@@ -265,10 +255,14 @@ identify a relatively low number of `active` terms.
 ## Structure of the MGSA Network
 
 Gene categories, or terms ($T_i$) that constitute the first layer can be either
-`active` or `inactive`. Terms that are `active` activate the hidden state
-($H_j$) of all genes annotated to them, with the other genes remaining `OFF`. The
+`active` or `inactive`. 
+
+* Terms that are `active` activate the hidden state
+($H_j$) of all genes annotated to them, with the other genes remaining `OFF`. 
+* The
 observed states ($O_j$) of the genes are noisy observations of
-their true hidden state. The parameters of the model (dashed nodes) are the
+their true hidden state. 
+* The parameters of the model (dashed nodes) are the
 prior probability of each term to be `active`, $p$, the false positive rate, $\alpha$,
 and the false negative rate, $\beta$.
 
@@ -298,8 +292,7 @@ layers that is augmented with a set of parameters.
 :::
 
 
-* \textcolor{gray}{A \emph{term layer}  }
-* A \emph{hidden layer} $H=\{H_1,\ldots,H_n\}$ that contains Boolean nodes
+* A *hidden layer* $H=\{H_1,\ldots,H_n\}$ that contains Boolean nodes
  representing the $n$ annotated genes. There are edges
  from the terms to the genes they annotate.
 * For instance, if gene $H_1$ is annotated to terms $T_1$ and $T_2$ then there is an edge between 
@@ -307,34 +300,11 @@ $T_1$ and $H_1$
  and another edge between $T_2$ and $H_1$. The state of the nodes reflects the
  true activation pattern of the genes. Each node can have the state
 values `ON` (1), or `OFF` (0). 
-
-## Structure of the MGSA Network}
-
-
-::: {.callout-note appearance="simple"}
-  More formally, the model can be described using a Bayesian network with three
-layers that is augmented with a set of parameters.
-:::
-
-* \textcolor{gray}{A \emph{term layer}  }
-* \textcolor{gray}{A \emph{hidden layer}}
-* An \emph{observed layer} $O=\{O_1,\ldots,O_n\}$ that contains Boolean
+* An **observed layer**: $O=\{O_1,\ldots,O_n\}$ that contains Boolean
  nodes reflecting the state of all observed genes. The observed gene state nodes are
  directly connected to the corresponding hidden gene state nodes in a
  one-to-one fashion.
-
-
-## Structure of the MGSA Network
-
-::: {.callout-note appearance="simple"}
-  More formally, the model can be described using a Bayesian network with three
-layers that is augmented with a set of parameters.
-:::
-
-* \textcolor{gray}{A \emph{term layer}  }
-* \textcolor{gray}{A \emph{hidden layer}}
-* \textcolor{gray}{An \emph{observed layer} }
-* A \emph{parameter set} that contains continuous nodes with values in
+* A *parameter set* that contains continuous nodes with values in
  $[0,1]$ corresponding to the parameters of the model $\alpha$, $\beta$ and
  $p$. These parameterize the distributions of the observed and the term layer
  as detailed below.
@@ -706,35 +676,25 @@ $$
 
 ## MGSA
 
-```pseudocode
-#| html-indent-size: "1.2em"
-#| html-comment-delimiter: "//"
-#| html-line-number: true
-#| html-line-number-punc: ":"
-#| html-no-end: false
-#| pdf-placement: "htb!"
-#| pdf-line-number: true
-#| pdf-comment-delimiter: "//"
+::: {.pseudocode}
+**Require:** $O$, $l$ (number of steps)
 
-\begin{algorithm}
-\begin{algorithmic}
-\REQUIRE $O$, $l$ (number of steps)
-\STATE $T^t \gets (0,\ldots,0)$
-\FOR{$t \gets 1$ \TO $l$}
-    \STATE $T^p \sim Q_T(\cdot|T^t)$, i.e., choose a neighbor by:
-    \STATE - Toggling a term
-    \STATE - Exchanging an active term with an inactive one
-    \STATE $a \gets \text{AcceptanceRatio}$
-    \STATE $r \sim U(0,1)$
-    \IF{$r < a$}
-        \STATE $T^t \gets T^p$
-    \ENDIF
-\ENDFOR
-\RETURN $P(T_1=1|O),\ldots,P(T_m=1|O)$
-\end{algorithmic}
-\end{algorithm}
-```
+1. $T^t \gets (0,\ldots,0)$
+2. **for** $t \gets 1$ **to** $l$ **do**
+   - $T^p \sim Q_T(\cdot\,|\,T^t)$, i.e., choose a neighbor by:
+     - toggling a term
+     - exchanging an active term with an inactive one
+   - $a \gets \text{AcceptanceRatio}$
+   - $r \sim U(0,1)$
+   - **if** $r < a$ **then**
+     - $T^t \gets T^p$
+   - **end if**
+3. **end for**
+4. **return** $P(T_1=1\,|\,O),\ldots,P(T_m=1\,|\,O)$
+:::
 
-## Homework
+## Sources
 
-describe what we will do here briefly
+
+- Lu Y, et al. (2008) [A probabilistic generative model for GO enrichment analysis. *Nucleic Acids Res* **36**:e109](https://pubmed.ncbi.nlm.nih.gov/18676451/)
+- Bauer S, et al. (2010) [GOing Bayesian: model-based gene set analysis of genome-scale data. *Nucleic Acids Res* **38**:3523-32](https://pubmed.ncbi.nlm.nih.gov/20172960/) 
