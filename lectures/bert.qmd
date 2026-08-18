@@ -709,24 +709,23 @@ like clustering
 image from [ Ortakci (2024) Revolutionary text clustering: Investigating transfer learning capacity of SBERT models through pooling techniques](https://doi.org/10.1016/j.jestch.2024.101730)
 :::
 
+
 ## Sentence-BERT
 
-- With standard BERT, two sentences are passed to the transformer network
-and the target value is predicted. 
--However, this setup is unsuitable for various pair regression tasks due to too many possible combinations. 
-- Finding in a collection of n = 10 000 sentences the pair
-with the highest similarity would require 
-$n\cdot(n−1)/2 = 49 995 000$ inference computations with BERT
-- A common method to address clustering and semantic search is to map each sentence to a vector space such that semantically similar sentences
-are close. 
+- With standard BERT, two sentences are passed to the transformer network together, and a single target value (e.g. similarity score) is predicted from that joint pass
+- This setup doesn't scale to tasks that need **many pairwise comparisons** — e.g. clustering a collection of sentences, which requires a similarity score between every pair
+- For $n = 10{,}000$ sentences, a full pairwise similarity matrix requires
+$$
+n(n-1)/2 = 49{,}995{,}000
+$$
+separate inference passes through BERT — each one a full forward pass of the transformer, since BERT has no way to compute a similarity score without processing both sentences jointly
 
-## Sentence vectors ?
-
-- A large disadvantage of the BERT network
-structure is that no independent sentence embeddings are computed, which makes it difficult to derive sentence embeddings from BERT. 
--  The most commonly used approach is to average the BERT output layer (known as BERT embeddings, i.e., before the linear classification layer)
-- Alternatively, by using the output of the first token (the [CLS] token).
-- However,  this common practice yields rather bad sentence embeddings
+::: {.small-text}
+- According to the authors, the time required for this is reduced from 
+65 hours with BERT to less than 10 seconds with SBERT
+  -  computation of 10,000 sentence embeddings (~5 seconds with SBERT) 
+  - computing cosine similarity (~0.01 seconds).
+:::
 
 ## SBERT sentence embeddings
 
@@ -751,11 +750,26 @@ $$
 cosine similarity
 - How do we teach BERT to do this?
 
-## Training objective 1: Classification (NLI)
+## Classification: natural language inference (NLI)
 
 - SBERT is first trained on **natural language inference (NLI)** data: SNLI (570,000 pairs) + MultiNLI, each pair labeled `entailment`, `contradiction`, or `neutral`
-- The two sentences (premise, hypothesis) are encoded independently by the siamese BERT, then mean-pooled to give sentence vectors $u$ and $v$
-- These are combined into a single feature vector:
+- Each pair has a **premise** and a **hypothesis**, encoded independently by the siamese BERT, then mean-pooled to give sentence vectors $u$ and $v$
+
+| Premise | Hypothesis | Label |
+|---|---|---|
+| The sun is shining | It is not raining | entailment |
+| The girl is playing with a ball | The girl is sleeping | contradiction |
+| An older and younger man smiling | Two men are smiling and laughing at cats playing on the floor | neutral |
+
+::: {.small-text}
+- **Entailment**: a human reading the premise would infer the hypothesis is most likely true — *not* strict logical entailment (sun shining doesn't *logically* rule out rain — this is a plausibility judgment, not a proof)
+- **Contradiction**: premise and hypothesis can't both be true
+- **Neutral**: hypothesis may or may not be true given the premise — it adds information the premise doesn't confirm or deny
+- Entailment is **directional** (premise → hypothesis); contradiction and neutral aren't
+:::
+
+## Classification: natural language inference (NLI)
+- The sentences ($u$=premise, $v$=hypothesis) are combined into a single feature vector:
 
 $$
 (u, v, |u-v|)
@@ -768,30 +782,149 @@ $$
 o = \mathrm{softmax}\big(W_t\,(u, v, |u-v|)\big)
 $$
 
+## Classification: natural language inference (NLI)
+
+![](./img/sbert-snli.png){width="60%" fig-align="center"}
+
 - Trained with standard **cross-entropy loss** against the gold label (entailment / contradiction / neutral)
-
-
-## Classification (NLI)
-
-- NLI pairs aren't "similar sentences" in the STS sense — they're purpose-built: crowdworkers wrote three different hypotheses (one entailed, one neutral, one contradictory) for each premise
 - This forces the model to learn *fine-grained* semantic distinctions — not just "same topic," but "does this logically follow?"
 - $W_t$ is a **training-time-only scaffold**: at inference, it's discarded — only the sentence encoder + pooling is kept
-- After NLI training, SBERT is fine-tuned further on the STS Benchmark using the cosine-similarity + MSE objective (next slide) — NLI gives the encoder broad semantic competence, STS calibrates it for graded similarity
 
-## Training
+## Regression Objective Function
+
+- Now we want to train the model to recognize "similar" sentences.
+- The authors use a Semantic Textual Similarity (STS) Benchmark
+
+::: {.small-text}
+
+| Score | Meaning | Example 1 | Example 2 |
+| :---: | :--- | :--- | :--- |
+| **5** | The two sentences are completely equivalent, as they mean the same thing. | The bird is bathing in the sink. | Birdie is washing itself in the water basin. |
+| **4** | The two sentences are mostly equivalent, but some unimportant details differ. | Two boys on a couch are playing video games. | Two boys are playing a video game. |
+| **3** | The two sentences are roughly equivalent, but some important information differs/missing. | John said he is considered a witness but not a suspect. | “He is not a suspect anymore.” John said. |
+| **2** | The two sentences are not equivalent, but share some details. | They flew out of the nest in groups. | They flew into the nest together. |
+| **1** | The two sentences are not equivalent, but are on the same topic. | The woman is playing the violin. | The young lady enjoys listening to the guitar. |
+| **0** | The two sentences are completely dissimilar. | The black dog is running through the snow. | A race car driver is driving his car through the mud. |
+:::
+
+:::{.tiny-credit}
+Cer, D et al. (2017) [SemEval-2017 Task 1: Semantic Textual Similarity Multilingual and
+            Crosslingual Focused Evaluation (SemEval-2017)](http://dx.doi.org/10.18653/v1/S17-2001)
+:::
+
+## Regression Objective Function
+
+* Mean squared-error (MSE) loss for the cosine similarity is used as the objective function.
+* The STS Benchmark labels are on a $y\in 0–5$ scale, so before computing the loss, the gold score 
+$y$ is rescaled as $y^{\prime} = \frac{y}{2.5} - 1$. For instance
+
+  - if $y=5$, $y^{\prime} = \frac{5}{2.5} - 1 = 1$.
+  - if $y=0$, $y^{\prime} = \frac{0}{2.5} - 1 = -1$.
 
 ![](./img/sbert-architecture.jpg){width="50%" fig-align="center"}
 
-- We have two "copies" of the same BERT model ("siamese twins")
-- One copy creates a sentence vector for sentence A, the other copy for sentence B
-- The cosine similarity between the two sentence embeddings u and v is computed . We use mean squared-error loss as the objective function
-- The STS Benchmark: Human annotators then rated each pair's semantic similarity on a continuous 0–5 scale (5 = same meaning, 0 = unrelated topics)
+
+## Regression Objective Function
+
+* directly using the output of BERT leads to rather poor performances.
+* Averaging the BERT embeddings achieves an average correlation of only 54.81, and using the CLStoken output only achieves an average correlation
+of 29.19. 
+* The SBERT/SRoBERTa approaches generally showed superior performance
+
+::: {.small-text}
+
+| Model | STS12 | STS13 | STS14 | STS15 | STS16 | STSb | SICK-R | Avg. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Avg. GloVe embeddings | 55.14 | 70.66 | 59.73 | 68.25 | 63.66 | 58.02 | 53.76 | 61.32 |
+| Avg. BERT embeddings | 38.78 | 57.98 | 57.98 | 63.15 | 61.06 | 46.35 | 58.40 | 54.81 |
+| BERT CLS-vector | 20.16 | 30.01 | 20.09 | 36.88 | 38.08 | 16.50 | 42.63 | 29.19 |
+| InferSent - Glove | 52.86 | 66.75 | 62.15 | 72.77 | 66.87 | 68.03 | 65.65 | 65.01 |
+| Universal Sentence Encoder | 64.49 | 67.80 | 64.61 | 76.83 | 73.18 | 74.92 |  <span style="color:blue">76.69</span> | 71.22 |
+| SBERT-NLI-base | 70.97 | 76.53 | 73.19 | 79.09 | 74.30 | 77.03 | 72.91 | 74.89 |
+| SBERT-NLI-large | 72.27 | <span style="color:blue">78.46</span> |  <span style="color:blue">74.90</span> | 80.99 | 76.25 |  <span style="color:blue">79.23</span> | 73.75 | 76.55 |
+| SRoBERTa-NLI-base | 71.54 | 72.49 | 70.80 | 78.74 | 73.69 | 77.77 | 74.46 | 74.21 |
+| SRoBERTa-NLI-large | <span style="color:blue">74.53</span> | 77.00 | 73.18 |  <span style="color:blue">81.85</span> |  <span style="color:blue">76.82</span> | 79.10 | 74.29 |  <span style="color:blue">76.68</span> |
+
+:::
 
 
-## RAG 
+## Triplet Loss
 
-- SBERT is often used to implement a step of retrieval augmented generation (RAG)
-- todo
+- Requires **triplets**: an anchor $a$, a positive $p$ (similar to $a$), and a negative $n$ (dissimilar to $a$) — no graded similarity score needed, just relative ordering
+
+::: {.mybox}
+Given an anchor
+sentence $a$, a positive sentence $p$, and a negative
+sentence $n$:
+
+* triplet loss tunes the network such that the distance between $a$ and $p$ is smaller than the
+distance between $a$ and $n$
+:::
+
+- We assume that a sentence is thematically closer to sentences
+within its section than to sentences from
+other sections
+
+* $a$: McDonnell resigned from Martin in 1938 and founded McDonnell Aircraft Corporation in 1939 
+* $p$: In 1967, McDonnell Aircraft merged with the Douglas Aircraft Company to create McDonnell Douglas
+* $n$: Born in Denver, Colorado, McDonnell was raised in Little Rock, Arkansas, and graduated from Little Rock
+High School in 1917
+
+::: {.tiny-credit}
+The authors assumed that sentences from the same Wikipedia section are more similar than those from different sections
+- Dor, YM, et al. (2018) [Learning Thematic Similarity Metric
+from Article Sections Using Triplet Networks](https://aclanthology.org/P18-2009/)
+:::
+
+
+## Triplet Loss
+- Compute two **Euclidean distances**:
+$$
+d_{ap} = \|s_a - s_p\|, \qquad d_{an} = \|s_a - s_n\|
+$$
+- Loss (with margin $\epsilon$):
+$$
+\mathcal{L} = \max\big(d_{ap} - d_{an} + \epsilon,\ 0\big)
+$$
+
+-  The margin $\epsilon$ ensures that $s_p$ is at least $\epsilon$ closer to $s_a$ than $s_n$. 
+- As metric Euclidean distance was used.
+- $\epsilon=1$ 
+
+
+## Triplet Loss — role of the margin $\epsilon$
+
+- If $p$ is *already* closer to $a$ than $n$ is, by at least $\epsilon$ → loss is **0**, no gradient, nothing to learn
+- Otherwise → loss is positive, and gradients pull $a$ and $p$ together / push $a$ and $n$ apart until the margin is satisfied
+
+| $d_{ap}$ | $d_{an}$ | $d_{ap}-d_{an}+1$ | Loss | Interpretation |
+|---|---|---|---|---|
+| 0.3 | 2.0 | $-0.7$ | 0 | well-separated — no update |
+| 0.3 | 0.9 | $0.4$ | 0.4 | $p$ closer, but less than $\epsilon$ |
+| 1.2 | 0.8 | $1.4$ | 1.4 | $n$ is closer — larger loss |
+
+- **Without** the margin, the loss would be 0 even if $d_{ap}$ is only slightly smaller than $d_{an}$ — a weak signal that stops training too early
+- The margin forces a gap, producing embeddings with clearer separation between similar and dissimilar sentences
+
+
+## SBERT: three objectives
+
+| | Classification (NLI) | Regression (STS) | Triplet |
+|---|---|---|---|
+| **Data needed** | labeled pairs (entailment/contradiction/neutral) | labeled pairs (0–5 similarity score) | (anchor, positive, negative) triplets — no score |
+| **Extra trainable layer?** | yes — $W_t$, size $3n \times k$ | no | no |
+| **Similarity metric** | — (cross-entropy on softmax) | cosine similarity | Euclidean distance |
+| **Loss** | cross-entropy | MSE | hinge ($\max(\cdot,0)$) with margin |
+
+
+
+## SBERT - Summary 
+
+- SBERT maps sentences to a vector space that better reflects sentence emantic similarity than BERT's sentence vectors
+- SBERT is computationally efficient.  SBERT
+can be used for tasks which are computationally
+not feasible to be modeled with BERT (e.g., clustering of large corpora of sentences).
+- We will see in a later lecture that SBERT is often used to implement Retrieval Augmented Generation (RAG)
 
 
 ## Sources
@@ -800,3 +933,4 @@ $$
 - Devlin J et al. (2019) [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805](https://arxiv.org/abs/1810.04805)
 - Hugging Face (blog) [BERT 101 🤗 State Of The Art](https://huggingface.co/blog/bert-101)
 - Rogers A et al. (2020) [A Primer in BERTology: What we know about how BERT works. arXiv 2002.12327](https://arxiv.org/abs/2002.12327)
+- Reimers N and Gurevych I (2019)[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks. arXiv 1908.10084](https://arxiv.org/abs/1908.10084)

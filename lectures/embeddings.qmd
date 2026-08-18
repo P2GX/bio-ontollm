@@ -9,7 +9,7 @@ format:
   revealjs:
     theme: [default] 
     css: ../style/styles.css            
-    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
     slide-number: true
     show-slide-number: all
     incremental: false 
