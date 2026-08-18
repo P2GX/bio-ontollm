@@ -305,19 +305,7 @@
     "href": "lectures/overview.html#course-overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Course Overview",
-    "text": "Course Overview\nThis course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nWill LLMs replace computer scientists, software developers, and bioinformaticians?\n\n\n\n\nCurrently, the best answer appears to be: “Some of them, but it will make others more productive”.\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models.\nWe will go into detail and implement simplified versions of some of the algorithms in Python.\nPrerequisites: Some knowledge of probability, calculus, and algorithms (We will explain everything as we go along).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/overview.html#course-logistics",
-    "href": "lectures/overview.html#course-logistics",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Course Logistics",
-    "text": "Course Logistics\n\n\nThis course is part of the Master Curriculum in Bioinformatics.\n\nTarget: Graduate Students\nFocus: Knowledge representation\nUniversity: Free University Berlin",
+    "text": "Course Overview\nThis course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\nThis course is part of the Master Curriculum in Bioinformatics.\n\nTarget: Graduate Students\nFocus: Knowledge representation\nUniversity: Free University Berlin",
     "crumbs": [
       "Home",
       "Lectures",
@@ -341,7 +329,19 @@
     "href": "lectures/overview.html#is-ai-ruining-our-skills",
     "title": "Approaches to biomedical knowledge",
     "section": "Is AI ruining our skills?",
-    "text": "Is AI ruining our skills?\n\n\n\n\n\n\nThere is an increasing amount of evidence that reliance on artificial-intelligence tools degrades the abilities of software engineers\n\n\n\nAdvice\n\nDo not use LLMs to do homework assignments!\nIt is probably OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.\nVibe coding is not to be recommended but LLMs can be quite helpful with targeted questions (e.g., what CSS class makes a rounded box that looks like an orange parakeet?) or to get advice on how to optimize code (e.g., using iterators instead of traditional forloops in Languages such as Rust and Java).\n\n\nFurther Reading:\n\nPearson, H. (2025). Are the Internet and AI affecting our memory? What the science says. Nature.\nLenharo, M. (2026). Is AI ruining our skills? Early results are in — and they’re not good. Nature.",
+    "text": "Is AI ruining our skills?\n\n\n\n\n\n\nThere is an increasing amount of evidence that reliance on artificial-intelligence tools degrades the abilities of software engineers",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/overview.html#non-skilling",
+    "href": "lectures/overview.html#non-skilling",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Non-skilling",
+    "text": "Non-skilling\n\n\n\n\n\n\nWill LLMs replace computer scientists, software developers, and bioinformaticians?\n\n\n\n\nCurrently, the best answer appears to be: “Some of them, but it will make others more productive”.\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models.\nWe will go into detail and implement simplified versions of some of the algorithms in Python.\nPrerequisites: Some knowledge of probability, calculus, and algorithms (We will explain everything as we go along).\n\nAdvice\n\nDo not use LLMs to do homework assignments!\nIt is probably OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.\nVibe coding is not to be recommended but LLMs can be quite helpful with targeted questions (e.g., what CSS class makes a rounded box that looks like an orange parakeet?) or to get advice on how to optimize code (e.g., using iterators instead of traditional forloops in Languages such as Rust and Java).\n\n\nFurther Reading:\n\nPearson, H. (2025). Are the Internet and AI affecting our memory? What the science says. Nature.\nLenharo, M. (2026). Is AI ruining our skills? Early results are in — and they’re not good. Nature.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2519,14 +2519,7 @@
     "href": "lectures/bert.html#sentence-bert",
     "title": "Approaches to biomedical knowledge",
     "section": "Sentence-BERT",
-    "text": "Sentence-BERT\n\nWith standard BERT, two sentences are passed to the transformer network and the target value is predicted. -However, this setup is unsuitable for various pair regression tasks due to too many possible combinations.\nFinding in a collection of n = 10 000 sentences the pair with the highest similarity would require \\(n\\cdot(n−1)/2 = 49 995 000\\) inference computations with BERT\nA common method to address clustering and semantic search is to map each sentence to a vector space such that semantically similar sentences are close."
-  },
-  {
-    "objectID": "lectures/bert.html#sentence-vectors",
-    "href": "lectures/bert.html#sentence-vectors",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Sentence vectors ?",
-    "text": "Sentence vectors ?\n\nA large disadvantage of the BERT network structure is that no independent sentence embeddings are computed, which makes it difficult to derive sentence embeddings from BERT.\nThe most commonly used approach is to average the BERT output layer (known as BERT embeddings, i.e., before the linear classification layer)\nAlternatively, by using the output of the first token (the [CLS] token).\nHowever, this common practice yields rather bad sentence embeddings"
+    "text": "Sentence-BERT\n\nWith standard BERT, two sentences are passed to the transformer network together, and a single target value (e.g. similarity score) is predicted from that joint pass\nThis setup doesn’t scale to tasks that need many pairwise comparisons — e.g. clustering a collection of sentences, which requires a similarity score between every pair\nFor \\(n = 10{,}000\\) sentences, a full pairwise similarity matrix requires \\[\nn(n-1)/2 = 49{,}995{,}000\n\\] separate inference passes through BERT — each one a full forward pass of the transformer, since BERT has no way to compute a similarity score without processing both sentences jointly\n\n\n\nAccording to the authors, the time required for this is reduced from 65 hours with BERT to less than 10 seconds with SBERT\n\ncomputation of 10,000 sentence embeddings (~5 seconds with SBERT)\ncomputing cosine similarity (~0.01 seconds)."
   },
   {
     "objectID": "lectures/bert.html#sbert-sentence-embeddings",
@@ -2543,39 +2536,88 @@
     "text": "SBERT sentence embeddings\n\nSBERT assesses the similarity of two sentences by the cosine similarity of their vectors\n\n\\[\n\\mathrm{sim}(\\mathbf{x},\\mathbf{y}) =\n\\frac{\\mathbf{x}\\cdot \\mathbf{y}}{\\Vert \\mathbf{x} \\Vert\n\\Vert \\mathbf{y}\n\\Vert} =\n\\frac{\\sum_i A_i\\cdot B_i}{\\sqrt{\\sum_i A_i^2}\\cdot \\sqrt{\\sum_i B_i^2}}\n\\]\n\nBut nobody told BERT that the sentence embeddings it produces should be compatible with cosine similarity\nHow do we teach BERT to do this?"
   },
   {
-    "objectID": "lectures/bert.html#training-objective-1-classification-nli",
-    "href": "lectures/bert.html#training-objective-1-classification-nli",
+    "objectID": "lectures/bert.html#classification-natural-language-inference-nli",
+    "href": "lectures/bert.html#classification-natural-language-inference-nli",
     "title": "Approaches to biomedical knowledge",
-    "section": "Training objective 1: Classification (NLI)",
-    "text": "Training objective 1: Classification (NLI)\n\nSBERT is first trained on natural language inference (NLI) data: SNLI (570,000 pairs) + MultiNLI, each pair labeled entailment, contradiction, or neutral\nThe two sentences (premise, hypothesis) are encoded independently by the siamese BERT, then mean-pooled to give sentence vectors \\(u\\) and \\(v\\)\nThese are combined into a single feature vector:\n\n\\[\n(u, v, |u-v|)\n\\]\n\n\\(|u - v|\\) is the element-wise absolute difference — it makes the relationship between the two embeddings explicit, rather than making the classifier re-derive it from \\(u\\) and \\(v\\) alone\nThis concatenated vector (size \\(3n\\), e.g. \\(3\\times768\\)) is passed through a trainable linear layer \\(W_t\\) and softmax:\n\n\\[\no = \\mathrm{softmax}\\big(W_t\\,(u, v, |u-v|)\\big)\n\\]\n\nTrained with standard cross-entropy loss against the gold label (entailment / contradiction / neutral)"
+    "section": "Classification: natural language inference (NLI)",
+    "text": "Classification: natural language inference (NLI)\n\nSBERT is first trained on natural language inference (NLI) data: SNLI (570,000 pairs) + MultiNLI, each pair labeled entailment, contradiction, or neutral\nEach pair has a premise and a hypothesis, encoded independently by the siamese BERT, then mean-pooled to give sentence vectors \\(u\\) and \\(v\\)\n\n\n\n\n\n\n\n\n\nPremise\nHypothesis\nLabel\n\n\n\n\nThe sun is shining\nIt is not raining\nentailment\n\n\nThe girl is playing with a ball\nThe girl is sleeping\ncontradiction\n\n\nAn older and younger man smiling\nTwo men are smiling and laughing at cats playing on the floor\nneutral\n\n\n\n\n\nEntailment: a human reading the premise would infer the hypothesis is most likely true — not strict logical entailment (sun shining doesn’t logically rule out rain — this is a plausibility judgment, not a proof)\nContradiction: premise and hypothesis can’t both be true\nNeutral: hypothesis may or may not be true given the premise — it adds information the premise doesn’t confirm or deny\nEntailment is directional (premise → hypothesis); contradiction and neutral aren’t"
   },
   {
-    "objectID": "lectures/bert.html#classification-nli",
-    "href": "lectures/bert.html#classification-nli",
+    "objectID": "lectures/bert.html#classification-natural-language-inference-nli-1",
+    "href": "lectures/bert.html#classification-natural-language-inference-nli-1",
     "title": "Approaches to biomedical knowledge",
-    "section": "Classification (NLI)",
-    "text": "Classification (NLI)\n\nNLI pairs aren’t “similar sentences” in the STS sense — they’re purpose-built: crowdworkers wrote three different hypotheses (one entailed, one neutral, one contradictory) for each premise\nThis forces the model to learn fine-grained semantic distinctions — not just “same topic,” but “does this logically follow?”\n\\(W_t\\) is a training-time-only scaffold: at inference, it’s discarded — only the sentence encoder + pooling is kept\nAfter NLI training, SBERT is fine-tuned further on the STS Benchmark using the cosine-similarity + MSE objective (next slide) — NLI gives the encoder broad semantic competence, STS calibrates it for graded similarity"
+    "section": "Classification: natural language inference (NLI)",
+    "text": "Classification: natural language inference (NLI)\n\nThe sentences (\\(u\\)=premise, \\(v\\)=hypothesis) are combined into a single feature vector:\n\n\\[\n(u, v, |u-v|)\n\\]\n\n\\(|u - v|\\) is the element-wise absolute difference — it makes the relationship between the two embeddings explicit, rather than making the classifier re-derive it from \\(u\\) and \\(v\\) alone\nThis concatenated vector (size \\(3n\\), e.g. \\(3\\times768\\)) is passed through a trainable linear layer \\(W_t\\) and softmax:\n\n\\[\no = \\mathrm{softmax}\\big(W_t\\,(u, v, |u-v|)\\big)\n\\]"
   },
   {
-    "objectID": "lectures/bert.html#training",
-    "href": "lectures/bert.html#training",
+    "objectID": "lectures/bert.html#classification-natural-language-inference-nli-2",
+    "href": "lectures/bert.html#classification-natural-language-inference-nli-2",
     "title": "Approaches to biomedical knowledge",
-    "section": "Training",
-    "text": "Training\n\n\nWe have two “copies” of the same BERT model (“siamese twins”)\nOne copy creates a sentence vector for sentence A, the other copy for sentence B\nThe cosine similarity between the two sentence embeddings u and v is computed . We use mean squared-error loss as the objective function\nThe STS Benchmark: Human annotators then rated each pair’s semantic similarity on a continuous 0–5 scale (5 = same meaning, 0 = unrelated topics)"
+    "section": "Classification: natural language inference (NLI)",
+    "text": "Classification: natural language inference (NLI)\n\n\nTrained with standard cross-entropy loss against the gold label (entailment / contradiction / neutral)\nThis forces the model to learn fine-grained semantic distinctions — not just “same topic,” but “does this logically follow?”\n\\(W_t\\) is a training-time-only scaffold: at inference, it’s discarded — only the sentence encoder + pooling is kept"
   },
   {
-    "objectID": "lectures/bert.html#rag",
-    "href": "lectures/bert.html#rag",
+    "objectID": "lectures/bert.html#regression-objective-function",
+    "href": "lectures/bert.html#regression-objective-function",
     "title": "Approaches to biomedical knowledge",
-    "section": "RAG",
-    "text": "RAG\n\nSBERT is often used to implement a step of retrieval augmented generation (RAG)\ntodo"
+    "section": "Regression Objective Function",
+    "text": "Regression Objective Function\n\nNow we want to train the model to recognize “similar” sentences.\nThe authors use a Semantic Textual Similarity (STS) Benchmark\n\n\n\n\n\n\n\n\n\n\n\nScore\nMeaning\nExample 1\nExample 2\n\n\n\n\n5\nThe two sentences are completely equivalent, as they mean the same thing.\nThe bird is bathing in the sink.\nBirdie is washing itself in the water basin.\n\n\n4\nThe two sentences are mostly equivalent, but some unimportant details differ.\nTwo boys on a couch are playing video games.\nTwo boys are playing a video game.\n\n\n3\nThe two sentences are roughly equivalent, but some important information differs/missing.\nJohn said he is considered a witness but not a suspect.\n“He is not a suspect anymore.” John said.\n\n\n2\nThe two sentences are not equivalent, but share some details.\nThey flew out of the nest in groups.\nThey flew into the nest together.\n\n\n1\nThe two sentences are not equivalent, but are on the same topic.\nThe woman is playing the violin.\nThe young lady enjoys listening to the guitar.\n\n\n0\nThe two sentences are completely dissimilar.\nThe black dog is running through the snow.\nA race car driver is driving his car through the mud.\n\n\n\n\n\nCer, D et al. (2017) SemEval-2017 Task 1: Semantic Textual Similarity Multilingual and Crosslingual Focused Evaluation (SemEval-2017)"
+  },
+  {
+    "objectID": "lectures/bert.html#regression-objective-function-1",
+    "href": "lectures/bert.html#regression-objective-function-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Regression Objective Function",
+    "text": "Regression Objective Function\n\nMean squared-error (MSE) loss for the cosine similarity is used as the objective function.\nThe STS Benchmark labels are on a \\(y\\in 0–5\\) scale, so before computing the loss, the gold score \\(y\\) is rescaled as \\(y^{\\prime} = \\frac{y}{2.5} - 1\\). For instance\n\nif \\(y=5\\), \\(y^{\\prime} = \\frac{5}{2.5} - 1 = 1\\).\nif \\(y=0\\), \\(y^{\\prime} = \\frac{0}{2.5} - 1 = -1\\)."
+  },
+  {
+    "objectID": "lectures/bert.html#regression-objective-function-2",
+    "href": "lectures/bert.html#regression-objective-function-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Regression Objective Function",
+    "text": "Regression Objective Function\n\ndirectly using the output of BERT leads to rather poor performances.\nAveraging the BERT embeddings achieves an average correlation of only 54.81, and using the CLStoken output only achieves an average correlation of 29.19.\nThe SBERT/SRoBERTa approaches generally showed superior performance\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nModel\nSTS12\nSTS13\nSTS14\nSTS15\nSTS16\nSTSb\nSICK-R\nAvg.\n\n\n\n\nAvg. GloVe embeddings\n55.14\n70.66\n59.73\n68.25\n63.66\n58.02\n53.76\n61.32\n\n\nAvg. BERT embeddings\n38.78\n57.98\n57.98\n63.15\n61.06\n46.35\n58.40\n54.81\n\n\nBERT CLS-vector\n20.16\n30.01\n20.09\n36.88\n38.08\n16.50\n42.63\n29.19\n\n\nInferSent - Glove\n52.86\n66.75\n62.15\n72.77\n66.87\n68.03\n65.65\n65.01\n\n\nUniversal Sentence Encoder\n64.49\n67.80\n64.61\n76.83\n73.18\n74.92\n76.69\n71.22\n\n\nSBERT-NLI-base\n70.97\n76.53\n73.19\n79.09\n74.30\n77.03\n72.91\n74.89\n\n\nSBERT-NLI-large\n72.27\n78.46\n74.90\n80.99\n76.25\n79.23\n73.75\n76.55\n\n\nSRoBERTa-NLI-base\n71.54\n72.49\n70.80\n78.74\n73.69\n77.77\n74.46\n74.21\n\n\nSRoBERTa-NLI-large\n74.53\n77.00\n73.18\n81.85\n76.82\n79.10\n74.29\n76.68"
+  },
+  {
+    "objectID": "lectures/bert.html#triplet-loss",
+    "href": "lectures/bert.html#triplet-loss",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Triplet Loss",
+    "text": "Triplet Loss\n\nRequires triplets: an anchor \\(a\\), a positive \\(p\\) (similar to \\(a\\)), and a negative \\(n\\) (dissimilar to \\(a\\)) — no graded similarity score needed, just relative ordering\n\n\nGiven an anchor sentence \\(a\\), a positive sentence \\(p\\), and a negative sentence \\(n\\):\n\ntriplet loss tunes the network such that the distance between \\(a\\) and \\(p\\) is smaller than the distance between \\(a\\) and \\(n\\)\n\n\n\nWe assume that a sentence is thematically closer to sentences within its section than to sentences from other sections\n\\(a\\): McDonnell resigned from Martin in 1938 and founded McDonnell Aircraft Corporation in 1939\n\\(p\\): In 1967, McDonnell Aircraft merged with the Douglas Aircraft Company to create McDonnell Douglas\n\\(n\\): Born in Denver, Colorado, McDonnell was raised in Little Rock, Arkansas, and graduated from Little Rock High School in 1917\n\n\nThe authors assumed that sentences from the same Wikipedia section are more similar than those from different sections - Dor, YM, et al. (2018) Learning Thematic Similarity Metric from Article Sections Using Triplet Networks"
+  },
+  {
+    "objectID": "lectures/bert.html#triplet-loss-1",
+    "href": "lectures/bert.html#triplet-loss-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Triplet Loss",
+    "text": "Triplet Loss\n\nCompute two Euclidean distances: \\[\nd_{ap} = \\|s_a - s_p\\|, \\qquad d_{an} = \\|s_a - s_n\\|\n\\]\nLoss (with margin \\(\\epsilon\\)): \\[\n\\mathcal{L} = \\max\\big(d_{ap} - d_{an} + \\epsilon,\\ 0\\big)\n\\]\nThe margin \\(\\epsilon\\) ensures that \\(s_p\\) is at least \\(\\epsilon\\) closer to \\(s_a\\) than \\(s_n\\).\nAs metric Euclidean distance was used.\n\\(\\epsilon=1\\)"
+  },
+  {
+    "objectID": "lectures/bert.html#triplet-loss-role-of-the-margin-epsilon",
+    "href": "lectures/bert.html#triplet-loss-role-of-the-margin-epsilon",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Triplet Loss — role of the margin \\(\\epsilon\\)",
+    "text": "Triplet Loss — role of the margin \\(\\epsilon\\)\n\nIf \\(p\\) is already closer to \\(a\\) than \\(n\\) is, by at least \\(\\epsilon\\) → loss is 0, no gradient, nothing to learn\nOtherwise → loss is positive, and gradients pull \\(a\\) and \\(p\\) together / push \\(a\\) and \\(n\\) apart until the margin is satisfied\n\n\n\n\n\\(d_{ap}\\)\n\\(d_{an}\\)\n\\(d_{ap}-d_{an}+1\\)\nLoss\nInterpretation\n\n\n\n\n0.3\n2.0\n\\(-0.7\\)\n0\nwell-separated — no update\n\n\n0.3\n0.9\n\\(0.4\\)\n0.4\n\\(p\\) closer, but less than \\(\\epsilon\\)\n\n\n1.2\n0.8\n\\(1.4\\)\n1.4\n\\(n\\) is closer — larger loss\n\n\n\n\nWithout the margin, the loss would be 0 even if \\(d_{ap}\\) is only slightly smaller than \\(d_{an}\\) — a weak signal that stops training too early\nThe margin forces a gap, producing embeddings with clearer separation between similar and dissimilar sentences"
+  },
+  {
+    "objectID": "lectures/bert.html#sbert-three-objectives",
+    "href": "lectures/bert.html#sbert-three-objectives",
+    "title": "Approaches to biomedical knowledge",
+    "section": "SBERT: three objectives",
+    "text": "SBERT: three objectives\n\n\n\n\n\n\n\n\n\n\nClassification (NLI)\nRegression (STS)\nTriplet\n\n\n\n\nData needed\nlabeled pairs (entailment/contradiction/neutral)\nlabeled pairs (0–5 similarity score)\n(anchor, positive, negative) triplets — no score\n\n\nExtra trainable layer?\nyes — \\(W_t\\), size \\(3n \\times k\\)\nno\nno\n\n\nSimilarity metric\n— (cross-entropy on softmax)\ncosine similarity\nEuclidean distance\n\n\nLoss\ncross-entropy\nMSE\nhinge (\\(\\max(\\cdot,0)\\)) with margin"
+  },
+  {
+    "objectID": "lectures/bert.html#sbert---summary",
+    "href": "lectures/bert.html#sbert---summary",
+    "title": "Approaches to biomedical knowledge",
+    "section": "SBERT - Summary",
+    "text": "SBERT - Summary\n\nSBERT maps sentences to a vector space that better reflects sentence emantic similarity than BERT’s sentence vectors\nSBERT is computationally efficient. SBERT can be used for tasks which are computationally not feasible to be modeled with BERT (e.g., clustering of large corpora of sentences).\nWe will see in a later lecture that SBERT is often used to implement Retrieval Augmented Generation (RAG)"
   },
   {
     "objectID": "lectures/bert.html#sources",
     "href": "lectures/bert.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805\nHugging Face (blog) BERT 101 🤗 State Of The Art\nRogers A et al. (2020) A Primer in BERTology: What we know about how BERT works. arXiv 2002.12327"
+    "text": "Sources\n\nDevlin J et al. (2019) BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv 1810.04805\nHugging Face (blog) BERT 101 🤗 State Of The Art\nRogers A et al. (2020) A Primer in BERTology: What we know about how BERT works. arXiv 2002.12327\nReimers N and Gurevych I (2019)Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks. arXiv 1908.10084"
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",
