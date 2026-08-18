@@ -713,7 +713,17 @@ color: #666666 !important;
 table.small-table tr.greyrow td.greycell,
 table.small-table td.greycell {
 background-color: #f2f2f2 !important;
-color: #666666 !important; }</style>
+color: #666666 !important; }
+.pseudocode{
+background:#ffffff; border:1px solid #d3d7de; border-radius:8px;
+padding:20px 26px; font-family:'IBM Plex Mono', monospace;
+font-size:15px; line-height:1.8; color:#1a1a1a;
+box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.pseudocode > ol{ list-style:decimal; padding-left:1.6em; margin:0; }
+.pseudocode ul{ list-style:none; padding-left:1.6em; margin:0.1em 0; }
+.pseudocode li{ margin:0.15em 0; }
+.pseudocode strong{ color:#9a5b00; font-weight:700; }</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1482,7 +1492,7 @@ Figure 1: RNN vs Encoder
 <h2>Understanding the PE Matrix</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div id="135eb202" class="cell" data-execution_count="1">
+<div id="644efb14" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1684,7 +1694,7 @@ Figure 2: RoPE
 <h2>The Encoder: Attention</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div id="0f6e6702" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="2">
+<div id="2ccbfa0a" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2196,7 +2206,7 @@ x = 0 &amp; \text{undefined but usually set to zero in code}\\
 <li>Leaky ReLU: <span class="math inline">\(f(x) = max(\alpha \cdot x, x)\)</span>, where <span class="math inline">\(\alpha\)</span> is a small value such as 0.01. Leaky ReLU enables a small, non-zero gradient for negative values.</li>
 </ul>
 </div><div class="column" style="width:30%;">
-<div id="bce167ff" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="3">
+<div id="727f4991" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2221,7 +2231,7 @@ x = 0 &amp; \text{undefined but usually set to zero in code}\\
 <li><span class="math inline">\(\Phi(x)\)</span> is the Cumulative Distribution Function (CDF) of the standard normal distribution. The BERT paper uses a fast approximation (shown on right)<sup>1</sup></li>
 </ul>
 </div><div class="column" style="width:30%;">
-<div id="dfc8e6f8" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="4">
+<div id="f80e37ce" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

@@ -778,7 +778,17 @@ color: #666666 !important;
 table.small-table tr.greyrow td.greycell,
 table.small-table td.greycell {
 background-color: #f2f2f2 !important;
-color: #666666 !important; }</style>
+color: #666666 !important; }
+.pseudocode{
+background:#ffffff; border:1px solid #d3d7de; border-radius:8px;
+padding:20px 26px; font-family:'IBM Plex Mono', monospace;
+font-size:15px; line-height:1.8; color:#1a1a1a;
+box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.pseudocode > ol{ list-style:decimal; padding-left:1.6em; margin:0; }
+.pseudocode ul{ list-style:none; padding-left:1.6em; margin:0.1em 0; }
+.pseudocode li{ margin:0.15em 0; }
+.pseudocode strong{ color:#9a5b00; font-weight:700; }</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1435,7 +1445,7 @@ Peter N Robinson
 <h2>RNN types</h2>
 <div class="columns">
 <div class="column" style="width:65%;">
-<div id="0aeee12a" class="cell" data-execution_count="1">
+<div id="56ad4e97" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1530,7 +1540,7 @@ where
 <ul>
 <li>RNNs can be portrayed as (equivalent) folded or unfolded networks</li>
 </ul>
-<div id="2c825a23" class="cell" data-execution_count="2">
+<div id="c14e41a9" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1564,7 +1574,7 @@ where
 \tag{3}\]</span></span></p>
 <p><br></p>
 </div><div class="column" style="width:55%;">
-<div id="df4faf62" class="cell" data-execution_count="3">
+<div id="f6b1ddf5" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1930,7 +1940,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 <li>The point of sentiment analysis is to perform binary classification about the opinion expressed by a certain text</li>
 <li>The classic example is to predict whether a movie review is positive or negative</li>
 </ul>
-<div id="b8377fb7" class="cell" data-execution_count="4">
+<div id="eafd5a1a" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1942,7 +1952,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="sentiment-analysis-embedding" class="slide level2">
 <h2>Sentiment analysis: embedding</h2>
-<div id="c9eb85cd" class="cell" data-execution_count="5">
+<div id="5b675d47" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1954,7 +1964,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="sentiment-analysis-unrolling-the-rnn" class="slide level2">
 <h2>Sentiment analysis: Unrolling the RNN</h2>
-<div id="48c8316a" class="cell" data-execution_count="6">
+<div id="b9f14371" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2099,7 +2109,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="loss" class="slide level2">
 <h2>Loss</h2>
-<div id="9b709278" class="cell" data-execution_count="7">
+<div id="923cd4c8" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -2206,7 +2216,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="lstms-vs-rnns" class="slide level2">
 <h2>LSTMS vs RNNs</h2>
-<div id="fe547421" class="cell" data-execution_count="8">
+<div id="b78752ba" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2222,7 +2232,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="lstms-vs-rnns-1" class="slide level2">
 <h2>LSTMS vs RNNs</h2>
-<div id="0584037c" class="cell" data-execution_count="9">
+<div id="811604a2" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2444,7 +2454,7 @@ P(\mathrm{Denmark}\mid \text{Something is rotten in the state of})
 <h2>RNN Language model equations</h2>
 <div class="columns">
 <div class="column" style="width:45%;">
-<div id="38510da0" class="cell" data-execution_count="10">
+<div id="58faba35" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2505,7 +2515,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <h2>Training</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="39805b93" class="cell" data-execution_count="11">
+<div id="d50c9ff2" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2534,7 +2544,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <h2>Generative RNNs</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="28043a87" class="cell" data-execution_count="12">
+<div id="9e51e64a" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2581,7 +2591,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <li>machine translation</li>
 </ul></li>
 </ul>
-<div id="2c06656d" class="cell" data-execution_count="13">
+<div id="5926e1e3" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2619,7 +2629,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 
 <section id="the-encoder-decoder-model-2" class="title-slide slide level1 center">
 <h1>The Encoder-Decoder Model</h1>
-<div id="b707032c" class="cell" data-execution_count="14">
+<div id="45bd3d6e" class="cell" data-execution_count="14">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2699,7 +2709,7 @@ f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^de) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{
 <ul>
 <li><span class="math inline">\(\mathbf{c}_i\)</span> thus takes information from the entire encoder into account and is dynamically updated at each step of decoding</li>
 </ul>
-<div id="dd02aadb" class="cell" data-execution_count="15">
+<div id="f4e3ff5e" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

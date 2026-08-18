@@ -779,7 +779,17 @@ color: #666666 !important;
 table.small-table tr.greyrow td.greycell,
 table.small-table td.greycell {
 background-color: #f2f2f2 !important;
-color: #666666 !important; }</style>
+color: #666666 !important; }
+.pseudocode{
+background:#ffffff; border:1px solid #d3d7de; border-radius:8px;
+padding:20px 26px; font-family:'IBM Plex Mono', monospace;
+font-size:15px; line-height:1.8; color:#1a1a1a;
+box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.pseudocode > ol{ list-style:decimal; padding-left:1.6em; margin:0; }
+.pseudocode ul{ list-style:none; padding-left:1.6em; margin:0.1em 0; }
+.pseudocode li{ margin:0.15em 0; }
+.pseudocode strong{ color:#9a5b00; font-weight:700; }</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1522,7 +1532,7 @@ z_i = \mathbf{w}\cdot \mathbf{x}_i + b
 <li>i.e., whenever <span class="math inline">\(z = \mathrm{w}\cdot \mathrm{x} + b\)</span> is over zero, the model predicts the positive class (<span class="math inline">\(\hat{y}=1\)</span>).</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div id="3328c0e7" class="cell" data-fig-height="1.5" data-fig-width="2" data-execution_count="1">
+<div id="0b451238" class="cell" data-fig-height="1.5" data-fig-width="2" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1628,7 +1638,7 @@ z_i = \mathbf{w}\cdot \mathbf{x}_i + b
 \]</span></li>
 </ul>
 <p>As <span class="math inline">\(\log \sigma(z) \rightarrow 1\)</span>, the loss approaches zero</p>
-<div id="4784383a" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="2">
+<div id="fffda5af" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1767,7 +1777,7 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 </section>
 <section id="gradient-descent" class="slide level2">
 <h2>Gradient descent</h2>
-<div id="59fd079e" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="3">
+<div id="ac23cc43" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1938,7 +1948,7 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 <section>
 <section id="gradient-descent-1" class="title-slide slide level1 center">
 <h1>Gradient descent</h1>
-<div id="36648ea5" class="cell" data-execution_count="4">
+<div id="b87d3fd3" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1980,7 +1990,7 @@ x \leftarrow x-\eta (14x +3 )
 </section>
 <section id="gradient-descent-example" class="slide level2">
 <h2>Gradient descent example</h2>
-<div id="e821445f" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="5">
+<div id="b7fb0ddb" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-label="1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a aria-label="2"></a><span class="im">import</span> matplotlib.pylab <span class="im">as</span> plt</span>
 <span id="cb1-3"><a aria-label="3"></a></span>
@@ -2017,7 +2027,7 @@ x \leftarrow x-\eta (14x +3 )
 </section>
 <section id="gradient-descent-overshoot" class="slide level2">
 <h2>Gradient descent: Overshoot</h2>
-<div id="da6abd41" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="6">
+<div id="85415246" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

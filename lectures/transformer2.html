@@ -715,7 +715,17 @@ color: #666666 !important;
 table.small-table tr.greyrow td.greycell,
 table.small-table td.greycell {
 background-color: #f2f2f2 !important;
-color: #666666 !important; }</style>
+color: #666666 !important; }
+.pseudocode{
+background:#ffffff; border:1px solid #d3d7de; border-radius:8px;
+padding:20px 26px; font-family:'IBM Plex Mono', monospace;
+font-size:15px; line-height:1.8; color:#1a1a1a;
+box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.pseudocode > ol{ list-style:decimal; padding-left:1.6em; margin:0; }
+.pseudocode ul{ list-style:none; padding-left:1.6em; margin:0.1em 0; }
+.pseudocode li{ margin:0.15em 0; }
+.pseudocode strong{ color:#9a5b00; font-weight:700; }</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1740,7 +1750,7 @@ Position-wise, applied independently per token; expands to <span class="math inl
 <aside><ol class="aside-footnotes"><li id="fn1"><p>EOS=end of sequence</p></li></ol></aside></section>
 <section id="autoregressive-text-generation" class="slide level2">
 <h2>Autoregressive text generation</h2>
-<div id="0e1d0988" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="1">
+<div id="9a262993" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1991,7 +2001,7 @@ P(x_i) = \frac{\exp(z_i / t)}{\sum_j \exp(z_j / t)}
 </tbody>
 </table>
 <div class="small-table">
-<div id="d8785d97" class="cell" data-execution_count="2">
+<div id="76943fa1" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 <style scoped>
