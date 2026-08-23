@@ -349,8 +349,20 @@
     ]
   },
   {
-    "objectID": "lectures/ontology3.html#problems-with-the-term-for-term-approach",
-    "href": "lectures/ontology3.html#problems-with-the-term-for-term-approach",
+    "objectID": "lectures/ontology3.html#overview",
+    "href": "lectures/ontology3.html#overview",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Overview",
+    "text": "Overview\n\nProblems with term-for-term approach\nMarkov chains\nMCMC\nMetropolis-Hastings\nMGSA",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#tftprob",
+    "href": "lectures/ontology3.html#tftprob",
     "title": "Approaches to biomedical knowledge",
     "section": "Problems with the term-for-term approach",
     "text": "Problems with the term-for-term approach\n\n\\[\n\\newcommand{\\argmax}{\\mathop{\\mathrm{arg\\,max}\\;}\\limits}\n\\]\n\n\n\n\n\n\n\n\n\nWe have seen in the previous chapter that a major difficulty of the standard approach to GO overrepresentation analysis is that each term is analyzed in isolation.\n\n\n\n\nBecause of the statistical dependencies between terms that are close to one another in the ontology graph, if one term is called significant then commonly one or more related terms are also called significant.\nToday, we will discuss a Bayesian algorithm for GO analysis that improves upon the “term-for-term” approach we saw last week.",
@@ -361,8 +373,8 @@
     ]
   },
   {
-    "objectID": "lectures/ontology3.html#problems-with-the-term-for-term-approach-1",
-    "href": "lectures/ontology3.html#problems-with-the-term-for-term-approach-1",
+    "objectID": "lectures/ontology3.html#problems-with-the-term-for-term-approach",
+    "href": "lectures/ontology3.html#problems-with-the-term-for-term-approach",
     "title": "Approaches to biomedical knowledge",
     "section": "Problems with the term-for-term approach",
     "text": "Problems with the term-for-term approach\n\n\nNote how there seems to be a dependency between parent and child terms.\nThe distribution of significant terms is not uniform across all 44,797 GO terms.",
@@ -377,7 +389,127 @@
     "href": "lectures/ontology3.html#model-based-gene-set-analysis-mgsa",
     "title": "Approaches to biomedical knowledge",
     "section": "Model based gene-set analysis (MGSA)",
-    "text": "Model based gene-set analysis (MGSA)\n\n\n\n\n\n\nMGSA is a completely different approach to GO analysis that seeks to find the best combination of terms that correspond to an experimental result.\n\n\n\n\nThe problem reduces to an optimization problem:\n\nThe choice of active GO terms (and optionally other parameters) are iteratively varied.\nThe goal is to maximize a single score or a probability.\n\nNo statistical tests (like Fisher’s exact test) are performed for individual terms in isolation.\nInstead, there is a single score to be optimized for the entire set of GO terms simultaneously.",
+    "text": "Model based gene-set analysis (MGSA)\n\n\n\n\n\n\nMGSA is a completely different approach to GO analysis that seeks to find the best combination of terms that correspond to an experimental result.\n\n\n\n\nTo understand MGSA, we will first need to review several topics\n\nMarkov chains\nMCMC algorithms\nMetropolis Hastings",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#markov-chain-monte-carlo-mcmc",
+    "href": "lectures/ontology3.html#markov-chain-monte-carlo-mcmc",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Markov Chain Monte Carlo (MCMC)",
+    "text": "Markov Chain Monte Carlo (MCMC)\n\nA Monte Carlo method approximates a quantity using random sampling instead of exact calculation\n\n\n\nA Markov chain is a sequence of random variables where the next value depends only on the current value, not on the full history that came before it.\nnice examples: https://www.youtube.com/watch?v=h-DC6ZUxB6M",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#markovchain",
+    "href": "lectures/ontology3.html#markovchain",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Markov Chain",
+    "text": "Markov Chain\n\n\n\n\n\n\n\n\n\nA Markov chain has a\n\nstate space: Sunny, Cloudy\nTransition probabilities: for instance, \\(p(\\mathrm{sunny}|\\mathrm{cloudy})=0.5\\)\nMarkov assumption: The next state depends only on the current state, not on what came before: \\[\np(w_{t+1}|w_{t}, w_{t-1}, \\ldots, w_{t}) = p(w_{t+1}|w_{t})\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#markov-chain",
+    "href": "lectures/ontology3.html#markov-chain",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Markov Chain",
+    "text": "Markov Chain\n\n\n\n\n\n\n\n\n\nWe can represent the transition probabilities in matrix form\n\\[\n\\begin{array}{c|cc}\nw_{t-1}\\backslash w_t & s & c \\\\\n\\hline\ns & 0.3 & 0.7 \\\\\nc & 0.5 & 0.5 \\\\\n\\end{array}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#markov-chain-1",
+    "href": "lectures/ontology3.html#markov-chain-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Markov Chain",
+    "text": "Markov Chain\n\nKey question:\n\nWill the chain achieve steady state if it runs for a long enough time?\n\n\n\\[\n\\begin{array}{c|cccc}\n  & w_0 & w_1 & \\ldots &  \\\\\n\\hline\np(\\mathrm{sunny})& 1 & 0.3 & 0.44 & \\ldots & \\pi_1 \\\\\np(\\mathrm{cloudy})& 0 & 0.7 & 0.56 & \\ldots & \\pi_2 \\\\\n\\end{array}\n\\]\n\nIn this example, we start the chain at time zero as a sunny day (so \\(p(\\mathrm{sunny})= 1\\) and \\(p(\\mathrm{cloudy})= 0\\))\nWe can calculate the probabilities at each iteration using the transition probabilities for each state\nThe question is whether these probabilities converge to steady state probabilities \\(\\pi_1\\) and \\(\\pi_2\\)?",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#markov-chain-2",
+    "href": "lectures/ontology3.html#markov-chain-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Markov Chain",
+    "text": "Markov Chain\n\nUnder certain assumptions they do\nWith our example, we have\n\n\\[\n\\begin{align}\n\\mathbf{\\pi}\\begin{bmatrix}0.3 & 0.7\\\\0.5 & 0.5\\end{bmatrix} &= \\mathbf{\\pi} \\\\\n\\begin{bmatrix}\\pi_1 & \\pi_2\\end{bmatrix}\\begin{bmatrix}0.3 & 0.7\\\\0.5 & 0.5\\end{bmatrix} &= \\begin{bmatrix}\\pi_1 & \\pi_2\\end{bmatrix} \\\\\n\\begin{bmatrix}(0.3\\pi_1 + 0.5\\pi_2) & (0.7\\pi_1 + 0.5\\pi_2)\\end{bmatrix} &= \\begin{bmatrix}\\pi_1 & \\pi_2\\end{bmatrix} \\\\\n\\end{align}\n\\]\n\nGiven that \\(\\pi_1 + \\pi_2=1\\), we have \\[\n\\begin{align}\n0.3\\pi_1 + 0.5\\pi_2 &= \\pi_1 \\\\\n0.3\\pi_1 + 0.5(1-\\pi_1) &= \\pi_1 \\\\\n1.2\\pi_1 &= 0.5 \\\\\n\\pi_1 &=\\frac{5}{12} \\quad \\text{ and similarly, } \\pi_2 =\\frac{7}{12}\n\\end{align}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mcmc-goals",
+    "href": "lectures/ontology3.html#mcmc-goals",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MCMC: Goals",
+    "text": "MCMC: Goals\nMCMC addresses two challenges\n\nto generate samples \\(\\left\\{ x^{(r)} \\right\\}_{r=1}^R\\) from a given probability distribution \\(P(x)\\).\nto estimate expectations of functions under this distribution, for example, the mean\n\n\nIt is assumed that \\(P(x)\\) is sufficiently complex that we cannot evaluate these expectations by exact methods\nIf we can sample appropriately from a probability distribution, it would be easy to calculate the mean\n\n\\[\n\\mu = \\frac{1}{R}\\sum_r \\phi (x^{(r)})\n\\]\n\nHowever, Obtaining independent samples from a given distribution \\(P(x)\\) is often not easy.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#why-is-sampling-from-some-distributions-hard",
+    "href": "lectures/ontology3.html#why-is-sampling-from-some-distributions-hard",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Why is sampling from some distributions hard?",
+    "text": "Why is sampling from some distributions hard?\nIf \\(P(x)\\) can be evaluated, at least to within a multiplicative constant; that is, we can evaluate a function \\(P^{*}(x)\\) such that\n\\[\nP(x) = \\frac{P^{*}(x)}{Z}\n\\]\n\nthe problem of drawing samples from P(x) is a challenging one, especially in high-dimensional spaces, because there is no obvious way to sample from \\(P\\) without enumerating most or all of the possible states.\n. Correct samples from P will by definition tend to come from places in x-space where P(x) is big; how can we identify those places where P(x) is big, without evaluating P(x) everywhere?\nIt is easy to draw samples from a high-dimensional Gaussian, but this is not true in general",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mcmc",
+    "href": "lectures/ontology3.html#mcmc",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MCMC",
+    "text": "MCMC\n\nFor instance, there are roughly 35,000 GO terms. If we want to model the distrivution of terms, each one of which can be on or off, then roughly speaking there are the following number of combinations1 \\[\n2^{35000} \\approx 1.12\\times 10^{10536}\n\\]\nThis is an insanely large number, more than the number of atoms in the universe (ca.\\(10^{80}\\))\nA useful analogy: Imagine the tasks of drawing random water samples from a lake and finding the average plankton concentration.\n\nWe can use a boat and sample the plankton concentration \\(P^{*}(x)\\) at any location \\(x\\)\nWe need to draw 1 cm3 water samples at random from the lake, in such a way that each sample is equally likely to come from any point within the lake\nWe do not know if the lake is largely of the same depth or if there are several narrow, deep underwater canyons\nThus it is very difficult to sample uniformly from the lake\n\n\n\nDavid J. C. MacKay (2003) Information Theory, Inference and Learning Algorithms. Cambridge University Press\n\nThe true number is less because some combinations are not valid because of the true path rule",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mcmc-1",
+    "href": "lectures/ontology3.html#mcmc-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MCMC",
+    "text": "MCMC\n\nA family of MCMC algorithms has been developed that are designed to sample from the true posterior distribution in a way that allows us to estimate means and other statistics\nWe will not fully cover this here, but will provide an introduction to the topics most important for understanding the MGSA\nWe will examine a simple example:\n\n\nExample\n\nGenerate samples from a normal distribution with mean 0 and standard deviation 1\n\n\n\ni.e., we want to generate samples \\(x_1, x_2, \\ldots, x_n\\) with \\[\nx_t \\sim \\mathcal{N}(\\mu=0, \\sigma^2=1)\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mcmc-algorithm",
+    "href": "lectures/ontology3.html#mcmc-algorithm",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MCMC Algorithm",
+    "text": "MCMC Algorithm\n\nStart the MCMC at \\(x_0=0\\) with \\(t=0\\) (starting location)\nPropose moves from current value \\(x_t \\rightarrow x_{t+1}\\) with a uniform transition kernel: \\[\nq(x_t, x_{t+1})\\sim \\mathcal{U}(x_t - \\frac{1}{2}, x_t + \\frac{1}{2})\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -649,35 +781,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology3.html#mcmc",
-    "href": "lectures/ontology3.html#mcmc",
-    "title": "Approaches to biomedical knowledge",
-    "section": "MCMC",
-    "text": "MCMC\n\nIt is often difficult or impossible to derive marginal probabilities for complicated probability distributions because there are simply too many possible configurations of the variables to be able to calculate each one, as would be required for an analytical solution.\nFor this reason, a number of estimation algorithms have been developed that in essence sample from the distribution of the posterior probability and take the proportion of samples in which \\(X\\) takes on some specific value \\(x'\\) as an estimate of the posterior probability of \\(x'\\)\n\n\n\n\n\n\n\n\nMCMC\n\n\nOne of the best known and most effective algorithms for this purpose is the Metropolis-Hasting algorithm, which is a Markov chain Monte Carlo (MCMC) method. The MCMC algorithm performs a random walk over the term and parameter configurations, which asymptotically provides a random sampler according to the target distribution \\(P(T|O)\\).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology3.html#mcmc-1",
-    "href": "lectures/ontology3.html#mcmc-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "MCMC",
-    "text": "MCMC\nGiven the current configuration of the terms denoted by \\(T^t\\), the algorithm proposes a neighbor state \\(T^p\\) in accordance to a proposal density function \\(Q_T(\\cdot|T^t)\\). A value \\(r\\) is sampled uniformly from the range (0,1). Then, if\n\\[\nr &lt; P_{\\text{accept}}(T^t,T^p) =\n\\frac{P(T^{p}|O)Q_T(T^{t}|T^{p})}{P(T^{t}|O)Q_T(T^{p}|T^t)}\n\\label{eqn:acceptance}\n\\]\nthe proposal is accepted, i.e., \\(T^{t+1} = T^p\\), otherwise it is rejected, i.e., \\(T^{t+1} = T^t\\).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
     "objectID": "lectures/ontology3.html#mcmc-2",
     "href": "lectures/ontology3.html#mcmc-2",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\nUsing Bayes’ law, we have\n\\[\nP(T^{p}|O) = \\dfrac{P(O|T^{p})P(T^{p})}{P(O)}\n\\label{eqn:cond.prob}\n\\]\nand similarly for \\(T^{t}\\). Substituting these expressions for \\(P(T^{p}|O)\\) and \\(P(T^{t}|O)\\) cancels out the normalization constant \\(P(O)\\). The acceptance probability is then:\n\\[\nP_{\\text{accept}}(T^t,T^p) =\n\\frac{P(O|T^{p})P(T^{p})Q_T(T^{t}|T^{p})}{P(O|T^{t})P(T^{t})Q_T(T^{p}|T^t)}.\n\\label{eqn:accept.prop.2}\n\\tag{7}\\]\n\nWe have \\(P(O|T)\\) and \\(P(T)\\) from the statement of the MGSA network",
+    "text": "MCMC\n\nIt is often difficult or impossible to derive marginal probabilities for complicated probability distributions because there are simply too many possible configurations of the variables to be able to calculate each one, as would be required for an analytical solution.\nFor this reason, a number of estimation algorithms have been developed that in essence sample from the distribution of the posterior probability and take the proportion of samples in which \\(X\\) takes on some specific value \\(x'\\) as an estimate of the posterior probability of \\(x'\\)\n\n\n\n\n\n\n\n\nMCMC\n\n\nOne of the best known and most effective algorithms for this purpose is the Metropolis-Hasting algorithm, which is a Markov chain Monte Carlo (MCMC) method. The MCMC algorithm performs a random walk over the term and parameter configurations, which asymptotically provides a random sampler according to the target distribution \\(P(T|O)\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -689,7 +797,7 @@
     "href": "lectures/ontology3.html#mcmc-3",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\nEquation 7 is used iteratively to define a random walk through the space of configurations. A burn-in period consisting of a certain number of iterations is used to initialize the MCMC chain (in our implementation of the MGSA algorithm in the Ontologizer, the default is 20,000 iterations).\n\nFollowing this, \\(l\\) further iterations (by default, \\(10^6\\)) are performed. Let \\(C(T_i)\\) be the number of samples in which term \\(T_i\\) was active. Then\n\n\\[\nP(T_i|O)\\approx \\frac{C(T_i)}{l}.\n\\label{eqn:mgsa-marginal}\n\\]",
+    "text": "MCMC\nGiven the current configuration of the terms denoted by \\(T^t\\), the algorithm proposes a neighbor state \\(T^p\\) in accordance to a proposal density function \\(Q_T(\\cdot|T^t)\\). A value \\(r\\) is sampled uniformly from the range (0,1). Then, if\n\\[\nr &lt; P_{\\text{accept}}(T^t,T^p) =\n\\frac{P(T^{p}|O)Q_T(T^{t}|T^{p})}{P(T^{t}|O)Q_T(T^{p}|T^t)}\n\\label{eqn:acceptance}\n\\]\nthe proposal is accepted, i.e., \\(T^{t+1} = T^p\\), otherwise it is rejected, i.e., \\(T^{t+1} = T^t\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -701,7 +809,7 @@
     "href": "lectures/ontology3.html#mcmc-4",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\n\n\n\n\n\n\nIn order to finish the description of the algorithm, one needs to define classes of operations of which a proposal is chosen, that is, we need to specify \\(Q_T(T^p|T^t)\\).\n\n\n\nDenote by \\(T^p \\leftrightarrow_T T^t\\) the binary relation that states that \\(T^p\\) be constructed from \\(T^t\\) by either\n\ntoggling the active/inactive state of a single term, or by\nexchanging the state of a pair of terms that contains a single active term and a single inactive term.",
+    "text": "MCMC\nUsing Bayes’ law, we have\n\\[\nP(T^{p}|O) = \\dfrac{P(O|T^{p})P(T^{p})}{P(O)}\n\\label{eqn:cond.prob}\n\\]\nand similarly for \\(T^{t}\\). Substituting these expressions for \\(P(T^{p}|O)\\) and \\(P(T^{t}|O)\\) cancels out the normalization constant \\(P(O)\\). The acceptance probability is then:\n\\[\nP_{\\text{accept}}(T^t,T^p) =\n\\frac{P(O|T^{p})P(T^{p})Q_T(T^{t}|T^{p})}{P(O|T^{t})P(T^{t})Q_T(T^{p}|T^t)}.\n\\label{eqn:accept.prop.2}\n\\tag{7}\\]\n\nWe have \\(P(O|T)\\) and \\(P(T)\\) from the statement of the MGSA network",
     "crumbs": [
       "Home",
       "Lectures",
@@ -711,6 +819,30 @@
   {
     "objectID": "lectures/ontology3.html#mcmc-5",
     "href": "lectures/ontology3.html#mcmc-5",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MCMC",
+    "text": "MCMC\nEquation 7 is used iteratively to define a random walk through the space of configurations. A burn-in period consisting of a certain number of iterations is used to initialize the MCMC chain (in our implementation of the MGSA algorithm in the Ontologizer, the default is 20,000 iterations).\n\nFollowing this, \\(l\\) further iterations (by default, \\(10^6\\)) are performed. Let \\(C(T_i)\\) be the number of samples in which term \\(T_i\\) was active. Then\n\n\\[\nP(T_i|O)\\approx \\frac{C(T_i)}{l}.\n\\label{eqn:mgsa-marginal}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mcmc-6",
+    "href": "lectures/ontology3.html#mcmc-6",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MCMC",
+    "text": "MCMC\n\n\n\n\n\n\nIn order to finish the description of the algorithm, one needs to define classes of operations of which a proposal is chosen, that is, we need to specify \\(Q_T(T^p|T^t)\\).\n\n\n\nDenote by \\(T^p \\leftrightarrow_T T^t\\) the binary relation that states that \\(T^p\\) be constructed from \\(T^t\\) by either\n\ntoggling the active/inactive state of a single term, or by\nexchanging the state of a pair of terms that contains a single active term and a single inactive term.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mcmc-7",
+    "href": "lectures/ontology3.html#mcmc-7",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
     "text": "MCMC\nDenote by \\(N(T)\\) the neighborhood of a given configuration for \\(T\\), that is, the number of different operations that can be applied once to \\(T\\) in order to get a new configuration. At first, there are \\(m\\) terms in total, each of which can be toggled. In addition, there are \\(m_{0|T}m_{1|T}\\) possibilities to combine terms that are active with terms that are inactive. Thus, there are a total of \\(N(T)=m+m_{0|T}m_{1|T}\\) valid state transitions. We would like to sample the valid proposals with equal probability; therefore, the proposal distribution \\(Q_T\\) is determined by\n\\[\nQ_T(T^p|T^t)=\\begin{cases}\n                  \\frac{1}{N(T^t)}, & \\text{if } T^p \\leftrightarrow_T\n                  T^t\\\\ 0, & \\text{otherwise.}\n               \\end{cases},\n\\]\nwhich we can use to rewrite Equation 7 to:\n\\[\nP_{\\text{accept}}(T^t,T^p) =\n\\frac{P(O|T^{p})P(T^{p})N(T^t)}{P(O|T^{t})P(T^{t})N(T^p)}.\n\\label{eqn:accept.prop.3}\n\\]",
