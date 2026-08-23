@@ -22,7 +22,15 @@ format:
 ---
 
 
-## Problems with the term-for-term approach
+## Overview
+
+- [Problems with term-for-term approach](#tftprob)
+- [Markov chains](#markovchain)
+- [MCMC](#mcmc)
+- [Metropolis-Hastings](#mh)
+- [MGSA](#mgsa)
+
+## Problems with the term-for-term approach {#tftprob}
 
 ::: {.hidden}
 $$
@@ -65,14 +73,198 @@ We have seen in the previous chapter that a major difficulty of the standard app
 MGSA is a completely different approach to GO analysis that seeks to find the best combination of terms that correspond to an experimental result.
 :::
 
-* The problem reduces to an **optimization problem**:
-    * The choice of active GO terms (and optionally other parameters) are iteratively varied.
-    * The goal is to maximize a single score or a probability.
-* **No statistical tests** (like Fisher's exact test) are performed for individual terms in isolation.
-* Instead, there is a **single score** to be optimized for the entire set of GO terms simultaneously.
+* To understand MGSA, we will first need to review several topics
+  - Markov chains
+  - MCMC algorithms
+  - Metropolis Hastings
 
 
----
+## Markov Chain Monte Carlo (MCMC) 
+
+- A Monte Carlo method approximates a quantity using random sampling instead of exact calculation
+
+![](./img/Monte-Carlo.jpg){width=50% fig-align="center"}
+
+- A Markov chain is a sequence of random variables where the next value depends only on the current value, not on the full history that came before it. 
+
+- nice examples: https://www.youtube.com/watch?v=h-DC6ZUxB6M
+
+## Markov Chain {#markovchain}
+
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from mcmc_plots import mcmc_sunny_cloudy
+mcmc_sunny_cloudy(figsize=(5,3))
+```
+
+A Markov chain has a 
+
+- **state space**: Sunny, Cloudy 
+- **Transition probabilities**: for instance, $p(\mathrm{sunny}|\mathrm{cloudy})=0.5$
+- **Markov assumption**: The next state depends only on the current state, not on what came before:
+$$
+p(w_{t+1}|w_{t}, w_{t-1}, \ldots, w_{t}) = p(w_{t+1}|w_{t})
+$$
+
+
+## Markov Chain
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from mcmc_plots import mcmc_sunny_cloudy
+mcmc_sunny_cloudy(figsize=(5,3))
+```
+
+We can represent the transition probabilities in matrix form
+
+$$
+\begin{array}{c|cc}
+w_{t-1}\backslash w_t & s & c \\
+\hline
+s & 0.3 & 0.7 \\
+c & 0.5 & 0.5 \\
+\end{array}
+$$
+
+
+## Markov Chain
+
+::: {.mybox}
+**Key question**:
+
+- Will the chain achieve steady state if it runs for a long enough time?
+:::
+
+$$
+\begin{array}{c|cccc}
+  & w_0 & w_1 & \ldots &  \\
+\hline
+p(\mathrm{sunny})& 1 & 0.3 & 0.44 & \ldots & \pi_1 \\
+p(\mathrm{cloudy})& 0 & 0.7 & 0.56 & \ldots & \pi_2 \\
+\end{array}
+$$
+
+- In this example, we start the chain at time zero as a sunny day (so $p(\mathrm{sunny})= 1$ and $p(\mathrm{cloudy})= 0$)
+- We can calculate the probabilities at each iteration using the transition probabilities for each state
+- The question is whether these probabilities converge to steady state probabilities $\pi_1$ and $\pi_2$?
+
+## Markov Chain
+
+- Under certain assumptions they do
+- With our example, we have
+
+$$
+\begin{align}
+\mathbf{\pi}\begin{bmatrix}0.3 & 0.7\\0.5 & 0.5\end{bmatrix} &= \mathbf{\pi} \\
+\begin{bmatrix}\pi_1 & \pi_2\end{bmatrix}\begin{bmatrix}0.3 & 0.7\\0.5 & 0.5\end{bmatrix} &= \begin{bmatrix}\pi_1 & \pi_2\end{bmatrix} \\
+\begin{bmatrix}(0.3\pi_1 + 0.5\pi_2) & (0.7\pi_1 + 0.5\pi_2)\end{bmatrix} &= \begin{bmatrix}\pi_1 & \pi_2\end{bmatrix} \\
+\end{align}
+$$
+
+- Given that $\pi_1 + \pi_2=1$, we have
+$$
+\begin{align}
+0.3\pi_1 + 0.5\pi_2 &= \pi_1 \\
+0.3\pi_1 + 0.5(1-\pi_1) &= \pi_1 \\
+1.2\pi_1 &= 0.5 \\
+\pi_1 &=\frac{5}{12} \quad \text{ and similarly, } \pi_2 =\frac{7}{12}
+\end{align} 
+$$
+
+## MCMC: Goals
+
+MCMC addresses two challenges
+
+1. to generate samples $\left\{ x^{(r)} \right\}_{r=1}^R$ from a given probability distribution $P(x)$.
+2. to estimate expectations of functions under this distribution, for
+example, the mean
+
+- It is assumed that $P(x)$ is sufficiently complex that we cannot evaluate these
+expectations by exact methods
+- If we can sample appropriately from a probability distribution, it would be easy to calculate the mean
+
+$$
+\mu = \frac{1}{R}\sum_r \phi (x^{(r)})
+$$
+
+- However, Obtaining independent samples from a given
+distribution $P(x)$ is often not easy.
+
+## Why is sampling from some distributions hard?
+
+If $P(x)$ can be evaluated, at least to within a multiplicative constant; that is, we can
+evaluate a function $P^{*}(x)$ such that
+
+$$
+P(x) = \frac{P^{*}(x)}{Z}
+$$
+
+-  the problem of drawing samples from P(x) is  a challenging one, especially in high-dimensional spaces,
+because there is no obvious way to sample from $P$ without enumerating most
+or all of the possible states.
+- . Correct samples from P will by definition tend
+to come from places in x-space where P(x) is big; how can we identify those
+places where P(x) is big, without evaluating P(x) everywhere? 
+- It is easy to draw samples from a high-dimensional Gaussian, but this is not true in general
+
+## MCMC
+
+- For instance, there are roughly 35,000 GO terms. If we want to model the distrivution of terms, each one of which can be on or off, 
+then roughly speaking there are the following number of combinations^[The true number is less because some combinations are not valid because of the true path rule]
+$$
+2^{35000} \approx 1.12\times 10^{10536}
+$$
+- This is an insanely large number, more than the number of atoms in the universe (ca.$10^{80}$)
+- A useful analogy: Imagine the tasks of drawing random water samples from a lake and finding
+the average plankton concentration. 
+  - We can use a boat and sample the plankton concentration $P^{*}(x)$ at any location $x$
+  - We need to draw 1 cm3 water samples at random from the lake, in
+such a way that each sample is equally likely to come from any point within
+the lake
+  - We do not know if the lake is largely of the same depth or if there are several narrow, deep underwater canyons
+  - Thus it is very difficult to sample uniformly from the lake
+
+::: {.tiny-credit}
+David J. C. MacKay (2003) Information Theory, Inference and Learning Algorithms. Cambridge University Press
+:::
+
+## MCMC
+
+- A family of MCMC algorithms has been developed that are designed to sample from the true posterior distribution in a way that allows us to estimate means and other statistics
+- We will not fully cover this here, but will provide an introduction to the topics most important for understanding the MGSA 
+- We will examine a simple example:
+
+::: {.mybox}
+**Example**
+
+- Generate samples from a normal distribution with mean 0 and standard deviation 1
+:::
+
+- i.e., we want to generate samples $x_1, x_2, \ldots, x_n$ with 
+$$
+x_t \sim \mathcal{N}(\mu=0, \sigma^2=1)
+$$
+
+## MCMC Algorithm
+
+1. Start the MCMC at $x_0=0$ with $t=0$ (starting location)
+2. Propose moves from current value $x_t \rightarrow x_{t+1}$ with a uniform transition kernel:
+$$
+q(x_t, x_{t+1})\sim \mathcal{U}(x_t - \frac{1}{2}, x_t + \frac{1}{2})
+$$
 
 ## GenGO: A Generative Model for GO
 
