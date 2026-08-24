@@ -1,6 +1,6 @@
 ---
 title: "Approaches to biomedical knowledge"
-subtitle: "Session #1: Ontologies: OBO, RDF, RDFS, and OWL"
+subtitle: "Session #1: What are ontologies, and what are they good for?"
 author: "Peter N Robinson"
 jupyter: python3
 format: 
@@ -355,7 +355,13 @@ ontologies rather than on their syntax.
 
 [→ Appendix: Ontology formats (OBO, RDF, RDFS, and OWL)](./appendix-ontology-formats.qmd)
 
-## Homework
+## Homework {.inactive-slide}
+
+::: {.slide-note}
+This exercise builds on the OWL material that has moved to the appendix. New
+exercises on the rules for building ontologies will replace it as soon as that
+material is part of the lecture.
+:::
 
 [HOMEWORK]{.hw-badge} You will create an Indian food ontology and infer whether certain dishes are vegetarian or non-veg.
 

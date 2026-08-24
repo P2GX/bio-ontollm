@@ -35,7 +35,7 @@ both topics as well as several sessions in which we show how ontologies and LLMs
 ### Lecture Schedule
 
 *   [What to expect from this course](lectures/overview.qmd)
-*   [Lecture 1: Ontologies: OBO, RDF, RDFS, and OWL](lectures/ontology1.qmd)
+*   [Lecture 1: What are ontologies, and what are they good for?](lectures/ontology1.qmd)
 *   [Appendix to Lecture 1: Ontology formats (OBO, RDF, RDFS, and OWL)](lectures/appendix-ontology-formats.qmd)
 *   [Lecture 2: Gene Ontology (GO) and Overrepresentation Analysis](lectures/ontology2.qmd)
 *   [Lecture 3: Bayesian algorithms for GO: Model-based gene-set analysis](lectures/ontology3.qmd)

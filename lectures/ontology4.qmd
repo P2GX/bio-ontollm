@@ -479,9 +479,9 @@ This lecture covers a review of artificial neural networks and backpropagation a
 ![EKG](./img/EKG.png){width="50%"}
 :::
 
-## A tale of two footballs {.moved-slide}
+## A tale of two footballs {.inactive-slide}
 
-::: {.moved-note}
+::: {.slide-note}
 Moved to lecture #1 --- kept here for reference.
 :::
 $$
@@ -509,9 +509,9 @@ A football $\ldots$
 ::: 
 
 
-## A tale of two fibrillations {.moved-slide}
+## A tale of two fibrillations {.inactive-slide}
 
-::: {.moved-note}
+::: {.slide-note}
 Moved to lecture #1 --- kept here for reference.
 :::
 $$
@@ -580,9 +580,9 @@ PN Robinson (2012) [Deep phenotyping for precision medicine. *Hum Mutat* **33**:
 :::
 
 
-## Ontologies for Medicine and Translational Research {.moved-slide}
+## Ontologies for Medicine and Translational Research {.inactive-slide}
 
-::: {.moved-note}
+::: {.slide-note}
 Moved to lecture #1 --- kept here for reference.
 :::
 
@@ -598,9 +598,9 @@ Moved to lecture #1 --- kept here for reference.
 ![](./img/nejm-fanconi.png){fig-align="center" width="75%"}
 
 
-## Ontologies: Interoperability {.moved-slide}
+## Ontologies: Interoperability {.inactive-slide}
 
-::: {.moved-note}
+::: {.slide-note}
 Moved to lecture #1 --- kept here for reference.
 :::
  
@@ -629,9 +629,9 @@ Brookes and Robinson (2015) [Human genotype-phenotype databases: aims,challenges
 opportunities, *Nature Reviews Genetics* **16**:702-15](https://pubmed.ncbi.nlm.nih.gov/26553330/)
 :::
 
-## Interoperability: What's the problem? {.moved-slide}
+## Interoperability: What's the problem? {.inactive-slide}
 
-::: {.moved-note}
+::: {.slide-note}
 Moved to lecture #1 --- kept here for reference.
 :::
 
@@ -649,9 +649,9 @@ humans^[Unfortunately computers, being significantly dumber than humans, don't q
 ![](img/communication.jpg){width="50%" fig-align="center"}
 
 
-## Interoperability: The ontology solution {.moved-slide}
+## Interoperability: The ontology solution {.inactive-slide}
 
-::: {.moved-note}
+::: {.slide-note}
 Moved to lecture #1 --- kept here for reference.
 :::
 
@@ -668,9 +668,9 @@ An ontology provides a **standardised "Term"** for each entity in its domain tha
 | **Xrefs** | MeSH:D058627, UMLS:C0221355, SNOMED CT:19410003, ICHPT:T0028, EoM:1d53660e657259f0, ... |
 | **Translations** | ![](./img/macrocephaly-translations.png){width="60%"} |
 
-## Ontologies as Computational Tools {.moved-slide}
+## Ontologies as Computational Tools {.inactive-slide}
 
-::: {.moved-note}
+::: {.slide-note}
 Moved to lecture #1 --- kept here for reference.
 :::
 

@@ -2,7 +2,7 @@
 
 Plan
 
-1. Introduction to ontologies: OBO, RDF, RDFS, and OWL
+1. What are ontologies, and what are they good for?
 2. Gene Ontology and Overrepresentation Analysis (lecture \#2)
 3. Model-based Gene Set Analysis (lecture \#3)
 4. Human Phenotype Ontology (HPO), semantic similarity, and Phenomizer (lecture \#4)

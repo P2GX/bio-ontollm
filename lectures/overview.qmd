@@ -51,7 +51,7 @@ The course explores the synergy between two paradigms:
 ### 🕸️ Ontologies
 *Structured Knowledge*
 
-- Formal Semantics (OWL/RDF)
+- Formal Semantics (classes, *is a*, DAGs)
 - Logical Consistency
 - Interoperability (OBO)
 :::
