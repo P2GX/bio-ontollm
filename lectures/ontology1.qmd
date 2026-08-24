@@ -48,19 +48,26 @@ In this part of the course we will review ontologies and algorithms and we will 
 
 ## Bio-Ontologies
 
-::: {.callout-note appearance="simple"}
-**Gameplan:**
-:::
-
-* Introduction to ontologies: OBO, RDF, RDFS, and OWL (today)
+::: {.callout-note appearance="simple" title="Gameplan"}
+* What ontologies are, and what they are good for (today)
 * Gene Ontology and Overrepresentation Analysis (lecture #2)
 * Model-based Gene Set Analysis (lecture #3)
 * Human Phenotype Ontology (HPO), semantic similarity, and Phenomizer (lecture #4)
+:::
 
 ---
 
 
-## A tale of two footballs
+## Overview
+
+* [Why do we need ontologies?](#why)
+* [What is an ontology?](#what)
+* [What are ontologies good for?](#usecases)
+* [How are ontologies built?](#structure)
+
+---
+
+## A tale of two footballs {#why}
 $$
 \begin{equation*}
 \mbox{American Football} = \mbox{Football} \neq
@@ -116,7 +123,7 @@ fibrillation $\ldots$
 When you see  ``fibrillation'', your computer sees: 
 011001100110100101100010011100100110100101101100011011000110000101110100011010010110111101101110
 
-## What is an Ontology?
+## What is an Ontology? {#what}
 
 :::: {layout="[30, 5, 30, 5, 30]"}
 
@@ -169,7 +176,7 @@ Ontologies are on the right of a scale of increasing semantic complexity:
 As we move from left to right, we move from simple **lists of terms** (Catalog/Glossary) to **hierarchical relationships** (Thesaurus/Subclassing) and finally to **formal logic** (Restrictions/Constraints).
 :::
 
-## Ontologies for Medicine and Translational Research
+## Ontologies for Medicine and Translational Research {#usecases}
 
 ::: {.callout-note appearance="simple"}
 ### Core Purpose
@@ -274,7 +281,7 @@ Haendel, Chute, Robinson (2018) Classification, Ontology, and Precision Medicine
 *N Eng J Med* **379**:1452-1462
 :::
 
-## OBO: Open Bio-Ontologies
+## OBO: Open Bio-Ontologies {#structure}
 
 
 :::: {.columns}
