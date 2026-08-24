@@ -1,5 +1,5 @@
 """
-Recreates a 2-state Markov chain transition diagram (Sunny <-> Rainy),
+Recreates a 2-state Markov chain transition diagram (Sunny <-> Cloudy),
 with self-loop and cross-transition probabilities.
 
 Run:  python markov_chain.py
@@ -42,7 +42,7 @@ def mcmc_sunny_cloudy(figsize=(8, 5)):
 
     ax.text(*sunny_xy, "Sunny", fontsize=15, fontweight="bold", ha="center", va="center",
             color="black", zorder=4)
-    ax.text(*rainy_xy, "Rainy", fontsize=15, fontweight="bold", ha="center", va="center",
+    ax.text(*rainy_xy, "Cloudy", fontsize=15, fontweight="bold", ha="center", va="center",
             color="white", zorder=4)
 
 
