@@ -87,7 +87,6 @@ MGSA is a completely different approach to GO analysis that seeks to find the be
 
 - A Markov chain is a sequence of random variables where the next value depends only on the current value, not on the full history that came before it. 
 
-- nice examples: https://www.youtube.com/watch?v=h-DC6ZUxB6M
 
 ## Markov Chain {#markovchain}
 
@@ -131,6 +130,7 @@ mcmc_sunny_cloudy(figsize=(5,3))
 We can represent the transition probabilities in matrix form
 
 $$
+\mathbf{P}=
 \begin{array}{c|cc}
 w_{t-1}\backslash w_t & s & c \\
 \hline
@@ -184,41 +184,47 @@ $$
 \end{align} 
 $$
 
-## MCMC: Goals
 
-MCMC addresses two challenges
 
-1. to generate samples $\left\{ x^{(r)} \right\}_{r=1}^R$ from a given probability distribution $P(x)$.
-2. to estimate expectations of functions under this distribution, for
-example, the mean
 
-- It is assumed that $P(x)$ is sufficiently complex that we cannot evaluate these
-expectations by exact methods
-- If we can sample appropriately from a probability distribution, it would be easy to calculate the mean
+
+## MCMC
+
+- With MCMC, our samples are on a Markov chain
+- We simulate draws (i.e., Monte Carlo) from this chain
+- The chain will reflect our target distribution
+- MCMC is usually used in Bayesian settings:
 
 $$
-\mu = \frac{1}{R}\sum_r \phi (x^{(r)})
+\begin{equation}
+p(\theta \mid \text{data}) =
+\frac{\overbrace{p(\text{data}\mid\theta)}^{\text{likelihood}} \cdot \overbrace{p(\theta)}^{\text{prior}}}
+{\underbrace{p(\text{data})}_{\text{evidence } = NC}}
+\end{equation}
 $$
 
-- However, Obtaining independent samples from a given
-distribution $P(x)$ is often not easy.
+- $\theta$ is our model (e.g., Normal distribution with specified $\mu, \sigma^2$)
+- By assumption, we are able to calculate the prior and we can calculate the likelihood for a given data point 
+- With complicated models, we are not able to calculate the normalizing constant $NC=p(\text{data})$
+- Thus, Obtaining independent samples from a given distribution $P(x)$ is often not easy.
 
 ## Why is sampling from some distributions hard?
 
 If $P(x)$ can be evaluated, at least to within a multiplicative constant; that is, we can
-evaluate a function $P^{*}(x)$ such that
+evaluate a function $g(x)$ such that
 
 $$
-P(x) = \frac{P^{*}(x)}{Z}
+P(x) = \frac{g(x)}{NC}
 $$
 
 -  the problem of drawing samples from P(x) is  a challenging one, especially in high-dimensional spaces,
 because there is no obvious way to sample from $P$ without enumerating most
 or all of the possible states.
-- . Correct samples from P will by definition tend
+- Correct samples from P will by definition tend
 to come from places in x-space where P(x) is big; how can we identify those
 places where P(x) is big, without evaluating P(x) everywhere? 
 - It is easy to draw samples from a high-dimensional Gaussian, but this is not true in general
+- In Bayesian setting, $g(x)=p(x\mid\theta)p(\theta)$ and can be easily evaluated
 
 ## MCMC
 
@@ -230,7 +236,7 @@ $$
 - This is an insanely large number, more than the number of atoms in the universe (ca.$10^{80}$)
 - A useful analogy: Imagine the tasks of drawing random water samples from a lake and finding
 the average plankton concentration. 
-  - We can use a boat and sample the plankton concentration $P^{*}(x)$ at any location $x$
+  - We can use a boat and sample the plankton concentration $g(x)$ at any location $x$
   - We need to draw 1 cm3 water samples at random from the lake, in
 such a way that each sample is equally likely to come from any point within
 the lake
@@ -243,186 +249,319 @@ David J. C. MacKay (2003) Information Theory, Inference and Learning Algorithms.
 
 ## MCMC
 
-- A family of MCMC algorithms has been developed that are designed to sample from the true posterior distribution in a way that allows us to estimate means and other statistics
-- We will not fully cover this here, but will provide an introduction to the topics most important for understanding the MGSA 
-- We will examine a simple example:
+- MCMC methods construct the sequence of samples as a **Markov chain** — each sample depends only on the previous one 
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from mcmc_plots import burn_in
+burn_in()
+```
+
+- The chain starts at an arbitrary state and wanders before settling into the target distribution's high-density region — this initial stretch is the **burn-in period**
+- After burn-in, the chain's samples $x_i$ are (approximately) draws from $p(x)$ 
+- Discarding the burn-in samples, we estimate the mean of $p(x)$ from the remaining $N$ chain samples:
+
+
+$$
+\hat{\mu} = \frac{1}{N}\sum_{1}^{N}x \qquad x_i \sim p(x) \text{ (approximately, post burn-in)}
+$$
+
+## MCMC
+
+::: {.mybox}
+- But how do we cause the chain to sample from the target distribution?
+:::
+
+- Design the transition probabilities $T(y\mid x)$ to satisfy the **detailed balance condition**:
+$$
+p(x)\,T(y\mid x) = p(y)\,T(x\mid y)
+$$
+- Sum both sides over all values of $x$:
+$$
+\begin{align}
+\sum_x p(x)\,T(y\mid x) &= \sum_x p(y)\,T(x\mid y) \\
+&= p(y) \underbrace{\sum_x T(x\mid y)}_{=1 \text{, since } T(\cdot\mid y) \text{ is a valid distribution}} \\
+&= p(y)
+\end{align}
+$$
+
+- Here, $x$ and $y$ are the discrete states (e.g., sunny and rainy)
+
+
+## Verifying detailed balance condition for the weather
+
+- Detailed balance requires, for **every pair** of states $x,y$:
+$$
+p(x)\,T(y\mid x) = p(y)\,T(x\mid y)
+$$
+- Assume we are in the stationary distribution sunny: $\pi_1 =\frac{5}{12}$ and cloudy: $\pi_2 =\frac{7}{12}$
+$$
+\underbrace{p(S)\,T(R\mid S)}_{\frac{5}{12}\times 0.7 \,=\, \frac{7}{24}} \;=\; \underbrace{p(R)\,T(S\mid R)}_{\frac{7}{12}\times 0.5 \,=\, \frac{7}{24}} \quad\checkmark
+$$
+- Thus, $p$ is a stationary distribution — we can also check directly:
+$$
+\sum_x p(x)\,T(S\mid x) = \underbrace{\tfrac{5}{12}\times 0.3}_{\text{stay Sunny}} + \underbrace{\tfrac{7}{12}\times 0.5}_{\text{Rainy}\to\text{Sunny}} = \tfrac{15}{120} +  \tfrac{35}{120}= \tfrac{5}{12} = p(S) \quad\checkmark
+$$
+- So: if the chain is currently 5/12 Sunny, 7/12 Rainy, thus, **$p$ is unchanged by a step of the chain** — i.e., $p$ to be a **stationary distribution**
+
+## Metropolis-Hastings {#mh}
+
+- The Metropolis-Hastings (MH) algorithm is a general method for constructing a transition kernel $T$ that samples from an arbitrary target $p$, using a **proposal** and an **acceptance** step
+- $q(y\mid x)$ is the proposal — a candidate generator, saying what state *might* come next
+- The transition kernel combines proposal and acceptance:
+$$
+T(y\mid x) = q(y\mid x)\cdot a(x,y) \qquad (y \neq x)
+$$
+- Rejected proposals mean the chain **stays put** — this adds a self-transition term:
+$$
+T(x\mid x) = q(x\mid x) + \sum_{y\neq x} q(y\mid x)\big(1-a(x,y)\big)
+$$
+- $a(x,y)$ is defined as:
+$$
+a(x,y) = \min\!\left(1,\ \frac{p(y)\,q(x\mid y)}{p(x)\,q(y\mid x)}\right)
+$$
+- It's $T$ — not $q$ — that needs to satisfy detailed balance
+- $a(x,y)$'s $\min(1,\cdot)$ form is *designed* so that $T = q\cdot a$ satisfies detailed balancefor **any** valid proposal $q$
+
+## MH — Proof (continued)
+
+- Let $a, b$ be two states with $p(b) < p(a)$. Then $a(a,b) = \dfrac{p(b)}{p(a)} < 1$ — the probability of accepting a move from $a$ to $b$ is less than one
+- What about the reverse move, $b \to a$? Since $p(a) > p(b)$, moving to $a$ only *increases* probability, so we always accept:
+$$
+a(b,a) = \min\!\left(1,\ \frac{p(a)}{p(b)}\right) = 1 \qquad \text{(since } \tfrac{p(a)}{p(b)} > 1\text{)}
+$$
+- Now check detailed balance, $p(a)T(b\mid a) \overset{?}{=} p(b)T(a\mid b)$, using $T(y\mid x) = q(y\mid x)\,a(x,y)$:
+$$
+p(a)\,T(b\mid a) = p(a)\,q(b\mid a)\,a(a,b) = p(a)\,q(b\mid a)\cdot\frac{p(b)}{p(a)} = q(b\mid a)\,p(b)
+$$
+$$
+p(b)\,T(a\mid b) = p(b)\,q(a\mid b)\,a(b,a) = p(b)\,q(a\mid b)\cdot 1 = q(a\mid b)\,p(b)
+$$
+
+## MH — Proof (continued)
+
+- These are equal **provided $q$ is symmetric**, i.e. $q(b\mid a) = q(a\mid b)$:
+$$
+p(a)\,T(b\mid a) = q(b\mid a)\,p(b) = q(a\mid b)\,p(b) = p(b)\,T(a\mid b) \qquad\checkmark
+$$
+- So for a symmetric proposal, this simplified acceptance rule — accept automatically if $p(b)\geq p(a)$, otherwise accept with probability $p(b)/p(a)$ — guarantees detailed balance
+- This is **Metropolis**, i.e., the proposal distribution is symmetric
+- In the general case (**Metropolis-Hastings**),  if $q$ isn't symmetric, the $q(b\mid a)$ and $q(a\mid b)$ terms above don't cancel
+
+
+## MH — Proof (continued): the general case
+
+- Drop the assumption $p(b) < p(a)$ — the general proof works for **any** two states, no case split needed
+- Write out $a(a,b)$ and $a(b,a)$ using the full MH formula:
+$$
+a(a,b) = \min\!\left(1,\ \frac{p(b)\,q(a\mid b)}{p(a)\,q(b\mid a)}\right), \qquad
+a(b,a) = \min\!\left(1,\ \frac{p(a)\,q(b\mid a)}{p(b)\,q(a\mid b)}\right)
+$$
+- Now compute $p(a)\,T(b\mid a) = p(a)\,q(b\mid a)\,a(a,b)$:
+$$
+p(a)\,q(b\mid a)\,a(a,b) = p(a)\,q(b\mid a)\cdot\min\!\left(1,\ \frac{p(b)\,q(a\mid b)}{p(a)\,q(b\mid a)}\right)
+$$
+- Pull $p(a)\,q(b\mid a)$ **inside** the $\min(\cdot)$ (valid since it's a positive constant):
+$$
+= \min\!\Big(p(a)\,q(b\mid a),\ \ p(b)\,q(a\mid b)\Big)
+$$
+- By the same steps, $p(b)\,T(a\mid b) = p(b)\,q(a\mid b)\,a(b,a)$ simplifies to:
+$$
+p(b)\,q(a\mid b)\,a(b,a) = \min\!\Big(p(b)\,q(a\mid b),\ \ p(a)\,q(b\mid a)\Big)
+$$
+
+## MH — Proof (continued): the general case
+
+- Thus
+$$
+p(a)\,T(b\mid a) = \min\big(p(a)q(b\mid a),\ p(b)q(a\mid b)\big) = \min\big(p(b)q(a\mid b),\ p(a)q(b\mid a)\big) = p(b)\,T(a\mid b) \qquad\checkmark
+$$
+- **Detailed balance holds exactly**, for *any* proposal $q$ — symmetric or not, and regardless of which of $p(a), p(b)$ is larger
+- Recall from earlier: **detailed balance $\Rightarrow$ stationarity** — summing both sides over $a$ recovers $\sum_a p(a)\,T(b\mid a) = p(b)$
+- So **$p$ is guaranteed to be a stationary distribution of the MH chain**, regardless of how the proposal $q$ is designed
+- What's *not* guaranteed by this proof alone: that the chain actually **converges** to $p$ from an arbitrary starting point — that requires $q$ to make the chain irreducible and aperiodic (ergodicity), a separate condition on your choice of $q$
+
+
+# MH Algorithm - Example
+
+- Up to now, we have been discussing application of the MH to discrete state spaces
+- However, it is applicable also to continuous state spaces
+
+|    | Discrete | Continuous |
+|----|----------|------------|
+| state space | finte or countable set | Interval of $\mathbb{R}$ or $\mathbb{R}^{n}$ |
+| $p(x)$   | a probability mass function | a density |
+| normalization | $\sum_x p(x) = 1$ | $\int p(x) dx = 1$ |
+| Detailed balance | $\sum_x p(x) T(y\mid x) = p(y)$ | $\int p(x) T(y\mid x) dx = p(y)$ | 
+
 
 ::: {.mybox}
 **Example**
 
-- Generate samples from a normal distribution with mean 0 and standard deviation 1
+- In the following, we will use the MH algorithm to generate samples from a normal distribution with mean 0 and standard deviation 1
 :::
+
+## Example 
 
 - i.e., we want to generate samples $x_1, x_2, \ldots, x_n$ with 
 $$
 x_t \sim \mathcal{N}(\mu=0, \sigma^2=1)
 $$
 
-## MCMC Algorithm
-
-1. Start the MCMC at $x_0=0$ with $t=0$ (starting location)
-2. Propose moves from current value $x_t \rightarrow x_{t+1}$ with a uniform transition kernel:
+* Start the MCMC at $x_0=0$
+* Propose moves from current value $x_t \rightarrow x_{t+1}$ with a uniform transition kernel:
 $$
-q(x_t, x_{t+1})\sim \mathcal{U}(x_t - \frac{1}{2}, x_t + \frac{1}{2})
+q(x_t, x_{t+1})\sim \mathcal{U}\left(x_t - \frac{1}{2}, x_t + \frac{1}{2}\right)
 $$
-
-## GenGO: A Generative Model for GO
-
-::: {.callout-note appearance="simple"}
-The core idea is to fit a model on all terms **simultaneously**, rather than testing each term in isolation.
-:::
-
-::: {.columns}
-
-::: {.column width="40%"}
-![](./img/genGO.png){#fig-gengo fig-alt="GenGO Model Diagram" width="100%"}
-:::
-
-::: {.column width="60%"}
-### The Logic
-* **Nodes:** GO terms are modeled as *active* (gray) or *inactive* (white).
-* **Connections:** Terms connect to their annotated genes.
-* **Objective:** Maximize a score by selecting GO terms that cover as many **ON** (active) genes as possible while avoiding **OFF** (inactive) genes.
-
-[^1]: [Lu Y et al. (2008). *Nucleic Acids Res*; 36:e109.](https://doi.org/10.1093/nar/gkn434)
-
-:::
-:::
-
-
-## GenGO (2)
-
-::: {.columns}
-::: {.column width="75%"}
-
-The GenGO algorithm can be explained with the use of several
-categories.
-
-* $A_g$: `ON` gene node that is connected to at least one
-  `active` GO term (e.g., genes B and C).
-* $A_n$: `ON` gene node that is *not* connected to any
-  `active` GO term (e.g., gene A).
-* $I$: `OFF` gene node (e.g., genes D and E).
-* $S_g$: edge connecting  an `active` GO term with a node
-  in $I$ (e.g., edge from `GO:2` to gene D).
-* $S_n$: edge connecting  an `inactive` GO term with a node
-  in $I$ (e.g., edge from `GO:4` to gene D).
-
-::: 
-::: {.column width="25%"}
-
-
-![](./img/genGO.png){fig-align="center" width="100%"}
-
-:::
-:::
-
-
-##  GenGO (3)
-
-*  According to the model of genGO, an `active` GO term does not
-activate all of the genes it annotated; rather, because of noise or
-other errors, annotated genes are observed to be `OFF` with a
-probability of $1-a$. 
-* Similarly, genes that are not annotated by any
-`active` GO term are observed to be `ON` with a
-probability of $b$. 
-* The actual values of $a$ and $b$ can be chosen by
-the user or optimized by the genGO algorithm itself, but
-representative values are $a=0.9$ and $b=0.01$.
-
-One can then define a scoring function that is to be maximized,
-whereby $C$ is the set of `active` GO terms in the current
-iteration.
-$$
-\mathcal{L}(C|p,q,G) = \underbrace{|A_g|\log p}_{\mathrm{TP}} + \underbrace{|A_n|\log q}_{\mathrm{TN}} 
-+ \; \underbrace{|S_g|\log (1-p)}_{\mathrm{FP}}
-+ \underbrace{|S_n| \log (1-q)}_{\mathrm{FN}} - \underbrace{\alpha |C|}_{\sim\mathrm{regularization}}
-$$ {#eq-gengo}
-
-
-# GenGO (4)
-
-The first four terms of @eq-gengo are equivalent to the logarithm of the following equation
+* That is, given the chain's current position $x_t$, the proposed next value $x_{t+1}$ is drawn uniformly at random from the interval centered on 
+$x_t$, with width 1. Every point in that interval is equally likely.
 
 $$
-p^{|A_g|}q^{|A_n|}(1-p)^{|S_g|}(1-q)^{|S_n|}
-$$ {#eq-genGO-no-log}
+q(x_t, x_{t+1}) = \begin{cases}
+1 & x_{t+1} \in (x_t - \frac{1}{2},x_t + \frac{1}{2}) \\
+0 & \text{otherwise}
+\end{cases}
+$$
+
+## Hastings ratio
+
+- We accept moves according to the Hastings ratio, $h=\min\left(1, \frac{p(a)q(b\mid a)}{p(b)q(a\mid b)}\right)$
+- Since we are using an uniform transition kernel, $q(b\mid a) = q(a\mid b)$ and thus $h=\min\left(1, \frac{p(a)}{p(b)}\right)$
+- In implementations, we generally transform to log space to avoid numerical problems
+- Recalling that our target disttribution is a normal distribution, we obtain
+
+$$
+\begin{align}
+\log h &= \log \frac{p(a)}{p(b)}\\
+&= \log \frac{\frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(a-\mu)^2}{2\sigma^2}}}{\frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(b-\mu)^2}{2\sigma^2}}}\\
+&= \log \frac{e^{-\frac{(a-\mu)^2}{2\sigma^2}}}{e^{-\frac{(b-\mu)^2}{2\sigma^2}}}\\
+&= \frac{1}{2\sigma^2}\left[ (a-\mu)^2 - (b-\mu)^2\right]
+\end{align}
+$$
+
+- We sample a random number $r$ uniformly from the interval $[0,1]$. If $ h < r$, then we accept the proposal and advance the chain from $a$ to $b$. If not, we remain at $a$.
 
 
+## MCMC: Run with start position $x_0=0$, $d=1$
 
-It can be seen that the value of Equation @eq-genGO-no-log is
-maximized if $|A_g|>|S_g|$ (because  $a>1-a$) and if $|S_n|>|A_n|$
-(because $1-b>b$). Thus, maximization of
-@eq-genGO-no-log would tend to identify sets of
-`active` GO terms
-that more often than not annotate the `ON` genes ($|A_g|>|S_g|$). On the other hand, the `inactive` GO terms would more often than not annotate `OFF` genes
-($|S_n|>|A_n|$).
 
-::: {.callout-note appearance="simple"}
- 
-The final term in @eq-gengo, $- \alpha |C|$ reduces the score linearly in the number of `active` GO terms. The authors of genGO state that a value of $\alpha=3$ tends to produce good results. The genGO algorithm seeks to optimize the score for the current set of `active` GO terms $C$. 
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from mcmc_plots import run_metropolis_mcmc
+run_metropolis_mcmc()
+```
 
-:::
- 
-## GenGO (5)
-
-::: {.callout-note appearance="simple"}
-
-GenGO performs iterations where all
- possible one-step changes of $C$ are considered, both changes that add
- a term $t_M$ to the current configuration as well as changes that
- remove a term $t_L$. In each iteration, the single-step change
- with the highest improvement of the score is chosen until no further
- improvement is possible. 
-
-:::
-
-::: {.pseudocode}
-**Require:** study set $\mathcal{S}$, population set $\mathcal{P}$, Gene Ontology $\mathcal{G}$, annotations $\mathcal{A}$
-
-1. $C \gets \emptyset$
-2. **repeat**
-   - **for all** $t \in \mathcal{G}$ **do**
-     - $t_L \gets \operatorname{argmax}_{t \in C}\, \mathcal{L}(C \setminus \{t\})$
-     - $t_M \gets \operatorname{argmax}_{t \in \mathcal{G} \setminus C}\, \mathcal{L}(C \cup \{t\})$
-     - **if** $\mathcal{L}(C \setminus \{t_L\}) > \mathcal{L}(C \cup \{t_M\})$ **then**
-       - $C \gets C \setminus \{t_L\}$
-     - **else**
-       - $C \gets C \cup \{t_M\}$
-     - **end if**
-   - **end for**
-3. **until** no further improvement of score $\mathcal{L}(C)$
-4. **return** $C$
-:::
-
-::: {.tiny-credit}
-Lu Y, et al. (2008) [A probabilistic generative model for GO enrichment analysis. Nucleic Acids Res **36**:e109](https://pubmed.ncbi.nlm.nih.gov/18676451/)
-:::
- 
-## GenGO (7)
-
-::: {.callout-note appearance="simple"}
-
-The idea behind GenGO appears particularly attractive because it represents a novel way
-of avoiding the statistical dependency problems associated with the
-overrepresentation methods described in the previous chapter.  
-
+::: {.small-text}
+- Top panel ("trace"): The value $x_t$ at each iteration
+- Acceptance rate of about 33% is considered optimal - maybe the proposal distribution of 1 is too small and we are not exploring the space enough?
 :::
 
 
-* However, the score and the optimization algorithm are heuristics without much statistical 
-rigor
-* It seemed possible to improve upon this result using Bayesian methodologies
-*  Model-based gene set analysis (MGSA) is similar to GenGO in that it seeks to identify an optimal combination of GO terms to ``explain'' the results of microarray or other high-throughput
-experiments. 
-*  MGSA differs from genGO in that it embeds the GO terms and
-the genes they annotate into a Bayesian network and uses probabilistic
-methods to search for the optimal combination. 
+## MCMC: Run with start position $x_0=0$, $d=10$
+
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from mcmc_plots import run_metropolis_mcmc
+run_metropolis_mcmc(start_val=0.0, n_steps=5000, proposal_width=10.0)
+```
+
+::: {.small-text}
+- Top panel ("trace"): The value $x_t$ at each iteration
+- Acceptance rate of about 33% is considered optimal
+:::
+
+## MCMC: Run with start position $x_0=0$, $d=0.1$
+
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from mcmc_plots import run_metropolis_mcmc
+run_metropolis_mcmc(start_val=0.0, n_steps=5000, proposal_width=0.1)
+```
+
+::: {.small-text}
+- Very small proposal width, so that we have not reached true distribution for much of the run
+- Very high acceptance rate 
+- The chain has not (yet) explored the entire space
+:::
+
+## MCMC: Run with start position $x_0=0$, $d=100$
+
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from mcmc_plots import run_metropolis_mcmc
+run_metropolis_mcmc(start_val=0.0, n_steps=5000, proposal_width=100)
+```
+
+::: {.small-text}
+- Very large proposal width
+- The chain often proposes values very far away from the true value, so there is a Very low acceptance rate
+:::
+
+
+## MCMC: Run with start position $x_0=-1000$, $d=10$
+
+
+```{python}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "100%"
+#| fig-align: center
+import sys
+sys.path.append('utils') 
+from mcmc_plots import run_metropolis_mcmc
+run_metropolis_mcmc(start_val=-1000.0, n_steps=5000, proposal_width=10)
+```
+
+::: {.small-text}
+- We start very far away from the true distribution
+- It takes the chain about 1000 iterations, but it does seem to reach the true distribution
+- The chain has a dependency on the starting distribution
+:::
+
+## MCMC: Wrap-Up
+
+- We have provided a very first introduction to MCMC
+- Our examples have shown the need for a burn-in phase to allow the chain to reach the true distribution 
+- The MGSA algorithm applies the Metropolis Hastings algorithm to the task of finding an optimal combination of GO terms to "explain" a set of differentially expressed genes.
+
 
 ## MGSA
 
-* Similar to genGO, MGSA assumes that the experiment attempts to detect genes that have a particular `state` (such as differential expression),
+* MGSA assumes that the experiment attempts to detect genes that have a particular `state` (such as differential expression),
 which can be `ON` or `OFF`. The true state of any gene is hidden. 
 * The experiment and its associated analysis provide observations of the gene states
 that are associated with unknown  false positive ($\alpha$) and  false negative rates
@@ -888,5 +1027,6 @@ $$
 ## Sources
 
 
-- Lu Y, et al. (2008) [A probabilistic generative model for GO enrichment analysis. *Nucleic Acids Res* **36**:e109](https://pubmed.ncbi.nlm.nih.gov/18676451/)
 - Bauer S, et al. (2010) [GOing Bayesian: model-based gene set analysis of genome-scale data. *Nucleic Acids Res* **38**:3523-32](https://pubmed.ncbi.nlm.nih.gov/20172960/) 
+- van Ravenzwaaij D, et al. (2018) [A simple introduction to Markov Chain Monte-Carlo sampling. *Psychon Bull Rev* **25**:143-154](https://pubmed.ncbi.nlm.nih.gov/26968853/)
+- Chandra, R and Simmons J (2024) [Bayesian Neural Networks via MCMC: A Python-Based Tutorial. *IEEE Access* **12**:70519–70549](http://dx.doi.org/10.1109/ACCESS.2024.3401234)
