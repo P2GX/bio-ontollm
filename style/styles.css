@@ -278,3 +278,24 @@ table.small-table td.greycell {
 .pseudocode ul{ list-style:none; padding-left:1.6em; margin:0.1em 0; }
 .pseudocode li{ margin:0.15em 0; }
 .pseudocode strong{ color:#9a5b00; font-weight:700; }
+
+/* Slides that have been moved to another lecture but are kept in place as a
+   pointer: everything is greyed out except the red note saying where it went.
+   Usage:  ## Slide title {.moved-slide}
+           ::: {.moved-note}
+           Moved to Lecture 1 ("New slide title").
+           :::
+   The note must be a div (::: syntax), not an inline span: opacity on the
+   slide creates a stacking context that a nested element cannot escape. */
+.moved-slide > *:not(.moved-note) {
+  opacity: 0.3;
+  filter: grayscale(100%);
+}
+
+.moved-note {
+  display: block;
+  color: #c00000;
+  font-weight: bold;
+  font-size: 0.7em;
+  margin-bottom: 0.6em;
+}

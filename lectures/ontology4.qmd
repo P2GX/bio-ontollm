@@ -479,7 +479,11 @@ This lecture covers a review of artificial neural networks and backpropagation a
 ![EKG](./img/EKG.png){width="50%"}
 :::
 
-## A tale of two footballs
+## A tale of two footballs {.moved-slide}
+
+::: {.moved-note}
+Moved to lecture #1 --- kept here for reference.
+:::
 $$
 \begin{equation*}
 \mbox{American Football} = \mbox{Football} \neq
@@ -505,7 +509,11 @@ A football $\ldots$
 ::: 
 
 
-## A tale of two fibrillations
+## A tale of two fibrillations {.moved-slide}
+
+::: {.moved-note}
+Moved to lecture #1 --- kept here for reference.
+:::
 $$
 \begin{equation*}
 \mbox{muscle fibrillation} = \mbox{fibrillation} \neq
@@ -572,7 +580,11 @@ PN Robinson (2012) [Deep phenotyping for precision medicine. *Hum Mutat* **33**:
 :::
 
 
-## Ontologies for Medicine and Translational Research
+## Ontologies for Medicine and Translational Research {.moved-slide}
+
+::: {.moved-note}
+Moved to lecture #1 --- kept here for reference.
+:::
 
 ::: {.callout-note appearance="simple"}
 ### Core Purpose
@@ -586,7 +598,11 @@ PN Robinson (2012) [Deep phenotyping for precision medicine. *Hum Mutat* **33**:
 ![](./img/nejm-fanconi.png){fig-align="center" width="75%"}
 
 
-## Ontologies: Interoperability
+## Ontologies: Interoperability {.moved-slide}
+
+::: {.moved-note}
+Moved to lecture #1 --- kept here for reference.
+:::
  
 ::: {.columns}
 ::: {.column width="50%"}
@@ -613,7 +629,11 @@ Brookes and Robinson (2015) [Human genotype-phenotype databases: aims,challenges
 opportunities, *Nature Reviews Genetics* **16**:702-15](https://pubmed.ncbi.nlm.nih.gov/26553330/)
 :::
 
-## Interoperability: What's the problem?
+## Interoperability: What's the problem? {.moved-slide}
+
+::: {.moved-note}
+Moved to lecture #1 --- kept here for reference.
+:::
 
 * Phenotypic descriptions that are very evocative for
 humans^[Unfortunately computers, being significantly dumber than humans, don't quite ``get'' it...]:
@@ -629,7 +649,11 @@ humans^[Unfortunately computers, being significantly dumber than humans, don't q
 ![](img/communication.jpg){width="50%" fig-align="center"}
 
 
-## Interoperability: The ontology solution
+## Interoperability: The ontology solution {.moved-slide}
+
+::: {.moved-note}
+Moved to lecture #1 --- kept here for reference.
+:::
 
 ::: {.callout-note appearance="simple"}
 An ontology provides a **standardised "Term"** for each entity in its domain that can be used for data exchange.
@@ -644,7 +668,11 @@ An ontology provides a **standardised "Term"** for each entity in its domain tha
 | **Xrefs** | MeSH:D058627, UMLS:C0221355, SNOMED CT:19410003, ICHPT:T0028, EoM:1d53660e657259f0, ... |
 | **Translations** | ![](./img/macrocephaly-translations.png){width="60%"} |
 
-## Ontologies as Computational Tools
+## Ontologies as Computational Tools {.moved-slide}
+
+::: {.moved-note}
+Moved to lecture #1 --- kept here for reference.
+:::
 
 ::: {.callout-note appearance="simple"}
 Ontologies are used for myriad applications in biomedical research and translational applications. The greatest common denominator is: **Compute over human knowledge!**
