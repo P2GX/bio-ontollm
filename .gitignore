@@ -153,3 +153,6 @@ _site/
 **.log
 lectures/encoder_files/
 lectures/lstm_files/
+
+# Local working material, not part of the lecture series
+ph_material/
