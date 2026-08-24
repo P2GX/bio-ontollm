@@ -60,6 +60,62 @@ In this part of the course we will review ontologies and algorithms and we will 
 ---
 
 
+## A tale of two footballs
+$$
+\begin{equation*}
+\mbox{American Football} = \mbox{Football} \neq
+\mbox{Football} = \mbox{European Football} = \mbox{Soccer}
+\end{equation*}
+$$
+
+::: {.columns}
+::: {.column width="50%"}
+
+![](./img/american-football.jpg){width="30%"}
+
+A football $\ldots$^[When you see ``football'', your computer sees: 
+0100011001101111011011110111010001100010011000010110110001101100]
+
+::: 
+::: {.column width="50%"}
+
+![](./img/european-football.jpg){width="30%"}
+
+A football $\ldots$
+::: 
+::: 
+
+
+## A tale of two fibrillations
+$$
+\begin{equation*}
+\mbox{muscle fibrillation} = \mbox{fibrillation} \neq
+\mbox{fibrillation} = \mbox{ventricular fibrillation}
+\end{equation*}
+$$
+
+::: {.columns}
+::: {.column width="50%"}
+
+![](./img/muscle_fibrillation.jpg){width="50%" fig-align="center"}
+
+fibrillation $\ldots$
+
+::: 
+::: {.column width="50%"}
+
+![](./img/ventricular_fibrillation.jpg){width="100%" fig-align="center"}
+
+fibrillation $\ldots$
+:::
+:::
+
+
+
+
+When you see  ``fibrillation'', your computer sees: 
+011001100110100101100010011100100110100101101100011011000110000101110100011010010110111101101110
+
 ## What is an Ontology?
 
 :::: {layout="[30, 5, 30, 5, 30]"}
@@ -111,6 +167,111 @@ Ontologies are on the right of a scale of increasing semantic complexity:
 ::: {.callout-tip}
 ## Evolution of Complexity
 As we move from left to right, we move from simple **lists of terms** (Catalog/Glossary) to **hierarchical relationships** (Thesaurus/Subclassing) and finally to **formal logic** (Restrictions/Constraints).
+:::
+
+## Ontologies for Medicine and Translational Research
+
+::: {.callout-note appearance="simple"}
+### Core Purpose
+ Ontologies have two major (interrelated) __use cases__
+:::
+
+- Interoperability between databases
+- Foundation for algorithms and computational tools
+
+
+![](./img/nejm-fanconi.png){fig-align="center" width="75%"}
+
+
+## Ontologies: Interoperability
+ 
+::: {.columns}
+::: {.column width="50%"}
+
+![](img/BrookesRobinson2015-f1.png)
+                
+
+:::
+::: {.column width="50%"}
+
+![](img/pipe.jpg){width="50%"}
+
+:::
+:::
+
+* Human genetics is becoming a data-driven science
+* Global Alliance for Genomics and Health (GA4GH) and other groups are
+defining standards to exchange and integrate information between databases
+across the globe
+* This is particularly difficult for __clinical data__!
+
+::: {.tiny-credit}
+Brookes and Robinson (2015) [Human genotype-phenotype databases: aims,challenges and
+opportunities, *Nature Reviews Genetics* **16**:702-15](https://pubmed.ncbi.nlm.nih.gov/26553330/)
+:::
+
+## Interoperability: What's the problem?
+
+* Phenotypic descriptions that are very evocative for
+humans^[Unfortunately computers, being significantly dumber than humans, don't quite ``get'' it...]:
+    * myopathic electromyography
+    * still walking 25 years after onset
+* The following descriptions mean the same thing to you: `generalized amyotrophy`, 
+`generalized muscle atrophy`, `muscular atrophy, generalized`,
+(etc)
+* Many publications have little^[or none at all] information about the actual phenotypic features seen in patients with particular diseases and variants
+* Databases cannot talk to one another about phenotypes
+
+
+![](img/communication.jpg){width="50%" fig-align="center"}
+
+
+## Interoperability: The ontology solution
+
+::: {.callout-note appearance="simple"}
+An ontology provides a **standardised "Term"** for each entity in its domain that can be used for data exchange.
+:::
+
+| Field | Description |
+|:---|:---|
+| **ID** | HP:0000256 |
+| **Name** | Macrocephaly |
+| **Definition** | Occipitofrontal (head) circumference greater than 97th centile compared to appropriate, age matched, sex-matched normal standards. Alternatively, an apparently increased size of the cranium. |
+| **Synonyms** | Large head, big head, large cranium, large calvaria, Increased head circumference, ... |
+| **Xrefs** | MeSH:D058627, UMLS:C0221355, SNOMED CT:19410003, ICHPT:T0028, EoM:1d53660e657259f0, ... |
+| **Translations** | ![](./img/macrocephaly-translations.png){width="60%"} |
+
+## Ontologies as Computational Tools
+
+::: {.callout-note appearance="simple"}
+Ontologies are used for myriad applications in biomedical research and translational applications. The greatest common denominator is: **Compute over human knowledge!**
+:::
+
+:::: {.columns}
+
+::: {.column width="60%"}
+### Applications
+::: {.small}
+* Functional profiling in high-throughput experiments
+* Network biology
+* Model, reason and manage complex data systems (e.g., IBM Watson)
+* Natural Language Processing
+* *et cetera*
+:::
+:::
+
+::: {.column width="40%"}
+![](./img/BioOntologiesCover.png){fig-align="center" width="80%"}
+:::
+
+::::
+
+
+
+
+::: {style="font-size: 0.4em; line-height: 0.9; margin-top: 20px;"}
+Haendel, Chute, Robinson (2018) Classification, Ontology, and Precision Medicine.  
+*N Eng J Med* **379**:1452-1462
 :::
 
 ## OBO: Open Bio-Ontologies

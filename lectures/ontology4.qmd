@@ -615,11 +615,10 @@ opportunities, *Nature Reviews Genetics* **16**:702-15](https://pubmed.ncbi.nlm.
 
 ## Interoperability: What's the problem?
 
-- Phenotypic descriptions that are very evocative for
+* Phenotypic descriptions that are very evocative for
 humans^[Unfortunately computers, being significantly dumber than humans, don't quite ``get'' it...]:
-    - myopathic electromyography
-    - still walking 25 years after onset
-\end{itemize}
+    * myopathic electromyography
+    * still walking 25 years after onset
 * The following descriptions mean the same thing to you: `generalized amyotrophy`, 
 `generalized muscle atrophy`, `muscular atrophy, generalized`,
 (etc)
@@ -630,7 +629,7 @@ humans^[Unfortunately computers, being significantly dumber than humans, don't q
 ![](img/communication.jpg){width="50%" fig-align="center"}
 
 
-## Ontologies: Interoperability
+## Interoperability: The ontology solution
 
 ::: {.callout-note appearance="simple"}
 An ontology provides a **standardised "Term"** for each entity in its domain that can be used for data exchange.
