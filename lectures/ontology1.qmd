@@ -133,10 +133,10 @@ As we move from left to right, we move from simple **lists of terms** (Catalog/G
 
 [http://www.obofoundry.org/](http://www.obofoundry.org/){.tiny}
 
-## RDFS: *is a* ain't always *is a*
+## *is a* ain't always *is a*
 
 ::: {.callout-note appearance="simple"}
-Probably the most important concept for inference in RDFS is that of the class. Classes provide an abstraction mechanism for grouping resources with similar characteristics.
+The most important concept in an ontology is that of the **class**. Classes provide an abstraction mechanism for grouping entities with similar characteristics.
 :::
 
 It is important to distinguish between two different usages of the phrase "is a" in the English language:
@@ -144,7 +144,33 @@ It is important to distinguish between two different usages of the phrase "is a"
 * **Mickey is a mouse**: This means a particular individual called *Mickey* is an **instance of** the class Mouse.
 * **A mouse is a rodent**: This means the class "mouse" **is a subclass of** the class "rodent," implying that every being that is a mouse is also a rodent.
 
-As we shall see, RDFS has a different syntax for expressing each relation.
+Ontologies keep the two apart, and write them differently: $x$ `instance_of` $A$
+for the first, $A$ `is_a` $B$ for the second. Essentially every term in the Gene
+Ontology and in the HPO is a **class**; the genes and patients we annotate with
+them are the individuals.
+
+## Inheritance and transitivity
+
+::: {.callout-note appearance="simple"}
+This is the one structural property of ontologies that the rest of the course rests on.
+:::
+
+* An individual inherits the parents of its class:
+$$x \;\texttt{instance\_of}\; A \;\text{ AND }\; A \;\texttt{is\_a}\; B \implies x \;\texttt{instance\_of}\; B$$
+
+* `is_a` links chain: if *mouse* `is_a` *rodent* and *rodent* `is_a` *mammal*,
+we can infer that mice are mammals.
+
+* `part_of` chains in the same way: if $A$ `part_of` $B$ and $B$ `part_of` $C$,
+then $A$ `part_of` $C$.
+
+::: {.callout-tip appearance="simple"}
+### Why this matters
+A gene annotated to a specific term is implicitly annotated to **all ancestors**
+of that term. Annotations propagate up the graph, and that is what makes
+overrepresentation analysis (lecture #2), MGSA (lecture #3), and semantic
+similarity (lecture #4) possible in the first place.
+:::
 
 
 ## Ontology formats: further reading
