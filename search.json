@@ -437,7 +437,7 @@
     "href": "lectures/ontology3.html#markov-chain-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Markov Chain",
-    "text": "Markov Chain\n\nKey question:\n\nWill the chain achieve steady state if it runs for a long enough time?\n\n\n\\[\n\\begin{array}{c|cccc}\n  & w_0 & w_1 & \\ldots &  \\\\\n\\hline\np(\\mathrm{sunny})& 1 & 0.3 & 0.44 & \\ldots & \\pi_1 \\\\\np(\\mathrm{cloudy})& 0 & 0.7 & 0.56 & \\ldots & \\pi_2 \\\\\n\\end{array}\n\\]\n\nIn this example, we start the chain at time zero as a sunny day (so \\(p(\\mathrm{sunny})= 1\\) and \\(p(\\mathrm{cloudy})= 0\\))\nWe can calculate the probabilities at each iteration using the transition probabilities for each state\nThe question is whether these probabilities converge to steady state probabilities \\(\\pi_1\\) and \\(\\pi_2\\)?",
+    "text": "Markov Chain\n\nKey question:\n\nWill the chain achieve steady state if it runs for a long enough time?\n\n\n\\[\n\\begin{array}{c|cccc}\n  & w_0 & w_1 &  w_2& \\ldots & \\\\\n\\hline\np(\\mathrm{sunny})& 1 & 0.3 & 0.44 & \\ldots & \\pi_1 \\\\\np(\\mathrm{cloudy})& 0 & 0.7 & 0.56 & \\ldots & \\pi_2 \\\\\n\\end{array}\n\\]\n\nIn this example, we start the chain at time zero as a sunny day – so \\(p(\\mathrm{sunny})= 1\\) and \\(p(\\mathrm{cloudy})= 0\\)\nWe can calculate the probabilities at each iteration using the transition probabilities for each state\nThe question is whether these probabilities converge to steady state probabilities \\(\\pi_1\\) and \\(\\pi_2\\)?",
     "crumbs": [
       "Home",
       "Lectures",
@@ -461,7 +461,7 @@
     "href": "lectures/ontology3.html#mcmc",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\n\nWith MCMC, our samples are on a Markov chain\nWe simulate draws (i.e., Monte Carlo) from this chain\nThe chain will reflect our target distribution\nMCMC is usually used in Bayesian settings:\n\n\\[\n\\begin{equation}\np(\\theta \\mid \\text{data}) =\n\\frac{\\overbrace{p(\\text{data}\\mid\\theta)}^{\\text{likelihood}} \\cdot \\overbrace{p(\\theta)}^{\\text{prior}}}\n{\\underbrace{p(\\text{data})}_{\\text{evidence } = NC}}\n\\end{equation}\n\\]\n\n\\(\\theta\\) is our model (e.g., Normal distribution with specified \\(\\mu, \\sigma^2\\))\nBy assumption, we are able to calculate the prior and we can calculate the likelihood for a given data point\nWith complicated models, we are not able to calculate the normalizing constant \\(NC=p(\\text{data})\\)\nThus, Obtaining independent samples from a given distribution \\(P(x)\\) is often not easy.",
+    "text": "MCMC\n\nWith MCMC, our samples are drawn from a Markov chain of states\nWe simulate draws (i.e., Monte Carlo) from this chain\nThe chain will reflect our target distribution\nMCMC is usually used in Bayesian settings:\n\n\\[\n\\begin{equation}\np(\\theta \\mid \\text{data}) =\n\\frac{\\overbrace{p(\\text{data}\\mid\\theta)}^{\\text{likelihood}} \\cdot \\overbrace{p(\\theta)}^{\\text{prior}}}\n{\\underbrace{p(\\text{data})}_{\\text{evidence } = NC}}\n\\end{equation}\n\\]\n\n\\(\\theta\\) is our model (e.g., Normal distribution with specified \\(\\mu, \\sigma^2\\))\nBy assumption, we are able to calculate the prior and we can calculate the likelihood for a given data point\nWith complicated models, we are not able to calculate the normalizing constant \\(NC=p(\\text{data})\\)\nThus, Obtaining independent samples from a given distribution \\(P(x)\\) is often not easy.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -497,7 +497,7 @@
     "href": "lectures/ontology3.html#mcmc-2",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\n\nMCMC methods construct the sequence of samples as a Markov chain — each sample depends only on the previous one\n\n\n\n\n\n\n\n\n\n\n\nThe chain starts at an arbitrary state and wanders before settling into the target distribution’s high-density region — this initial stretch is the burn-in period\nAfter burn-in, the chain’s samples \\(x_i\\) are (approximately) draws from \\(p(x)\\)\nDiscarding the burn-in samples, we estimate the mean of \\(p(x)\\) from the remaining \\(N\\) chain samples:\n\n\\[\n\\hat{\\mu} = \\frac{1}{N}\\sum_{1}^{N}x \\qquad x_i \\sim p(x) \\text{ (approximately, post burn-in)}\n\\]",
+    "text": "MCMC\n\nMCMC methods construct the sequence of samples as a Markov chain — each sample depends only on the previous one\n\n\n\n\n\n\n\n\n\n\n\nThe chain starts at an arbitrary state and wanders before settling into the target distribution’s high-density region — this initial stretch is the burn-in period\nAfter burn-in, the chain’s samples \\(x_i\\) are (approximately) drawn from \\(p(x)\\)\nDiscarding the burn-in samples, we estimate the mean of \\(p(x)\\) from the remaining \\(N\\) chain samples:\n\n\\[\n\\hat{\\mu} = \\frac{1}{N}\\sum_{1}^{N}x \\qquad x_i \\sim p(x) \\text{ (approximately, post burn-in)}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -521,7 +521,7 @@
     "href": "lectures/ontology3.html#verifying-detailed-balance-condition-for-the-weather",
     "title": "Approaches to biomedical knowledge",
     "section": "Verifying detailed balance condition for the weather",
-    "text": "Verifying detailed balance condition for the weather\n\nDetailed balance requires, for every pair of states \\(x,y\\): \\[\np(x)\\,T(y\\mid x) = p(y)\\,T(x\\mid y)\n\\]\nAssume we are in the stationary distribution sunny: \\(\\pi_1 =\\frac{5}{12}\\) and cloudy: \\(\\pi_2 =\\frac{7}{12}\\) \\[\n\\underbrace{p(S)\\,T(R\\mid S)}_{\\frac{5}{12}\\times 0.7 \\,=\\, \\frac{7}{24}} \\;=\\; \\underbrace{p(R)\\,T(S\\mid R)}_{\\frac{7}{12}\\times 0.5 \\,=\\, \\frac{7}{24}} \\quad\\checkmark\n\\]\nThus, \\(p\\) is a stationary distribution — we can also check directly: \\[\n\\sum_x p(x)\\,T(S\\mid x) = \\underbrace{\\tfrac{5}{12}\\times 0.3}_{\\text{stay Sunny}} + \\underbrace{\\tfrac{7}{12}\\times 0.5}_{\\text{Rainy}\\to\\text{Sunny}} = \\tfrac{15}{120} +  \\tfrac{35}{120}= \\tfrac{5}{12} = p(S) \\quad\\checkmark\n\\]\nSo: if the chain is currently 5/12 Sunny, 7/12 Rainy, thus, \\(p\\) is unchanged by a step of the chain — i.e., \\(p\\) to be a stationary distribution",
+    "text": "Verifying detailed balance condition for the weather\n\nDetailed balance requires, for every pair of states \\(x,y\\): \\[\np(x)\\,T(y\\mid x) = p(y)\\,T(x\\mid y)\n\\]\nAssume we are in the stationary distribution sunny: \\(S =\\frac{5}{12}\\) and cloudy: \\(C =\\frac{7}{12}\\) \\[\n\\underbrace{p(S)\\,T(C\\mid S)}_{\\frac{5}{12}\\times 0.7 \\,=\\, \\frac{7}{24}} \\;=\\; \\underbrace{p(C)\\,T(S\\mid C)}_{\\frac{7}{12}\\times 0.5 \\,=\\, \\frac{7}{24}} \\quad\\checkmark\n\\]\nThus, \\(p\\) is a stationary distribution — we can also check directly: \\[\n\\sum_x p(x)\\,T(S\\mid x) = \\underbrace{\\tfrac{5}{12}\\times 0.3}_{\\text{stay Sunny}} + \\underbrace{\\tfrac{7}{12}\\times 0.5}_{\\text{Cloudy}\\to\\text{Sunny}} = \\tfrac{15}{120} +  \\tfrac{35}{120}= \\tfrac{5}{12} = p(S) \\quad\\checkmark\n\\]\nSo: if the chain is currently 5/12 Sunny, 7/12 Rainy, thus, \\(p\\) is unchanged by a step of the chain — i.e., \\(p\\) to be a stationary distribution",
     "crumbs": [
       "Home",
       "Lectures",
@@ -533,7 +533,19 @@
     "href": "lectures/ontology3.html#mh",
     "title": "Approaches to biomedical knowledge",
     "section": "Metropolis-Hastings",
-    "text": "Metropolis-Hastings\n\nThe Metropolis-Hastings (MH) algorithm is a general method for constructing a transition kernel \\(T\\) that samples from an arbitrary target \\(p\\), using a proposal and an acceptance step\n\\(q(y\\mid x)\\) is the proposal — a candidate generator, saying what state might come next\nThe transition kernel combines proposal and acceptance: \\[\nT(y\\mid x) = q(y\\mid x)\\cdot a(x,y) \\qquad (y \\neq x)\n\\]\nRejected proposals mean the chain stays put — this adds a self-transition term: \\[\nT(x\\mid x) = q(x\\mid x) + \\sum_{y\\neq x} q(y\\mid x)\\big(1-a(x,y)\\big)\n\\]\n\\(a(x,y)\\) is defined as: \\[\na(x,y) = \\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right)\n\\]\nIt’s \\(T\\) — not \\(q\\) — that needs to satisfy detailed balance\n\\(a(x,y)\\)’s \\(\\min(1,\\cdot)\\) form is designed so that \\(T = q\\cdot a\\) satisfies detailed balancefor any valid proposal \\(q\\)",
+    "text": "Metropolis-Hastings\n\nThe Metropolis-Hastings (MH) algorithm is a general method for constructing a transition kernel \\(T\\) that samples from an arbitrary target distribution \\(p\\), using a proposal and an acceptance step\n\\(q(y\\mid x)\\) is the proposal — a candidate generator that proposes which state might come next\n$ a(x,y)$ is the acceptance - what is the probability we accepted the proposed next term?\nThe transition kernel combines proposal and acceptance: \\[\nT(y\\mid x) = q(y\\mid x)\\cdot a(x,y) \\qquad (y \\neq x)\n\\]\nRejected proposals mean the chain stays put — this adds a self-transition term: \\[\nT(x\\mid x) = q(x\\mid x) + \\sum_{y\\neq x} q(y\\mid x)\\big(1-a(x,y)\\big)\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#metropolis-hastings",
+    "href": "lectures/ontology3.html#metropolis-hastings",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Metropolis-Hastings",
+    "text": "Metropolis-Hastings\n\n\\(a(x,y)\\) is defined as: \\[\na(x,y) = \\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right)\n\\]\nIt’s \\(T\\) — not \\(q\\) — that needs to satisfy the detailed balance condition\n\\(a\\) is designed so that \\(T = q\\cdot a\\) satisfies detailed balance for any valid proposal \\(q\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -545,7 +557,7 @@
     "href": "lectures/ontology3.html#mh-proof-continued",
     "title": "Approaches to biomedical knowledge",
     "section": "MH — Proof (continued)",
-    "text": "MH — Proof (continued)\n\nLet \\(a, b\\) be two states with \\(p(b) &lt; p(a)\\). Then \\(a(a,b) = \\dfrac{p(b)}{p(a)} &lt; 1\\) — the probability of accepting a move from \\(a\\) to \\(b\\) is less than one\nWhat about the reverse move, \\(b \\to a\\)? Since \\(p(a) &gt; p(b)\\), moving to \\(a\\) only increases probability, so we always accept: \\[\na(b,a) = \\min\\!\\left(1,\\ \\frac{p(a)}{p(b)}\\right) = 1 \\qquad \\text{(since } \\tfrac{p(a)}{p(b)} &gt; 1\\text{)}\n\\]\nNow check detailed balance, \\(p(a)T(b\\mid a) \\overset{?}{=} p(b)T(a\\mid b)\\), using \\(T(y\\mid x) = q(y\\mid x)\\,a(x,y)\\): \\[\np(a)\\,T(b\\mid a) = p(a)\\,q(b\\mid a)\\,a(a,b) = p(a)\\,q(b\\mid a)\\cdot\\frac{p(b)}{p(a)} = q(b\\mid a)\\,p(b)\n\\] \\[\np(b)\\,T(a\\mid b) = p(b)\\,q(a\\mid b)\\,a(b,a) = p(b)\\,q(a\\mid b)\\cdot 1 = q(a\\mid b)\\,p(b)\n\\]",
+    "text": "MH — Proof (continued)\n\nLet us first examine the case where the proposal distribution is symmetric, i.e., \\(q(y\\mid x)=q(x\\mid y)\\).\nThis class of algorithms are known as Metropolis algorithms and are a special case of MH algorithms\nLet \\(x, y\\) be two states with \\(p(y) &lt; p(x)\\). Then we get \\[\n\\begin{align}\na(x,y) &= \\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right) \\\\\n&= \\min\\!\\left(1,\\ \\frac{p(y)}{p(x)}\\right) \\\\\n&=  \\frac{p(y)}{p(x)} \\quad \\bullet \\text{ because } p(y) &lt; p(x)\\\\\n\\end{align}\n\\]\nThe Metroplis algorithm (and the MH algorithm) draw a uniformly distributed random number \\(r\\in [0,1]\\) and choose to transition to state \\(y\\) if \\(r&lt;a(x,y)\\)\nThus in this case, it will not always choose to do so because \\(\\tfrac{p(y)}{p(x)} &lt; 1\\),",
     "crumbs": [
       "Home",
       "Lectures",
@@ -557,7 +569,19 @@
     "href": "lectures/ontology3.html#mh-proof-continued-1",
     "title": "Approaches to biomedical knowledge",
     "section": "MH — Proof (continued)",
-    "text": "MH — Proof (continued)\n\nThese are equal provided \\(q\\) is symmetric, i.e. \\(q(b\\mid a) = q(a\\mid b)\\): \\[\np(a)\\,T(b\\mid a) = q(b\\mid a)\\,p(b) = q(a\\mid b)\\,p(b) = p(b)\\,T(a\\mid b) \\qquad\\checkmark\n\\]\nSo for a symmetric proposal, this simplified acceptance rule — accept automatically if \\(p(b)\\geq p(a)\\), otherwise accept with probability \\(p(b)/p(a)\\) — guarantees detailed balance\nThis is Metropolis, i.e., the proposal distribution is symmetric\nIn the general case (Metropolis-Hastings), if \\(q\\) isn’t symmetric, the \\(q(b\\mid a)\\) and \\(q(a\\mid b)\\) terms above don’t cancel",
+    "text": "MH — Proof (continued)\n\nWhat about the reverse move, \\(y \\to x\\)? Since \\(p(x) &gt; p(y)\\), moving to \\(x\\) only increases probability, so we always accept: \\[\na(y,x) = \\min\\!\\left(1,\\ \\frac{p(x)}{p(y)}\\right) = 1 \\qquad \\bullet \\text{since } \\tfrac{p(x)}{p(y)} &gt; 1\n\\]\nNow check detailed balance, \\(p(x)T(y\\mid x) \\overset{?}{=} p(y)T(x\\mid y)\\), using \\(T(y\\mid x) = q(y\\mid x)\\,a(x,y)\\): \\[\np(x)\\,T(y\\mid x) = p(x)\\,q(y\\mid x)\\,a(x,y) = p(x)\\,q(y\\mid x)\\cdot\\frac{p(y)}{p(x)} = q(y\\mid x)\\,p(y)\n\\] \\[\np(y)\\,T(x\\mid y) = p(y)\\,q(x\\mid y)\\,a(y,x) = p(y)\\,q(x\\mid y)\\cdot 1 = q(x\\mid y)\\,p(y)\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mh-proof-continued-2",
+    "href": "lectures/ontology3.html#mh-proof-continued-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MH — Proof (continued)",
+    "text": "MH — Proof (continued)\n\nThese are equal provided \\(q\\) is symmetric, i.e. \\(q(y\\mid x) = q(x\\mid y)\\): \\[\np(x)\\,T(y\\mid x) = q(y\\mid x)\\,p(y) = q(x\\mid y)\\,p(y) = p(y)\\,T(x\\mid y) \\qquad\\checkmark\n\\]\nSo for a symmetric proposal, this simplified acceptance rule — accept automatically if \\(p(y)\\geq p(x)\\), otherwise accept with probability \\(p(y)/p(x)\\) — guarantees detailed balance\nThis is Metropolis, i.e., the proposal distribution is symmetric\nIn the general case (Metropolis-Hastings), if \\(q\\) isn’t symmetric, the \\(q(y\\mid x)\\) and \\(q(x\\mid y)\\) terms above don’t cancel",
     "crumbs": [
       "Home",
       "Lectures",
@@ -569,7 +593,7 @@
     "href": "lectures/ontology3.html#mh-proof-continued-the-general-case",
     "title": "Approaches to biomedical knowledge",
     "section": "MH — Proof (continued): the general case",
-    "text": "MH — Proof (continued): the general case\n\nDrop the assumption \\(p(b) &lt; p(a)\\) — the general proof works for any two states, no case split needed\nWrite out \\(a(a,b)\\) and \\(a(b,a)\\) using the full MH formula: \\[\na(a,b) = \\min\\!\\left(1,\\ \\frac{p(b)\\,q(a\\mid b)}{p(a)\\,q(b\\mid a)}\\right), \\qquad\na(b,a) = \\min\\!\\left(1,\\ \\frac{p(a)\\,q(b\\mid a)}{p(b)\\,q(a\\mid b)}\\right)\n\\]\nNow compute \\(p(a)\\,T(b\\mid a) = p(a)\\,q(b\\mid a)\\,a(a,b)\\): \\[\np(a)\\,q(b\\mid a)\\,a(a,b) = p(a)\\,q(b\\mid a)\\cdot\\min\\!\\left(1,\\ \\frac{p(b)\\,q(a\\mid b)}{p(a)\\,q(b\\mid a)}\\right)\n\\]\nPull \\(p(a)\\,q(b\\mid a)\\) inside the \\(\\min(\\cdot)\\) (valid since it’s a positive constant): \\[\n= \\min\\!\\Big(p(a)\\,q(b\\mid a),\\ \\ p(b)\\,q(a\\mid b)\\Big)\n\\]\nBy the same steps, \\(p(b)\\,T(a\\mid b) = p(b)\\,q(a\\mid b)\\,a(b,a)\\) simplifies to: \\[\np(b)\\,q(a\\mid b)\\,a(b,a) = \\min\\!\\Big(p(b)\\,q(a\\mid b),\\ \\ p(a)\\,q(b\\mid a)\\Big)\n\\]",
+    "text": "MH — Proof (continued): the general case\n\nDrop the assumption \\(p(y) &lt; p(x)\\) — the general proof works for any two states, no case split needed\nWrite out \\(a(x,y)\\) and \\(a(y,x)\\) using the full MH formula: \\[\na(x,y) = \\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right), \\qquad\na(y,x) = \\min\\!\\left(1,\\ \\frac{p(x)\\,q(y\\mid x)}{p(y)\\,q(x\\mid y)}\\right)\n\\]\nNow compute \\(p(x)\\,T(y\\mid x) = p(x)\\,q(y\\mid x)\\,a(x,y)\\): \\[\np(x)\\,q(y\\mid x)\\,a(x,y) = p(x)\\,q(y\\mid x)\\cdot\\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right)\n\\]\nPull \\(p(x)\\,q(y\\mid x)\\) inside the \\(\\min(\\cdot)\\) (valid since it’s a positive constant): \\[\n= \\min\\!\\Big(p(x)\\,q(y\\mid x),\\ \\ p(y)\\,q(x\\mid y)\\Big)\n\\]\nBy the same steps, \\(p(y)\\,T(x\\mid y) = p(y)\\,q(x\\mid y)\\,a(y,x)\\) simplifies to: \\[\np(y)\\,q(x\\mid y)\\,a(y,x) = \\min\\!\\Big(p(y)\\,q(x\\mid y),\\ \\ p(x)\\,q(y\\mid x)\\Big)\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -581,7 +605,7 @@
     "href": "lectures/ontology3.html#mh-proof-continued-the-general-case-1",
     "title": "Approaches to biomedical knowledge",
     "section": "MH — Proof (continued): the general case",
-    "text": "MH — Proof (continued): the general case\n\nThus \\[\np(a)\\,T(b\\mid a) = \\min\\big(p(a)q(b\\mid a),\\ p(b)q(a\\mid b)\\big) = \\min\\big(p(b)q(a\\mid b),\\ p(a)q(b\\mid a)\\big) = p(b)\\,T(a\\mid b) \\qquad\\checkmark\n\\]\nDetailed balance holds exactly, for any proposal \\(q\\) — symmetric or not, and regardless of which of \\(p(a), p(b)\\) is larger\nRecall from earlier: detailed balance \\(\\Rightarrow\\) stationarity — summing both sides over \\(a\\) recovers \\(\\sum_a p(a)\\,T(b\\mid a) = p(b)\\)\nSo \\(p\\) is guaranteed to be a stationary distribution of the MH chain, regardless of how the proposal \\(q\\) is designed\nWhat’s not guaranteed by this proof alone: that the chain actually converges to \\(p\\) from an arbitrary starting point — that requires \\(q\\) to make the chain irreducible and aperiodic (ergodicity), a separate condition on your choice of \\(q\\)",
+    "text": "MH — Proof (continued): the general case\n\nThus \\[\np(x)\\,T(y\\mid x) = \\min\\big(p(x)q(y\\mid x),\\ p(y)q(x\\mid y)\\big) = \\min\\big(p(y)q(x\\mid y),\\ p(y)q(y\\mid x)\\big) = p(y)\\,T(x\\mid y) \\qquad\\checkmark\n\\]\nDetailed balance holds exactly, for any proposal \\(q\\) — symmetric or not, and regardless of which of \\(p(a), p(b)\\) is larger\nRecall from earlier: detailed balance \\(\\Rightarrow\\) stationarity — summing both sides over \\(a\\) recovers \\(\\sum_x p(x)\\,T(y\\mid x) = p(y)\\)\nSo \\(p\\) is guaranteed to be a stationary distribution of the MH chain, regardless of how the proposal \\(q\\) is designed\nWhat’s not guaranteed by this proof alone: that the chain actually converges to \\(p\\) from an arbitrary starting point — that requires \\(q\\) to make the chain irreducible and aperiodic (ergodicity), a separate condition on your choice of \\(q\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -605,19 +629,7 @@
     "href": "lectures/ontology3.html#hastings-ratio",
     "title": "Approaches to biomedical knowledge",
     "section": "Hastings ratio",
-    "text": "Hastings ratio\n\nWe accept moves according to the Hastings ratio, \\(h=\\min\\left(1, \\frac{p(a)q(b\\mid a)}{p(b)q(a\\mid b)}\\right)\\)\nSince we are using an uniform transition kernel, \\(q(b\\mid a) = q(a\\mid b)\\) and thus \\(h=\\min\\left(1, \\frac{p(a)}{p(b)}\\right)\\)\nIn implementations, we generally transform to log space to avoid numerical problems\nRecalling that our target disttribution is a normal distribution, we obtain\n\n\\[\n\\begin{align}\n\\log h &= \\log \\frac{p(a)}{p(b)}\\\\\n&= \\log \\frac{\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(a-\\mu)^2}{2\\sigma^2}}}{\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(b-\\mu)^2}{2\\sigma^2}}}\\\\\n&= \\log \\frac{e^{-\\frac{(a-\\mu)^2}{2\\sigma^2}}}{e^{-\\frac{(b-\\mu)^2}{2\\sigma^2}}}\\\\\n&= \\frac{1}{2\\sigma^2}\\left[ (a-\\mu)^2 - (b-\\mu)^2\\right]\n\\end{align}\n\\]\n\nWe sample a random number \\(r\\) uniformly from the interval \\([0,1]\\). If $ h &lt; r$, then we accept the proposal and advance the chain from \\(a\\) to \\(b\\). If not, we remain at \\(a\\).",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d1",
-    "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=1\\)\n\n\nAcceptance rate: 90.74%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal - maybe the proposal distribution of 1 is too small and we are not exploring the space enough?",
+    "text": "Hastings ratio\n\nWe accept moves according to the Hastings ratio, \\(h=\\min\\left(1, \\frac{p(x)q(y\\mid x)}{p(y)q(x\\mid y)}\\right)\\)\nSince we are using an uniform transition kernel, \\(q(y\\mid x) = q(x\\mid y)\\) and thus \\(h=\\min\\left(1, \\frac{p(x)}{p(y)}\\right)\\)\nIn implementations, we generally transform to log space to avoid numerical problems\nRecalling that our target disttribution is a normal distribution, we obtain\n\n\\[\n\\begin{align}\n\\log h &= \\log \\frac{p(a)}{p(b)}\\\\\n&= \\log \\frac{\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}}{\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(y-\\mu)^2}{2\\sigma^2}}}\\\\\n&= \\log \\frac{e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}}{e^{-\\frac{(y-\\mu)^2}{2\\sigma^2}}}\\\\\n&= \\frac{1}{2\\sigma^2}\\left[ (x-\\mu)^2 - (y-\\mu)^2\\right]\n\\end{align}\n\\]\n\nWe sample a random number \\(r\\) uniformly from the interval \\([0,1]\\). If \\(h &lt; r\\), then we accept the proposal and advance the chain from \\(x\\) to \\(y\\). If not, we remain at \\(x\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -629,7 +641,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.54%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.70%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
     "crumbs": [
       "Home",
       "Lectures",
@@ -641,7 +653,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.16%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.54%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
     "crumbs": [
       "Home",
       "Lectures",
@@ -653,7 +665,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.80%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 2.78%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
     "crumbs": [
       "Home",
       "Lectures",
@@ -665,7 +677,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.20%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.56%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
     "crumbs": [
       "Home",
       "Lectures",
@@ -978,6 +990,30 @@
     "title": "Approaches to biomedical knowledge",
     "section": "MGSA",
     "text": "MGSA\n\nRequire: \\(O\\), \\(l\\) (number of steps)\n\n\\(T^t \\gets (0,\\ldots,0)\\)\nfor \\(t \\gets 1\\) to \\(l\\) do\n\n\\(T^p \\sim Q_T(\\cdot\\,|\\,T^t)\\), i.e., choose a neighbor by:\n\ntoggling a term\nexchanging an active term with an inactive one\n\n\\(a \\gets \\text{AcceptanceRatio}\\)\n\\(r \\sim U(0,1)\\)\nif \\(r &lt; a\\) then\n\n\\(T^t \\gets T^p\\)\n\nend if\n\nend for\nreturn \\(P(T_1=1\\,|\\,O),\\ldots,P(T_m=1\\,|\\,O)\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mgsa-benchmarking",
+    "href": "lectures/ontology3.html#mgsa-benchmarking",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MGSA benchmarking",
+    "text": "MGSA benchmarking\n\nMGSA results",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology3.html#mgsa-wrap-up",
+    "href": "lectures/ontology3.html#mgsa-wrap-up",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MGSA Wrap-Up",
+    "text": "MGSA Wrap-Up\n\nHOMEWORK You will process several datasets with the Ontologizer using the MGSA algorithm.\nHow do the results differ from those of TfT? How might this affect the interpretation and use of the results by an experimentalist?",
     "crumbs": [
       "Home",
       "Lectures",
