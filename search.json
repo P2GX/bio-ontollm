@@ -641,7 +641,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.70%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 30.86%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
     "crumbs": [
       "Home",
       "Lectures",
@@ -653,7 +653,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.54%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.48%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
     "crumbs": [
       "Home",
       "Lectures",
@@ -665,7 +665,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 2.78%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.06%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
     "crumbs": [
       "Home",
       "Lectures",
@@ -677,7 +677,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.56%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.18%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4964,7 +4964,7 @@
     "href": "lectures/ontology4.html#overview-semantic-similarity",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview: Semantic similarity",
-    "text": "Overview: Semantic similarity\n\n\n\n\n\n\n\nGame plan\n\n\nThis lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.\n\n\n\n\n\n\nPart 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer\n\nPhenomizer algorithm",
+    "text": "Overview: Semantic similarity\n\nInformation content/Entropy\nSemantic similarity\nHuman Phenotype Ontology\nPhenomizer\nLIRICAL",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4972,8 +4972,8 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#part-1",
-    "href": "lectures/ontology4.html#part-1",
+    "objectID": "lectures/ontology4.html#ic",
+    "href": "lectures/ontology4.html#ic",
     "title": "Approaches to biomedical knowledge",
     "section": "Semantic Similarity: The Resnik Method",
     "text": "Semantic Similarity: The Resnik Method\nIn 1995, Resnik introduced a method for evaluating the semantic similarity between two concepts in an ontology with is_a relations.1\n\nCore Idea: Associate probabilities with the concepts of an ontology.\nDefinitions:\n\nLet \\(\\mathcal{C}=\\left\\{c_1,c_2,\\ldots,c_n\\right\\}\\) be the set of concepts in the ontology (permits multiple inheritance).\nDefine a function \\(p:\\mathcal{C}\\longrightarrow \\left[ 0,1\\right]\\).\n\\(p(c_i)\\) is the probability of encountering an instance of class \\(c_i \\in \\mathcal{C}\\).\n\n\nResnik P (1995) Using Information Content to Evaluate Semantic Similarity in a Taxonomy. arXiv cmp-lg/9511007",
@@ -5024,7 +5024,7 @@
     "href": "lectures/ontology4.html#basic-properties-of-information-content-ic",
     "title": "Approaches to biomedical knowledge",
     "section": "Basic Properties of Information Content (IC)",
-    "text": "Basic Properties of Information Content (IC)\n\n\n\n\n\n\nMathematical Foundation\n\n\nInformation Content relies heavily on the properties of logarithms. These identities are essential for calculating IC across different branches of an ontology.\n\n\n\nThe following logarithmic identities are fundamental to the behavior of \\(IC(t) = -\\log p(t)\\):\n\\[\n\\begin{aligned}\n\\log 1 &= 0 \\\\\n\\log xy &= \\log x + \\log y \\\\\n\\log x^r &= r \\log x \\\\\n\\log \\frac{1}{x} &= - \\log x \\\\\n\\log_a x &= \\frac{\\log x}{\\log a}\n\\end{aligned}\n\\]\n\n\n\n\n\n\n\nProperties of logarithms: Review\n\n\n\n\\(\\log 1 = 0\\): Explains why the Root node (\\(p=1\\)) always has an Information Content of \\(0\\).\n\\(\\log \\frac{1}{x} = -\\log x\\): This identity implies: \\(IC(t) = \\log \\frac{1}{p(t)}\\) as \\(IC(t) = -\\log p(t)\\).\n\\(\\log xy = \\log x + \\log y\\).",
+    "text": "Basic Properties of Information Content (IC)\n\n\n\n\n\n\nMathematical Foundation\n\n\nInformation Content relies heavily on the properties of logarithms. These identities are essential for calculating IC across different branches of an ontology.\n\n\n\nThe following logarithmic identities1 are fundamental to the behavior of \\(IC(t) = -\\log p(t)\\):\n\\[\n\\begin{aligned}\n\\log 1 &= 0 \\\\\n\\log xy &= \\log x + \\log y \\\\\n\\log x^r &= r \\log x \\\\\n\\log \\frac{1}{x} &= - \\log x \\\\\n\\log_a x &= \\frac{\\log x}{\\log a}\n\\end{aligned}\n\\]\nNote that we mean the natural logarithm when we write simply \\(\\log\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5048,7 +5048,7 @@
     "href": "lectures/ontology4.html#part-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Entropy",
-    "text": "Entropy\n\nLet us assume we are analyzing a random variable \\(X\\), which can take on one of a finite number of specific values \\(\\left\\{x_1,x_2,\\ldots,x_n\\right\\}\\) with a probability \\(\\left\\{p_1,p_2,\\ldots,p_n\\right\\}\\), where the probability of the outcome \\(x_i\\) is \\(p_i\\) and \\(\\sum_{i=1}^n p_i=1\\).\nWe will use the notation \\(p(X=x)\\) or simply \\(p(x)\\) to denote the probability that the random variable \\(X\\) takes on some specific value \\(x\\), where \\(x\\in\n\\left\\{x_1,x_2,\\ldots,x_n\\right\\}\\).\nWe will refer to each of the specific values that \\(X\\) can take on as .\n\nShannon defined the information content of an outcome \\(x\\) as\n\\[\nh(x) = \\log_2 \\dfrac{1}{p(x)}\n\\tag{1}\\]",
+    "text": "Entropy\n\nLet us assume we are analyzing a random variable \\(X\\), which can take on one of a finite number of specific values \\(\\left\\{x_1,x_2,\\ldots,x_n\\right\\}\\) with a probability \\(\\left\\{p_1,p_2,\\ldots,p_n\\right\\}\\), where the probability of the outcome \\(x_i\\) is \\(p_i\\) with \\(0\\leq p_i\\leq 1\\) and \\(\\sum_{i=1}^n p_i=1\\).\nWe will use the notation \\(p(X=x)\\) or simply \\(p(x)\\) to denote the probability that the random variable \\(X\\) takes on some specific value \\(x\\), where \\(x\\in\n\\left\\{x_1,x_2,\\ldots,x_n\\right\\}\\).\nWe will refer to each of the specific values that \\(X\\) can take on as outcomes.\n\nShannon defined the information content of an outcome \\(x\\) as\n\\[\nh(x) = \\log_2 \\dfrac{1}{p(x)}\n\\tag{1}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5060,7 +5060,7 @@
     "href": "lectures/ontology4.html#entropy-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Entropy (2)",
-    "text": "Entropy (2)\nNote that because of the properties of logarithms, \\(\\log_2 \\frac{1}{p(x)} = -\\log_2 p(x)\\), which is the definition of information content. The of the random variable \\(X\\), written as \\(H(X)\\), was defined by Shannon as the average information content of all of the possible outcomes of \\(X\\).\n\\[\nH(X) = \\sum_{i=1}^n p(x_i)\\log_2\\dfrac{1}{p(x_i)}\n\\tag{2}\\]\n\nNote that by convention \\(p(x')\\log_2 p(x')=0\\) for \\(p(x')=0\\). This is necessary because \\(\\log 0\\) is undefined, and reasonable because \\(\\lim_{x\\rightarrow 0} x\\log x = 0\\).",
+    "text": "Entropy (2)\nNote that because of the properties of logarithms, \\(\\log_2 \\frac{1}{p(x)} = -\\log_2 p(x)\\), which is the definition of information content. The entropy of the random variable \\(X\\), written as \\(H(X)\\), was defined by Shannon as the average information content of all of the possible outcomes of \\(X\\).1\n\\[\nH(X) = \\sum_{i=1}^n p(x_i)\\log_2\\dfrac{1}{p(x_i)}\n\\tag{2}\\]\nNote that by convention \\(p(x')\\log_2 p(x')=0\\) for \\(p(x')=0\\). This is necessary because \\(\\log 0\\) is undefined, and reasonable because \\(\\lim_{x\\rightarrow 0} x\\log x = 0\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5084,7 +5084,43 @@
     "href": "lectures/ontology4.html#entropy-4",
     "title": "Approaches to biomedical knowledge",
     "section": "Entropy (4)",
-    "text": "Entropy (4)\nIt can easily be shown that the entropy of \\(X\\) is maximized if there is maximal uncertainty about the outcome – this is the case if no outcome is more likely than the others, or stated differently, if \\(X\\) follows a uniform distribution.\n\nEntropy of a random variable \\(X=\\left\\{\\mathtt{0, 1}\\right\\}\\) representing Bernoulli process such as a coin toss for different values of \\(p(X=1)\\). Maximum entropy is achieved if \\(p(\\mathtt{0}) = p(\\mathtt{1}) = 0.5\\), i.e., for a uniform distribution. The minimum entropy of zero occurs if the probability of one of the two outcomes is 1.",
+    "text": "Entropy (4)\nOn the other hand the entropy of \\(X\\) is maximized if there is maximal uncertainty about the outcome – this is the case if no outcome is more likely than the others, or stated differently, if \\(X\\) follows a uniform distribution.\n\n\nEntropy of a random variable \\(X=\\left\\{\\mathtt{0, 1}\\right\\}\\) representing Bernoulli process such as a coin toss for different values of \\(p(X=1)\\).\nMaximum entropy is achieved if \\(p(\\mathtt{0}) = p(\\mathtt{1}) = 0.5\\), i.e., for a uniform distribution.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#proof",
+    "href": "lectures/ontology4.html#proof",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Proof",
+    "text": "Proof\nWe want to show: among all probability distributions on \\(n\\) outcomes, entropy\n\\[\nH(p) = -\\sum_{i=1}^n p_i \\log p_i\n\\]\nis maximized by the uniform distribution \\(p_i = 1/n\\).\n\nConstraint: \\(\\sum_{i=1}^n p_i = 1\\), with \\(p_i \\geq 0\\).\nThe method of Lagrange multipliers allows us to find maximums/minimums subject to a constraint",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#the-lagrangian",
+    "href": "lectures/ontology4.html#the-lagrangian",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Lagrangian",
+    "text": "The Lagrangian\nIntroduce a multiplier \\(\\lambda\\) for the normalization constraint:\n\\[\n\\mathcal{L}(p, \\lambda) = -\\sum_{i=1}^n p_i \\log p_i \\;-\\; \\lambda\\left(\\sum_{i=1}^n p_i - 1\\right)\n\\]\n\nAt a stationary point, the gradient with respect to every \\(p_i\\) must vanish, i.e., \\(\\tfrac{\\partial \\mathcal{L}(p, \\lambda)}{\\partial p_i}=0\\)\nWe have\n\n\\[\n\\begin{align}\n\\frac{\\partial \\mathcal{L}}{\\partial p_i} &= -\\log p_i - 1 - \\lambda = 0 \\quad \\Longrightarrow \\quad p_i = e^{-1-\\lambda}\n\\end{align}\n\\]\n\nthe right-hand side doesn’t depend on \\(i\\), so every \\(p_i\\) must be equal; denoting the the common value \\(c\\): \\[\n\\sum_{i=1}^n p_i = \\sum_{i=1}^n c  = nc = 1 \\quad \\Longrightarrow \\quad p_i = \\frac{1}{n}\\quad \\text{for all } i\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#the-hessian-matrix",
+    "href": "lectures/ontology4.html#the-hessian-matrix",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Hessian Matrix",
+    "text": "The Hessian Matrix\n\\[\n\\nabla^2 \\mathcal{L} = \\begin{bmatrix} -\\dfrac{1}{p_1} & 0 & \\cdots & 0 \\\\\n0 & -\\dfrac{1}{p_2} & \\cdots & 0 \\\\\n0 & 0 & \\ddots & 0 \\\\\n0 & 0 & \\cdots & -\\dfrac{1}{p_n}\n\\end{bmatrix}\n\\]\n\nSince \\(p_i &gt; 0\\), every diagonal entry is negative, and off-diagonal entries vanish.\n\n\n\\(H(p)\\) is therefore strictly concave — the unique critical point is a global maximum, not a saddle or minimum.\n\n\\[\nH(p) \\leq H\\left(\\tfrac{1}{n}, \\dots, \\tfrac{1}{n}\\right) = \\log n\n\\]\nfor every probability distribution \\(p\\) on \\(n\\) outcomes, with equality iff \\(p\\) is uniform.\nInterpretation: maximal uncertainty about the outcome corresponds exactly to maximal entropy — any deviation from uniformity introduces predictability and strictly lowers \\(H\\).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5108,7 +5144,7 @@
     "href": "lectures/ontology4.html#shannons-entropy-the-uniqueness-theorem",
     "title": "Approaches to biomedical knowledge",
     "section": "Shannon’s Entropy: The Uniqueness Theorem",
-    "text": "Shannon’s Entropy: The Uniqueness Theorem\nClaude Shannon’s definition of entropy is not arbitrary; it is the only function that satisfies three fundamental postulates.\n\n\n\nTheorem: Uniqueness of Entropy\n\n\nLet \\(P = \\{p_1, p_2, \\dots, p_n\\}\\) be the probabilities of outcomes \\(\\{x_1, x_2, \\dots, x_n\\}\\), where \\(p_i \\geq 0\\) and \\(\\sum p_i = 1\\). A continuous function \\(H(P)\\) satisfies the following:\n\nMaximality: \\(H\\) is maximized when \\(p_i = \\frac{1}{n}\\) for all \\(i\\) (uncertainty is highest when all outcomes are equally likely).\nAdditivity: \\(H(AB) = H(A) + H_A(B)\\). If \\(A\\) and \\(B\\) are independent, \\(H(AB) = H(A) + H(B)\\).\nExpandability: \\(H(p_1, \\dots, p_n) = H(p_1, \\dots, p_n, 0)\\) (adding an impossible event does not change entropy).\n\nThen \\(H\\) must take the form: \\[H(p_1, p_2, \\dots, p_n) = \\lambda \\sum_{i=1}^n - p_i \\log p_i\\] where \\(\\lambda\\) is a positive constant (usually \\(\\lambda=1\\)).",
+    "text": "Shannon’s Entropy: The Uniqueness Theorem\nClaude Shannon’s definition of entropy is not arbitrary; it is the only function that satisfies three fundamental postulates.\n\n\n\nTheorem: Uniqueness of Entropy\n\n\nLet \\(P = \\{p_1, p_2, \\dots, p_n\\}\\) be the probabilities of outcomes \\(\\{x_1, x_2, \\dots, x_n\\}\\), where \\(p_i \\geq 0\\) and \\(\\sum p_i = 1\\).\nA continuous function \\(H(P)\\) satisfies the following:\n\nMaximality: \\(H\\) is maximized when \\(p_i = \\frac{1}{n}\\) for all \\(i\\) (uncertainty is highest when all outcomes are equally likely).\nAdditivity: \\(H(AB) = H(A) + H_A(B)\\). If \\(A\\) and \\(B\\) are independent, \\(H(AB) = H(A) + H(B)\\).\nExpandability: \\(H(p_1, \\dots, p_n) = H(p_1, \\dots, p_n, 0)\\) (adding an impossible event does not change entropy).\n\nThen \\(H\\) must take the form: \\[H(p_1, p_2, \\dots, p_n) = \\lambda \\sum_{i=1}^n - p_i \\log p_i\\] where \\(\\lambda\\) is a positive constant (usually \\(\\lambda=1\\)).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5132,7 +5168,7 @@
     "href": "lectures/ontology4.html#information-content-in-gene-ontology-go",
     "title": "Approaches to biomedical knowledge",
     "section": "Information Content in Gene Ontology (GO)",
-    "text": "Information Content in Gene Ontology (GO)\nIn the setting of GO, the probability of a term \\(t\\) is the probability that a randomly chosen protein is annotated to that term.\n\nThe Root Term: Assuming all genes are annotated to the root (the most general term):\n\n\\(p(\\text{root}) = 1\\)\n\\(\\text{IC}(\\text{root}) = -\\log_2(1) = 0\\)\n\nGeneral vs. Specific:\n\nTerms used for many genes have low IC.\nTerms used for very few genes have high IC.\n\n\n\n\n\n\n\n\nNote\n\n\nThis reflects “surprise”: discovering a gene is annotated to the root is expected, while discovering a rare, specific annotation provides significant information.",
+    "text": "Information Content in Gene Ontology (GO)\nIn the setting of GO, the probability of a term \\(t\\) is the probability that a randomly chosen gene product (usually: protein) is annotated to that term.\n\nThe Root Term: Assuming all genes are annotated to the root (the most general term):\n\n\\(p(\\text{root}) = 1\\)\n\\(\\text{IC}(\\text{root}) = -\\log_2(1) = 0\\)\n\nGeneral vs. Specific:\n\nTerms used for many genes have low IC.\nTerms used for very few genes have high IC.\n\n\n\n\n\n\n\n\nNote\n\n\nThis reflects “surprise”: discovering a gene is annotated to the root is expected, while discovering a rare, specific annotation provides significant information.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5152,8 +5188,8 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#semantic-similarity-t_1-leftrightarrow-t_2",
-    "href": "lectures/ontology4.html#semantic-similarity-t_1-leftrightarrow-t_2",
+    "objectID": "lectures/ontology4.html#semsim",
+    "href": "lectures/ontology4.html#semsim",
     "title": "Approaches to biomedical knowledge",
     "section": "Semantic Similarity (\\(t_1 \\leftrightarrow t_2\\))",
     "text": "Semantic Similarity (\\(t_1 \\leftrightarrow t_2\\))\nResnik defined similarity between two terms based on the Information Content of their Most Specific Ancestor (MSA).\n\\[\\text{IC}(t) = -\\log p(t)\\]\n\n\n\n\n\n\n\n\nResnik Similarity\nThe similarity is the IC of the most specific ancestor \\(a\\) in the set of common ancestors \\(\\mathcal{A}(t_1, t_2)\\):\n\\[\\mathrm{sim}(t_1, t_2) = \\max_{a \\in \\mathcal{A}(t_1, t_2)} [-\\log p(a)]\\]\nWe refer to this as the IC of the Most Specific Ancestor: \\(\\text{IC}(a')\\).",
@@ -5332,8 +5368,8 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#part-4",
-    "href": "lectures/ontology4.html#part-4",
+    "objectID": "lectures/ontology4.html#phenomizer",
+    "href": "lectures/ontology4.html#phenomizer",
     "title": "Approaches to biomedical knowledge",
     "section": "Phenotypic Similarity Algorithms",
     "text": "Phenotypic Similarity Algorithms\n\n\n\n\n\n\nGoal: Calculate a similarity between a set of query terms and computational disease models.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhenomizer\nKöhler et al. (2009) Am J Hum Genet 85:457-64\n\n\n\nExact Score Distribution\nSchulz MH et al (2011) BMC Bioinformatics 12:441\n\n\n\nBOQA\nBauer et al. (2012) Bioinformatics 28:2502-8\n\n\n\n\nI will not go into detail on the computational methods today.\nInstead, I will explain the intuition behind the Phenomizer and then show how to use these algorithms for translational genomics.",
@@ -5385,6 +5421,30 @@
     "title": "Approaches to biomedical knowledge",
     "section": "TODO",
     "text": "TODO\n\nTodo: add more recent slides about Exomiser, LIRICAL etc. Also Phenopackets, GPSEA",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#lirical",
+    "href": "lectures/ontology4.html#lirical",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LIRICAL",
+    "text": "LIRICAL\n-todo",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#sources",
+    "href": "lectures/ontology4.html#sources",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sources",
+    "text": "Sources",
     "crumbs": [
       "Home",
       "Lectures",
