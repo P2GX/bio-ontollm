@@ -24,49 +24,16 @@ format:
 
 ## Overview: Semantic similarity
 
-::: {.callout-note title="Game plan"}
-This lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.
-:::
-
-:::: {.columns}
-
-::: {.column width="48%"}
-### [Part 1: Information content](#part-1)
-* Information content
-* Entropy
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Semantic similarity](#part-2)
-* Definition of ontologies (review)
-* Ontologies and biomedical research
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 3: Human Phenotype Ontology](#part-3)
-* Phenotype and phenotypic feature
-* HPO
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: Phenomizer](#part-4)
-* Phenomizer algorithm
-:::
-
-::::
+* [Information content/Entropy](#ic)
+* [Semantic similarity](#semsim)
+* [Human Phenotype Ontology](#hpo)
+* [Phenomizer](#phenomizer)
+* [LIRICAL](#lirical)
 
 
-## Semantic Similarity: The Resnik Method {#part-1}
+
+
+## Semantic Similarity: The Resnik Method {#ic}
 
 In 1995, Resnik introduced a method for evaluating the semantic similarity between two concepts in an ontology with `is_a` relations.^[Resnik P (1995) Using Information Content to Evaluate Semantic Similarity in a Taxonomy. arXiv cmp-lg/9511007]
 
@@ -143,7 +110,7 @@ The more specific a term is (lower probability), the higher its Information Cont
 Information Content relies heavily on the properties of logarithms. These identities are essential for calculating IC across different branches of an ontology.
 :::
 
-The following logarithmic identities are fundamental to the behavior of $IC(t) = -\log p(t)$:
+The following logarithmic identities^[Note that we mean the natural logarithm when we write simply $\log$.] are fundamental to the behavior of $IC(t) = -\log p(t)$:
 
 $$
 \begin{aligned}
@@ -155,12 +122,7 @@ $$
 \end{aligned}
 $$
 
-::: {.callout-note title="Properties of logarithms: Review"}
 
-* $\log 1 = 0$: Explains why the Root node ($p=1$) always has an Information Content of $0$.
-* $\log \frac{1}{x} = -\log x$: This identity implies: $IC(t) = \log \frac{1}{p(t)}$ as $IC(t) = -\log p(t)$.
-* $\log xy = \log x + \log y$.
-:::
 
 
 
@@ -214,13 +176,13 @@ analyzing a random variable $X$, which can take on one of a finite
 number of specific values
 $\left\{x_1,x_2,\ldots,x_n\right\}$ with a probability
 $\left\{p_1,p_2,\ldots,p_n\right\}$, where the probability of the
-outcome $x_i$ is $p_i$ and $\sum_{i=1}^n p_i=1$. 
+outcome $x_i$ is $p_i$ with $0\leq p_i\leq 1$ and $\sum_{i=1}^n p_i=1$. 
 * We will use the
 notation $p(X=x)$ or simply $p(x)$ to denote the probability that the
 random variable $X$ takes on some specific value $x$, where $x\in
 \left\{x_1,x_2,\ldots,x_n\right\}$. 
 * We will refer to each of the
-specific values that $X$ can take on as \textit{outcomes}.
+specific values that $X$ can take on as *outcomes*.
 
 Shannon defined the information content of an outcome $x$ as
 
@@ -234,17 +196,17 @@ $$ {#eq-appdx-IC}
 Note that because of the properties of logarithms, 
 $\log_2 \frac{1}{p(x)} = -\log_2 p(x)$, which is the definition of
 information content. The
-\textit{entropy} of the random variable $X$, written as $H(X)$, was defined by Shannon as
+*entropy* of the random variable $X$, written as $H(X)$, was defined by Shannon as
 the average information content of all of the possible outcomes of
-$X$.
+$X$.^[Note that by convention $p(x')\log_2 p(x')=0$ for $p(x')=0$. This is
+necessary because $\log 0$ is undefined, and reasonable because
+$\lim_{x\rightarrow 0} x\log x = 0$.]
 
 $$
 H(X) = \sum_{i=1}^n p(x_i)\log_2\dfrac{1}{p(x_i)}
 $$ {#eq-appdx-entropy}
 
--  Note that by convention $p(x')\log_2 p(x')=0$ for $p(x')=0$. This is
-necessary because $\log 0$ is undefined, and reasonable because
-$\lim_{x\rightarrow 0} x\log x = 0$.
+
 
 ## Entropy (3)
  
@@ -264,13 +226,85 @@ $$
 
 ## Entropy (4)
 
-It can easily be shown that the entropy of $X$ is maximized if there
+On the other hand the entropy of $X$ is maximized if there
 is maximal uncertainty about the outcome -- this is the case if no
 outcome is more likely than the others, or stated differently, if
 $X$ follows a uniform distribution.
 
 
-![Entropy of a random variable $X=\left\{\mathtt{0, 1}\right\}$ representing  Bernoulli process such as a coin toss for different values of $p(X=1)$. Maximum entropy is achieved if $p(\mathtt{0}) = p(\mathtt{1}) = 0.5$, i.e., for a uniform distribution. The minimum entropy of zero occurs if the probability of one of the two outcomes is 1.](img/entropyCoinToss.svg){fig-align="center" width="10%"}
+![](img/entropyCoinToss.svg){fig-align="center" width="10%"}
+
+- Entropy of a random variable $X=\left\{\mathtt{0, 1}\right\}$ representing  Bernoulli process such as a coin toss for different values of $p(X=1)$. 
+- Maximum entropy is achieved if $p(\mathtt{0}) = p(\mathtt{1}) = 0.5$, i.e., for a uniform distribution. 
+
+## Proof
+
+We want to show: among all probability distributions on $n$ outcomes, entropy
+
+$$
+H(p) = -\sum_{i=1}^n p_i \log p_i
+$$
+
+is maximized by the **uniform** distribution $p_i = 1/n$.
+
+
+* **Constraint:** $\sum_{i=1}^n p_i = 1$, with $p_i \geq 0$.
+* The method of Lagrange multipliers allows us to find maximums/minimums subject to a constraint
+
+
+## The Lagrangian
+
+Introduce a multiplier $\lambda$ for the normalization constraint:
+
+$$
+\mathcal{L}(p, \lambda) = -\sum_{i=1}^n p_i \log p_i \;-\; \lambda\left(\sum_{i=1}^n p_i - 1\right)
+$$
+
+
+- At a stationary point, the gradient with respect to every $p_i$ must vanish, i.e., $\tfrac{\partial \mathcal{L}(p, \lambda)}{\partial p_i}=0$
+- We have 
+
+
+$$
+\begin{align}
+\frac{\partial \mathcal{L}}{\partial p_i} &= -\log p_i - 1 - \lambda = 0 \quad \Longrightarrow \quad p_i = e^{-1-\lambda}
+\end{align}
+$$
+
+* the right-hand side doesn't depend on $i$, so every  $p_i$ must be equal; denoting the the common value $c$:
+$$
+\sum_{i=1}^n p_i = \sum_{i=1}^n c  = nc = 1 \quad \Longrightarrow \quad p_i = \frac{1}{n}\quad \text{for all } i
+$$
+
+
+
+## The Hessian Matrix
+
+$$
+\nabla^2 \mathcal{L} = \begin{bmatrix} -\dfrac{1}{p_1} & 0 & \cdots & 0 \\
+0 & -\dfrac{1}{p_2} & \cdots & 0 \\
+0 & 0 & \ddots & 0 \\
+0 & 0 & \cdots & -\dfrac{1}{p_n}
+\end{bmatrix}
+$$
+
+::: {.fragment}
+Since $p_i > 0$, every diagonal entry is **negative**, and off-diagonal entries vanish.
+:::
+
+::: {.fragment}
+$H(p)$ is therefore **strictly concave** — the unique critical point is a **global maximum**, not a saddle or minimum.
+:::
+
+
+$$
+H(p) \leq H\left(\tfrac{1}{n}, \dots, \tfrac{1}{n}\right) = \log n
+$$
+
+for every probability distribution $p$ on $n$ outcomes, with equality **iff** $p$ is uniform.
+
+
+**Interpretation:** maximal uncertainty about the outcome corresponds exactly to maximal entropy — any deviation from uniformity introduces predictability and strictly lowers $H$.
 
 
 
@@ -303,7 +337,9 @@ Claude Shannon's definition of entropy is not arbitrary; it is the **only** func
 
 ::: {.callout-note icon=false}
 ## Theorem: Uniqueness of Entropy
-Let $P = \{p_1, p_2, \dots, p_n\}$ be the probabilities of outcomes $\{x_1, x_2, \dots, x_n\}$, where $p_i \geq 0$ and $\sum p_i = 1$. A continuous function $H(P)$ satisfies the following:
+Let $P = \{p_1, p_2, \dots, p_n\}$ be the probabilities of outcomes $\{x_1, x_2, \dots, x_n\}$, where $p_i \geq 0$ and $\sum p_i = 1$. 
+
+A continuous function $H(P)$ satisfies the following:
 
 1.  **Maximality**: $H$ is maximized when $p_i = \frac{1}{n}$ for all $i$ (uncertainty is highest when all outcomes are equally likely).
 2.  **Additivity**: $H(AB) = H(A) + H_A(B)$. If $A$ and $B$ are independent, $H(AB) = H(A) + H(B)$.
@@ -330,7 +366,7 @@ mathematical definition of information content should have.
 
 ## Information Content in Gene Ontology (GO)
 
-In the setting of GO, the probability of a term $t$ is the probability that a **randomly chosen protein** is annotated to that term.
+In the setting of GO, the probability of a term $t$ is the probability that a **randomly chosen** gene product (usually: protein) is annotated to that term.
 
 * **The Root Term**: Assuming all genes are annotated to the root (the most general term):
     * $p(\text{root}) = 1$
@@ -358,7 +394,8 @@ Assume we have a set of **256 annotated genes**:
 
 
 
-## Semantic Similarity ($t_1 \leftrightarrow t_2$)
+## Semantic Similarity ($t_1 \leftrightarrow t_2$){#semsim}
+
 
 Resnik defined similarity between two terms based on the **Information Content of their Most Specific Ancestor (MSA)**.
 
@@ -404,25 +441,10 @@ We refer to this as the **IC of the Most Specific Ancestor**: $\text{IC}(a')$.
 
 * `beagle` and `wildcat`  are not $\ldots$
 
-# Semantic similarity between genes or diseases
-
-![](./img/grasm3.png){fig-align="center" width="90%"}
-
-* similarity between gene $g_1$, which is  annotated to terms $C$ and $F$, and gene $g_2$, which is annotated
-   to terms $F$ and $G$.
-
-$$
-\begin{eqnarray*}
-\mathrm{sim}(g_1,g_2)& =&
- \displaystyle\frac{1}{|I_1|} \sum_{t_1\in I_1} \max_{t_2 \in I_2}
- \textnormal{sim}(t_1,t_2) \\
-&=& \dfrac{1}{2} \left[ \mathrm{IC}(B) + \mathrm{IC}(F) \right] = 0.7
- \label{eqn:resnik.avg.max}
-\end{eqnarray*}
-$$
 
 
-## HPO
+## HPO {#hpo}
+
 
 ::: {.callout-note title="Game plan"}
 This lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.
@@ -769,7 +791,7 @@ This lecture covers a review of artificial neural networks and backpropagation a
 
 ::::
 
-## Phenotypic Similarity Algorithms {#part-4}
+## Phenotypic Similarity Algorithms {#phenomizer}
 
 ::: {.callout-note appearance="simple"}
 **Goal**: Calculate a similarity between a set of query terms and computational disease models.
@@ -881,3 +903,11 @@ $$\text{sim}(\color{orange}{Q} \rightarrow \color{blue}{d}) = \text{avg} \left[ 
 ## TODO
 
 - [Todo: add more recent slides about Exomiser, LIRICAL etc. Also Phenopackets, GPSEA]{.neon-todo}
+
+
+
+
+## LIRICAL{#lirical}
+-todo
+
+## Sources
