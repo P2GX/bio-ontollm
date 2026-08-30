@@ -641,7 +641,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.06%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.72%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
     "crumbs": [
       "Home",
       "Lectures",
@@ -653,7 +653,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.02%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.40%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
     "crumbs": [
       "Home",
       "Lectures",
@@ -665,7 +665,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 2.68%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.74%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
     "crumbs": [
       "Home",
       "Lectures",
@@ -677,7 +677,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.88%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.58%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5192,7 +5192,7 @@
     "href": "lectures/ontology4.html#semsim",
     "title": "Approaches to biomedical knowledge",
     "section": "Semantic Similarity (\\(t_1 \\leftrightarrow t_2\\))",
-    "text": "Semantic Similarity (\\(t_1 \\leftrightarrow t_2\\))\nResnik defined similarity between two terms based on the Information Content of their Most Specific Ancestor (MSA).\n\\[\\text{IC}(t) = -\\log p(t)\\]\n\n\n\n\n\n\n\n\nResnik Similarity\nThe similarity is the IC of the most specific ancestor \\(a\\) in the set of common ancestors \\(\\mathcal{A}(t_1, t_2)\\):\n\\[\\mathrm{sim}(t_1, t_2) = \\max_{a \\in \\mathcal{A}(t_1, t_2)} [-\\log p(a)]\\]\nWe refer to this as the IC of the Most Specific Ancestor: \\(\\text{IC}(a')\\).",
+    "text": "Semantic Similarity (\\(t_1 \\leftrightarrow t_2\\))\nResnik defined similarity between two terms based on the Information Content of their Most Specific Ancestor (MSA).\n\\[\\text{IC}(t) = -\\log p(t)\\]\n\n\n\n\n\n\n\n\nResnik Similarity\nThe similarity is the IC of the most specific ancestor \\(a\\) in the set of common ancestors \\(\\mathcal{A}(t_1, t_2)\\):\n\\[\n\\mathrm{sim}(t_1, t_2) = \\max_{a \\in \\mathcal{A}(t_1, t_2)} [-\\log p(a)]\n\\tag{3}\\]\nWe refer to this as the IC of the Most Specific Ancestor: \\(\\text{IC}(a')\\), or MICA",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5452,11 +5452,203 @@
     ]
   },
   {
+    "objectID": "lectures/ontology4.html#example",
+    "href": "lectures/ontology4.html#example",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Example",
+    "text": "Example\n\nquery:\n\nPulmonic stenosis HP:0001642\nUpslanted palpebral fissure HP:0000582\nProportionate short stature HP:0003508\nHeadache HP:0002315 ###\n\nFor demo purposes, let’s create two simplified disease models\n\n\nNoonan syndrome type 1 (NS1)\n\nPulmonic stenosis HP:0001642\nShort stature HP:0004322\nDownslanted palpebral fissures HP:0000494\n\n\nNeurodevelopmental disorder 1 (NDD1)\n\nShort stature HP:0004322\nPrimary microcephaly HP:0011451\nGray matter heterotopia HP:0002282",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#example-1",
+    "href": "lectures/ontology4.html#example-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Example",
+    "text": "Example\n\n\n\n\n\n\n\n\n\n\nQuery term\nNoonan syndrome 1\nNS1 score\nNeurodevelopmental disorder 1\nNDD1 score\n\n\n\n\nPulmonic stenosis\nPulmonic stenosis\n4.19\nPhenotypic abnormality\n0.00*\n\n\nUpslanted palpebral fissure\nDownslanted palpebral fissure\n2.59*\nPhenotypic abnormality\n0.00*\n\n\nProportionate short stature\nShort stature\n1.91*\nShort stature\n1.91*\n\n\nHeadache\nPhenotypic abnormality\n0.00*\nAbnormality of the nervous system\n0.51*\n\n\nSum\n\n8.60\n\n2.42\n\n\n\n\nInformation content of Upslanted palpebral fissure is 3.46, that of Downslanted palpebral fissure is 3.01. To calculate the most informative common ancestor, we go to their common parent Slanting of the palpebral fissure HP:0200006, which has an IC of 2.59\nShort stature is the direct parent of Proportionate short stature, and so the MICA is the IC of Short stature\nNoonan syndrome 1 receives a higher score than Neurodevelopmental disorder 1, and so NS1 would be ranked before NDD1\nThe same process is performed for all 8500 candidate diseases to generate the final ranking (prioritization)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#example-2",
+    "href": "lectures/ontology4.html#example-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Example",
+    "text": "Example\nThe table in the previous slide demonstrates how to calculate the phenomizer score \\[\n\\mathrm{sim}(Q\\rightarrow D) = \\mathrm{avg} \\sum_{s\\in Q}\\max_{t\\in D}\\mathrm{sim}(s,t)\n\\] - \\(\\mathrm{sim}(s,t)\\) is calculated as the IC of the maximally informative common ancestor (MICA), see Equation 3.\n\nFrom raw score to p-value:\nRaw similarity scores aren’t directly comparable across diseases:\n\nA disease with many annotated terms has more chances for a lucky match\nA small, specific query profile behaves differently than a large, vague one\n\n\n\nTo make the Phgenomizer score comparable across 8500 diseases, we want to know: How much does a score actually support a disease, given the query’s and the disease’s HPO term count and specificity?",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#empirical-p-value-via-simulation",
+    "href": "lectures/ontology4.html#empirical-p-value-via-simulation",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Empirical p-value via simulation",
+    "text": "Empirical p-value via simulation\nFor each candidate disease \\(D\\):\n\nGenerate \\(N\\) random query profiles of the same size as the observed query (terms sampled from the HPO term/annotation universe)\nCompute the fuzzy similarity score between each random query and \\(D\\), exactly as for the real query\nThis builds a null distribution of scores specific to \\(D\\)’s phenotype profile and the query size\nEmpirical p-value:\n\n\\[\np = \\frac{\\#\\{\\text{random scores} \\geq \\text{observed score}\\}}{N}\n\\]\n\nDiseases are then ranked by \\(p\\)-value rather than raw score, making rankings comparable across diseases with very different profile sizes\nThis was the basis of the original Phenomizer algorithm",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#empirical-p-value-via-simulation-1",
+    "href": "lectures/ontology4.html#empirical-p-value-via-simulation-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Empirical p-value via simulation",
+    "text": "Empirical p-value via simulation\n\n\nFeature vector (FV) method, ontological similarity search (OSS), and p value (OSS-PV)\n\n\nKöhler S, et al. (2009) Clinical diagnostics in human genetics with semantic similarity searches in ontologies. Am J Hum Genet 85:457-64",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
     "objectID": "lectures/ontology4.html#lirical",
     "href": "lectures/ontology4.html#lirical",
     "title": "Approaches to biomedical knowledge",
     "section": "LIRICAL",
-    "text": "LIRICAL\n-todo",
+    "text": "LIRICAL\n\nLIRICAL is a newer phenotypic-driven prioritization algorithm that leverages the likelihood ratio test\n\n\n\nWe will first explain the basic concepts of the likelihood ratio test (LRT) and then present LIRICAL in more detail.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#likelihood-ratio-test-intuition",
+    "href": "lectures/ontology4.html#likelihood-ratio-test-intuition",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Likelihood Ratio Test: Intuition",
+    "text": "Likelihood Ratio Test: Intuition\nRecall Bayes’ law: \\[\nP(A\\mid B) = \\frac{P(B\\mid A)\\cdot P(A)}{P(B)}\n\\tag{4}\\]\n\nSuppose that Suppose that A is the presence (D+) or absence (D–) of a disease\nSuppose B represents the result of a diagnostic test (x) fulfils, say the test result being abnormal.\nThen\n\n\\[\nP(D^{+}\\mid x=\\mathrm{abn}) = \\frac{P(x=\\mathrm{abn}\\mid D^{+})\\cdot P(D^{+})}{P(x=\\mathrm{abn})}\n\\tag{5}\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#likelihood-ratio-test-intuition-1",
+    "href": "lectures/ontology4.html#likelihood-ratio-test-intuition-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Likelihood Ratio Test: Intuition",
+    "text": "Likelihood Ratio Test: Intuition\n\nSimilarly, the probability of the absence of the disease (D–) given the test result is \\[\n\\begin{align}\nP(D^{-}\\mid x=\\mathrm{abn}) &= 1 - P(D^{+}\\mid x=\\mathrm{abn}) \\\\\n&= \\frac{P(x=\\mathrm{abn}\\mid D^{-})\\cdot P(D^{-})}{P(x=\\mathrm{abn})} \\\\\n\\end{align}\n\\tag{6}\\]\nDividing Equation 5 by Equation 6 and replacing P(D–) with 1 – P(D+) gives: \\[\n\\frac{P(D^{+}\\mid x=\\mathrm{abn}) }{1-P(D^{+}\\mid x=\\mathrm{abn}) } =\n\\frac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\n\\times\n\\frac{P(D^{+})}{1 - P(D^{+})}\n\\]\nThis is \\[\n\\text{Post-test odds of }D^{+} =\n\\frac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\n\\times\n\\text{Pre-test odds of }D^{+}\n\\]\nThis is the equation used in the Bayesian approach to interpret test results.\nThe factor \\(\\tfrac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\\) is termed the likelihood ratio (LR)\nWhen the test result equals to \\(r\\), we write \\(LR(r)\\).\nGenerally speaking, the likelihood ratio indicates how many times more (or less) likely a certain condition for a test result is expected to be observed in diseased, compared with non-diseased, people\n\n\nHabibzadeh F, Habibzadeh P (2019) The likelihood ratio and its graphical representation. Biochem Med (Zagreb)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#review-odds-vs.-probabilities",
+    "href": "lectures/ontology4.html#review-odds-vs.-probabilities",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Review: odds vs. probabilities",
+    "text": "Review: odds vs. probabilities\nOdds and probability both describe uncertainty, and are related by the following equation\n\\[\n\\text{odds} = \\frac{P(\\text{event})}{P(\\text{not event})} = \\frac{p}{1-p}\n\\tag{7}\\]\n\nEquation 7 implies \\(p = \\tfrac{\\text{odds}}{1+\\text{odds}}\\)\nProbability\n\nRanges from 0 to 1\n\nOdds\n\nRanges from 0 to \\(\\infty\\)\n\n\n\n\n\nProbability\nOdds\nReads as\n\n\n\n\n50%\n1.00\n1 : 1\n\n\n90%\n9.00\n9 : 1\n\n\n2%\n0.0204\n~1 : 49\n\n\n\n\n\\(p = 2\\%\\) → odds \\(= \\dfrac{0.02}{1-0.02} \\approx 0.0204\\)\nSmall probabilities and their odds are nearly identical numerically; they diverge as \\(p \\to 1\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#lirical-motivation",
+    "href": "lectures/ontology4.html#lirical-motivation",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LIRICAL: motivation",
+    "text": "LIRICAL: motivation\n\n\n\n\nCurrent WES/WGS detection rate: \\(\\sim 40-50\\%\\)\nBut prevailing algorithms don’t help us realize that there are no good candidates. #1 may still be poor.\n\n\n\n\n\nSome phenotypic features may support a diagnosis while others do not\nPrevailing algorithms don’t help users interpret the relative contribution of individual HPO terms to the computational ranking",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#lirical-calculating-the-likelihood-ratio",
+    "href": "lectures/ontology4.html#lirical-calculating-the-likelihood-ratio",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LIRICAL: Calculating the likelihood ratio",
+    "text": "LIRICAL: Calculating the likelihood ratio\n\\[\n\\rm{LR}=\\dfrac{P(x|\\mathcal{D})}{P(x|\\neg \\mathcal{D})}\n\\tag{8}\\]\nThe definition of the LR can be extended to multiple tests. Suppose \\(X=(x_1,x_2,\\cdots,x_n)\\) is an array of \\(n\\) test results. Under the assumption that the tests are independent, \\(\\rm{LR}(X)\\) is defined as:\n\\[\n\\frac{{\\rm{{Pr}}}(X|\\mathcal{D})}{{\\rm{Pr}}(X|\\neg \\mathcal{D})} = \\frac{{\\rm{Pr}}(x_1,x_2,\\cdots,x_n|\\mathcal{D})}{{\\rm{{Pr}}}(x_1,x_2,\\cdots,x_n|\\neg \\mathcal{D})}\n= \\prod_{i=1}^{n} \\dfrac{{\\rm{{Pr}}}(x_i|\\mathcal{D})}{{\\rm{Pr}}(x_i|\\neg \\mathcal{D})}\n\\tag{9}\\]\n\nWith this equation, one can calculate a likelihood ratio for a set of query HPO terms\nBut how exactly do we calculate \\(\\dfrac{P(x|\\mathcal{D})}{P(x|\\neg \\mathcal{D})}\\)?",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#dfracph_imathcaldph_ineg-mathcald",
+    "href": "lectures/ontology4.html#dfracph_imathcaldph_ineg-mathcald",
+    "title": "Approaches to biomedical knowledge",
+    "section": "\\(\\dfrac{P(h_i|\\mathcal{D})}{P(h_i|\\neg \\mathcal{D})}\\)",
+    "text": "\\(\\dfrac{P(h_i|\\mathcal{D})}{P(h_i|\\neg \\mathcal{D})}\\)\n\nCalculating \\(P(h_i|\\mathcal{D})\\), the probability of an individual with disease \\(D\\) to have HPO term \\(h_i\\), is easy\nIf the HPO annotations for \\(D\\) include the HPO term \\(h_i\\), then \\(P(h_i|\\mathcal{D})\\) is equal to the frequency of that term in the HPO annotations for the disease\n\nOMIM:614669 Auriculocondylar syndrome 2     HP:0000347  PMID:16114046   PCS     22/31       PHPO:skoehler[2012-10-17];HPO:probinson[2023-01-30]\n\nThe above line is one of 285603 lines in the phenotype.hpoa file\nIt specifies the frequency of Micrognathia HP:0000347 in individuals with Auriculocondylar syndrome 2\nIt is less obvious how to specify \\(P(h_i|\\neg \\mathcal{D})\\) - the frquency of \\(h_i\\) in individuals without disease \\(D\\).\nIn principle, we could collect data on the general population, omitting individuals with \\(D\\), and estimate the population prevalence of \\(h_i\\)\nThis is both impossible and also not a good model of the diagnostic situation in medical genetics (individuals who present for diagnosis are not an unbiased selection from the general population)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#ph_ineg-mathcald",
+    "href": "lectures/ontology4.html#ph_ineg-mathcald",
+    "title": "Approaches to biomedical knowledge",
+    "section": "\\(P(h_i|\\neg \\mathcal{D})\\)",
+    "text": "\\(P(h_i|\\neg \\mathcal{D})\\)\n\nLIRICAL therefore makes the assumption that every individual in the population has some Mendelian disease.\nThen we can estimate \\(P(h_i|\\neg \\mathcal{D})\\) as follows (with a total of \\(N\\) Mendelian diseases) \\[\nP(h_i\\mid D_j) = \\frac{1}{N-1}\\sum_{k\\neq j} P(h_i\\mid D_k) \\approx \\frac{1}{N}\\sum_{k} f_{i}^{D_k}\n\\]\nHere, \\(f_{i}^{D_k}\\) is the frequency of HPO term \\(i\\) in individuals with disease \\(k\\)\nThis is the key assumption (“trick”) that allows us to apply the likelihood ratio framework to HPO-based differential diagnostic support\nThere are many details about how to calculate \\(f_{i}^{D_k}\\) in different situations and how to true-path rule is applied\nThe next slide gives an impression of the algorithms.1\nLIRICAL also introduces an approach to estimate likelihood ratios for genotypes that we will not cover here.\n\nThese details will not be covered in the exams",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#lirical-calculating-the-likelihood-ratio-1",
+    "href": "lectures/ontology4.html#lirical-calculating-the-likelihood-ratio-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LIRICAL: Calculating the likelihood ratio",
+    "text": "LIRICAL: Calculating the likelihood ratio\n\nCalculating the likelihood ratios for phenotypes\nHPO annotations and frequency data: used to calculate \\(\\dfrac{P(x|\\mathcal{D})}{P(x|\\neg \\mathcal{D})}\\), with heuristics for non-exact matches.\n\nDisease model annotated with four HPO terms (dark blue), annotated are “inherited” by ancestors (light blue)\nExact match to query term: \\(P(h_{16}|\\mathcal{D})=f_{16}^{\\mathcal{D}}\\)\nQuery matches descendent of annotated term: \\(P(h_{14}|\\mathcal{D})=\\frac{f_{7}^{\\mathcal{D}}}{2}=0.5\\)\nQuery matches ancestor of annotated term: \\(P(h_{8}|\\mathcal{D})=f_{16}^{\\mathcal{D}}\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#lirical-posterior-probabilities-improve-interpretation-of-rankings",
+    "href": "lectures/ontology4.html#lirical-posterior-probabilities-improve-interpretation-of-rankings",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LIRICAL: Posterior probabilities improve interpretation of rankings",
+    "text": "LIRICAL: Posterior probabilities improve interpretation of rankings\n\n\nLIRICAL provides estimates of posttest probabilities",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#lirical-performance-on-384-published-case-reports",
+    "href": "lectures/ontology4.html#lirical-performance-on-384-published-case-reports",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LIRICAL: Performance on 384 published case reports",
+    "text": "LIRICAL: Performance on 384 published case reports",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#lirical-detailed-disease-output-page",
+    "href": "lectures/ontology4.html#lirical-detailed-disease-output-page",
+    "title": "Approaches to biomedical knowledge",
+    "section": "LIRICAL: Detailed disease output page",
+    "text": "LIRICAL: Detailed disease output page\n\n\nRobinson PN et al., Interpretable Clinical Genomics with a Likelihood Ratio Paradigm\nAm J Hum Genet 2020;107:403-417\nfree for academic use",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5468,7 +5660,7 @@
     "href": "lectures/ontology4.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\n\nKhinchin - Mathematical Foundations of Information Theory-Dover Publications (1957)",
+    "text": "Sources\n\nAlbert A (1982) On the use and computation of likelihood ratios in clinical chemistry. Clin Chem 28:1113-9: Excellent introduction to the mathemastics of LRs\nKhinchin - Mathematical Foundations of Information Theory-Dover Publications (1957) Another excellent introduction to the mathemastics of LRs\nRobinson PN et al. (2020) Interpretable Clinical Genomics with a Likelihood Ratio Paradigm. Am J Hum Genet 107:403-417\nKöhler S, et al. (2009) Clinical diagnostics in human genetics with semantic similarity searches in ontologies. Am J Hum Genet 85:457-64",
     "crumbs": [
       "Home",
       "Lectures",
