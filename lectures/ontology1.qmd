@@ -1060,6 +1060,12 @@ This uses owl:Thing (the root class of everything) and explicitly states the typ
 </owl:Thing>
 ```
 
+## What is the logic here?
+
+
+![](./img/three-logicians-walk-into-a-bar.png){fig-align="center" width="75%"}
+
+
 ## OWL: Conclusion and Next Steps
 
 * **The Tip of the Iceberg:** We have barely scratched the surface of OWL's logical capabilities in this lecture.

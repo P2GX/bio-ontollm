@@ -351,18 +351,6 @@ where $\lambda$ is a positive constant (usually $\lambda=1$).
 :::
 
 
-## Entropy
-
-A proof of this theorem can be found in Khinchin's book^[Khinchin - Mathematical Foundations of Information Theory-Dover Publications (1957)]. It can also be shown that $\lambda=1$ if
-$\log_2$ is used.
-
-::: {.callout-note icon=false}
-  Thus, we conclude that @eq-appdx-entropy
-provides a definition of information content that
-satisfies several important intuitions about the properties that a
-mathematical definition of information content should have.
-:::
-
 
 ## Information Content in Gene Ontology (GO)
 
@@ -514,8 +502,7 @@ $$
 
 ![](./img/american-football.jpg){width="30%"}
 
-A football $\ldots$^[When you see ``football'', your computer sees: 
-0100011001101111011011110111010001100010011000010110110001101100]
+A football $\ldots$
 
 ::: 
 ::: {.column width="50%"}
@@ -526,6 +513,8 @@ A football $\ldots$
 ::: 
 ::: 
 
+When you see ``football'', your computer sees: 
+0100011001101111011011110111010001100010011000010110110001101100
 
 ## A tale of two fibrillations
 $$
@@ -740,10 +729,9 @@ Gargano Nucleic Acids Res 2024
 ::::
 
 ::: {.small style="margin-top: -10px;"}
-* **16,908 terms**
+* **>19,00 terms**
 * 244,440 annotations for **8,223 monogenic or chromosomal diseases**
-* 132,006 annotations for **~3,145 common diseases**
-* [http://www.human-phenotype-ontology.org](http://www.human-phenotype-ontology.org)
+* [http://www.human-phenotype-ontology.org](https://hpo.jax.org/app/)
 :::
 
 
@@ -856,8 +844,7 @@ Bauer et al. (2012) *Bioinformatics* **28**:2502-8
 :::::
 
 ::: {.small}
-* I will not go into detail on the computational methods today.
-* Instead, I will explain the intuition behind the Phenomizer and then show how to use these algorithms for translational genomics.
+* Today, we will go into detail about two phenotype matching algoriths, Phenomizer and LIRICAL.
 :::
 
 
@@ -877,37 +864,80 @@ $$\text{sim}(\color{orange}{Q} \rightarrow \color{blue}{d}) = \text{avg} \left[ 
 :::
 :::
 
----
-
-## Semantic Matching
-
-![](img/phen1.png){fig-align="center" height="60%"}
-
-* Basic idea of ontological search: **Do not need exact match!**
-* **Semantically similar** diseases score well by traversing the ontology structure.
 
 
-
----
 
 ## The Phenomizer
 
-![](img/LDSphenomizer5.png){fig-align="center" height="60%"}
+![](img/LDSphenomizer5.png){fig-align="center" width="60%"}
 
-::: {style="font-size: 0.45em;"}
+::: {.small-text}
+* The **Phenomizer**: The first algorithm/software tool for supporting differential diagnostics with semantic similarity analysis
 * Sebastian Köhler et al. (2009) Clinical Diagnostics with Semantic Similarity Searches in Ontologies. *Am J Hum Genet*, **85**:457--64.
+* Online version supported 2009-2022...no longer available.
 :::
 
-[**http://compbio.charite.de/Phenomizer**](http://compbio.charite.de/Phenomizer)
-
-## TODO
-
-- [Todo: add more recent slides about Exomiser, LIRICAL etc. Also Phenopackets, GPSEA]{.neon-todo}
 
 
+
+
+## The query
+
+::: {.mybox}
+**Query terms**:
+ The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individualbeing evaluated for suspected rare genetic disease. 
+:::
+
+:::: {.columns}
+::: {.column width="50%"}
+![](./img/aneurysm.png){width="75%" fig-align="center"}
+:::
+::: {.column width="50%"}
+
+![](./img/hpo-browser-hepatitis.png){fig-align="center"}
+
+
+:::
+::::
+
+- Physicians choose terms to represent the clinical anomalies seen in a patient^[The word "patient" is a role played by an individual who presents for medical treatment or diagnostics, but does not describe the individual him- or herself. In many contexts, the word "individual" is preferred.]
+- Many tools are available. Some tools enable users to choose HPO terms by navigating the HPO hierarchy or by using autocomplete functions.
+
+
+## The query
+![](./img/phenoboard-example.png){fig-align="center"}
+
+- Various text mining (named entity recognition) tools are available
+
+::: {.small-text}
+- For more information on how to choose HPO terms to represent clinical data, see 
+[Köhler S, et al., (2019) Encoding Clinical Data with the Human Phenotype Ontology for Computational Differential Diagnostics. Curr Protoc Hum Genet](https://pubmed.ncbi.nlm.nih.gov/31479590/)
+- [phenoboard](https://github.com/P2GX/phenoboard)
+:::
+
+## Disease model(s)
+
+::: {.mybox}
+**Disease model**:
+ The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individualbeing evaluated for suspected rare genetic disease. 
+:::
+
+![](./img/hpo-annotation-model.png){fig-align="center"}
+
+- ThHe HPO project has ca. 8500 disease models 
+- Algorithms such as Phenomizer compare the query with each model to determine a ranked list of models that best match the query
+- Algorithms differ in how they calculate the strength of the **match**
+
+
+## Fuzzy, specificity weighted matching
+
+
+![](./img/zemojtel.png){fig-align="center"}
 
 
 ## LIRICAL{#lirical}
 -todo
 
 ## Sources
+
+- [Khinchin - Mathematical Foundations of Information Theory-Dover Publications (1957)](https://www.amazon.de/Mathematical-Foundations-Information-Advanced-Mathematics/dp/0486604349) 
