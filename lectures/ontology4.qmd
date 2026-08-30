@@ -399,9 +399,11 @@ $$\text{IC}(t) = -\log p(t)$$
 ### Resnik Similarity
 The similarity is the IC of the most specific ancestor $a$ in the set of common ancestors $\mathcal{A}(t_1, t_2)$:
 
-$$\mathrm{sim}(t_1, t_2) = \max_{a \in \mathcal{A}(t_1, t_2)} [-\log p(a)]$$
+$$
+\mathrm{sim}(t_1, t_2) = \max_{a \in \mathcal{A}(t_1, t_2)} [-\log p(a)]
+$$ {#eq-mica}
 
-We refer to this as the **IC of the Most Specific Ancestor**: $\text{IC}(a')$.
+We refer to this as the **IC of the Most Specific Ancestor**: $\text{IC}(a')$, or **MICA**
 :::
 
 ::::
@@ -934,10 +936,296 @@ $$\text{sim}(\color{orange}{Q} \rightarrow \color{blue}{d}) = \text{avg} \left[ 
 
 ![](./img/zemojtel.png){fig-align="center"}
 
+## Example
+
+### {.my-box}
+**query**:
+
+- Pulmonic stenosis [HP:0001642](https://hpo.jax.org/browse/term/HP:0001642)
+- Upslanted palpebral fissure [HP:0000582](https://hpo.jax.org/browse/term/HP:0000582)
+- Proportionate short stature [HP:0003508](https://hpo.jax.org/browse/term/HP:0003508)
+- Headache [HP:0002315](https://hpo.jax.org/browse/term/HP:0002315)
+###
+
+For demo purposes, let's create two simplified disease models
+
+:::: {.columns}
+::: {.column width=50%}
+**Noonan syndrome type 1 (NS1)**
+
+- Pulmonic stenosis [HP:0001642](https://hpo.jax.org/browse/term/HP:0001642)
+- Short stature [HP:0004322](https://hpo.jax.org/browse/term/HP:0004322)
+- Downslanted palpebral fissures [HP:0000494](https://hpo.jax.org/browse/term/HP:0000494)
+:::
+::: {.column width=50%}
+**Neurodevelopmental disorder 1 (NDD1)**
+
+- Short stature [HP:0004322](https://hpo.jax.org/browse/term/HP:0004322)
+- Primary microcephaly [HP:0011451](https://hpo.jax.org/browse/term/HP:0011451)
+- Gray matter heterotopia [HP:0002282](https://hpo.jax.org/browse/term/HP:0002282)
+:::
+::::
+
+## Example
+
+
+| Query term                   | Noonan syndrome 1              | NS1 score | Neurodevelopmental disorder 1     | NDD1 score |
+|:------------------------------|:--------------------------------|----------:|:-----------------------------------|-----------:|
+| Pulmonic stenosis              | Pulmonic stenosis               |      4.19 | Phenotypic abnormality             |       0.00* |
+| Upslanted palpebral fissure     | Downslanted palpebral fissure    |     2.59* | Phenotypic abnormality             |       0.00* |
+| Proportionate short stature     | Short stature                   |      1.91* | Short stature                      |       1.91* |
+| Headache                       | Phenotypic abnormality          |      0.00* | Abnormality of the nervous system |       0.51* |
+| **Sum**                        |                                  |  **8.60** |                                    |   **2.42** |
+
+* Information content of *Upslanted palpebral fissure* is 3.46, that of *Downslanted palpebral fissure* is 3.01. To calculate the most informative common ancestor, we go to their common parent *Slanting of the palpebral fissure* 
+[HP:0200006](https://hpo.jax.org/browse/term/HP:0200006), which has an IC of 2.59
+* *Short stature* is the direct parent of *Proportionate short stature*, and so the MICA is the IC of *Short stature*
+* Noonan syndrome 1 receives a higher score than Neurodevelopmental disorder 1, and so NS1 would be ranked before NDD1
+* The same process is performed for all 8500 candidate diseases to generate the final ranking (**prioritization**)
+
+## Example
+
+The table in the previous slide demonstrates how to calculate the phenomizer score
+$$
+\mathrm{sim}(Q\rightarrow D) = \mathrm{avg} \sum_{s\in Q}\max_{t\in D}\mathrm{sim}(s,t)
+$$
+- $\mathrm{sim}(s,t)$ is calculated as the IC of the maximally informative common ancestor (MICA), see @eq-mica.
+
+
+::: {.mybox}
+**From raw score to *p*-value**:
+
+Raw similarity scores aren't directly comparable across diseases:
+
+- A disease with **many annotated terms** has more chances for a lucky match
+- A **small, specific** query profile behaves differently than a large, vague one
+:::
+
+- To make the Phgenomizer score comparable across 8500 diseases, we want to know:
+    *How much does a score actually support a disease, given the query's and the disease's HPO term count and specificity?*
+
+## Empirical *p*-value via simulation
+
+For each candidate disease $D$:
+
+1. Generate $N$ **random query profiles** of the same size as the observed query (terms sampled from the HPO term/annotation universe)
+2. Compute the fuzzy similarity score between each random query and $D$, exactly as for the real query
+3. This builds a **null distribution** of scores specific to $D$'s phenotype profile and the query size
+4. Empirical *p*-value:
+
+$$
+p = \frac{\#\{\text{random scores} \geq \text{observed score}\}}{N}
+$$
+
+- Diseases are then ranked by $p$-value rather than raw score, making rankings comparable across diseases with very different profile sizes
+- This was the basis of the original Phenomizer algorithm
+
+
+## Empirical *p*-value via simulation
+
+![](./img/phenomizer-eval.jpg)
+
+- Feature vector (FV) method, ontological similarity search (OSS), and p value (OSS-PV)
+
+::: {.small-text}
+Köhler S, et al. (2009) [Clinical diagnostics in human genetics with semantic similarity searches in ontologies. 
+*Am J Hum Genet* **85**:457-64](https://pubmed.ncbi.nlm.nih.gov/19800049/)
+:::
 
 ## LIRICAL{#lirical}
--todo
+
+- LIRICAL is a newer phenotypic-driven prioritization algorithm that leverages the likelihood ratio test
+
+![](img/lirical-f1.png){ width="50%" fig-align="center"}
+
+- We will first explain the basic concepts of the likelihood ratio test (LRT) and then present LIRICAL in more detail.
+
+
+## Likelihood Ratio Test: Intuition
+
+Recall Bayes' law:
+$$
+P(A\mid B) = \frac{P(B\mid A)\cdot P(A)}{P(B)}
+$$ {#eq-bayes}
+
+- Suppose that Suppose that A is the presence (D+) or absence (D–) of a disease 
+- Suppose B represents the result of a diagnostic test (x) fulfils, say the test result being abnormal. 
+- Then
+
+$$
+P(D^{+}\mid x=\mathrm{abn}) = \frac{P(x=\mathrm{abn}\mid D^{+})\cdot P(D^{+})}{P(x=\mathrm{abn})}
+$$ {#eq-bayes-present}
+
+## Likelihood Ratio Test: Intuition
+
+- Similarly, the probability of the absence of the disease (D–) given the test result is
+$$
+\begin{align}
+P(D^{-}\mid x=\mathrm{abn}) &= 1 - P(D^{+}\mid x=\mathrm{abn}) \\
+&= \frac{P(x=\mathrm{abn}\mid D^{-})\cdot P(D^{-})}{P(x=\mathrm{abn})} \\
+\end{align}
+$$ {#eq-bayes-absent}
+
+- Dividing @eq-bayes-present by @eq-bayes-absent  and replacing P(D–) with 1 – P(D+) gives:
+$$
+\frac{P(D^{+}\mid x=\mathrm{abn}) }{1-P(D^{+}\mid x=\mathrm{abn}) } =
+\frac{P(x=\mathrm{abn}\mid D^{+})}{P(x=\mathrm{abn}\mid D^{-})}
+\times
+\frac{P(D^{+})}{1 - P(D^{+})}
+$$
+- This is
+$$
+\text{Post-test odds of }D^{+} =
+\frac{P(x=\mathrm{abn}\mid D^{+})}{P(x=\mathrm{abn}\mid D^{-})}
+\times
+\text{Pre-test odds of }D^{+}
+$$
+
+- This is the equation used in the Bayesian approach to interpret test results. 
+- The factor $\tfrac{P(x=\mathrm{abn}\mid D^{+})}{P(x=\mathrm{abn}\mid D^{-})}$ is termed the likelihood ratio (LR)
+- When the test result equals to $r$, we write $LR(r)$. 
+- Generally speaking, the likelihood ratio indicates **how many times more (or less) likely a certain condition for a test result is expected to be observed in diseased, compared with non-diseased, people**
+
+::: {.tiny-credit}
+Habibzadeh F, Habibzadeh P (2019) [The likelihood ratio and its graphical representation. Biochem Med (Zagreb)](https://pubmed.ncbi.nlm.nih.gov/31015780/)
+:::
+
+## Review: odds vs. probabilities
+
+Odds and probability both describe uncertainty, and are related by the following equation
+
+$$
+\text{odds} = \frac{P(\text{event})}{P(\text{not event})} = \frac{p}{1-p}
+$$ {#eq-odds}
+
+- @eq-odds implies $p = \tfrac{\text{odds}}{1+\text{odds}}$
+- **Probability**
+    - Ranges from 0 to 1
+- **Odds**
+    - Ranges from 0 to $\infty$
+
+
+| Probability | Odds        | Reads as    |
+|------------:|------------:|:------------|
+|         50% |        1.00 | 1 : 1       |
+|         90% |        9.00 | 9 : 1       |
+|          2% |      0.0204 | ~1 : 49     |
+
+- $p = 2\%$ → odds $= \dfrac{0.02}{1-0.02} \approx 0.0204$
+- Small probabilities and their odds are nearly identical numerically; they diverge as $p \to 1$
+
+
+## LIRICAL: motivation
+
+::: {.columns}
+::: {.column width="50%"}
+::: {.tiny}
+- Current WES/WGS detection rate: $\sim 40-50\%$
+- But prevailing algorithms don't help us realize that there are no good candidates. #1 may still be poor.
+:::
+:::
+::: {.column width="50%"}
+::: {.tiny}
+- Some phenotypic features may support a diagnosis while others do not
+- Prevailing algorithms don't help users interpret the relative contribution of individual HPO terms to the computational ranking
+:::
+:::
+:::
+
+::: {.columns}
+::: {.column width="50%"}
+![](img/findit.png){width="90%" fig-align="center"}
+:::
+::: {.column width="50%"}
+![](img/redgreen.png){width="90%" fig-align="center"}
+:::
+:::
+
+## LIRICAL: Calculating the likelihood ratio
+
+$$
+\rm{LR}=\dfrac{P(x|\mathcal{D})}{P(x|\neg \mathcal{D})}
+$$ {#eq-LR-def}
+
+The definition of the LR can be extended to multiple tests. Suppose $X=(x_1,x_2,\cdots,x_n)$ is an array of $n$ test results. Under the assumption that the tests are independent, $\rm{LR}(X)$ is defined as:
+
+$$
+\frac{{\rm{{Pr}}}(X|\mathcal{D})}{{\rm{Pr}}(X|\neg \mathcal{D})} = \frac{{\rm{Pr}}(x_1,x_2,\cdots,x_n|\mathcal{D})}{{\rm{{Pr}}}(x_1,x_2,\cdots,x_n|\neg \mathcal{D})}
+ = \prod_{i=1}^{n} \dfrac{{\rm{{Pr}}}(x_i|\mathcal{D})}{{\rm{Pr}}(x_i|\neg \mathcal{D})}
+$$ {#eq-lrprod}
+
+- With this equation, one can calculate a likelihood ratio for a set of query HPO terms
+- But how exactly do we calculate $\dfrac{P(x|\mathcal{D})}{P(x|\neg \mathcal{D})}$?
+
+## $\dfrac{P(h_i|\mathcal{D})}{P(h_i|\neg \mathcal{D})}$
+
+- Calculating $P(h_i|\mathcal{D})$, the probability of an individual with disease $D$ to have HPO term $h_i$, is easy
+- If the HPO annotations for $D$ include the HPO term $h_i$, then $P(h_i|\mathcal{D})$ is equal to the frequency of that term in the HPO annotations for the disease
+
+```bash 
+OMIM:614669	Auriculocondylar syndrome 2		HP:0000347	PMID:16114046	PCS		22/31		PHPO:skoehler[2012-10-17];HPO:probinson[2023-01-30]
+```
+- The above line is one of 285603 lines in the `phenotype.hpoa` file 
+- It specifies the frequency of Micrognathia [HP:0000347](https://hpo.jax.org/browse/term/HP:0000347) in individuals with *Auriculocondylar syndrome 2*
+- It is less obvious how to specify $P(h_i|\neg \mathcal{D})$ - the frquency of $h_i$ in individuals without disease $D$.
+- In principle, we could collect data on the general population, omitting individuals with $D$, and estimate the population prevalence of $h_i$
+- This is both impossible and also not a good model of the diagnostic situation in medical genetics (individuals who present for diagnosis are not an unbiased selection from the general population)
+
+## $P(h_i|\neg \mathcal{D})$
+
+- LIRICAL therefore makes the assumption that every individual in the population has some Mendelian disease. 
+- Then we can estimate $P(h_i|\neg \mathcal{D})$ as follows (with a total of $N$ Mendelian diseases)
+$$
+P(h_i\mid D_j) = \frac{1}{N-1}\sum_{k\neq j} P(h_i\mid D_k) \approx \frac{1}{N}\sum_{k} f_{i}^{D_k}
+$$
+
+- Here, $f_{i}^{D_k}$ is the frequency of HPO term $i$ in individuals with disease $k$
+- This is the key assumption ("trick") that allows us to apply the likelihood ratio framework to HPO-based differential diagnostic support
+- There are many details about how to calculate $f_{i}^{D_k}$ in different situations and how to true-path rule is applied
+- The next slide gives an impression of the algorithms.^[These details will not be covered in the exams]
+- LIRICAL also introduces an approach to estimate likelihood ratios for genotypes that we will not cover here.
+
+## LIRICAL: Calculating the likelihood ratio
+
+![Calculating the likelihood ratios for phenotypes](./img/lirical-4way.png){ width="60%" fig-align="center"}
+
+::: {.tiny}
+HPO annotations and frequency data: used to calculate $\dfrac{P(x|\mathcal{D})}{P(x|\neg \mathcal{D})}$, with heuristics for non-exact matches.
+
+- Disease model annotated with four HPO terms (dark blue), annotated are "inherited" by ancestors (light blue)
+- Exact match to query term: $P(h_{16}|\mathcal{D})=f_{16}^{\mathcal{D}}$
+- Query matches descendent of annotated term: $P(h_{14}|\mathcal{D})=\frac{f_{7}^{\mathcal{D}}}{2}=0.5$
+- Query matches ancestor of annotated term: $P(h_{8}|\mathcal{D})=f_{16}^{\mathcal{D}}$
+:::
+
+
+## LIRICAL: Posterior probabilities improve interpretation of rankings
+
+![](./img/LIRICAL-posttest.png){width="100%" fig-align="center"}
+
+- LIRICAL provides estimates of posttest probabilities
+
+## LIRICAL: Performance on 384 published case reports
+
+![](./img/lirical-f2.png){width="100%" fig-align="center"}
+
+## LIRICAL: Detailed disease output page
+
+![](./img/LIRICAL-Rett.png){width="90%" fig-align="center"}
+
+
+
+::: {.tiny-credit}
+Robinson PN et al., Interpretable Clinical Genomics with a Likelihood Ratio Paradigm  
+*Am J Hum Genet* 2020;**107**:403-417  
+free for academic use
+:::
+
+
 
 ## Sources
 
-- [Khinchin - Mathematical Foundations of Information Theory-Dover Publications (1957)](https://www.amazon.de/Mathematical-Foundations-Information-Advanced-Mathematics/dp/0486604349) 
+- [Albert A (1982) On the use and computation of likelihood ratios in clinical chemistry. *Clin Chem*  **28**:1113-9](https://pubmed.ncbi.nlm.nih.gov/7074890/): Excellent introduction to the mathemastics of LRs
+- [Khinchin - Mathematical Foundations of Information Theory-Dover Publications (1957)](https://www.amazon.de/Mathematical-Foundations-Information-Advanced-Mathematics/dp/0486604349) Another excellent introduction to the mathemastics of LRs
+- [Robinson PN et al. (2020) Interpretable Clinical Genomics with a Likelihood Ratio Paradigm. *Am J Hum Genet* **107**:403-417](https://pubmed.ncbi.nlm.nih.gov/32755546/)
+- [Köhler S, et al. (2009) Clinical diagnostics in human genetics with semantic similarity searches in ontologies. *Am J Hum Genet* **85**:457-64](https://pubmed.ncbi.nlm.nih.gov/19800049/)
