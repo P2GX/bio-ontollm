@@ -641,7 +641,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 30.86%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.06%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
     "crumbs": [
       "Home",
       "Lectures",
@@ -653,7 +653,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.48%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.02%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
     "crumbs": [
       "Home",
       "Lectures",
@@ -665,7 +665,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.06%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 2.68%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
     "crumbs": [
       "Home",
       "Lectures",
@@ -677,7 +677,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.18%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.88%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1590,6 +1590,18 @@
     "title": "Approaches to biomedical knowledge",
     "section": "Individuals in OWL",
     "text": "Individuals in OWL\nIn OWL, rdf:type is the property that connects an individual to a class of which it is a member.\nIf we have a class of cities:\n&lt;owl:Class rdf:ID=\"City\"/&gt;\nWe can declare individual cities to be members of this class. The following two syntactical forms have identical meanings:\n\nOption 1: Direct Class Tag\n\nThis uses the class name as the XML element tag.\n&lt;City rdf:ID=\"Berlin\"/&gt;\n\nOption 2: Explicit Typing\n\nThis uses owl:Thing (the root class of everything) and explicitly states the type.\n&lt;owl:Thing rdf:ID=\"Berlin\"/&gt;\n\n&lt;owl:Thing rdf:about=\"#Berlin\"&gt;\n  &lt;rdf:type rdf:resource=\"#City\"/&gt;\n&lt;/owl:Thing&gt;",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#what-is-the-logic-here",
+    "href": "lectures/ontology1.html#what-is-the-logic-here",
+    "title": "Approaches to biomedical knowledge",
+    "section": "What is the logic here?",
+    "text": "What is the logic here?",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5152,18 +5164,6 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#entropy-1",
-    "href": "lectures/ontology4.html#entropy-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Entropy",
-    "text": "Entropy\nA proof of this theorem can be found in Khinchin’s book1. It can also be shown that \\(\\lambda=1\\) if \\(\\log_2\\) is used.\n\n\n\nNote\n\n\nThus, we conclude that Equation 2 provides a definition of information content that satisfies several important intuitions about the properties that a mathematical definition of information content should have.\n\n\n\nKhinchin - Mathematical Foundations of Information Theory-Dover Publications (1957)",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
     "objectID": "lectures/ontology4.html#information-content-in-gene-ontology-go",
     "href": "lectures/ontology4.html#information-content-in-gene-ontology-go",
     "title": "Approaches to biomedical knowledge",
@@ -5240,7 +5240,7 @@
     "href": "lectures/ontology4.html#a-tale-of-two-footballs",
     "title": "Approaches to biomedical knowledge",
     "section": "A tale of two footballs",
-    "text": "A tale of two footballs\n\\[\n\\begin{equation*}\n\\mbox{American Football} = \\mbox{Football} \\neq\n\\mbox{Football} = \\mbox{European Football} = \\mbox{Soccer}\n\\end{equation*}\n\\]\n\n\n\nA football \\(\\ldots\\)1\n\n\nA football \\(\\ldots\\)\n\nWhen you see ``football’’, your computer sees: 0100011001101111011011110111010001100010011000010110110001101100",
+    "text": "A tale of two footballs\n\\[\n\\begin{equation*}\n\\mbox{American Football} = \\mbox{Football} \\neq\n\\mbox{Football} = \\mbox{European Football} = \\mbox{Soccer}\n\\end{equation*}\n\\]\n\n\n\nA football \\(\\ldots\\)\n\n\nA football \\(\\ldots\\)\n\nWhen you see ``football’’, your computer sees: 0100011001101111011011110111010001100010011000010110110001101100",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5348,7 +5348,7 @@
     "href": "lectures/ontology4.html#the-human-phenotype-ontology",
     "title": "Approaches to biomedical knowledge",
     "section": "The Human Phenotype Ontology",
-    "text": "The Human Phenotype Ontology\n\n\n\n\n\n\n\n\n\nRobinson Am J Hum Genet 2008\nKöhler Am J Hum Genet 2009\nRobinson Clin Genet. 2010\nSchulz BMC Bioinformatics. 2011\nKöhler Hum Mutat. 2012\nBauer Bioinformatics 2012\nKöhler Nucleic Acids Res 2014\nKöhler J Med Genet 2014\nZemojtel Sci Transl Med. 2014\nRobinson PLoS Genet. 2014\nRobinson Genome Res. 2014\nGroza Am J Hum Genet 2015\nGroza Database (Oxford). 2015\nSmedley Nat Protoc 2015\nSmedley Genome Med. 2015\nSmedley Am J Hum Genet. 2016\nKöhler Nucleic Acids Res 2017\nVasilevsky Nat Genet 2018\nKöhler Nucleic Acids Res 2019\nKöhler Curr Protoc Hum Genet. 2019\nCarmody Orphanet J Rare Dis. 2020\nKöhler Nucleic Acids Res 2021\nDhombres Am J Med Genet C 2022\nGargano Nucleic Acids Res 2024\n\n\n\n\n16,908 terms\n244,440 annotations for 8,223 monogenic or chromosomal diseases\n132,006 annotations for ~3,145 common diseases\nhttp://www.human-phenotype-ontology.org",
+    "text": "The Human Phenotype Ontology\n\n\n\n\n\n\n\n\n\nRobinson Am J Hum Genet 2008\nKöhler Am J Hum Genet 2009\nRobinson Clin Genet. 2010\nSchulz BMC Bioinformatics. 2011\nKöhler Hum Mutat. 2012\nBauer Bioinformatics 2012\nKöhler Nucleic Acids Res 2014\nKöhler J Med Genet 2014\nZemojtel Sci Transl Med. 2014\nRobinson PLoS Genet. 2014\nRobinson Genome Res. 2014\nGroza Am J Hum Genet 2015\nGroza Database (Oxford). 2015\nSmedley Nat Protoc 2015\nSmedley Genome Med. 2015\nSmedley Am J Hum Genet. 2016\nKöhler Nucleic Acids Res 2017\nVasilevsky Nat Genet 2018\nKöhler Nucleic Acids Res 2019\nKöhler Curr Protoc Hum Genet. 2019\nCarmody Orphanet J Rare Dis. 2020\nKöhler Nucleic Acids Res 2021\nDhombres Am J Med Genet C 2022\nGargano Nucleic Acids Res 2024\n\n\n\n\n&gt;19,00 terms\n244,440 annotations for 8,223 monogenic or chromosomal diseases\nhttp://www.human-phenotype-ontology.org",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5372,7 +5372,7 @@
     "href": "lectures/ontology4.html#phenomizer",
     "title": "Approaches to biomedical knowledge",
     "section": "Phenotypic Similarity Algorithms",
-    "text": "Phenotypic Similarity Algorithms\n\n\n\n\n\n\nGoal: Calculate a similarity between a set of query terms and computational disease models.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhenomizer\nKöhler et al. (2009) Am J Hum Genet 85:457-64\n\n\n\nExact Score Distribution\nSchulz MH et al (2011) BMC Bioinformatics 12:441\n\n\n\nBOQA\nBauer et al. (2012) Bioinformatics 28:2502-8\n\n\n\n\nI will not go into detail on the computational methods today.\nInstead, I will explain the intuition behind the Phenomizer and then show how to use these algorithms for translational genomics.",
+    "text": "Phenotypic Similarity Algorithms\n\n\n\n\n\n\nGoal: Calculate a similarity between a set of query terms and computational disease models.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhenomizer\nKöhler et al. (2009) Am J Hum Genet 85:457-64\n\n\n\nExact Score Distribution\nSchulz MH et al (2011) BMC Bioinformatics 12:441\n\n\n\nBOQA\nBauer et al. (2012) Bioinformatics 28:2502-8\n\n\n\n\nToday, we will go into detail about two phenotype matching algoriths, Phenomizer and LIRICAL.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5392,23 +5392,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#semantic-matching",
-    "href": "lectures/ontology4.html#semantic-matching",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Semantic Matching",
-    "text": "Semantic Matching\n\n\n\n\n\n\nBasic idea of ontological search: Do not need exact match!\nSemantically similar diseases score well by traversing the ontology structure.",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
     "objectID": "lectures/ontology4.html#the-phenomizer",
     "href": "lectures/ontology4.html#the-phenomizer",
     "title": "Approaches to biomedical knowledge",
     "section": "The Phenomizer",
-    "text": "The Phenomizer\n\n\n\n\n\n\n\nSebastian Köhler et al. (2009) Clinical Diagnostics with Semantic Similarity Searches in Ontologies. Am J Hum Genet, 85:457–64.\n\n\nhttp://compbio.charite.de/Phenomizer",
+    "text": "The Phenomizer\n\n\n\nThe Phenomizer: The first algorithm/software tool for supporting differential diagnostics with semantic similarity analysis\nSebastian Köhler et al. (2009) Clinical Diagnostics with Semantic Similarity Searches in Ontologies. Am J Hum Genet, 85:457–64.\nOnline version supported 2009-2022…no longer available.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5416,11 +5404,47 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#todo",
-    "href": "lectures/ontology4.html#todo",
+    "objectID": "lectures/ontology4.html#the-query",
+    "href": "lectures/ontology4.html#the-query",
     "title": "Approaches to biomedical knowledge",
-    "section": "TODO",
-    "text": "TODO\n\nTodo: add more recent slides about Exomiser, LIRICAL etc. Also Phenopackets, GPSEA",
+    "section": "The query",
+    "text": "The query\n\nQuery terms: The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individualbeing evaluated for suspected rare genetic disease.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhysicians choose terms to represent the clinical anomalies seen in a patient1\nMany tools are available. Some tools enable users to choose HPO terms by navigating the HPO hierarchy or by using autocomplete functions.\n\nThe word “patient” is a role played by an individual who presents for medical treatment or diagnostics, but does not describe the individual him- or herself. In many contexts, the word “individual” is preferred.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#the-query-1",
+    "href": "lectures/ontology4.html#the-query-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The query",
+    "text": "The query\n\n\nVarious text mining (named entity recognition) tools are available\n\n\n\nFor more information on how to choose HPO terms to represent clinical data, see Köhler S, et al., (2019) Encoding Clinical Data with the Human Phenotype Ontology for Computational Differential Diagnostics. Curr Protoc Hum Genet\nphenoboard",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#disease-models",
+    "href": "lectures/ontology4.html#disease-models",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Disease model(s)",
+    "text": "Disease model(s)\n\nDisease model: The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individualbeing evaluated for suspected rare genetic disease.\n\n\n\nThHe HPO project has ca. 8500 disease models\nAlgorithms such as Phenomizer compare the query with each model to determine a ranked list of models that best match the query\nAlgorithms differ in how they calculate the strength of the match",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#fuzzy-specificity-weighted-matching",
+    "href": "lectures/ontology4.html#fuzzy-specificity-weighted-matching",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Fuzzy, specificity weighted matching",
+    "text": "Fuzzy, specificity weighted matching",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5444,7 +5468,7 @@
     "href": "lectures/ontology4.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources",
+    "text": "Sources\n\nKhinchin - Mathematical Foundations of Information Theory-Dover Publications (1957)",
     "crumbs": [
       "Home",
       "Lectures",
