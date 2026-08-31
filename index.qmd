@@ -34,21 +34,21 @@ both topics as well as several sessions in which we show how ontologies and LLMs
 
 ### Lecture Schedule
 
-*   [What to expect from this course](lectures/overview.qmd)
-*   [Lecture 1: Ontologies: OBO, RDF, RDFS, and OWL](lectures/ontology1.qmd)
-*   [Lecture 2: Gene Ontology (GO) and Overrepresentation Analysis](lectures/ontology2.qmd)
-*   [Lecture 3: Bayesian algorithms for GO: Model-based gene-set analysis](lectures/ontology3.qmd)
-*   [Lecture 4: Human Phenotype Ontology: Semantic similarity algorithms](lectures/ontology4.qmd)
-*   [Lecture 5: From Logistic Regression to Neural Foundations](lectures/logreg.qmd)
-*   [Lecture 6: Neural networks](lectures/neural.qmd)
-*   [Lecture 7: RNNs and LSTMs](lectures/lstm.qmd)
-*   [Lecture 8: Embeddings and Tokens](lectures/embeddings.qmd)
-*   [Lecture 9: Transformers](lectures/transformer.qmd)
-*   [Lecture 10: Transformers (continued)](lectures/transformer2.qmd)
-*   [Lecture 11: BERT and Sentence BERT](lectures/bert.qmd)
-*   Lecture 12: Reinforcement learning and LLMs (to do)
-*   Lecture 13: RAG, Fine tuning, Structured Outputs  (to do)
-*   Lecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)
+* [What to expect from this course](lectures/overview.qmd)
+* [Lecture 1: Ontologies: OBO, RDF, RDFS, and OWL](lectures/ontology1.qmd)
+* [Lecture 2: Gene Ontology (GO) and Overrepresentation Analysis](lectures/ontology2.qmd)
+* [Lecture 3: Bayesian algorithms for GO: Model-based gene-set analysis](lectures/ontology3.qmd)
+* [Lecture 4: Human Phenotype Ontology: Semantic similarity algorithms](lectures/ontology4.qmd)
+* [Lecture 5: From Logistic Regression to Neural Foundations](lectures/logreg.qmd)
+* [Lecture 6: Neural networks](lectures/neural.qmd)
+* [Lecture 7: RNNs and LSTMs](lectures/lstm.qmd)
+* [Lecture 8: Embeddings and Tokens](lectures/embeddings.qmd)
+* [Lecture 9: Transformers](lectures/transformer.qmd)
+* [Lecture 10: Transformers (continued)](lectures/transformer2.qmd)
+* [Lecture 11: BERT and Sentence BERT](lectures/bert.qmd)
+* [Lecture 12: Reinforcement learning and LLMs](lectures/reinforcement.qmd)
+* Lecture 13: RAG, Fine tuning, Structured Outputs  (to do)
+* Lecture 14: Applications of LLMs in Medicine: Problems and opportunities (Short lecture followed by review period)
 
 ### Homework
 
