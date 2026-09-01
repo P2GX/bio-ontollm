@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 780" width="1500" height="780" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1500" height="780" fill="#ffffff"/>
+
+  <!-- Retrieval box (top center) -->
+  <rect x="600" y="30" width="300" height="80" rx="14" ry="14" fill="#ffffff" stroke="#333333" stroke-width="2.5"/>
+  <text x="750" y="80" text-anchor="middle" font-size="26" font-weight="700" fill="#111111">Retrieval</text>
+
+  <!-- Lines from Retrieval box down to the two branches -->
+  <path d="M 750 110 L 750 150 L 340 150 L 340 190" fill="none" stroke="#333333" stroke-width="2.2" marker-end="url(#arrow2)"/>
+  <path d="M 750 110 L 750 150 L 1160 150 L 1160 190" fill="none" stroke="#333333" stroke-width="2.2" marker-end="url(#arrow2)"/>
+
+  <!-- ===== LEFT branch: the question ===== -->
+  <!-- generic person icon -->
+  <circle cx="120" cy="235" r="55" fill="none" stroke="#222222" stroke-width="3"/>
+  <circle cx="120" cy="215" r="18" fill="none" stroke="#222222" stroke-width="3"/>
+  <path d="M 88 262 Q 120 232 152 262" fill="none" stroke="#222222" stroke-width="3"/>
+
+  <rect x="210" y="195" width="470" height="90" rx="16" ry="16" fill="#fdf3c4" stroke="#d8c765" stroke-width="1.5"/>
+  <text x="445" y="232" text-anchor="middle" font-size="21" font-weight="700" fill="#3a3110">Who won the 2026 US Open</text>
+  <text x="445" y="262" text-anchor="middle" font-size="21" font-weight="700" fill="#3a3110">Men's Singles title?</text>
+
+  <!-- ===== RIGHT branch: the retrieved fact ===== -->
+  <!-- generic document/knowledge-source icon -->
+  <rect x="1080" y="185" width="90" height="110" rx="8" ry="8" fill="#ffffff" stroke="#222222" stroke-width="3"/>
+  <line x1="1098" y1="212" x2="1152" y2="212" stroke="#222222" stroke-width="3"/>
+  <line x1="1098" y1="232" x2="1152" y2="232" stroke="#222222" stroke-width="3"/>
+  <line x1="1098" y1="252" x2="1152" y2="252" stroke="#222222" stroke-width="3"/>
+  <line x1="1098" y1="272" x2="1132" y2="272" stroke="#222222" stroke-width="3"/>
+
+  <rect x="810" y="195" width="245" height="90" rx="16" ry="16" fill="#e2edd7" stroke="#a9c397" stroke-width="1.5"/>
+  <text x="932" y="234" text-anchor="middle" font-size="20" font-weight="700" fill="#2c4a1c">Mariano Navone won the</text>
+  <text x="932" y="262" text-anchor="middle" font-size="20" font-weight="700" fill="#2c4a1c">2026 US Open Men's title.</text>
+
+  <!-- Vertical arrows down to bottom answer boxes -->
+  <line x1="340" y1="285" x2="340" y2="370" stroke="#333333" stroke-width="2.2" marker-end="url(#arrow2)"/>
+  <line x1="1160" y1="285" x2="1160" y2="370" stroke="#333333" stroke-width="2.2" marker-end="url(#arrow2)"/>
+
+  <!-- ===== Bottom-left: no-retrieval AI icon + answer ===== -->
+  <circle cx="150" cy="470" r="60" fill="#7fb3ae"/>
+  <rect x="120" y="450" width="60" height="42" rx="10" fill="#ffffff"/>
+  <circle cx="138" cy="471" r="5" fill="#7fb3ae"/>
+  <circle cx="162" cy="471" r="5" fill="#7fb3ae"/>
+  <path d="M 138 484 Q 150 492 162 484" fill="none" stroke="#7fb3ae" stroke-width="3"/>
+
+  <rect x="245" y="400" width="480" height="130" rx="16" ry="16" fill="#f7d9d3" stroke="#dba79b" stroke-width="1.5"/>
+  <text x="485" y="440" text-anchor="middle" font-size="19" fill="#5c261a">As of my last update in 2025, I don't have</text>
+  <text x="485" y="466" text-anchor="middle" font-size="19" fill="#5c261a">information about the 2026 US Open</text>
+  <text x="485" y="492" text-anchor="middle" font-size="19" fill="#5c261a">Men's Singles champion.</text>
+
+  <!-- ===== Bottom-right: with-retrieval AI icon + answer ===== -->
+  <circle cx="1000" cy="470" r="60" fill="#7fb3ae"/>
+  <rect x="970" y="450" width="60" height="42" rx="10" fill="#ffffff"/>
+  <circle cx="988" cy="471" r="5" fill="#7fb3ae"/>
+  <circle cx="1012" cy="471" r="5" fill="#7fb3ae"/>
+  <path d="M 988 484 Q 1000 492 1012 484" fill="none" stroke="#7fb3ae" stroke-width="3"/>
+
+  <rect x="1095" y="400" width="360" height="130" rx="16" ry="16" fill="#e6dcf0" stroke="#bda6d6" stroke-width="1.5"/>
+  <text x="1275" y="440" text-anchor="middle" font-size="19" fill="#3a1c52">Mariano Navone. won the 2026</text>
+  <text x="1275" y="466" text-anchor="middle" font-size="19" fill="#3a1c52">US Open Tennis title,</text>
+  <text x="1275" y="492" text-anchor="middle" font-size="19" fill="#3a1c52">defeating Novak Djokovic.</text>
+
+  <!-- Caption labels -->
+  <text x="485" y="560" text-anchor="middle" font-size="19" font-style="italic" fill="#666666">Without retrieval: answer is stale / unavailable</text>
+  <text x="1275" y="560" text-anchor="middle" font-size="19" font-style="italic" fill="#666666">With retrieval: answer is current and grounded</text>
+
+</svg>
