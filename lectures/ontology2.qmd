@@ -326,7 +326,7 @@ probs_fair = binom.pmf(k_values, n, 0.5)
 probs_biased = binom.pmf(k_values, n, 0.1)
 
 # Create Plot
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
 
 # Plot A: Fair Coin
 ax1.bar(k_values, probs_fair, color='skyblue', edgecolor='black', alpha=0.7)
