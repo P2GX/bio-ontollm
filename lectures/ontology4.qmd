@@ -81,7 +81,7 @@ $x$ `instance_of` $A$  AND $A$ `is_a` $B$ $\implies$ $x$ `instance_of` $B$.
 * **Root Probability**: If the ontology has a unique root node $r$, then $p(r)=1$.
 
 ### Resnik's Definition
-The **Information Content (IC)** of a concept is the negative log likelihood of its probability:
+The **Information Content (IC)** of a concept is the negative log of its probability:
 
 $$\text{IC}(t) = -\log p(t)$$
 
