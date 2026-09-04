@@ -294,7 +294,7 @@ This value $\binom{n}{k}$, represents the number of different ways of choosing $
 
 $$
 p^k(1-p)^{n-k}
-$$
+$$ {#eq-binomial-proba}
 
 * The total probability of obtaining $k$ successes is the probability of one particular trial order with $k$ successes by the number of trial orders resulting in $k$ successes, which is given by the binomial coefficient. This probability distribution is called the **binomial distribution**:
 
@@ -326,7 +326,7 @@ probs_fair = binom.pmf(k_values, n, 0.5)
 probs_biased = binom.pmf(k_values, n, 0.1)
 
 # Create Plot
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
 
 # Plot A: Fair Coin
 ax1.bar(k_values, probs_fair, color='skyblue', edgecolor='black', alpha=0.7)
@@ -340,7 +340,6 @@ ax1.grid(axis='y', linestyle='--', alpha=0.7)
 ax2.bar(k_values, probs_biased, color='salmon', edgecolor='black', alpha=0.7)
 ax2.set_title('B) Biased Coin (p=0.1)')
 ax2.set_xlabel('Number of successes (k)')
-ax2.set_ylabel('Probability')
 ax2.set_xticks(k_values)
 ax2.grid(axis='y', linestyle='--', alpha=0.7)
 
