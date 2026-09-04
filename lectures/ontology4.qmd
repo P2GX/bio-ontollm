@@ -220,9 +220,7 @@ $\log_2 \frac{1}{p(x)} = -\log_2 p(x)$, which is the definition of
 information content. The
 *entropy* of the random variable $X$, written as $H(X)$, was defined by Shannon as
 the average information content of all of the possible outcomes of
-$X$.^[Note that by convention $p(x')\log_2 p(x')=0$ for $p(x')=0$. This is
-necessary because $\log 0$ is undefined, and reasonable because
-$\lim_{x\rightarrow 0} x\log x = 0$.]
+$X$.
 
 $$
 H(X) = \sum_{i=1}^n p(x_i)\log_2\dfrac{1}{p(x_i)}
