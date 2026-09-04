@@ -83,7 +83,9 @@ $x$ `instance_of` $A$  AND $A$ `is_a` $B$ $\implies$ $x$ `instance_of` $B$.
 ### Resnik's Definition
 The **Information Content (IC)** of a concept is the negative log of its probability:
 
-$$\text{IC}(t) = -\log p(t)$$
+$$
+\text{IC}(t) = -\log p(t)
+$${#eq-IC-def}
 
 ---
 
