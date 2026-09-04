@@ -340,7 +340,6 @@ ax1.grid(axis='y', linestyle='--', alpha=0.7)
 ax2.bar(k_values, probs_biased, color='salmon', edgecolor='black', alpha=0.7)
 ax2.set_title('B) Biased Coin (p=0.1)')
 ax2.set_xlabel('Number of successes (k)')
-ax2.set_ylabel('Probability')
 ax2.set_xticks(k_values)
 ax2.grid(axis='y', linestyle='--', alpha=0.7)
 
