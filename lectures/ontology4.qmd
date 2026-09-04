@@ -87,6 +87,26 @@ $$\text{IC}(t) = -\log p(t)$$
 
 ---
 
+## Information Content (IC) {#ic-part-2}
+
+The base $b$ of the logarithm $log_b$ determines the unit of the IC:
+
+| base | IC unit   |
+|------|-----------|
+| 2    | *bit*     |
+| 3    | *trit*    |
+| $e$  | *nat*     |
+| 10   | *hartley* |
+
+
+The unit selection has no impact on the output as long as the same unit is used consistently.
+
+::: {.callout-note}
+When writing $log$ without base, we mean the natural logarithm.
+:::
+
+---
+
 ## Intuition Behind IC
 
 As the probability of a concept increases, its information content decreases. This mirrors information theory:
@@ -110,7 +130,7 @@ The more specific a term is (lower probability), the higher its Information Cont
 Information Content relies heavily on the properties of logarithms. These identities are essential for calculating IC across different branches of an ontology.
 :::
 
-The following logarithmic identities^[Note that we mean the natural logarithm when we write simply $\log$.] are fundamental to the behavior of $IC(t) = -\log p(t)$:
+The following logarithmic identities are fundamental to the behavior of $IC(t) = -\log p(t)$:
 
 $$
 \begin{aligned}
