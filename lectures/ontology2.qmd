@@ -294,7 +294,7 @@ This value $\binom{n}{k}$, represents the number of different ways of choosing $
 
 $$
 p^k(1-p)^{n-k}
-$$
+$$ {#eq-binomial-proba}
 
 * The total probability of obtaining $k$ successes is the probability of one particular trial order with $k$ successes by the number of trial orders resulting in $k$ successes, which is given by the binomial coefficient. This probability distribution is called the **binomial distribution**:
 
