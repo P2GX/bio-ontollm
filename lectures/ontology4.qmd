@@ -390,7 +390,7 @@ This reflects "surprise": discovering a gene is annotated to the root is expecte
 
 Assume we have a set of **256 annotated genes**:
 
-| Genes Annotated to Term | Probability $p(t)$ | IC calculation ($-\log_2 p(t)$) | IC Value |
+| Genes Annotated to Term | Probability $p(t)$ | IC calculation ($-\log_2 p(t)$) | IC Value (bits) |
 |:---|:---|:---|:---|
 | 256 (All) | $256/256 = 1$ | $-\log_2(1)$ | **0** |
 | 4 | $4/256$ | $-\log_2(4/256) = 8 - 2$ | **6** |
@@ -429,10 +429,8 @@ We refer to this as the **IC of the Most Specific Ancestor**: $\text{IC}(a')$, o
 
 ## Semantic similarity: An example
 
-![](./img/carnivore.png){fig-align="center" width="90%"}
+![An ontology with annotated items](./img/carnivore.png){fig-align="center" width="90%"}
 
-
-*  An ontology with annotated items
 
 
 # Semantic similarity
@@ -440,14 +438,14 @@ We refer to this as the **IC of the Most Specific Ancestor**: $\text{IC}(a')$, o
 ![](./img/carnivore2.png){fig-align="center" width="90%"}
 
 
-* `lion` and `cheetah` are similar
+`lion` and `cheetah` are similar
 
 # Semantic similarity
 
 ![](./img/carnivore3.png){fig-align="center" width="90%"}
 
 
-* `beagle` and `wildcat`  are not $\ldots$
+`beagle` and `wildcat`  are not $\ldots$
 
 
 
@@ -533,7 +531,7 @@ A football $\ldots$
 ::: 
 ::: 
 
-When you see ``football'', your computer sees: 
+When you see `football`, your computer sees: 
 0100011001101111011011110111010001100010011000010110110001101100
 
 ## A tale of two fibrillations
@@ -563,7 +561,7 @@ fibrillation $\ldots$
 
 
 
-When you see  ``fibrillation'', your computer sees: 
+When you see  `fibrillation`, your computer sees: 
 011001100110100101100010011100100110100101101100011011000110000101110100011010010110111101101110
 
 
@@ -594,9 +592,9 @@ The precise and comprehensive analysis of phenotypic abnormalities.
 
 - Individual components of the phenotype are observed and described using a controlled vocabulary.
 - Deep phenotyping information is critical for:
-- Computational differential diagnostic tools.
-- Genotype-phenotype correlation.
-- Scientific examination of human disease.
+  - Computational differential diagnostic tools.
+  - Genotype-phenotype correlation.
+  - Scientific examination of human disease.
 
 ::: {style="font-size: 0.45em; margin-top: 50px;"}
 PN Robinson (2012) [Deep phenotyping for precision medicine. *Hum Mutat* **33**:777–780](https://pubmed.ncbi.nlm.nih.gov/22504886/). Special Issue of Human Mutation on Deep Phenotyping
@@ -647,10 +645,10 @@ opportunities, *Nature Reviews Genetics* **16**:702-15](https://pubmed.ncbi.nlm.
 ## Interoperability: What's the problem?
 
 - Phenotypic descriptions that are very evocative for
-humans^[Unfortunately computers, being significantly dumber than humans, don't quite ``get'' it...]:
+humans^[Unfortunately computers, being significantly dumber than humans, don't quite "get" it...]:
     - myopathic electromyography
     - still walking 25 years after onset
-\end{itemize}
+
 * The following descriptions mean the same thing to you: `generalized amyotrophy`, 
 `generalized muscle atrophy`, `muscular atrophy, generalized`,
 (etc)
@@ -749,7 +747,7 @@ Gargano Nucleic Acids Res 2024
 ::::
 
 ::: {.small style="margin-top: -10px;"}
-* **>19,00 terms**
+* **>19,000 terms**
 * 244,440 annotations for **8,223 monogenic or chromosomal diseases**
 * [http://www.human-phenotype-ontology.org](https://hpo.jax.org/app/)
 :::
@@ -905,7 +903,7 @@ $$\text{sim}(\color{orange}{Q} \rightarrow \color{blue}{d}) = \text{avg} \left[ 
 
 ::: {.mybox}
 **Query terms**:
- The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individualbeing evaluated for suspected rare genetic disease. 
+ The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individual being evaluated for suspected rare genetic disease. 
 :::
 
 :::: {.columns}
@@ -944,7 +942,7 @@ $$\text{sim}(\color{orange}{Q} \rightarrow \color{blue}{d}) = \text{avg} \left[ 
 
 ![](./img/hpo-annotation-model.png){fig-align="center"}
 
-- ThHe HPO project has ca. 8500 disease models 
+- The HPO project has $>8000$ disease models 
 - Algorithms such as Phenomizer compare the query with each model to determine a ranked list of models that best match the query
 - Algorithms differ in how they calculate the strength of the **match**
 
@@ -956,14 +954,12 @@ $$\text{sim}(\color{orange}{Q} \rightarrow \color{blue}{d}) = \text{avg} \left[ 
 
 ## Example
 
-### {.my-box}
 **query**:
 
 - Pulmonic stenosis [HP:0001642](https://hpo.jax.org/browse/term/HP:0001642)
 - Upslanted palpebral fissure [HP:0000582](https://hpo.jax.org/browse/term/HP:0000582)
 - Proportionate short stature [HP:0003508](https://hpo.jax.org/browse/term/HP:0003508)
 - Headache [HP:0002315](https://hpo.jax.org/browse/term/HP:0002315)
-###
 
 For demo purposes, let's create two simplified disease models
 
