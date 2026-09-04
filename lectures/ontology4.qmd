@@ -229,10 +229,8 @@ $$ {#eq-appdx-entropy}
 
 
 ## Entropy (3)
- 
- Entropy and information content are measured in units called
-`bits` (not to be confused with the definition of a bit as a
-zero or one in computer science). 
+
+* The *unit* of entropy and information content depends on the logarithm base (*bit*, *nat*, ...). 
 
 * The entropy of a random variable $X$
 can be interpreted as the *uncertainty* of the random
