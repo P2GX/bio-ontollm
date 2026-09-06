@@ -991,7 +991,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.96%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.30%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1003,7 +1003,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.12%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.30%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1015,7 +1015,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.22%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.78%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1027,7 +1027,7 @@
     "href": "lectures/ontology3.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.52%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.14%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5107,11 +5107,23 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#overview-semantic-similarity",
-    "href": "lectures/ontology4.html#overview-semantic-similarity",
+    "objectID": "lectures/ontology4.html#game-plan",
+    "href": "lectures/ontology4.html#game-plan",
     "title": "Approaches to biomedical knowledge",
-    "section": "Overview: Semantic similarity",
-    "text": "Overview: Semantic similarity\n\nInformation content/Entropy\nSemantic similarity\nHuman Phenotype Ontology\nPhenomizer\nLIRICAL",
+    "section": "Game plan",
+    "text": "Game plan\nThis lecture reviews information content, semantic similarity, Human Phenotype Ontology, and their use in differential diagnostics of Mendelian diseases.\n\n\nPart 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer & LIRICAL\n\nPhenomizer algorithm\nLIRICAL algorithm",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#part-1",
+    "href": "lectures/ontology4.html#part-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "",
+    "text": "Part 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer & LIRICAL\n\nPhenomizer algorithm\nLIRICAL algorithm",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5147,7 +5159,19 @@
     "href": "lectures/ontology4.html#information-content-ic",
     "title": "Approaches to biomedical knowledge",
     "section": "Information Content (IC)",
-    "text": "Information Content (IC)\n\n\n\n\n\n\nLogic of Inheritance\n\n\nRecall that:\n\\(x\\) instance_of \\(A\\) AND \\(A\\) is_a \\(B\\) \\(\\implies\\) \\(x\\) instance_of \\(B\\).\n\n\n\n\nMonotonicity: \\(p\\) is a monotonically increasing function as we move up the hierarchy.\n\nIf \\(c_i\\) is_a \\(c_j\\), then \\(p(c_i) \\leq p(c_j)\\).\n\nRoot Probability: If the ontology has a unique root node \\(r\\), then \\(p(r)=1\\).\n\nResnik’s Definition\nThe Information Content (IC) of a concept is the negative log likelihood of its probability:\n\\[\\text{IC}(t) = -\\log p(t)\\]",
+    "text": "Information Content (IC)\n\n\n\n\n\n\nLogic of Inheritance\n\n\nRecall that:\n\\(x\\) instance_of \\(A\\) AND \\(A\\) is_a \\(B\\) \\(\\implies\\) \\(x\\) instance_of \\(B\\).\n\n\n\n\nMonotonicity: \\(p\\) is a monotonically increasing function as we move up the hierarchy.\n\nIf \\(c_i\\) is_a \\(c_j\\), then \\(p(c_i) \\leq p(c_j)\\).\n\nRoot Probability: If the ontology has a unique root node \\(r\\), then \\(p(r)=1\\).\n\nResnik’s Definition\nThe Information Content (IC) of a concept is the negative log of its probability:\n\\[\n\\text{IC}(t) = -\\log p(t)\n\\tag{1}\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#ic-part-2",
+    "href": "lectures/ontology4.html#ic-part-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Information Content (IC)",
+    "text": "Information Content (IC)\nThe base \\(b\\) of the logarithm \\(log_b\\) determines the unit of the IC:\n\n\n\nbase\nIC unit\n\n\n\n\n2\nbit\n\n\n3\ntrit\n\n\n\\(e\\)\nnat\n\n\n10\nhartley\n\n\n\nThe unit selection has no impact on the output as long as the same unit is used consistently.\n\n\n\n\n\n\nNote\n\n\nWhen writing \\(log\\) without base, we mean the natural logarithm.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5171,7 +5195,7 @@
     "href": "lectures/ontology4.html#basic-properties-of-information-content-ic",
     "title": "Approaches to biomedical knowledge",
     "section": "Basic Properties of Information Content (IC)",
-    "text": "Basic Properties of Information Content (IC)\n\n\n\n\n\n\nMathematical Foundation\n\n\nInformation Content relies heavily on the properties of logarithms. These identities are essential for calculating IC across different branches of an ontology.\n\n\n\nThe following logarithmic identities1 are fundamental to the behavior of \\(IC(t) = -\\log p(t)\\):\n\\[\n\\begin{aligned}\n\\log 1 &= 0 \\\\\n\\log xy &= \\log x + \\log y \\\\\n\\log x^r &= r \\log x \\\\\n\\log \\frac{1}{x} &= - \\log x \\\\\n\\log_a x &= \\frac{\\log x}{\\log a}\n\\end{aligned}\n\\]\nNote that we mean the natural logarithm when we write simply \\(\\log\\).",
+    "text": "Basic Properties of Information Content (IC)\n\n\n\n\n\n\nMathematical Foundation\n\n\nInformation Content relies heavily on the properties of logarithms. These identities are essential for calculating IC across different branches of an ontology.\n\n\n\nThe following logarithmic identities are fundamental to the behavior of \\(IC(t) = -\\log p(t)\\):\n\\[\n\\begin{aligned}\n\\log 1 &= 0 \\\\\n\\log xy &= \\log x + \\log y \\\\\n\\log x^r &= r \\log x \\\\\n\\log \\frac{1}{x} &= - \\log x \\\\\n\\log_a x &= \\frac{\\log x}{\\log a}\n\\end{aligned}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5183,19 +5207,7 @@
     "href": "lectures/ontology4.html#entropy",
     "title": "Approaches to biomedical knowledge",
     "section": "Entropy",
-    "text": "Entropy\n\n\n\n\n\n\n\nGame plan\n\n\nThis lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.\n\n\n\n\n\n\nPart 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer\n\nPhenomizer algorithm",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/ontology4.html#part-2",
-    "href": "lectures/ontology4.html#part-2",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Entropy",
-    "text": "Entropy\n\nLet us assume we are analyzing a random variable \\(X\\), which can take on one of a finite number of specific values \\(\\left\\{x_1,x_2,\\ldots,x_n\\right\\}\\) with a probability \\(\\left\\{p_1,p_2,\\ldots,p_n\\right\\}\\), where the probability of the outcome \\(x_i\\) is \\(p_i\\) with \\(0\\leq p_i\\leq 1\\) and \\(\\sum_{i=1}^n p_i=1\\).\nWe will use the notation \\(p(X=x)\\) or simply \\(p(x)\\) to denote the probability that the random variable \\(X\\) takes on some specific value \\(x\\), where \\(x\\in\n\\left\\{x_1,x_2,\\ldots,x_n\\right\\}\\).\nWe will refer to each of the specific values that \\(X\\) can take on as outcomes.\n\nShannon defined the information content of an outcome \\(x\\) as\n\\[\nh(x) = \\log_2 \\dfrac{1}{p(x)}\n\\tag{1}\\]",
+    "text": "Entropy\n\nLet us assume we are analyzing a random variable \\(X\\), which can take on one of a finite number of specific values \\(\\left\\{x_1,x_2,\\ldots,x_n\\right\\}\\) with a probability \\(\\left\\{p_1,p_2,\\ldots,p_n\\right\\}\\), where the probability of the outcome \\(x_i\\) is \\(p_i\\) with \\(0\\leq p_i\\leq 1\\) and \\(\\sum_{i=1}^n p_i=1\\).\nWe will use the notation \\(p(X=x)\\) or simply \\(p(x)\\) to denote the probability that the random variable \\(X\\) takes on some specific value \\(x\\), where \\(x\\in\n\\left\\{x_1,x_2,\\ldots,x_n\\right\\}\\).\nWe will refer to each of the specific values that \\(X\\) can take on as outcomes.\n\nShannon defined the information content of an outcome \\(x\\) as\n\\[\nh(x) = \\log_2 \\dfrac{1}{p(x)}\n\\tag{2}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5207,7 +5219,7 @@
     "href": "lectures/ontology4.html#entropy-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Entropy (2)",
-    "text": "Entropy (2)\nNote that because of the properties of logarithms, \\(\\log_2 \\frac{1}{p(x)} = -\\log_2 p(x)\\), which is the definition of information content. The entropy of the random variable \\(X\\), written as \\(H(X)\\), was defined by Shannon as the average information content of all of the possible outcomes of \\(X\\).1\n\\[\nH(X) = \\sum_{i=1}^n p(x_i)\\log_2\\dfrac{1}{p(x_i)}\n\\tag{2}\\]\nNote that by convention \\(p(x')\\log_2 p(x')=0\\) for \\(p(x')=0\\). This is necessary because \\(\\log 0\\) is undefined, and reasonable because \\(\\lim_{x\\rightarrow 0} x\\log x = 0\\).",
+    "text": "Entropy (2)\nNote that because of the properties of logarithms, \\(\\log_2 \\frac{1}{p(x)} = -\\log_2 p(x)\\), which is the definition of information content. The entropy of the random variable \\(X\\), written as \\(H(X)\\), was defined by Shannon as the average information content of all of the possible outcomes of \\(X\\).\n\\[\nH(X) = \\sum_{i=1}^n p(x_i)\\log_2\\dfrac{1}{p(x_i)}\n\\tag{3}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5219,7 +5231,7 @@
     "href": "lectures/ontology4.html#entropy-3",
     "title": "Approaches to biomedical knowledge",
     "section": "Entropy (3)",
-    "text": "Entropy (3)\nEntropy and information content are measured in units called bits (not to be confused with the definition of a bit as a zero or one in computer science).\n\nThe entropy of a random variable \\(X\\) can be interpreted as the uncertainty of the random variable. For instance, if \\(X\\) has only one outcome (i.e., \\(p(x')=1\\) for some \\(x'\\)), then the entropy of \\(X\\) is zero.\n\n\\[\nH(X) = p(x')\\log_2\\dfrac{1}{p(x')} = 1\\times (-1)\\times\\log_2 1 = 0\n\\]",
+    "text": "Entropy (3)\n\nThe unit of entropy and information content depends on the logarithm base (bit, nat, …).\nThe entropy of a random variable \\(X\\) can be interpreted as the uncertainty of the random variable. For instance, if \\(X\\) has only one outcome (i.e., \\(p(x')=1\\) for some \\(x'\\)), then the entropy of \\(X\\) is zero.\n\n\\[\nH(X) = p(x')\\log_2\\dfrac{1}{p(x')} = 1\\times (-1)\\times\\log_2 1 = 0\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5315,7 +5327,19 @@
     "href": "lectures/ontology4.html#ic-numerical-examples",
     "title": "Approaches to biomedical knowledge",
     "section": "IC: Numerical Examples",
-    "text": "IC: Numerical Examples\nAssume we have a set of 256 annotated genes:\n\n\n\n\n\n\n\n\n\nGenes Annotated to Term\nProbability \\(p(t)\\)\nIC calculation (\\(-\\log_2 p(t)\\))\nIC Value\n\n\n\n\n256 (All)\n\\(256/256 = 1\\)\n\\(-\\log_2(1)\\)\n0\n\n\n4\n\\(4/256\\)\n\\(-\\log_2(4/256) = 8 - 2\\)\n6\n\n\n2\n\\(2/256\\)\n\\(-\\log_2(2/256) = 8 - 1\\)\n7\n\n\n1 (Unique)\n\\(1/256\\)\n\\(-\\log_2(1/256)\\)\n8",
+    "text": "IC: Numerical Examples\nAssume we have a set of 256 annotated genes:\n\n\n\n\n\n\n\n\n\nGenes Annotated to Term\nProbability \\(p(t)\\)\nIC calculation (\\(-\\log_2 p(t)\\))\nIC Value (bits)\n\n\n\n\n256 (All)\n\\(256/256 = 1\\)\n\\(-\\log_2(1)\\)\n0\n\n\n4\n\\(4/256\\)\n\\(-\\log_2(4/256) = 8 - 2\\)\n6\n\n\n2\n\\(2/256\\)\n\\(-\\log_2(2/256) = 8 - 1\\)\n7\n\n\n1 (Unique)\n\\(1/256\\)\n\\(-\\log_2(1/256)\\)\n8",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#part-2",
+    "href": "lectures/ontology4.html#part-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "",
+    "text": "Part 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer & LIRICAL\n\nPhenomizer algorithm\nLIRICAL algorithm",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5327,7 +5351,7 @@
     "href": "lectures/ontology4.html#semsim",
     "title": "Approaches to biomedical knowledge",
     "section": "Semantic Similarity (\\(t_1 \\leftrightarrow t_2\\))",
-    "text": "Semantic Similarity (\\(t_1 \\leftrightarrow t_2\\))\nResnik defined similarity between two terms based on the Information Content of their Most Specific Ancestor (MSA).\n\\[\\text{IC}(t) = -\\log p(t)\\]\n\n\n\n\n\n\n\n\nResnik Similarity\nThe similarity is the IC of the most specific ancestor \\(a\\) in the set of common ancestors \\(\\mathcal{A}(t_1, t_2)\\):\n\\[\n\\mathrm{sim}(t_1, t_2) = \\max_{a \\in \\mathcal{A}(t_1, t_2)} [-\\log p(a)]\n\\tag{3}\\]\nWe refer to this as the IC of the Most Specific Ancestor: \\(\\text{IC}(a')\\), or MICA",
+    "text": "Semantic Similarity (\\(t_1 \\leftrightarrow t_2\\))\nResnik defined similarity between two terms based on the Information Content of their Most Specific Ancestor (MSA).\n\\[\\text{IC}(t) = -\\log p(t)\\]\n\n\n\n\n\n\n\n\nResnik Similarity\nThe similarity is the IC of the most specific ancestor \\(a\\) in the set of common ancestors \\(\\mathcal{A}(t_1, t_2)\\):\n\\[\n\\mathrm{sim}(t_1, t_2) = \\max_{a \\in \\mathcal{A}(t_1, t_2)} [-\\log p(a)]\n\\tag{4}\\]\nWe refer to this as the IC of the Most Specific Ancestor: \\(\\text{IC}(a')\\), or MICA",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5339,7 +5363,7 @@
     "href": "lectures/ontology4.html#semantic-similarity-an-example",
     "title": "Approaches to biomedical knowledge",
     "section": "Semantic similarity: An example",
-    "text": "Semantic similarity: An example\n\n\nAn ontology with annotated items",
+    "text": "Semantic similarity: An example\n\nAn ontology with annotated items",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5347,11 +5371,23 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#hpo",
-    "href": "lectures/ontology4.html#hpo",
+    "objectID": "lectures/ontology4.html#semantic-similarity",
+    "href": "lectures/ontology4.html#semantic-similarity",
     "title": "Approaches to biomedical knowledge",
-    "section": "HPO",
-    "text": "HPO\n\n\n\n\n\n\n\nGame plan\n\n\nThis lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.\n\n\n\n\n\n\nPart 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer\n\nPhenomizer algorithm",
+    "section": "Semantic similarity",
+    "text": "Semantic similarity\n\nlion and cheetah are similar",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#semantic-similarity-1",
+    "href": "lectures/ontology4.html#semantic-similarity-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Semantic similarity",
+    "text": "Semantic similarity\n\nbeagle and wildcat are not \\(\\ldots\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5361,6 +5397,18 @@
   {
     "objectID": "lectures/ontology4.html#part-3",
     "href": "lectures/ontology4.html#part-3",
+    "title": "Approaches to biomedical knowledge",
+    "section": "",
+    "text": "Part 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer & LIRICAL\n\nPhenomizer algorithm\nLIRICAL algorithm",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology4.html#bioinformatics-for-medicine",
+    "href": "lectures/ontology4.html#bioinformatics-for-medicine",
     "title": "Approaches to biomedical knowledge",
     "section": "Bioinformatics for Medicine?",
     "text": "Bioinformatics for Medicine?\n\nHow exactly do we calculate the similarity between diseases, symptoms, patients, and more?\n\n\n\n\n\n\n\nCommon Cold\n\n\n\n\n\n\n\nICU\n\n\n\n\n\n\n\n\n\nBroken Bone\n\n\n\n\n\n\n\nEKG",
@@ -5375,7 +5423,7 @@
     "href": "lectures/ontology4.html#a-tale-of-two-footballs",
     "title": "Approaches to biomedical knowledge",
     "section": "A tale of two footballs",
-    "text": "A tale of two footballs\n\\[\n\\begin{equation*}\n\\mbox{American Football} = \\mbox{Football} \\neq\n\\mbox{Football} = \\mbox{European Football} = \\mbox{Soccer}\n\\end{equation*}\n\\]\n\n\n\nA football \\(\\ldots\\)\n\n\nA football \\(\\ldots\\)\n\nWhen you see ``football’’, your computer sees: 0100011001101111011011110111010001100010011000010110110001101100",
+    "text": "A tale of two footballs\n\\[\n\\begin{equation*}\n\\mbox{American Football} = \\mbox{Football} \\neq\n\\mbox{Football} = \\mbox{European Football} = \\mbox{Soccer}\n\\end{equation*}\n\\]\n\n\n\nA football \\(\\ldots\\)\n\n\nA football \\(\\ldots\\)\n\nWhen you see football, your computer sees: 0100011001101111011011110111010001100010011000010110110001101100",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5387,7 +5435,7 @@
     "href": "lectures/ontology4.html#a-tale-of-two-fibrillations",
     "title": "Approaches to biomedical knowledge",
     "section": "A tale of two fibrillations",
-    "text": "A tale of two fibrillations\n\\[\n\\begin{equation*}\n\\mbox{muscle fibrillation} = \\mbox{fibrillation} \\neq\n\\mbox{fibrillation} = \\mbox{ventricular fibrillation}\n\\end{equation*}\n\\]\n\n\n\n\n\n\n\nfibrillation \\(\\ldots\\)\n\n\n\n\n\n\nfibrillation \\(\\ldots\\)\n\nWhen you see ``fibrillation’’, your computer sees: 011001100110100101100010011100100110100101101100011011000110000101110100011010010110111101101110",
+    "text": "A tale of two fibrillations\n\\[\n\\begin{equation*}\n\\mbox{muscle fibrillation} = \\mbox{fibrillation} \\neq\n\\mbox{fibrillation} = \\mbox{ventricular fibrillation}\n\\end{equation*}\n\\]\n\n\n\n\n\n\n\nfibrillation \\(\\ldots\\)\n\n\n\n\n\n\nfibrillation \\(\\ldots\\)\n\nWhen you see fibrillation, your computer sees: 011001100110100101100010011100100110100101101100011011000110000101110100011010010110111101101110",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5411,7 +5459,7 @@
     "href": "lectures/ontology4.html#deep-phenotyping",
     "title": "Approaches to biomedical knowledge",
     "section": "Deep Phenotyping",
-    "text": "Deep Phenotyping\nThe precise and comprehensive analysis of phenotypic abnormalities.\n\nIndividual components of the phenotype are observed and described using a controlled vocabulary.\nDeep phenotyping information is critical for:\nComputational differential diagnostic tools.\nGenotype-phenotype correlation.\nScientific examination of human disease.\n\n\nPN Robinson (2012) Deep phenotyping for precision medicine. Hum Mutat 33:777–780. Special Issue of Human Mutation on Deep Phenotyping",
+    "text": "Deep Phenotyping\nThe precise and comprehensive analysis of phenotypic abnormalities.\n\nIndividual components of the phenotype are observed and described using a controlled vocabulary.\nDeep phenotyping information is critical for:\n\nComputational differential diagnostic tools.\nGenotype-phenotype correlation.\nScientific examination of human disease.\n\n\n\nPN Robinson (2012) Deep phenotyping for precision medicine. Hum Mutat 33:777–780. Special Issue of Human Mutation on Deep Phenotyping",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5447,7 +5495,7 @@
     "href": "lectures/ontology4.html#interoperability-whats-the-problem",
     "title": "Approaches to biomedical knowledge",
     "section": "Interoperability: What’s the problem?",
-    "text": "Interoperability: What’s the problem?\n\nPhenotypic descriptions that are very evocative for humans1:\n\nmyopathic electromyography\nstill walking 25 years after onset \\end{itemize}\n\nThe following descriptions mean the same thing to you: generalized amyotrophy, generalized muscle atrophy, muscular atrophy, generalized, (etc)\nMany publications have little2 information about the actual phenotypic features seen in patients with particular diseases and variants\nDatabases cannot talk to one another about phenotypes\n\n\n\n\n\n\nUnfortunately computers, being significantly dumber than humans, don’t quite ``get’’ it…or none at all",
+    "text": "Interoperability: What’s the problem?\n\nPhenotypic descriptions that are very evocative for humans1:\n\nmyopathic electromyography\nstill walking 25 years after onset\n\nThe following descriptions mean the same thing to you: generalized amyotrophy, generalized muscle atrophy, muscular atrophy, generalized, (etc)\nMany publications have little2 information about the actual phenotypic features seen in patients with particular diseases and variants\nDatabases cannot talk to one another about phenotypes\n\n\n\n\n\n\nUnfortunately computers, being significantly dumber than humans, don’t quite “get” it…or none at all",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5483,7 +5531,7 @@
     "href": "lectures/ontology4.html#the-human-phenotype-ontology",
     "title": "Approaches to biomedical knowledge",
     "section": "The Human Phenotype Ontology",
-    "text": "The Human Phenotype Ontology\n\n\n\n\n\n\n\n\n\nRobinson Am J Hum Genet 2008\nKöhler Am J Hum Genet 2009\nRobinson Clin Genet. 2010\nSchulz BMC Bioinformatics. 2011\nKöhler Hum Mutat. 2012\nBauer Bioinformatics 2012\nKöhler Nucleic Acids Res 2014\nKöhler J Med Genet 2014\nZemojtel Sci Transl Med. 2014\nRobinson PLoS Genet. 2014\nRobinson Genome Res. 2014\nGroza Am J Hum Genet 2015\nGroza Database (Oxford). 2015\nSmedley Nat Protoc 2015\nSmedley Genome Med. 2015\nSmedley Am J Hum Genet. 2016\nKöhler Nucleic Acids Res 2017\nVasilevsky Nat Genet 2018\nKöhler Nucleic Acids Res 2019\nKöhler Curr Protoc Hum Genet. 2019\nCarmody Orphanet J Rare Dis. 2020\nKöhler Nucleic Acids Res 2021\nDhombres Am J Med Genet C 2022\nGargano Nucleic Acids Res 2024\n\n\n\n\n&gt;19,00 terms\n244,440 annotations for 8,223 monogenic or chromosomal diseases\nhttp://www.human-phenotype-ontology.org",
+    "text": "The Human Phenotype Ontology\n\n\n\n\n\n\n\n\n\nRobinson Am J Hum Genet 2008\nKöhler Am J Hum Genet 2009\nRobinson Clin Genet. 2010\nSchulz BMC Bioinformatics. 2011\nKöhler Hum Mutat. 2012\nBauer Bioinformatics 2012\nKöhler Nucleic Acids Res 2014\nKöhler J Med Genet 2014\nZemojtel Sci Transl Med. 2014\nRobinson PLoS Genet. 2014\nRobinson Genome Res. 2014\nGroza Am J Hum Genet 2015\nGroza Database (Oxford). 2015\nSmedley Nat Protoc 2015\nSmedley Genome Med. 2015\nSmedley Am J Hum Genet. 2016\nKöhler Nucleic Acids Res 2017\nVasilevsky Nat Genet 2018\nKöhler Nucleic Acids Res 2019\nKöhler Curr Protoc Hum Genet. 2019\nCarmody Orphanet J Rare Dis. 2020\nKöhler Nucleic Acids Res 2021\nDhombres Am J Med Genet C 2022\nGargano Nucleic Acids Res 2024\n\n\n\n\n&gt;19,000 terms\n244,440 annotations for 8,223 monogenic or chromosomal diseases\nhttp://www.human-phenotype-ontology.org",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5491,11 +5539,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology4.html#hpo-1",
-    "href": "lectures/ontology4.html#hpo-1",
+    "objectID": "lectures/ontology4.html#part-4",
+    "href": "lectures/ontology4.html#part-4",
     "title": "Approaches to biomedical knowledge",
-    "section": "HPO",
-    "text": "HPO\n\n\n\n\n\n\n\nGame plan\n\n\nThis lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.\n\n\n\n\n\n\nPart 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer\n\nPhenomizer algorithm",
+    "section": "",
+    "text": "Part 1: Information content\n\nInformation content\nEntropy\n\n\n\n\nPart 2: Semantic similarity\n\nDefinition of ontologies (review)\nOntologies and biomedical research\n\n\n\n\nPart 3: Human Phenotype Ontology\n\nPhenotype and phenotypic feature\nHPO\n\n\n\n\nPart 4: Phenomizer & LIRICAL\n\nPhenomizer algorithm\nLIRICAL algorithm",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5543,7 +5591,7 @@
     "href": "lectures/ontology4.html#the-query",
     "title": "Approaches to biomedical knowledge",
     "section": "The query",
-    "text": "The query\n\nQuery terms: The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individualbeing evaluated for suspected rare genetic disease.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhysicians choose terms to represent the clinical anomalies seen in a patient1\nMany tools are available. Some tools enable users to choose HPO terms by navigating the HPO hierarchy or by using autocomplete functions.\n\nThe word “patient” is a role played by an individual who presents for medical treatment or diagnostics, but does not describe the individual him- or herself. In many contexts, the word “individual” is preferred.",
+    "text": "The query\n\nQuery terms: The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individual being evaluated for suspected rare genetic disease.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhysicians choose terms to represent the clinical anomalies seen in a patient1\nMany tools are available. Some tools enable users to choose HPO terms by navigating the HPO hierarchy or by using autocomplete functions.\n\nThe word “patient” is a role played by an individual who presents for medical treatment or diagnostics, but does not describe the individual him- or herself. In many contexts, the word “individual” is preferred.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5567,7 +5615,7 @@
     "href": "lectures/ontology4.html#disease-models",
     "title": "Approaches to biomedical knowledge",
     "section": "Disease model(s)",
-    "text": "Disease model(s)\n\nDisease model: The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individualbeing evaluated for suspected rare genetic disease.\n\n\n\nThHe HPO project has ca. 8500 disease models\nAlgorithms such as Phenomizer compare the query with each model to determine a ranked list of models that best match the query\nAlgorithms differ in how they calculate the strength of the match",
+    "text": "Disease model(s)\n\nDisease model: The HPO is frequently used to create a set of terms that accurately describe the observed clinical abnormalities of an individualbeing evaluated for suspected rare genetic disease.\n\n\n\nThe HPO project has \\(&gt;8000\\) disease models\nAlgorithms such as Phenomizer compare the query with each model to determine a ranked list of models that best match the query\nAlgorithms differ in how they calculate the strength of the match",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5591,7 +5639,7 @@
     "href": "lectures/ontology4.html#example",
     "title": "Approaches to biomedical knowledge",
     "section": "Example",
-    "text": "Example\n\nquery:\n\nPulmonic stenosis HP:0001642\nUpslanted palpebral fissure HP:0000582\nProportionate short stature HP:0003508\nHeadache HP:0002315 ###\n\nFor demo purposes, let’s create two simplified disease models\n\n\nNoonan syndrome type 1 (NS1)\n\nPulmonic stenosis HP:0001642\nShort stature HP:0004322\nDownslanted palpebral fissures HP:0000494\n\n\nNeurodevelopmental disorder 1 (NDD1)\n\nShort stature HP:0004322\nPrimary microcephaly HP:0011451\nGray matter heterotopia HP:0002282",
+    "text": "Example\nquery:\n\nPulmonic stenosis HP:0001642\nUpslanted palpebral fissure HP:0000582\nProportionate short stature HP:0003508\nHeadache HP:0002315\n\nFor demo purposes, let’s create two simplified disease models\n\n\nNoonan syndrome type 1 (NS1)\n\nPulmonic stenosis HP:0001642\nShort stature HP:0004322\nDownslanted palpebral fissures HP:0000494\n\n\nNeurodevelopmental disorder 1 (NDD1)\n\nShort stature HP:0004322\nPrimary microcephaly HP:0011451\nGray matter heterotopia HP:0002282",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5615,7 +5663,7 @@
     "href": "lectures/ontology4.html#example-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Example",
-    "text": "Example\nThe table in the previous slide demonstrates how to calculate the phenomizer score \\[\n\\mathrm{sim}(Q\\rightarrow D) = \\mathrm{avg} \\sum_{s\\in Q}\\max_{t\\in D}\\mathrm{sim}(s,t)\n\\] - \\(\\mathrm{sim}(s,t)\\) is calculated as the IC of the maximally informative common ancestor (MICA), see Equation 3.\n\nFrom raw score to p-value:\nRaw similarity scores aren’t directly comparable across diseases:\n\nA disease with many annotated terms has more chances for a lucky match\nA small, specific query profile behaves differently than a large, vague one\n\n\n\nTo make the Phgenomizer score comparable across 8500 diseases, we want to know: How much does a score actually support a disease, given the query’s and the disease’s HPO term count and specificity?",
+    "text": "Example\nThe table in the previous slide demonstrates how to calculate the phenomizer score \\[\n\\mathrm{sim}(Q\\rightarrow D) = \\mathrm{avg} \\sum_{s\\in Q}\\max_{t\\in D}\\mathrm{sim}(s,t)\n\\] - \\(\\mathrm{sim}(s,t)\\) is calculated as the IC of the maximally informative common ancestor (MICA), see Equation 4.\n\nFrom raw score to p-value:\nRaw similarity scores aren’t directly comparable across diseases:\n\nA disease with many annotated terms has more chances for a lucky match\nA small, specific query profile behaves differently than a large, vague one\n\n\n\nTo make the Phgenomizer score comparable across 8500 diseases, we want to know: How much does a score actually support a disease, given the query’s and the disease’s HPO term count and specificity?",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5663,7 +5711,7 @@
     "href": "lectures/ontology4.html#likelihood-ratio-test-intuition",
     "title": "Approaches to biomedical knowledge",
     "section": "Likelihood Ratio Test: Intuition",
-    "text": "Likelihood Ratio Test: Intuition\nRecall Bayes’ law: \\[\nP(A\\mid B) = \\frac{P(B\\mid A)\\cdot P(A)}{P(B)}\n\\tag{4}\\]\n\nSuppose that Suppose that A is the presence (D+) or absence (D–) of a disease\nSuppose B represents the result of a diagnostic test (x) fulfils, say the test result being abnormal.\nThen\n\n\\[\nP(D^{+}\\mid x=\\mathrm{abn}) = \\frac{P(x=\\mathrm{abn}\\mid D^{+})\\cdot P(D^{+})}{P(x=\\mathrm{abn})}\n\\tag{5}\\]",
+    "text": "Likelihood Ratio Test: Intuition\nRecall Bayes’ law: \\[\nP(A\\mid B) = \\frac{P(B\\mid A)\\cdot P(A)}{P(B)}\n\\tag{5}\\]\n\nSuppose that Suppose that A is the presence (D+) or absence (D–) of a disease\nSuppose B represents the result of a diagnostic test (x) fulfils, say the test result being abnormal.\nThen\n\n\\[\nP(D^{+}\\mid x=\\mathrm{abn}) = \\frac{P(x=\\mathrm{abn}\\mid D^{+})\\cdot P(D^{+})}{P(x=\\mathrm{abn})}\n\\tag{6}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5675,7 +5723,7 @@
     "href": "lectures/ontology4.html#likelihood-ratio-test-intuition-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Likelihood Ratio Test: Intuition",
-    "text": "Likelihood Ratio Test: Intuition\n\nSimilarly, the probability of the absence of the disease (D–) given the test result is \\[\n\\begin{align}\nP(D^{-}\\mid x=\\mathrm{abn}) &= 1 - P(D^{+}\\mid x=\\mathrm{abn}) \\\\\n&= \\frac{P(x=\\mathrm{abn}\\mid D^{-})\\cdot P(D^{-})}{P(x=\\mathrm{abn})} \\\\\n\\end{align}\n\\tag{6}\\]\nDividing Equation 5 by Equation 6 and replacing P(D–) with 1 – P(D+) gives: \\[\n\\frac{P(D^{+}\\mid x=\\mathrm{abn}) }{1-P(D^{+}\\mid x=\\mathrm{abn}) } =\n\\frac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\n\\times\n\\frac{P(D^{+})}{1 - P(D^{+})}\n\\]\nThis is \\[\n\\text{Post-test odds of }D^{+} =\n\\frac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\n\\times\n\\text{Pre-test odds of }D^{+}\n\\]\nThis is the equation used in the Bayesian approach to interpret test results.\nThe factor \\(\\tfrac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\\) is termed the likelihood ratio (LR)\nWhen the test result equals to \\(r\\), we write \\(LR(r)\\).\nGenerally speaking, the likelihood ratio indicates how many times more (or less) likely a certain condition for a test result is expected to be observed in diseased, compared with non-diseased, people\n\n\nHabibzadeh F, Habibzadeh P (2019) The likelihood ratio and its graphical representation. Biochem Med (Zagreb)",
+    "text": "Likelihood Ratio Test: Intuition\n\nSimilarly, the probability of the absence of the disease (D–) given the test result is \\[\n\\begin{align}\nP(D^{-}\\mid x=\\mathrm{abn}) &= 1 - P(D^{+}\\mid x=\\mathrm{abn}) \\\\\n&= \\frac{P(x=\\mathrm{abn}\\mid D^{-})\\cdot P(D^{-})}{P(x=\\mathrm{abn})} \\\\\n\\end{align}\n\\tag{7}\\]\nDividing Equation 6 by Equation 7 and replacing P(D–) with 1 – P(D+) gives: \\[\n\\frac{P(D^{+}\\mid x=\\mathrm{abn}) }{1-P(D^{+}\\mid x=\\mathrm{abn}) } =\n\\frac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\n\\times\n\\frac{P(D^{+})}{1 - P(D^{+})}\n\\]\nThis is \\[\n\\text{Post-test odds of }D^{+} =\n\\frac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\n\\times\n\\text{Pre-test odds of }D^{+}\n\\]\nThis is the equation used in the Bayesian approach to interpret test results.\nThe factor \\(\\tfrac{P(x=\\mathrm{abn}\\mid D^{+})}{P(x=\\mathrm{abn}\\mid D^{-})}\\) is termed the likelihood ratio (LR)\nWhen the test result equals to \\(r\\), we write \\(LR(r)\\).\nGenerally speaking, the likelihood ratio indicates how many times more (or less) likely a certain condition for a test result is expected to be observed in diseased, compared with non-diseased, people\n\n\nHabibzadeh F, Habibzadeh P (2019) The likelihood ratio and its graphical representation. Biochem Med (Zagreb)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5687,7 +5735,7 @@
     "href": "lectures/ontology4.html#review-odds-vs.-probabilities",
     "title": "Approaches to biomedical knowledge",
     "section": "Review: odds vs. probabilities",
-    "text": "Review: odds vs. probabilities\nOdds and probability both describe uncertainty, and are related by the following equation\n\\[\n\\text{odds} = \\frac{P(\\text{event})}{P(\\text{not event})} = \\frac{p}{1-p}\n\\tag{7}\\]\n\nEquation 7 implies \\(p = \\tfrac{\\text{odds}}{1+\\text{odds}}\\)\nProbability\n\nRanges from 0 to 1\n\nOdds\n\nRanges from 0 to \\(\\infty\\)\n\n\n\n\n\nProbability\nOdds\nReads as\n\n\n\n\n50%\n1.00\n1 : 1\n\n\n90%\n9.00\n9 : 1\n\n\n2%\n0.0204\n~1 : 49\n\n\n\n\n\\(p = 2\\%\\) → odds \\(= \\dfrac{0.02}{1-0.02} \\approx 0.0204\\)\nSmall probabilities and their odds are nearly identical numerically; they diverge as \\(p \\to 1\\)",
+    "text": "Review: odds vs. probabilities\nOdds and probability both describe uncertainty, and are related by the following equation\n\\[\n\\text{odds} = \\frac{P(\\text{event})}{P(\\text{not event})} = \\frac{p}{1-p}\n\\tag{8}\\]\n\nEquation 8 implies \\(p = \\tfrac{\\text{odds}}{1+\\text{odds}}\\)\nProbability\n\nRanges from 0 to 1\n\nOdds\n\nRanges from 0 to \\(\\infty\\)\n\n\n\n\n\nProbability\nOdds\nReads as\n\n\n\n\n50%\n1.00\n1 : 1\n\n\n90%\n9.00\n9 : 1\n\n\n2%\n0.0204\n~1 : 49\n\n\n\n\n\\(p = 2\\%\\) → odds \\(= \\dfrac{0.02}{1-0.02} \\approx 0.0204\\)\nSmall probabilities and their odds are nearly identical numerically; they diverge as \\(p \\to 1\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5711,7 +5759,7 @@
     "href": "lectures/ontology4.html#lirical-calculating-the-likelihood-ratio",
     "title": "Approaches to biomedical knowledge",
     "section": "LIRICAL: Calculating the likelihood ratio",
-    "text": "LIRICAL: Calculating the likelihood ratio\n\\[\n\\rm{LR}=\\dfrac{P(x|\\mathcal{D})}{P(x|\\neg \\mathcal{D})}\n\\tag{8}\\]\nThe definition of the LR can be extended to multiple tests. Suppose \\(X=(x_1,x_2,\\cdots,x_n)\\) is an array of \\(n\\) test results. Under the assumption that the tests are independent, \\(\\rm{LR}(X)\\) is defined as:\n\\[\n\\frac{{\\rm{{Pr}}}(X|\\mathcal{D})}{{\\rm{Pr}}(X|\\neg \\mathcal{D})} = \\frac{{\\rm{Pr}}(x_1,x_2,\\cdots,x_n|\\mathcal{D})}{{\\rm{{Pr}}}(x_1,x_2,\\cdots,x_n|\\neg \\mathcal{D})}\n= \\prod_{i=1}^{n} \\dfrac{{\\rm{{Pr}}}(x_i|\\mathcal{D})}{{\\rm{Pr}}(x_i|\\neg \\mathcal{D})}\n\\tag{9}\\]\n\nWith this equation, one can calculate a likelihood ratio for a set of query HPO terms\nBut how exactly do we calculate \\(\\dfrac{P(x|\\mathcal{D})}{P(x|\\neg \\mathcal{D})}\\)?",
+    "text": "LIRICAL: Calculating the likelihood ratio\n\\[\n\\rm{LR}=\\dfrac{P(x|\\mathcal{D})}{P(x|\\neg \\mathcal{D})}\n\\tag{9}\\]\nThe definition of the LR can be extended to multiple tests. Suppose \\(X=(x_1,x_2,\\cdots,x_n)\\) is an array of \\(n\\) test results. Under the assumption that the tests are independent, \\(\\rm{LR}(X)\\) is defined as:\n\\[\n\\frac{{\\rm{{Pr}}}(X|\\mathcal{D})}{{\\rm{Pr}}(X|\\neg \\mathcal{D})} = \\frac{{\\rm{Pr}}(x_1,x_2,\\cdots,x_n|\\mathcal{D})}{{\\rm{{Pr}}}(x_1,x_2,\\cdots,x_n|\\neg \\mathcal{D})}\n= \\prod_{i=1}^{n} \\dfrac{{\\rm{{Pr}}}(x_i|\\mathcal{D})}{{\\rm{Pr}}(x_i|\\neg \\mathcal{D})}\n\\tag{10}\\]\n\nWith this equation, one can calculate a likelihood ratio for a set of query HPO terms\nBut how exactly do we calculate \\(\\dfrac{P(x|\\mathcal{D})}{P(x|\\neg \\mathcal{D})}\\)?",
     "crumbs": [
       "Home",
       "Lectures",
