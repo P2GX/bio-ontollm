@@ -257,26 +257,90 @@ Many high-throughput analyses filter out **IEA** codes because they are automate
 
 ## GO: Overrepresentation Analysis {#gora}
 
+:::: {.columns}
+::: {.column width=60%}
+
 ::: {.callout-tip icon=false}
 ### The Situation
 We have performed a high-throughput experiment (e.g., RNA-seq) and identified a list of differentially expressed genes. What are the **salient characteristics** of the genes in this list?
 :::
 
-* **Beyond Counting:** We cannot simply count genes annotated to a term. Why? Because common biological processes are naturally common in the genome.
-* **Core Question:** Is a specific GO term annotated to our gene list **more often than we would expect by random chance?**
-* **Approach:** We use the **Fisher's Exact Test** (standard procedure).
-    * Today's demonstration will use the **Ontologizer** software.
+- RNA-seq experiments can be processed to yield a list of genes that are differentially expressed between two conditions (e.g., disease and control)
+- The goal of GO analysis is to get a global picture of the biological attributes of these genes
 
-## The Binomial Coefficient
+::: {.small-text}
+For background on RNA-seq analysis, see 
+- Conesa A, et al. (2016) [A survey of best practices for RNA-seq data analysis. *Genome Biol* **17**:13](https://pubmed.ncbi.nlm.nih.gov/26813401/)
+:::
 
-To calculate the number of unique ways to arrange $k$ "heads" and $n-k$ "tails," we must account for redundant rearrangements:
+
+:::
+::: {.column width=30%}
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+from ontology_plots import analysis_path
+analysis_path(figsize=(2.5, 6))
+plt.show()
+``` 
+
+:::
+::::
+
+
+## Counting
+
+
+::: {.callout-tip icon=false}
+### Keep it simple stupid?
+- Why not just rank the GO terms according to counts?
+:::
+
+- Common things are common
+- For instance, *extracellular exosome* is annotated to 1801 genes in the human genome
+- On the other hand, *lipoxin B4 metabolic process* is annotated to only 2 genes
+
+::: {.callout-tip icon=false}
+### Basic assumption
+- The basic assumption of GO analysis is that if **more genes annotated to some GO term are differentially expressed than expected by chance**, then the GO term is somehow related to the biology of the RNA-seq experiment.
+:::
+
+
+* But what does **more often than we would expect by random chance?** mean in this context?
+
+
+## The Binomial Coefficient (review)
+
+:::: {.columns}
+:::{.column width=70%}
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+from ontology_plots import binomial_explanation
+binomial_explanation(figsize=(8, 6.5))
+plt.show()
+``` 
+:::
+::: {.column width=30%}
+::: {.small-text}
+
+::: {.callout-note}
+$\binom{n}{k}$: read "N choose k" ("N über k")
+:::
+
+- To calculate the number of unique ways to arrange $k$ "heads" and $n-k$ "tails," we must account for redundant rearrangements:
 
 * **Total Permutations:** There are $n!$ ways to rearrange $n$ distinct objects.
 * **Redundancy Correction:** Exchanging the positions of two "heads" does not change the observable sequence. 
     - There are $k!$ ways to reorder the "heads" without chainging the overall sequence.
     - Similarly, there are $(n-k)!$ ways to reorder the "tails" without changing the sequence.
 * **The Formula:** To find the number of *distinct* orderings, we divide the total by the redundancies:
-
 $$
 \binom{n}{k} = \dfrac{n!}{(n-k)! k!}
 $$ {#eq-binomial-coefficient}
@@ -285,27 +349,29 @@ $$ {#eq-binomial-coefficient}
 This value $\binom{n}{k}$, represents the number of different ways of choosing $k$ items from a set of $n$ items where the order of selection does not matter.
 :::
 
+:::
+:::
+::::
 
-## Binomial Coefficient
 
-* This quantity (read "$n$ choose $k$") is known as the binomial coefficient. We can now use this to calculate the probability of obtaining $k$ *successes* in $n$ trials, whereby the probability of *success* in one trial is $p$, and the probability of *failure* is $q=1-p$. 
+## Binomial Distribution (review)
 
+* The binomial distribution models the probability of exactly $k$ successes (e.g., "heads") in $n$ trials of a boolean experiment, with the probability of success in a single trial being $p$.
 * The probability of a particular order of trials with $k$ successes and $n-k$ failures is obtained by multiplying the probabilities of the individual trials;
-
 $$
 p^k(1-p)^{n-k}
 $$
-
-* The total probability of obtaining $k$ successes is the probability of one particular trial order with $k$ successes by the number of trial orders resulting in $k$ successes, which is given by the binomial coefficient. This probability distribution is called the **binomial distribution**:
-
+* We have seen in the previous slide that there are ${N\choose k}$ orderings of outcomes (heads and tails) that yield exactly $k$ successes
+* The probability mass function of the binomial is therefore
 $$
-P(k,n,p) = \binom{n}{k} p^k(1-p)^{n-k}
-$$ {#eq-binomial}
+P(X=k) = \underbrace{{N\choose k}}_{\# \text{ways of choosing } k \text{ successes from } n \text{ trials}}\times\underbrace{p^k(1-p)^{n-k}}_{\text{probability of one such trial}}
+$$ {#eq-binomial-pmf}
 
 
-# Binomial Coefficient
 
-For instance, the figure shows 
+# Binomial Distribution (review)
+
+For instance:
 
 A) the probability of $k=1,\ldots,10$ "heads" in ten coin tosses using a fair coin ($p=0.5$). 
 B) Probability of $k=1,\ldots,10$ "heads" in ten coin tosses using a biased coin ($p=0.1$).
@@ -348,92 +414,58 @@ plt.tight_layout()
 plt.show()
 ```
 
-## GO Overrepresentation with the Binomial Distribution
 
-GO overrepresentation analysis can be modeled as a binomial distribution in which each gene in the study set is considered to be a "trial," and "success" occurs if the gene is annotated to a GO term of interest.^[We will see shortly that the binomial distribution only approximates the true probability in this setting.]
 
-- The probability of "success" is simply the frequency of the annotation to the GO term among all genes. 
-- For instance, if there are 10,000 genes on a microarray chip, 600 of which are annotated to some GO term $t$, then the probability of $t$ is $p=600/10,000=0.06$.
-- If we perform an experiment using microarray hybridizations and identify 250 differentially expressed genes (the "DE set"), 30 of which are annotated to $t$, we can use the binomial distribution to find the probability of observing exactly 30 genes in the DE set annotated to $t$ as:
+## Binomial Test (review)
 
+::: {.callout-note icon=false}
+**How do we go from the binomial distribution to a statistical test?**
+
+- The key idea is to regard the binomial as the null distribution and to ask if an observed distribution is unusual given this null.
+:::
+
+- If we are interested in testing whether the number of heads is more than we would expect by chance, we can formulate the null and alternative hypetheses as follows
+- Let $p$ be the expected probability of an outcome such as heads
+- The null hypothesis ($H_0$) is that the true likelihood of heads is not more than $p$, and the **alternative hypothesis** is that the true likelihood of heads *is* more than $p$
 $$
-P(30, 250, 0.06) = \binom{250}{30} 0.06^{30} (1-0.06)^{250-30} = 1.44 \times 10^{-4}
-$$
-
-## GO Overrepresentation with the Binomial Distribution
-
-In order to use this for a statistical test, we now define a null hypothesis ($H_0$) to be that the biological function described by GO term $t$ is not overrepresented among the differentially expressed genes.
-
-- According to this null hypothesis, we would expect the same proportion of genes (or less) in the DE set to be annotated to $t$ as in the population.
-- If we symbolize the proportion of genes in the population and study set that are annotated to the term as $\pi_p$ and $\pi_s$, then:
-$$
-H_0: \pi_{s} \leq \pi_p
+\begin{align}
+H_0: \pi_{s} &\leq p \\
+H_a :\pi_s &> p
+\end{align}
 $$
 
-## GO Overrepresentation with the binomial distribution
+
+
  
- In GO overrepresentation analysis, we are looking
-for terms that annotate a higher than expected proportion of the genes
-in the study set. 
+# Binomial Test (review)
 
-- Therefore, the alternative hypothesis is $H_a :\pi_s
-> \pi_p$.  
-- If the probability of the observed result of our experiment
-(the observation of 30 genes in the DE set being annotated to $t$) is
-less than $\alpha$, we reject the null hypothesis in favor of the
-alternative hypothesis, which would imply that the GO term $t$ has
-something to do with the observed differential expression. 
-- Since we
-have divided the set of all possible results into two classes, it is
-necessary to collect all outcomes that are as extreme or more so than
+- So assume we have flipped a coin 30 times and we observe 25 heads
+- We suspect the coin may not be fair and decide to do a test
+- We collect all outcomes that are as extreme or more so than
 the observed one to be part of the rejection class. 
-- In our example,
-this means that we need to sum up the probability of observing 30
-*or more* genes annotated to GO term $t$ in the DE set of 250
-genes.
- 
-# GO Overrepresentation with the binomial distribution
- Note that if there were only 100 genes annotated to a term $t$
-in the entire population of genes on the microarray chip, the
-probability of observing 101 or more genes annotated to $t$ is
-zero. 
-
-- Therefore, in general we can take the sum to the maximum of the
-number of genes annotated to a GO term $t$ (denoted $p_t$) or to the
-size of the DE set (denoted $|\textit{DE}|$).  We thus obtain:
 
 $$
-p(k \geq k^{'},n,p) = \sum_{k=k^{'}}^{\max(p_t,|\textit{DE}|)}\binom{n}{k} 
-k^p\left(n-k\right)^{1-p}.
+\begin{align}
+p(k \geq k^{'},n,p) &= \sum_{k=k^{'}}^{N}\binom{n}{k} 
+p^k\left(1-p\right)^{n-k} \\
+\end{align}
 $$ {#eq-dbinomial}
+
+- In our example, we have $p(k\geq 25,n=30, p=0.5) = \sum_{k=25}^{30}\binom{n}{k}\tfrac{1}{2}^n$
+- In R, this is 
+```R
+> dbinom(25,30,0.5)
+[1] 0.0001327191
+```
+
+
+
  
-# GO Overrepresentation with the Binomial Distribution
+# Binomial Test
 
-::: {.columns}
-::: {.column width="50%"}
+- It is also common to represent the region of probability graphically
+- In this example, we have  $n = 250$, $p = 0.06$, and $k = 30$
 
-An approximation of the probability mass function for $k=0,1,\ldots,40$, in which the discrete points are depicted as a smoothed line. The gray region indicates the values of $k$ which encompass 95% of the probability mass under the null hypothesis.
-
-- Statistical Decision: Since the observed value lies outside of this region, we reject the null hypothesis that genes annotated to $t$ are not enriched in the DE set.
-- P-value Calculation: In order to calculate a $p$-value, we add up the probabilities for observing $k=30, 31, \ldots, 250$ genes annotated to $t$ in the DE set.
-
-::: 
-::: {.column width="50%"}
-
-```{python}
-#| echo: false
-#| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-sys.path.append('utils') 
-from ontology_plots import plot_binom
-plot_binom()
-plt.show()
-``` 
-::: 
-::: 
-
-## GO Overrepresentation with the Binomial Distribution
 
 ```{python}
 #| echo: false
@@ -446,48 +478,104 @@ plot_binom()
 plt.show()
 ``` 
 
-
-- The observed value for $k$ of 30 lies outside of the range containing 95% of the probability mass, and we reject the null hypothesis that the genes
-   in the study set are not enriched in genes annotated by $t$. 
+- The observed value for $k$ of 30 lies outside of the range containing 95% of the probability mass, and we reject the null hypothesis that the true probability of success is not more than $p=0.06$. 
 - The $p$-value for this observation can be calculated by @eq-dbinomial to be $1.68\times 10^{-8}$.
 
-# binomial vs hypergeometric distribution
+## Question {.center background-color="#ffe1f5"}
 
-Although this approach provides a nearly correct answer for terms with
-many annotations in the population and large DE sets, it is actually
-only an approximation. 
+![](img/stop-and-think-icon.svg){width=60%}
 
-- The problem is that the binomial distribution
+**Before we continue:** If we apply the binomial test to Gene Ontology overrepresentation analysis, where do we get $n$, $k$, and $p$?
+
+## $n$, $k$, and $p$
+
+:::: {.columns}
+::: {.column width=60%}
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+from ontology_plots import gora_shapes
+gora_shapes()
+plt.show()
+``` 
+:::
+::: {.column width=40%}
+::: {.text-small}
+-  $N$: "all" genes, for instance
+    - All genes in the genome
+    - All protein-coding genes in the genome
+    - All measured genes
+- $K$: All genes annotation to the GO term being evaluated
+- $n$: Differentially expressed genes
+- $k$: Differentially expressed genes that are also annotated to the GO term
+- If the GO term has nothing to do with the differential expression, than our null hypothesis is that the proportion of genes in the differentially expressed set if $\tfrac{K}{N}$
+- So we are asking if $k$ is more than we would expect by chance given the number of genes $n$ (our sample) and the probability $p=\tfrac{K}{N}$
+- $\mathrm{dbinom}(k,n,\tfrac{K}{N})$
+:::
+:::
+::::
+
+
+
+## Question {.center background-color="#ffe1f5"}
+
+![](img/stop-and-think-icon.svg){width=60%}
+
+**Before we continue:** Why is the binomial test not quite correct to perform GO overrepresentation analysis?
+
+
+## Binomial vs hypergeometric distribution
+
+:::: {.columns}
+::: {.column width=70%}
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+from ontology_plots import hyperg_vs_binom
+hyperg_vs_binom(figsize=(7, 6))
+plt.show()
+``` 
+:::
+::: {.column width=30%}
+::: {.text-small}
+-  the binomial distribution
 is based on the assumption that the individual trials are independent
-of one another. 
-- While this is clearly true for coin tosses, it is not
-for GO overrepresentation analysis, which is rather comparable to a
-lotto game in which labelled balls are taken from an urn and not
-replaced.
+of one another ($p$ never changes)
+- If the initial probability of removing a black ball from an urn is $\tfrac{6}{12}$, the probability changes after we remove the first ball
+- If a coin has a probability of heads of $\tfrac{1}{2}$, this probability is unchanged with each flip
+- This corresponds to sampling **without replacement** and sampling **with replacement**
+:::
+:::
+::::
 
--  For instance, if there are 60 balls numbered 1 to 60, the
-chance of getting a 7 on the first draw is 1/60. 
-- If a 7 was drawn the
-first time, the chance of getting it the second time is zero. 
-- If
-another number was drawn the first time, the chance of getting a 7 the
-second time is 1/59, because some other ball has been removed.
+
+
 
 
 # GO Overrepresentation with the hypergeometric distribution
-  In our
-microarray experiment, we imagine that the set of all 10,000 genes on
-the chip is represented by an urn with 10,000 balls. 
 
-- A total of 100 genes are annotated to some GO term $t$, and thus 600 balls in the urn are colored blue. 
-- We then model the observation of 250 differentially expressed genes as the process of randomly removing 250 balls in turn from the urn without replacement. 
-- Clearly there are many possible outcomes to this experiment. 
+
+- GO annotations can be naturally modeled as an urn with $m$ balls, where $m$ is the total count of genes
+- $n$ of these genes are differentially expressed
+- $m_t$ of the $m$ genes are annotated to GO term $t$, so the probability that any given gene is annotated to $t$ is $\tfrac{m_t}{m}$
+- Thus, by chance we expect $n \times \tfrac{m_t}{m}$ genes to be annotated to $t$
+- We model this by removing genes from an urn: annotated genes are black, unannotated genes are white. After each ball is removed, the probability of drawing a black ball on the next draw changes — so the binomial distribution is not appropriate; we need the **hypergeometric distribution** instead
+
+
 
 
 ## GO Overrepresentation with the Hypergeometric Distribution
 
-The statistical analysis basically just counts up all the ways of getting $k$ genes annotated to $t$ and $n-k$ remaining genes not annotated to $t$, 
-ß´and compares this number to the number of all possible outcomes.
+The statistical analysis counts up all the ways of getting $k$ genes annotated to $t$ and $n-k$ remaining genes not annotated to $t$, and compares this number to the number of all possible outcomes.
+
 
 - Let $m$ be the number of genes on the microarray chip.
   - $m_t$ be the number of these genes that are annotated to GO term $t$.
@@ -495,56 +583,71 @@ The statistical analysis basically just counts up all the ways of getting $k$ ge
   - $k$ be the number of DE genes that are annotated to $t$.
 - We have:
 $$
-P(k,n,m,m_t) = \dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}
-$$
+P(k\mid n,m,m_t) = \dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}
+$$ {#eq-hypergeometric}
 
 - Numerator: $\binom{m_t}{k}\binom{m-m_t}{n-k}$: The number of ways to choose exactly $k$ annotated genes AND $n-k$ non-annotated genes.
 - Denominator: $\binom{m}{n}$: The total number of ways to choose any $n$ genes from the population $m$.
 
-# GO Overrepresentation with the Hypergeometric Distribution
+# Hypergeometric Distribution: intuition
+
+- We can understand @eq-hypergeometric as follows
+
+$$
+\begin{align}
+P(k\mid n,m,m_t) &= \dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}} \\
+&=\dfrac{\text{\# ways to choose } k \text{ annotated and } (n-k)\text{ non-annotated genes }}{\text{\# ways to choose } n \text{ genes }} \\
+\end{align}
+$$ 
+
+- This is the probability of seeing *exactly* $k$ annotated genes in the differentially expressed set.
+
+
+# GORA with the Hypergeometric Distribution: Recap
 $$
 p(k,n,m,m_t) = \dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}
-$$ {#eq-hypergeometric}
+$$ 
 
 - Ways to choose annotated genes: There are $\binom{m_t}{k}$ ways of choosing $k$ genes annotated to $t$.
 - Ways to choose non-annotated genes: There are $\binom{m-m_t}{n-k}$ ways of choosing the remaining $n-k$ genes that are not annotated to $t$.
 - Combined combinations: In total, there are $\binom{m_t}{k}\binom{m-m_t}{n-k}$ ways of choosing the genes in the study set such that $k$ are annotated to $t$ and $n-k$ are not.
 - Total possible outcomes: There are $\binom{m}{n}$ total ways of choosing a study set with $n$ genes from the population of $m$ genes with arbitrary annotations.
-- The hypergeometric equation reflects the proportion of all possible study sets that can be chosen from the population such that exactly $k$ of the genes are annotated to $t$. [If this proportion is very small, it is unlikely that such a study set will be chosen at random.]{style="color: #3b82f6;"}
 
-# GO Overrepresentation with the Hypergeometric Distribution
-@eq-hypergeometric is known as the `hypergeometric
-distribution`. 
 
-- Analogously to the situation with the binomial distribution, we need to calculate the probability of observing some
-number $k$ or more genes annotated to $t$ in order to have a
-statistical test. 
-- In this case, the sum over the tail of the
-hypergeometric distribution is known as the `Fisher Exact Test`:
+## GO Overrepresentation with the Fisher's Exact Test
+
+@eq-hypergeometric is known as the `hypergeometric distribution`.
+
+- Analogously to the situation with the binomial distribution, we need to calculate the probability of observing some number $k$ or more genes annotated to $t$ in order to have a statistical test
+- The sum over the tail of the hypergeometric distribution is known as the `Fisher Exact Test`:
 
 $$
-p(K\geq k^{'},n,p) = 
-\sum_{k=k^{'}}^{\max(K,|DE|)}\dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}
+P(X \geq k) = \sum_{i=k}^{\min(n,\, m_t)} \dfrac{\binom{m_t}{i}\binom{m-m_t}{n-i}}{\binom{m}{n}}
 $$ {#eq-fet}
- 
-## GO Overrepresentation with Fisher's exact test
 
-* We refer to the set of genes^[We use the term `gene` only for simplicity. The items annotated to the ontology terms may also be proteins or other biological entities. ] which are investigated in an experiment as the `population set`. 
-* The cardinality (count) of the population set is refered to as $m$
-* In RNA-seq, the population set can be defined as all measured genes
-* In microarray or other targeted experiments, we might define the population set as all genes that the microarray chip can detect. 
-* The outcome of the experiment is referred
-to as the `study set`. 
-The cardinality of the study set is $n$.
-* In the microarray or RNA-seq scenario the study set could consist of all genes that were
-detected to be differentially expressed.
-* The count of genes in the population that are annotated to GO term $t$ is $m_t$.
-* $k$ is the number of genes in the study set annotated to GO term $t$
+- Here, $X$ is the (random) number of study-set genes annotated to $t$; $n$ is the total count of differentially expressed genes; $m_t$ is the count of genes in the population annotated to GO term $t$
+
+## Question {.center background-color="#ffe1f5"}
+
+![](img/stop-and-think-icon.svg){width=30%}
 
 $$
-p(K\geq k^{'},n,p) = 
-\sum_{k=k^{'}}^{\max(K,|DE|)}\dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}
-$$ 
+P(X \geq k) = \sum_{i=k}^{\min(n,\, m_t)} \dfrac{\binom{m_t}{i}\binom{m-m_t}{n-i}}{\binom{m}{n}}
+$$
+
+- With the binomial test, we summed up to $n$ (the total number of trials)
+- Here, we sum up to $\min(n, m_t)$ — why?
+
+## Answer
+
+$$
+P(X \geq k) = \sum_{i=k}^{\min(n,\, m_t)} \dfrac{\binom{m_t}{i}\binom{m-m_t}{n-i}}{\binom{m}{n}}
+$$
+
+- It is impossible to draw more annotated genes than the size of the study set itself ($n$)
+- It is impossible to draw more annotated genes than exist in the population annotated to term $t$ ($m_t$)
+- So the maximum possible value of $k$ is whichever of these two is *smaller* — hence $\min(n, m_t)$.
+
 
 ## Term-for-Term
 ::: {.callout-note icon=false}
@@ -600,7 +703,7 @@ the experiment.
 ## Multiple testing correction
 
 :::: {.columns}
-::: {.column width="25%"}
+::: {.column width="30%"}
 
 ![](img/mtc-cartoon.png){fig-align="center" width="100%"}
 
@@ -608,7 +711,7 @@ the experiment.
 
 ::: {.column width="5%"}
 :::
-::: {.column width="65%"}
+::: {.column width="60%"}
 
 - multiple testing problem occurs when many statistical tests are performed on the same dataset. 
 - Each test has its own chance of a Type I error (false positive)
@@ -620,6 +723,9 @@ $$
 - The Bonferroni correction sets $\alpha _{\mathrm {\{per\ comparison\}} }=\frac{\alpha }{m}$
 - We will not go into detail in this course; there are many other MTC procedures
 
+::: {.small-text}
+More background: Noble WS (2009) [How does multiple testing correction work? *Nat Biotechnol* **27**:1135-7](https://pubmed.ncbi.nlm.nih.gov/20010596/)
+:::
 
 :::
 ::::
@@ -628,7 +734,7 @@ $$
 
 ![](img/ontologizer.png){fig-align="center" width="85%"}
 
-- [HOMEWORK]{.hw-badge} You will process several datasets with the Ontologizer to gain intuition about GO TfT analysis.
+- [HOMEWORK]{.hw-badge} You will process a dataset with the Ontologizer to gain intuition about GO TfT analysis.
 
 ## Gene set enrichment analysis {#gsea}
 
@@ -643,8 +749,8 @@ $$
     - In this case the gene set is correlated with the phenotypic class distinction.
 
 ::: {.tiny-credit}
-Subramanian A, et al. (2005) Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. 
-Proc Natl Acad Sci U S A. **102**:15545-50. PMID: 16199517.
+Subramanian A, et al. (2005) [Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. 
+Proc Natl Acad Sci U S A. **102**:15545-50](https://pubmed.ncbi.nlm.nih.gov/16199517/)
 :::
 
 
@@ -652,7 +758,7 @@ Proc Natl Acad Sci U S A. **102**:15545-50. PMID: 16199517.
 
 * GSEA considers experiments with genomewide expression profiles from samples belonging to two classes, labeled 1 or 2. 
 * Genes are ranked based on the correlation between their expression and the class distinction by using any suitable metric
-* Concretely, class 1 can be `Annotated to GO term *t*` and class 2 `Not annotated to *t*`
+* Concretely, class 1 can be _Annotated to GO term_ **t** and class 2 _Not annotated to_ **t**
 
 ![](img/gsea-1.png){fig-align="center" width="100%"}
 
@@ -693,7 +799,7 @@ The running-sum construction
 
 $$
 P_{hit}(S,i) = \sum_{\substack{j \le i \\ g_j \in S}} \dfrac{|r_j|^p}{N_R}
-\quad\quad N_R = \sum_{g_j\in S}|r_j|^p
+\quad\quad \bullet N_R = \sum_{g_j\in S}|r_j|^p
 $$ {#eq-gsea-hit}
 
 - The `hit` term of @eq-gsea-hit increases whenever it encounters a gene that belongs to 
@@ -702,7 +808,7 @@ $S$, weighted by the magnitude of its ranking statistic $r_j$
 and
 
 $$
-P_{miss}(S,i) = \sum_{\substack{j \le i \\ g_j \notin S}}\dfrac{1}{N-N_H}
+P_{miss}(S,i) = \sum_{\substack{j \le i \\ g_j \notin S}}\dfrac{1}{N-N_R}
 $$
 
 - The `miss` term increases whenever it encounters a gene not in *S*, with a uniform step size.
@@ -773,11 +879,11 @@ $$
 
 - Specifically, we permute the phenotype labels and recompute the ES of the gene set for the permuted data, which generates a null distribution for the ES. 
 - The empirical, nominal P value of the observed ES is then calculated relative to this null distribution.
+- The adjustment for multiple testing is essentially the same as with GO Overrepresentation Analysis
 
-## Adjustment for Multiple Hypothesis Testing
-
-- The adjustment fo multiple testing is essentially the same as with GO Overrepresentation Analysis
-- Skipping some details in the original publication
+::: {.small-text}
+Skipping some details in the original publication
+:::
 
 ## GSEA: Examples
 
@@ -828,7 +934,8 @@ Image: https://geneontology.org/docs/gocam-overview/
 ::: {.column width=30%}
 
 A GO-CAM model is a combination of standard GO annotations to produce a network of annotations (“model”) that is a more complete model of biological function than the separate annotations.
-- **a)**: set of disconnected GO annotations
+
+    - **a)**: set of disconnected GO annotations
 - **b)**: GO-CAM model links together GO annotations into a structured model of NEDD4 functions
 :::
 ::::
@@ -918,8 +1025,11 @@ Feuermann M, et al. (2025) [A compendium of human gene functions derived from ev
 
 ## Sources
 
-- Gene Ontology Consortium (2026) [The Gene Ontology knowledgebase in 2026. *Nucleic Acids Res* **54**:D1779-D1792](https://pubmed.ncbi.nlm.nih.gov/41413728/).
-- Bauer S, et al. (2008) Ontologizer 2.0--a multifunctional tool for GO term enrichment analysis and data exploration. *Bioinformatics* **24**:1650-1](https://pubmed.ncbi.nlm.nih.gov/18511468/) 
-- Subramanian A, et al. (2005) Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S A. **102**:15545-50 PMID: 16199517.
-- Mootha VK, et al. (2003) PGC-1alpha-responsive genes involved in oxidative phosphorylation are coordinately downregulated in human diabetes. Nat Genet. **34**:267-73.  PMID:12808457.
+::: {.callout-important title="Suggested Reading" icon=false}
+Gene Ontology Consortium (2026) [The Gene Ontology knowledgebase in 2026. *Nucleic Acids Res* **54**:D1779-D1792](https://pubmed.ncbi.nlm.nih.gov/41413728/)
+:::
+- Bauer S, et al. (2008) [Ontologizer 2.0--a multifunctional tool for GO term enrichment analysis and data exploration. *Bioinformatics* **24**:1650-1](https://pubmed.ncbi.nlm.nih.gov/18511468/) 
+- Subramanian A, et al. (2005) [Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S A. **102**:15545-50](https://pubmed.ncbi.nlm.nih.gov/16199517/) 
+- Mootha VK, et al. (2003) [PGC-1alpha-responsive genes involved in oxidative phosphorylation are coordinately downregulated in human diabetes. Nat Genet. **34**:267-73](https://pubmed.ncbi.nlm.nih.gov/12808457/)
 - Thomas PD, et al. (2019) [Gene Ontology Causal Activity Modeling (GO-CAM) moves beyond GO annotations to structured descriptions of biological functions and systems. *Nat Genet* **51**:1429-1433](https://pubmed.ncbi.nlm.nih.gov/31548717/)
+- Feuermann M, et al. (2025) [A compendium of human gene functions derived from evolutionary modelling. *Nature* **640**:146-154](https://pubmed.ncbi.nlm.nih.gov/40011791/)

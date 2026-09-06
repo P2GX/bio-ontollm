@@ -1158,7 +1158,25 @@ Virutally every major LLM uses BPE to transform input text into number (tokens) 
 Sennrich, R, et al. (2016) [Neural Machine Translation of Rare Words with Subword Units](https://aclanthology.org/P16-1162/)
 :::
 
+## Strawberry
 
+::: {.mybox}
+**Older versions of GPT famously were not able to determine how many r's there are in the word strawberry
+:::
+
+![](./img/strawberry.png){width=40% fig-align="center"}
+
+- Why do you think this is?
+
+## Strawberry tokens
+
+![](./img/strawberry-tokens.png){width=25% fig-align="center"}
+
+- GPT had difficulties with letter-based calculations because it represents words with tokens
+- Language models do not work with text the way that humans do!
+- LLMs work with embedding vectors derived from tokens
+- Sometimes those tokens and their embeddings correspond to our conceptualization of language
+- More modern LLMs have been trained to deal with this issue, e.g., by writing a script to calculate the number of 'r's
 
 
 ## Sources

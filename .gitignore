@@ -143,6 +143,7 @@ temp.*
 sandbox/tikz/*.pdf
 sandbox/ATTIC.txt
 sandbox/TMP.py
+sandbox/images/TMP.py
 **.fdb_latexmk
 **.fls
 .DS_Store
