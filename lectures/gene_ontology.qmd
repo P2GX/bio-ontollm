@@ -71,7 +71,7 @@ The following represents the lineage of the term **DNA ligase (ATP) activity** (
 * Gene Ontology is a directed acyclic graph (DAG)
     (A) Tree
     (B) A graph with directed edges and no cycles
-    (C) A graph with a cycle
+    (C) A graph with directed edges and a cycle
 
 ## QuickGO: DAG
 
@@ -485,7 +485,7 @@ plt.show()
 
 ![](img/stop-and-think-icon.svg){width=60%}
 
-**Before we continue:** If we apply the binomial test to Gene Ontology overrepresentation analysis, where do we get $n$, $k$, and $p$?
+**Before we continue:** If we apply the binomial test to Gene Ontology overrepresentation analysis, what are $n$, $k$, and $p$?
 
 ## $n$, $k$, and $p$
 
@@ -699,6 +699,10 @@ $$
 - Since $P(X_t\geq 3|H_0)=0.044<0.05=\alpha$, the null-hypotheses is
 rejected and the term may be interpreted as being characteristic of
 the experiment.
+
+## Multiple testing correction
+
+![](img/mtc-cartoon.png){fig-align="center" width="100%"}
 
 ## Multiple testing correction
 
