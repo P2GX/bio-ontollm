@@ -308,6 +308,69 @@
     "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the Reinforcement Learning with an emphasis on its use to train LLMs\n\n\n\n\nReinforcment learning: Basic ideas\nPolicy gradient optimization\nReward to go\nSubtracting baselines"
   },
   {
+    "objectID": "lectures/reinforcement.html#pretraining-vs.-posttraining",
+    "href": "lectures/reinforcement.html#pretraining-vs.-posttraining",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Pretraining vs. Posttraining",
+    "text": "Pretraining vs. Posttraining\n\n\n\n\n\n\n\n\n\n\nPretraining teaches the model to predict the next token"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#pretraining-vs.-posttraining-1",
+    "href": "lectures/reinforcement.html#pretraining-vs.-posttraining-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Pretraining vs. Posttraining",
+    "text": "Pretraining vs. Posttraining\n\n\n\n\n\n\n\n\n\n\nInstruction fine tuning teaches the model to answer questions (to be a chatbot)\nPreference fine tuning (Reinforcement learning) teaches the model to respond in ways that correspond to human preferences"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#today",
+    "href": "lectures/reinforcement.html#today",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Today",
+    "text": "Today\n\nToday we will focus on instruction fine tuning and reinforcement learning with human feedback\nThere is more than one way to do it: There is an enormous variety of posttraining approaches that we will not cover today. This is where the magic happens in modern LLMs, but it would require an additional course to do it justice\nYou will learning some basic ideas of posttraining that will put you in a good position to understand more sophisticated approaches"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#ift-instruction-fine-tuning-and-sft-supervised-fine-tuning",
+    "href": "lectures/reinforcement.html#ift-instruction-fine-tuning-and-sft-supervised-fine-tuning",
+    "title": "Approaches to biomedical knowledge",
+    "section": "IFT (Instruction Fine-Tuning) and SFT (Supervised Fine-Tuning)",
+    "text": "IFT (Instruction Fine-Tuning) and SFT (Supervised Fine-Tuning)\n\n** IFT vs SFT**:\n\nThese terms are nearly synonyms\n\n\n\nSFT: fine-tuning a pretrained model on labeled input-output pairs using standard supervised learning (cross-entropy loss on target tokens, conditioned on some input).\nIFT: A specific kind of SFT where the training data is specifically instruction/response pairs (e.g. “Summarize this text: …” → summary; “Write a poem about X” → poem).\n\nThe goal of IFT is to get the model to behave like a chatbot, i.e., to follow natural lanugage instructions and conduct a conversation, rather than just continuing the input text"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#intuition-before-ift",
+    "href": "lectures/reinforcement.html#intuition-before-ift",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Intuition: Before IFT",
+    "text": "Intuition: Before IFT\n\nPrompt: What is the most delicious Spanish appetizer?\nResponse: What is the most delicious Spanish appetizer? What is the most delicious Mexican appetizer? What is the most delicious Portuguese appetizer? These are the kinds of questions readers ask us all the time here on the blog, so we decided to put together a definitive ranking…\n\n\nThe raw model isn’t “answering” so much as continuing the statistical pattern (predicting the next token)\nThe text might resemble some blog text about appetizers, but it is not answering the user’s question directly"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#intuition-after-ift",
+    "href": "lectures/reinforcement.html#intuition-after-ift",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Intuition: After IFT",
+    "text": "Intuition: After IFT\n\nPrompt: What is the most delicious Spanish appetizer?\nResponse: A top pick is patatas bravas (fried potatoes with a spicy tomato sauce and aioli).\n\n\nAfter instruction tuning, the model recognizes the input as a request directed at it\nThe model produces a direct answer instead of continuing a hypothetical document"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#chat-templates",
+    "href": "lectures/reinforcement.html#chat-templates",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Chat Templates",
+    "text": "Chat Templates\nEach major LLM has a template structure that organizes the main components of the chat so the model can recognize them.\n\nUnambiguous structure\nAllow multiturn conversations\nEnables use of APIs"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#example",
+    "href": "lectures/reinforcement.html#example",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Example",
+    "text": "Example\nmessages = [\n    {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n    {\"role\": \"user\", \"content\": \"Hello!\"},\n    {\"role\": \"assistant\", \"content\": \"Hi! How can I help you today?\"},\n    {\"role\": \"user\", \"content\": \"What's the weather?\"},\n]\n\nThis example is taken from the Hugging Face LLM course\n\n\nThe format and keywords vary for some models\nThis is the style for OpenAI style and Qwen\nim stands for instruction message (e.g., im_start refers to the start of the instruction message)\n\n&lt;|im_start|&gt;system\nYou are a helpful assistant.&lt;|im_end|&gt;\n&lt;|im_start|&gt;user\nHello!&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant\nHi! How can I help you today?&lt;|im_end|&gt;\n&lt;|im_start|&gt;user\nWhat's the weather?&lt;|im_start|&gt;assistant"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#ift-best-practices",
+    "href": "lectures/reinforcement.html#ift-best-practices",
+    "title": "Approaches to biomedical knowledge",
+    "section": "IFT Best Practices",
+    "text": "IFT Best Practices\n\nHigh quality completions needed\nGenerally, modern LLMs train with on the order of 1 million prompts\n\n\n\n\n\nItem\n\n\nPretraining\n\n\nIFT\n\n\n\n\n\n\nData\n\n\nenormous\n\n\nca. 1 million prompt completions\n\n\n\n\nBatch size\n\n\n256\n\n\n1024-2048\n\n\n\n\nLearning rate\n\n\n\\(1\\times 10^{-5}\\)\n\n\n\\(3\\times 10^{-4}\\)\n\n\n\n\nLoss function\n\n\nCE\n\n\nCE\n\n\n\n\n\nLearning Rate: Lower the learning rate during instruction fine-tuning (IFT) to prevent overfitting on the narrower data distribution.\nLoss Masking: Apply cross-entropy (CE) loss exclusively on the assistant tokens rather than the prompt tokens."
+  },
+  {
     "objectID": "lectures/reinforcement.html#rl-gpt-and-chatgpt",
     "href": "lectures/reinforcement.html#rl-gpt-and-chatgpt",
     "title": "Approaches to biomedical knowledge",
@@ -438,7 +501,7 @@
     "href": "lectures/reinforcement.html#modelling-trajectories",
     "title": "Approaches to biomedical knowledge",
     "section": "Modelling trajectories",
-    "text": "Modelling trajectories\n\nA trajectory, represented by tau (\\(\\tau\\)), is a series of (state, action, reward) – see slide 7.\nThe probability of a trajectory \\(\\tau\\) given a policy \\(\\pi\\) is thus modeled as the probability of the initial state multiplied by the product of the transition probability and the policy for each step: \\[\nP(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi(a_t\\mid s_t)\n\\tag{2}\\]\n\n\n\nWhere\n\n\\(\\rho(s_0)\\) is the probability of starting at \\(s_0\\)\n\\(P(s_{t+1}\\mid s_t,a_t)\\): The transition function (See Equation 1)\n\\(\\pi(a_t\\mid s_t)\\) is the probability of choosing action \\(a_t\\) given we are in state \\(s_t\\)\n\nNote the trajectory is a Markov process - the next state is dependent only on the previous state, not on the entire history1\n\n\nSee lecture 4 for background on Markov chains"
+    "text": "Modelling trajectories\n\nA trajectory, represented by tau (\\(\\tau\\)), is a series of (state, action, reward) – see slide 16.\nThe probability of a trajectory \\(\\tau\\) given a policy \\(\\pi\\) is thus modeled as the probability of the initial state multiplied by the product of the transition probability and the policy for each step: \\[\nP(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi(a_t\\mid s_t)\n\\tag{2}\\]\n\n\n\nWhere\n\n\\(\\rho(s_0)\\) is the probability of starting at \\(s_0\\)\n\\(P(s_{t+1}\\mid s_t,a_t)\\): The transition function (See Equation 1)\n\\(\\pi(a_t\\mid s_t)\\) is the probability of choosing action \\(a_t\\) given we are in state \\(s_t\\)\n\nNote the trajectory is a Markov process - the next state is dependent only on the previous state, not on the entire history1\n\n\nSee lecture 4 for background on Markov chains"
   },
   {
     "objectID": "lectures/reinforcement.html#rewards",
@@ -452,7 +515,7 @@
     "href": "lectures/reinforcement.html#llm-trajectories",
     "title": "Approaches to biomedical knowledge",
     "section": "LLM Trajectories",
-    "text": "LLM Trajectories\n\nA trajectory in an LLM is a series of prompts (see slide Section 7)\nIn this example, our original prompt is “Where is Berlin?” (\\(s_0\\))\nThe first action is the choice of the token “Berlin” (\\(a_0\\))\ndecoders are autoregressive, so our second prompt is “Where is Berlin? Berlin” (\\(s_1\\))"
+    "text": "LLM Trajectories\n\nA trajectory in an LLM is a series of prompts (see slide Section 16)\nIn this example, our original prompt is “Where is Berlin?” (\\(s_0\\))\nThe first action is the choice of the token “Berlin” (\\(a_0\\))\ndecoders are autoregressive, so our second prompt is “Where is Berlin? Berlin” (\\(s_1\\))"
   },
   {
     "objectID": "lectures/reinforcement.html#policy-gradient",
@@ -515,7 +578,7 @@
     "href": "lectures/reinforcement.html#calculating-rewards",
     "title": "Approaches to biomedical knowledge",
     "section": "Calculating rewards",
-    "text": "Calculating rewards\n\nApply the linear layer to all positions that correspond to actions (i.e., tokens following the original prompt)\nSee slide Section 18.\nThis allows us to generate the reward for each time step/trajectory \\[\n\\sum_{t=0}^{T} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)\\underbrace{R(\\tau)}_{\\mathrm{reward}}\n\\]"
+    "text": "Calculating rewards\n\nApply the linear layer to all positions that correspond to actions (i.e., tokens following the original prompt)\nSee slide Section 27.\nThis allows us to generate the reward for each time step/trajectory \\[\n\\sum_{t=0}^{T} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)\\underbrace{R(\\tau)}_{\\mathrm{reward}}\n\\]"
   },
   {
     "objectID": "lectures/reinforcement.html#reward-to-go",
@@ -2924,6 +2987,20 @@
     "text": "Sources\nThe sources used to prepare this lecture include\n\nGoldberg Y and Levy O (2014) word2vec Explained: deriving Mikolov et al.’s negative-sampling word-embedding method, arXiv 1402.3722\nKozma L and Voderholzer J (2024) Theoretical Analysis of Byte-Pair Encoding, arXiv 2411.08671\nMikolov, T. et al. (2013) Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781\nMikolov, T. et al. (2013) Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546"
   },
   {
+    "objectID": "lectures/applications.html#overview",
+    "href": "lectures/applications.html#overview",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Overview",
+    "text": "Overview\n\nReview\n\nToday, we will wrap up the course by providing an overview of several important biomedical applications of LLMs and ontologies\nWe will wrap up with a Q&A session\n\n\n\nHistory of LLMs"
+  },
+  {
+    "objectID": "lectures/applications.html#history",
+    "href": "lectures/applications.html#history",
+    "title": "Approaches to biomedical knowledge",
+    "section": "History of LLMs",
+    "text": "History of LLMs\n\n2018\n\n\n\n\n2017\n\n\nAll you need is attention (transformer)\n\n\n\n\n\nGPT1, BERT\n\n\n\n\n2019\n\n\nGPT2, scaling laws\n\n\n\n\n2020\n\n\nGPT3, one-shot learning\n\n\n\n\n2021\n\n\nStochastic parrots debate\n\n\n\n\n2022\n\n\nChatGPT (reinforcement learning)\n\n\n\n2023\n\n\nGPT4, frontier scale models\n\n\n\n\n2024\n\n\nGPT o1, reasoning models\n\n\n\n\n2025\n\n\n03, Claude code, agentic AI\n\n\n\n\n2026\n\n\nImpact of agents\n\n\n\n\n2027\n\n\nJudgment Day?\n\n\n\n\n(Short lecture followed by review period)"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Approaches to biomedical knowledge",
@@ -4046,7 +4123,7 @@
     "href": "lectures/logreg.html#derivative-of-the-sigmoid-activation-function",
     "title": "Approaches to biomedical knowledge",
     "section": "derivative of the sigmoid activation function",
-    "text": "derivative of the sigmoid activation function\n\nThus we get the fascinating result that\n\n\\[\n\\frac{d\\sigma(x)}{dx} = \\sigma(x)(1-\\sigma(x))\n\\]\n\nSubstituing and remembering that we define \\[\n\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\n\\] we get \\[\n\\underbrace{\\frac{\\partial  \\sigma_i}{\\partial z_i}}_{\\text{Part B}} = \\hat{y}(1- \\hat{y})\n\\]",
+    "text": "derivative of the sigmoid activation function\n\nThus we get the fascinating result that\n\n\\[\n\\frac{d\\sigma(x)}{dx} = \\sigma(x)(1-\\sigma(x))\n\\]\n\nSubstituting and remembering that we define \\[\n\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\n\\] we get \\[\n\\underbrace{\\frac{\\partial  \\sigma_i}{\\partial z_i}}_{\\text{Part B}} = \\hat{y}(1- \\hat{y})\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4166,7 +4243,7 @@
     "href": "lectures/logreg.html#batch-and-mini-batch-training",
     "title": "Approaches to biomedical knowledge",
     "section": "Batch and Mini-batch training",
-    "text": "Batch and Mini-batch training\n\nStochastic gradient descent is called stochastic because it chooses a single random example at a time\nBatch training trains over all examples before adjusting parenters\nSince the total Cost \\(J\\) is the average of all individual losses (\\(\\frac{1}{m} \\sum \\mathcal{L}\\)), the derivative of the total cost is simply the average of the individual derivatives:\\[\\frac{\\partial J}{\\partial w_j} = \\frac{1}{m} \\sum_{i=1}^{m} (\\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}\\]\nIn Mini-batch training, we train on a group of examples at a time, and take the average loss of these examples.\nModern hardware lets mini-batch training be vectorized for efficiency",
+    "text": "Batch and Mini-batch training\n\nStochastic gradient descent is called stochastic because it chooses a single random example at a time\nBatch training trains over all examples before adjusting parameters\nSince the total Cost \\(J\\) is the average of all individual losses (\\(\\frac{1}{m} \\sum \\mathcal{L}\\)), the derivative of the total cost is simply the average of the individual derivatives:\\[\\frac{\\partial J}{\\partial w_j} = \\frac{1}{m} \\sum_{i=1}^{m} (\\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}\\]\nIn Mini-batch training, we train on a group of examples at a time, and take the average loss of these examples.\nModern hardware lets mini-batch training be vectorized for efficiency",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4346,7 +4423,19 @@
     "href": "lectures/logreg.html#intuition-for-gradient-descent-updates",
     "title": "Approaches to biomedical knowledge",
     "section": "💡 Intuition for Gradient Descent Updates",
-    "text": "💡 Intuition for Gradient Descent Updates\nWhen we update our weights (\\(w_j \\leftarrow w_j - \\alpha \\frac{\\partial J}{\\partial w_j}\\)) using Equation 9, the L2 term (i.e., weight penalty) alters the step:\n\nThe Core Error \\((\\hat{y} - y)x_j\\): Same as above!\nThe Weight Penalty \\(\\frac{\\lambda}{m} w_j\\): The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.\n\n\n\nThe Sum of Convex Functions is Convex\nThe above total cost function \\(J(\\mathbf{w})\\) is composed of two distinct components \\[J(\\mathbf{w}) = \\mathcal{L}_{\\text{cross-entropy}}(\\mathbf{w}) + \\mathcal{L}_{\\text{L2}}(\\mathbf{w})\\]\nTHe Standard negative log-likelihood (cross-entropy loss) for logistic regression is convex.\nL2 Penalty (\\(\\frac{\\lambda}{2m}\\|\\mathbf{w}\\|_2^2\\)) is a quadratic function (“bowl shaped”), which is strictly convex.\nThus logistic regression with L2 penalty has a unique solution\nWe still need to decide which value to use for \\(\\lambda\\), which is a hyperparameter.\nThe optimal value of \\(\\lambda\\) can be estimated with \\(k\\)-Fold Cross-Validation\nHOMEWORK You will receive code for “do-it-yourself” logisitic regression in Python and be askeed to add L2 regularization.",
+    "text": "💡 Intuition for Gradient Descent Updates\nWhen we update our weights (\\(w_j \\leftarrow w_j - \\alpha \\frac{\\partial J}{\\partial w_j}\\)) using Equation 9, the L2 term (i.e., weight penalty) alters the step:\n\nThe Core Error \\((\\hat{y} - y)x_j\\): Same as above!\nThe Weight Penalty \\(\\frac{\\lambda}{m} w_j\\): The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.\n\n\n\nThe Sum of Convex Functions is Convex\nThe above total cost function \\(J(\\mathbf{w})\\) is composed of two distinct components \\[J(\\mathbf{w}) = \\mathcal{L}_{\\text{cross-entropy}}(\\mathbf{w}) + \\mathcal{L}_{\\text{L2}}(\\mathbf{w})\\]\nTHe Standard negative log-likelihood (cross-entropy loss) for logistic regression is convex.\nL2 Penalty (\\(\\frac{\\lambda}{2m}\\|\\mathbf{w}\\|_2^2\\)) is a quadratic function (“bowl shaped”), which is strictly convex.\nThus logistic regression with L2 penalty has a unique solution\nWe still need to decide which value to use for \\(\\lambda\\), which is a hyperparameter.\nThe optimal value of \\(\\lambda\\) can be estimated with \\(k\\)-Fold Cross-Validation\nHOMEWORK You will receive code for “do-it-yourself” logistic regression in Python and be askeed to add L2 regularization.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#sources-and-suggested-rewarding",
+    "href": "lectures/logreg.html#sources-and-suggested-rewarding",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sources and Suggested Rewarding",
+    "text": "Sources and Suggested Rewarding\n\nJames, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning. Springer",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4526,28 +4615,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 33.22%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.08%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.06%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.48%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.12%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.42%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.92%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 33.74%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
