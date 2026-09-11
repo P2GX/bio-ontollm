@@ -725,7 +725,23 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 .pseudocode > ol{ list-style:decimal; padding-left:1.6em; margin:0; }
 .pseudocode ul{ list-style:none; padding-left:1.6em; margin:0.1em 0; }
 .pseudocode li{ margin:0.15em 0; }
-.pseudocode strong{ color:#9a5b00; font-weight:700; }</style>
+.pseudocode strong{ color:#9a5b00; font-weight:700; }
+.question {
+color: #d62728; 
+font-weight: 600;
+}
+.no-border {
+border-collapse: collapse; 
+}
+.no-border th,
+.no-border td {
+border: none !important;
+padding: 0.3em 1em; 
+text-align: left;
+}
+.big-code pre code {
+font-size: 1.4em;
+}</style>
   <style type="text/css">.reveal
 div.sourceCode
 pre
@@ -1750,7 +1766,7 @@ Position-wise, applied independently per token; expands to <span class="math inl
 <aside><ol class="aside-footnotes"><li id="fn1"><p>EOS=end of sequence</p></li></ol></aside></section>
 <section id="autoregressive-text-generation" class="slide level2">
 <h2>Autoregressive text generation</h2>
-<div id="1f84b79f" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="1">
+<div id="20b9144f" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2001,7 +2017,7 @@ P(x_i) = \frac{\exp(z_i / t)}{\sum_j \exp(z_j / t)}
 </tbody>
 </table>
 <div class="small-table">
-<div id="9cbe6517" class="cell" data-execution_count="2">
+<div id="d441723c" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 <style scoped>
