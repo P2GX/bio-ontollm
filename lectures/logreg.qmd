@@ -8,7 +8,7 @@ jupyter: python3
 format: 
   revealjs:
     theme: [default] 
-    css: ../style/styles.css            
+    css: ../style/styles.css
     footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
     slide-number: true
     show-slide-number: all
@@ -85,6 +85,78 @@ We will go over the algorithm in detail, because it is an excellent preparation 
 :::
 
 ![](./img/logistic_regression.png){fig-align="center"}
+
+
+## Logistic regression: review
+
+::: {.mybox}
+The basics are explained very well by Wikipedia (we summarize the Wikipedia entry here!)
+:::
+
+* A group of 20 students spends between 0 and 6 hours studying for an exam. How does the number of hours spent studying affect the probability of the student passing the exam?
+
+::: {.small-text}
+| | | | | | | | | | | | | | | | | | | | |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Hours: $x_i$** | 0.50 | 0.75 | 1.00 | 1.25 | 1.50 | 1.75 | 1.75 | 2.00 | 2.25 | 2.50 | 2.75 | 3.00 | 3.25 | 3.50 | 4.00 | 4.25 | 4.50 | 4.75 | 5.00 | 5.50 |
+| **Pass: $y_i$** | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 |
+
+: Exam pass/fail outcome by hours studied. {#tbl-exam-pass}
+:::
+
+- The logistic function has the form
+$$
+p(x) = \frac{1}{1+e^{-\tfrac{x-\mu}{s}}} 
+$$ {#eq-logistic-fxn}
+
+## Logistic regression: review
+
+- In @eq-logistic-fxn, $\mu$ is the location parameter (midpoint of the curve, $\tfrac{1}{2}$, and $s$ is the scale parameter.
+- We generally rewrite this with $\beta_0 = -\tfrac{\mu}{s}$ and $\beta_1=\tfrac{1}{s}$, yielding
+
+:::{.small-text}
+$$
+p(x) = \frac{1}{1+e^{-\beta_0 + \beta_1x}} 
+$$ {#eq-logistic-fxn2}
+- In our example, $y_k=p(x_k)$ is the probability of passing given $x_k$ hours studied
+:::
+
+
+
+```{python}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from logreg import logreg_example
+logreg_example(figsize=(5,3.5))
+plt.show()
+``` 
+
+## Log odds
+
+- In our example, $\beta_1$ is the log odds of passing for each additional hour studied
+
+$$
+\log\left(\frac{p}{1-p}\right) = \beta_o + \beta_1x
+$$
+
+- In our example, $\beta_1 = 1.505$, so each additional hour of studying increased log odds of passing by 1.5
+- It is more interpretable to use the odds ratio defined as 
+$$
+e^{\beta_1} = e^{1.505}\approx 4.5
+$$
+
+- For each additional hour, we multiply the odds of passing by 4.5
+- We can also perform multiple logistic regression with a vector of variables
+
+$$
+p(\mathbf{x}) = \frac{1}{1+e^{-\beta_0 + \beta_1x + \beta_2x_2+\ldots}} 
+$$ {#eq-logistic-fxn3}
 
 ## The five components of Logistic Regression
 
@@ -210,6 +282,19 @@ $$
 \end{align*}
 $$
 
+## Sigmoid: A convenient identity
+
+$1−\sigma(x) = \sigma(−x)$
+
+<table class="no-border">
+<tbody>
+<tr class="fragment"><td>$1−\sigma(x)$</td><td>$= 1- \dfrac{1}{1+e^{-x}}$</td><td>$\bullet$ definition of $\sigma(x)$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1+e^{-x} - 1}{1+e^{-x}}$</td><td>$\bullet$ common denominator</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{e^{-x}}{1+e^{-x}} \cdot \dfrac{e^{x}}{e^{x}}$</td><td>$\bullet$ multiply by $1=\frac{e^x}{e^x}$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{1+e^{x}}$</td><td>$\bullet$ simplify</td></tr>
+<tr class="fragment"><td></td><td>$= \sigma(-x)$</td><td>$\bullet$ definition of $\sigma(-x)$</td></tr>
+</tbody>
+</table>
 
 ## Logit
 
@@ -222,18 +307,18 @@ $$
 
 ## Proof
 
-$$
-\begin{align*}
-\sigma(\text{logit}(p)) &= \frac{1}{1 + e^{-\left[ \ln \left( \frac{p}{1-p} \right) \right]}} &&\bullet \text{Substitute Logit into Sigmoid } z \\
-&= \frac{1}{1 + e^{\left[ \ln \left( \frac{1-p}{p} \right) \right]}} && \bullet\text{Apply } -\ln(A) = \ln(1/A) \\
-&= \frac{1}{1 + \frac{1-p}{p}} && \bullet\text{Identity: } e^{\ln(x)} = x \\
-&= \frac{1}{\frac{p + 1 - p}{p}} && \\
-&= \frac{1}{1/p} && \bullet\text{Simplify} \\
-&= p && 
-\end{align*}
-$$
+<table class="no-border">
+<tbody>
+<tr class="fragment"><td>$\sigma(\text{logit}(p))$</td><td>$= \dfrac{1}{1 + e^{-\left[ \ln \left( \frac{p}{1-p} \right) \right]}}$</td><td>$\bullet$ Substitute Logit into Sigmoid $z$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{1 + e^{\left[ \ln \left( \frac{1-p}{p} \right) \right]}}$</td><td>$\bullet$ Apply $-\ln(A) = \ln(1/A)$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{1 + \frac{1-p}{p}}$</td><td>$\bullet$ Identity: $e^{\ln(x)} = x$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{\frac{p + 1 - p}{p}}$</td><td>$\bullet$ $1=\tfrac{p}{p}$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{1/p}$</td><td>$\bullet$ Simplify</td></tr>
+<tr class="fragment"><td></td><td>$= p$</td><td></td></tr>
+<tr class="fragment"><td>[Therefore]{style="color: green; font-weight: bold;"}</td><td>The logit is the inverse of the sigmoid</td><td></td></tr>
+</tbody>
+</table>
 
-- [Therefore]{style="color: green; font-weight: bold;"} :The logit is the inverse of the sigmoid function.
 
 
 
@@ -243,17 +328,20 @@ $$
 
 $$
 \begin{array}{c c c c c}
-\mathbf{x}& \longrightarrow & \sigma(z)=\sigma(\mathbf{w}\cdot\mathbf{x}+b) & \longrightarrow & \hat{y}\\
-\text{\small Input features} & & \text{\small Output probability} & & \text{\small Prediction of class label}
+\mathbf{x}& \longrightarrow & \hat{y} = \sigma(z)=\sigma(\mathbf{w}\cdot\mathbf{x}+b) & \longrightarrow \\
+\text{\small Input features} & & \text{\small Output probability} & 
 \end{array}
 $$
+
+- The class label $y$ is 1 (true) or 0 (false)
+- The prediction of the class label $\hat{y}=P(y = 1|x)$ is a real number between 0 and 1
 
 ::: {.callout-note}
 ## Classification Decision Rule
 $$
 \mathrm{classification}(x) = 
 \begin{cases}
-1 & \text{if }P(y = 1|x) > 0.5 \\
+1 & \text{if }\hat{y} > 0.5 \\
 0 & \text{otherwise}
 \end{cases}
 $$
@@ -268,30 +356,7 @@ $$
 - For logistic regression with binary classification, $y$ can be either 0 or 1, but $\hat{y}$ is a probability that ranges from 0 to 1.
 - We measure the difference with the loss function $\mathcal{L}(\hat{y}, y)$
 
-## Loss function
-- Consider the following piecewise loss function
-$$
-\mathcal{L}(\sigma(z), y) = \begin{cases}
--\log \sigma(z) & \text{if } y_i = 1 \\
--\log 1- \sigma(z) & \text{if } y_i = 0 \\
-\end{cases}
-$$
 
-As $\log \sigma(z) \rightarrow 1$, the loss approaches zero
-
-```{python}
-#| echo: false
-#| fig-width: 6
-#| fig-height: 5
-#| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from logreg import plot_loss
-plot_loss(figsize=(4,3))
-plt.show()
-``` 
 
 
 ## Loss function
@@ -318,11 +383,40 @@ $$
 $$
 
 
+## Loss function
+- $- y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\sigma(\mathbf{w}\cdot \mathbf{x} + b))$ is equivalent to the following piecewise loss function
+$$
+\mathcal{L}(\sigma(z), y) = \begin{cases}
+-\log \sigma(z) & \text{if } y_i = 1 \\
+-\log 1- \sigma(z) & \text{if } y_i = 0 \\
+\end{cases}
+$$
+
+- If $y_i=1$, then As $\log \sigma(z) \rightarrow 1$, the loss approaches zero
+
+```{python}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+
+sys.path.append('utils') 
+from logreg import plot_loss
+plot_loss(figsize=(4,3))
+plt.show()
+``` 
+
+::: {.small-text}
+- Also, if $y_i=0$, then the loss approaches zero as  $\sigma(z)\rightarrow 0$
+:::
+
 ## Loss function (sanity check)
 
 $$
 \mathcal{L}_{CE}(\hat{y}, y)
-= - y\log\sigma(\mathbf{Xw} + b) - (1-y)\log(1-\sigma(\mathbf{Xw} + b))
+= - y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\mathbf{w}\cdot \mathbf{x} + b))
 $$
 
 - Note that if we predict (correctly) for a true example that $\hat{y}=1$, then the second term drops out and we have
@@ -363,11 +457,11 @@ The gradient descent algorithm finds the gradient
 of the loss function at the current point and moves the parameters in the opposite direction.
 :::
 
-- Given a learning rate $\eta$ and the gradient of the weights and biases:
-- Each iteration of the GD processes Updates the weights and biases of each layer
+- Given a learning rate $\eta$ and the gradient of the weights and bias:
+- Each iteration of the GD processes Updates the weights and bias
 $$
 \begin{eqnarray*}
-\mathbf{W} &\leftarrow &\mathbf{W} - \eta\Delta \mathbf{W} \\
+\mathbf{w} &\leftarrow &\mathbf{w} - \eta\Delta \mathbf{w} \\
 \mathbf{b} &\leftarrow &\mathbf{b} - \eta\Delta \mathbf{b}
 \end{eqnarray*}
 $$
@@ -416,7 +510,7 @@ plt.show()
 
 ## Calculating derivatives
 
-We need to update each component of the weight vector $\mathbf{w}$, e.g., $w_j$ based on the firstderivative of the loss 
+We need to update each component of the weight vector $\mathbf{w}$, e.g., $w_j$ based on the first derivative of the loss 
 $\mathcal{L}=\mathcal{L}_{CE}(\hat{y}, y)$ with respect to the component.
 
 - Apply the chain rule twice
@@ -427,7 +521,7 @@ $$
 \frac{\partial \mathcal{L}}{\partial \sigma_i} 
 \cdot \frac{\partial  \sigma_i}{\partial z_i}
 \cdot \frac{\partial  z_i}{\partial w_j}
-$$
+$$ {#eq-chain-lr-loss}
 
 
 
@@ -459,17 +553,41 @@ Examples
   - Let $u = 5+3x$, so $y = u^5$
   - $\frac{dy}{du} = 5u^4$ and $\frac{du}{dx} = 3$
   $$\frac{dy}{dx} = 5(5+3x)^4 \cdot 3 = 15(5+3x)^4$$
-
-- **Trig**: $y = \sin(4x+3)$
-  - Let $u = 4x+3$, so $y = \sin(u)$
-  - $\frac{dy}{du} = \cos(u)$ and $\frac{du}{dx} = 4$
-  $$\frac{dy}{dx} = \cos(4x+3) \cdot 4 = 4\cos(4x+3)$$
- 
-
 :::
 ::::
 
+
+## Question {.center background-color="#ffe1f5"}
+
+![](img/stop-and-think-icon.svg){width=20%}
+
+* How does the chain rule work for $\frac{dy}{dx} = \frac{d}{dx}\sin(4x+3)$?
+
+## Answer
+
+$$
+\frac{dy}{dx} = \frac{d}{dx}\sin(4x+3)
+$$
+
+- Use the chain rule to evaluate this expression!
+
+::: {.incremental}
+- [What is $u$?]{.question}
+- Let $u = 4x+3$, so $y = \sin(u)$
+- [What is $\tfrac{dy}{du}$?]{.question}
+- $\frac{dy}{du} = \cos(u)$
+- [What is $\tfrac{du}{dx}$?]{.question}
+- $\tfrac{du}{dx}=\tfrac{d}{dx}4x+3 = 4$
+- [Use the chain rule!]{.question}
+- $\frac{dy}{dx} = \tfrac{dy}{du}\cdot \tfrac{du}{dx} = \cos(u) \cdot 4 = \cos(4x+3) \cdot 4 = 4\cos(4x+3)$
+:::
+
+
+
+
 ## Calculating derivatives
+
+- Let's return to the calculation of the derivative of the loss function for  coefficient $w_j$  of logistic regression (@eq-chain-lr-loss)
 
 $$
 \frac{\partial \mathcal{L}}{\partial w_j} =
@@ -482,41 +600,36 @@ $$
 
 
 
-## Part A: $\frac{\partial \mathcal{L}}{\partial \hat{y}}$: Gradient of the Loss with respect to Prediction
 
-$$
-\begin{align*}
-\frac{\partial \mathcal{L}}{\partial \hat{y}} 
-& = -\frac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})] && \bullet \text{Using } \hat{y}=\sigma(wx+b) \\
-& = -y \frac{\partial }{\partial \hat{y}}\ln \hat{y} - (1-y)\frac{\partial }{\partial \hat{y}}\ln(1-\hat{y}) && \bullet \text{Move constants out of derivative}\\
-& = -\frac{y}{\hat{y}} - (1-y) \frac{-1}{1-\hat{y}} && \bullet \text{Recall } \frac{d \ln x}{dx} = \frac{1}{x} \\
-& = -\frac{y}{\hat{y}} + \frac{1-y}{1-\hat{y}} && \bullet \text{Simplify signs} \\
-& = \frac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})} && \bullet \text{Common denominator} \\
-& = \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})} && \bullet \text{Expand numerator} \\
-& = \frac{\hat{y} - y}{\hat{y}(1-\hat{y})} && \bullet \text{Final result}
-\end{align*}
-$$
+## Part A: $\frac{\partial \mathcal{L}}{\partial \hat{y}}$
 
-
+<table class="no-border">
+<tbody>
+<tr class="fragment"><td>$\dfrac{\partial \mathcal{L}}{\partial \hat{y}}$</td><td>$= -\dfrac{\partial }{\partial \hat{y}} [y \ln \hat{y} + (1-y) \ln(1-\hat{y})]$</td><td>$\bullet$ Using $\hat{y}=\sigma(wx+b)$</td></tr>
+<tr class="fragment"><td></td><td>$= -y \dfrac{\partial }{\partial \hat{y}}\ln \hat{y} - (1-y)\dfrac{\partial }{\partial \hat{y}}\ln(1-\hat{y})$</td><td>$\bullet$ Move constants out of derivative</td></tr>
+<tr class="fragment"><td></td><td>$= -\dfrac{y}{\hat{y}} - (1-y) \dfrac{-1}{1-\hat{y}}$</td><td>$\bullet$  Recall $\dfrac{d \ln x}{dx} = \dfrac{1}{x}$</td></tr>
+<tr class="fragment"><td></td><td>$= -\dfrac{y}{\hat{y}} + \dfrac{1-y}{1-\hat{y}}$</td><td>$\bullet$  Simplify signs</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{-y(1-\hat{y}) + \hat{y}(1-y)}{\hat{y}(1-\hat{y})}$</td><td>$\bullet$  Common denominator</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1-\hat{y})}$</td><td>$\bullet$  Expand numerator</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{\hat{y} - y}{\hat{y}(1-\hat{y})}$</td><td>$\bullet$  Final result</td></tr>
+</tbody>
+</table>
 
 
 ## Part B: derivative of the sigmoid activation function
 
- 
-$$
-\begin{align*}
-\dfrac{d\sigma(x)}{dx} & = \dfrac{d}{dx} \dfrac{1}{1+e^{-x}} \\
-& = \dfrac{-1}{(1+e^{-x})^2}\cdot (-e^{-x}) && \bullet \text{chain rule} \\
-& = \dfrac{e^{-x}}{(1+e^{-x})^2} && \bullet \text{simplify}\\
-& = \dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}} && \bullet \text{rearrange}\\
-& = \sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}} && \bullet \text{definition of } \sigma(x)\\
-& = \sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}} && \bullet \text{add and subtract 1}\\
-& = \sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right) && \bullet \text{rearrange}\\
-& = \sigma(x) \cdot \left( 1 -\sigma(x) \right) && \bullet \text{simplify using definition of } \sigma(x)
-\end{align*}
-$$
-
-
+<table class="no-border">
+<tbody>
+<tr class="fragment"><td>$\dfrac{d\sigma(x)}{dx}$</td><td>$= \dfrac{d}{dx} \dfrac{1}{1+e^{-x}}$</td><td></td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{-1}{(1+e^{-x})^2}\cdot (-e^{-x})$</td><td>$\bullet$ chain rule with $u=1+e^{-x}$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{e^{-x}}{(1+e^{-x})^2}$</td><td>$\bullet$ simplify</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{1+e^{-x}} \cdot \dfrac{e^{-x}}{1+e^{-x}}$</td><td>$\bullet$ rearrange</td></tr>
+<tr class="fragment"><td></td><td>$= \sigma(x) \cdot \dfrac{e^{-x}}{1+e^{-x}}$</td><td>$\bullet$ definition of $\sigma(x)$</td></tr>
+<tr class="fragment"><td></td><td>$= \sigma(x) \cdot \dfrac{1 + e^{-x} - 1}{1+e^{-x}}$</td><td>$\bullet$ add 1, subtract 1</td></tr>
+<tr class="fragment"><td></td><td>$= \sigma(x) \cdot \left( \dfrac{1 + e^{-x} }{1+e^{-x}} -\dfrac{1}{1+e^{-x}} \right)$</td><td>$\bullet$ rearrange</td></tr>
+<tr class="fragment"><td></td><td>$= \sigma(x) \cdot \left( 1 -\sigma(x) \right)$</td><td>$\bullet$ simplify using definition of $\sigma(x)$</td></tr>
+</tbody>
+</table>
 
 
 ##  derivative of the sigmoid activation function
@@ -598,15 +711,15 @@ plt.show()
 
 ## Basic idea of gradient descent
 
-* Update the weights and biases of each layer
+* Update the weights and biases 
 $$
 \begin{eqnarray*}
-\mathbf{W} &\leftarrow &\mathbf{W} - \eta\Delta \mathbf{W} \\
+\mathbf{w} &\leftarrow &\mathbf{w} - \eta\Delta \mathbf{w} \\
 \mathbf{b} &\leftarrow &\mathbf{b} - \eta\Delta \mathbf{b}
 \end{eqnarray*}
 $$
 
-* Gradient descent is used in a variety of settings outside of back prop. Let's do one simple example -- finding the minimum of a function
+* Let's do one simple example -- finding the minimum of a function
 
 $$
 f(x) = 7x^2 + 3x-9
@@ -621,7 +734,7 @@ x &=& - \dfrac{3}{14}
 \end{eqnarray*}
 $$
 
-* To use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size $\eta$ ("eta").
+* To use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size $\eta$^[$\eta$="eta"]
 
 $$
 x \leftarrow x-\eta (14x +3 )
@@ -771,72 +884,6 @@ example at a time
 - Modern hardware lets mini-batch training be vectorized for efficiency 
 
 
-## Vectorized representation
-
-
-::: {.callout-note appearance="simple" title="Sigmoid function"}
-It is convenient to stack many examples into a matrix
-:::
-
-
-$$
-\mathbf{\hat{y}} = \sigma(\mathbf{Xw} + b)
-$$
-
-
-- Dimensions
-
-$$
-\underbrace{\hat{\mathbf{y}}}_{m \times 1} = \sigma \left( 
-\underbrace{\mathbf{X}}_{m \times n} \cdot 
-\underbrace{\mathbf{w}}_{n \times 1} + b 
-\right)
-$$
-
-
-:::: {.columns}
-
-::: {.column width="40%"}
-
-- Rows of $X$ = Observations (e.g., $m$ Patients)
-- Columns of $X$: Features ($n$ items in this example)
-
-:::
-::: {.column width="60%"}
-
-$$
-\mathbf{X} = 
-\begin{pmatrix}
-x_{1,1} & x_{1,2} & \cdots & x_{1,n} \\
-x_{2,1} & x_{2,2} & \cdots & x_{2,n} \\
-\vdots  & \vdots  & \ddots & \vdots  \\
-x_{m,1} & x_{m,2} & \cdots & x_{m,n}
-\end{pmatrix}
-$$
-
-:::
-::::
-
-
-## Softmax
-
-- The softmax is a generalization of the sigmoid
-
-$$
-\begin{align*}
-\sigma(z) & = \frac{1}{1+e^{-z}} \\
-\mathrm{softmax}(z_i) & = \frac{e^{z_i}}{\sum_{j=1}^K e^{-z_j}} 
-\end{align*}
-$$
-
-
-
-
-- The softmax function takes a vector $z = [z_1, z_2,\ldots, z_K]$ of $K$ arbitrary values and maps them to a probability distribution, with each value in the range [0,1], and all the values summing to 1.
-- $z$, the vector of scores that is the input to the softmax are called **logits** (as with sigmoid)
-- This allows us to perform logistic regression for $>2$ outcomes
-- Softmax will be important for neural networks and transformers, we will discuss more later.
-
 
 ## [Part 4: Python implementation from scratch]{#part-4}
 
@@ -865,7 +912,7 @@ $$
 \sigma(z) = \frac{1}{1+e^{-z}} = \frac{1}{1+\exp(-z)}
 $$
 
-
+::: {style="font-size: 1.4em;"}
 ```python
 import numpy as np
 import numpy.typing as npt
@@ -873,11 +920,14 @@ import numpy.typing as npt
 def sigmoid(z: npt.NDArray) -> npt.NDArray:
     return 1 / (1 + np.exp(-z))
 ```
+:::
 
 -  NumPy N-Dimensional Array: the function takes an array and returns an array
 - The function takes the data (X,y) and the current values of the parameters w and b
 
 ## Cost function
+
+::: {style="font-size: 1.4em;"}
 ```python
 def cost_function(
     X: npt.NDArray, 
@@ -897,6 +947,8 @@ def cost_function(
 
     return (1 / m) * cost_sum
 ```
+:::
+
 - i.e., we calculate the Binary Cross-Entropy Cost Function
 $$
 C(w,b) = \frac{1}{m} \mathcal{L}(\sigma(z_i), y_i)
@@ -905,8 +957,11 @@ $$
 
 
 ##  Gradient Function
-- compute derivatives of the cost function
 
+:::: {.columns}
+::: {.column width=60%}
+
+::: {style="font-size: 1.4em;"}
 ```python
 def gradient_function(
     X: npt.NDArray, 
@@ -919,15 +974,11 @@ def gradient_function(
     grad_b = 0.0
 
     for i in range(m):
-        # Calculate prediction error for the i-th example
         z = float(np.dot(w, X[i]) + b)
         g = sigmoid(z)
         error = g - y[i]
-
-        # Accumulate bias gradient
         grad_b += error
         
-        # Accumulate weight gradients for each feature j
         for j in range(n):
             grad_w[j] += error * X[i, j]
 
@@ -937,14 +988,24 @@ def gradient_function(
 
     return grad_b, grad_w
 ```
-$$
-\frac{\partial C}{\partial w_j} = \frac{1}{m}\sum_{i=1}^m(\sigma(z_i)  - y_i)x_{i,j} \quad\text{ and }\quad
-\frac{\partial C}{\partial b} = \frac{1}{m}\sum_{i=1}^m(\sigma(z_i)  - y_i) 
-$$
+:::
+:::
+::: {.column width=10%}
+:::
+::: {.column width=30%}
+
+
+ Compute derivatives of the cost function
+
+ * $\dfrac{\partial C}{\partial w_j} = \frac{1}{m}\sum_{i=1}^m(\sigma(z_i)  - y_i)x_{i,j}$
+ * $\dfrac{\partial C}{\partial b} = \frac{1}{m}\sum_{i=1}^m(\sigma(z_i)  - y_i)$
+
+:::
+::::
 
 ## Gradient descent
 
-
+::: {style="font-size: 1.4em;"}
 ```python
 def gradient_descent(X: npt.NDArray, 
     y: npt.NDArray, 
@@ -965,13 +1026,17 @@ def gradient_descent(X: npt.NDArray,
     
     return w, b
 ```
-$$
-w_j \leftarrow w_j - \eta \frac{\partial C}{\partial w_j}  \quad\text{ and }\quad
-b \leftarrow b - \eta \frac{\partial C}{\partial b}  
-$$
+:::
+
+* 
+$$w_j \leftarrow w_j - \eta \frac{\partial C}{\partial w_j}$$
+
+* 
+$$b \leftarrow b - \eta \frac{\partial C}{\partial b}$$
 
 ## Prediction
 
+::: {style="font-size: 1.4em;"}
 ```python
 def predict(
     X: npt.NDArray, 
@@ -988,6 +1053,8 @@ def predict(
     
     return preds
 ```
+:::
+
 
 $$
 pred(i) = \begin{cases}
@@ -998,6 +1065,8 @@ $$
 
 
 ## Running
+
+::: {style="font-size: 1.4em;"}
 ```python 
 learning_rate = 0.01
 iterations = 10000
@@ -1008,6 +1077,8 @@ predictions = predict(X_train, final_w, final_b)
 accuracy = np.mean(predictions == y_train) * 100
 print(f"training accuracy: {accuracy:.2f}%")
 ````
+
+
 ```bash
 Iteration 0: Cost 0.6863856844505929
 Iteration 1000: Cost 0.24893304312617473
@@ -1021,6 +1092,7 @@ Iteration 8000: Cost 0.13704269179323025
 Iteration 9000: Cost 0.13464584006217875
 training accuracy: 95.60%
 ```
+:::
 
 ## Decision decision_boundary
 - As mentioned above, the decision boundary for the output of the sigmoid function is typically taken to be 0.5:

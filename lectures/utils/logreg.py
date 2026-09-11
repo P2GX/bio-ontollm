@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
-
+from sklearn.linear_model import LogisticRegression
 
 
 
@@ -128,4 +128,82 @@ def plot_loss(figsize=(7, 4.5)):
     ax.grid(axis='both', linestyle='--', alpha=0.5)
 
     plt.tight_layout()
-    
+
+
+def logreg_example(figsize=(7, 5)):
+    """
+    Logistic regression example: probability of passing an exam as a function
+    of hours studied.
+
+    Data source: the classic Wikipedia "Logistic regression" example dataset.
+    """
+
+   
+
+    # --- Data -------------------------------------------------------------
+    hours = np.array([
+        0.50, 0.75, 1.00, 1.25, 1.50, 1.75, 1.75, 2.00, 2.25, 2.50,
+        2.75, 3.00, 3.25, 3.50, 4.00, 4.25, 4.50, 4.75, 5.00, 5.50
+    ])
+    passed = np.array([
+        0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
+        1, 0, 1, 0, 1, 1, 1, 1, 1, 1
+    ])
+
+    X = hours.reshape(-1, 1)
+    y = passed
+
+    # --- Fit logistic regression -------------------------------------------
+    # Use a very small L2 penalty (large C) so the fit is close to an
+    # unregularized MLE fit, matching the classic textbook coefficients.
+    model = LogisticRegression(C=1e6)
+    model.fit(X, y)
+
+    beta0 = model.intercept_[0]
+    beta1 = model.coef_[0][0]
+    #print(f"Fitted model: logit(p) = {beta0:.4f} + {beta1:.4f} * hours")
+
+    # Hours at which predicted probability of passing = 0.5
+    x_50 = -beta0 / beta1
+    #print(f"Hours needed for 50% pass probability: {x_50:.3f}")
+
+    # --- Build smooth curve for plotting -----------------------------------
+    x_smooth = np.linspace(0, 6, 300).reshape(-1, 1)
+    y_prob = model.predict_proba(x_smooth)[:, 1]
+
+    # --- Plot ---------------------------------------------------------------
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # Scatter of raw observations, jittered slightly in y for visibility
+    # where points overlap (e.g., the two 1.75-hour observations).
+    ax.scatter(
+        hours, passed,
+        facecolors="none", edgecolors="black", s=60, zorder=3,
+        label="Observed outcome"
+    )
+
+    # Fitted logistic curve
+    ax.plot(
+        x_smooth, y_prob,
+        color="#1f77b4", linewidth=2, zorder=2,
+        label="Fitted logistic curve"
+    )
+
+    # Reference lines at p = 0.5
+    ax.axhline(0.5, color="gray", linestyle="--", linewidth=1)
+    ax.axvline(x_50, color="gray", linestyle="--", linewidth=1)
+    ax.annotate(
+        f"{x_50:.2f} h",
+        xy=(x_50, 0.5), xytext=(x_50 + 0.15, 0.08),
+        fontsize=9, color="gray"
+    )
+
+    ax.set_xlabel("Hours studied ($x_k$)")
+    ax.set_ylabel("Probability of $y_k$")
+    ax.set_ylim(-0.05, 1.05)
+    ax.set_xlim(0, 6)
+    ax.legend(loc="lower right", frameon=False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    fig.tight_layout()

@@ -278,3 +278,24 @@ table.small-table td.greycell {
 .pseudocode ul{ list-style:none; padding-left:1.6em; margin:0.1em 0; }
 .pseudocode li{ margin:0.15em 0; }
 .pseudocode strong{ color:#9a5b00; font-weight:700; }
+
+
+.question {
+  color: #d62728;   /* pick whatever color you like */
+  font-weight: 600;
+}
+
+
+.no-border {
+  border-collapse: collapse; /* avoids double-border artifacts from spacing */
+}
+.no-border th,
+.no-border td {
+  border: none !important;
+  padding: 0.3em 1em; /* keep some breathing room since border spacing is gone */
+  text-align: left;
+}
+
+.big-code pre code {
+  font-size: 1.4em;
+}

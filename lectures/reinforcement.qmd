@@ -185,6 +185,86 @@ $$
 - We ask humans to indicate which answer they prefer and rank the answers
 - Answers that are chosen get a high reward, those that are not get a low reward
 
+
+## Training an LLM
+
+
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+import matplotlib.pyplot as plt
+from reinforce_plots import pipeline
+fig = pipeline()
+plt.show()
+```
+
+
+
+## Steps of LLM-RL
+
+::: {.mybox}
+**Warning**:
+
+- Reinforcement learning for LLMs is a very active area of research and there are many different approaches and algorithms
+- In this lecture, we will focus on the approach presented in the InstructGPT paper
+- This approach is no longer used in modern models, but it is a good place to start to learn about LLM-RL
+- At the end of the talk, we will present a selected list of new developments
+:::
+
+- todo
+
+## pretraining
+
+-- todo, summarize learn next token
+
+
+## Question {.center background-color="#ffe1f5"}
+
+![](img/stop-and-think-icon.svg){width=60%}
+
+- Why exactly are pretrained models not ready to chat with users?
+
+## Pretraining 
+::: {.mybox}
+**Base Model**:
+
+- Pretrained LLMs are trained to do next-token prediction or text continuation based on web-scale statistical association.
+:::
+
+::: {.small-text}
+- For example, if the user prompt is
+
+> Translate the following English sentence to Spanish: "The weather is nice today!"
+
+- a language model trained only to predict the most likely continuations might respond:
+
+> Translate the following English sentence to Spanish: "The weather is nice today!" Also, I want to know how to order coffee in Spanish?
+
+- Whereas actually, we want a response such as
+
+> Translate the following English sentence to Spanish: "The weather is nice today!" "El tiempo está precioso hoy."
+
+:::
+
+## Supervised fine tuning (SFT)
+
+::: {.mybox}
+- Right after pretraining, the LLM is essentially trained to autocomplete
+- This is not necessarily what humans want.
+- To implement a chatbot, the LLM needs to respond in a question/answer format
+:::
+
+- Start from a pretraining language model
+- Create a collection of desired model behavior (e.g., question answering)
+- Train with standard supervised learning on prompt-response pairs
+- Following SFT,^[SFT is also known as Instruction fune tuning (IFT)] the model can answer questions 
+- SFT can be used to adapt the base LLM to many other domains
+
+
 ## Architecture of the RL/LLM reward model  {#sec-reward-1}
 
 ![](./img/rl-llm-2.png)
