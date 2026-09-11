@@ -34,6 +34,144 @@ This lecture provides an introduction to the Reinforcement Learning with an emph
 - [Reward to go](#reward-to-go)
 - [Subtracting baselines](#baselines)
 
+
+## Pretraining vs. Posttraining
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+import matplotlib.pyplot as plt
+from reinforce_plots import training_stages
+fig = training_stages(include=["Stage 0", "Stage 1"])
+plt.show()
+```
+
+- Pretraining teaches the model to predict the next token
+
+## Pretraining vs. Posttraining
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+import matplotlib.pyplot as plt
+from reinforce_plots import training_stages
+fig = training_stages(include=["Stage 2", "Stage 3"])
+plt.show()
+```
+
+- Instruction fine tuning teaches the model to answer questions (to be a chatbot)
+- Preference fine tuning (Reinforcement learning) teaches the model to respond in ways that correspond to human preferences
+
+
+## Today
+
+- Today we will focus on instruction fine tuning and reinforcement learning with human feedback 
+- There is more than one way to do it: There is an enormous variety of posttraining approaches that we will not cover today. This is where the magic happens in modern LLMs, but it would require an additional course to do it justice
+- You will learning some basic ideas of posttraining that will put you in a good position to understand more sophisticated approaches
+
+## IFT (Instruction Fine-Tuning) and SFT (Supervised Fine-Tuning) 
+
+::: {.mybox}
+** IFT vs SFT**:
+
+- These terms are nearly synonyms
+:::
+
+- SFT: fine-tuning a pretrained model on labeled input-output pairs using standard supervised learning (cross-entropy loss on target tokens, conditioned on some input).
+- **IFT**: A specific kind of SFT where the training data is specifically instruction/response pairs (e.g. "Summarize this text: ..." → summary; "Write a poem about X" → poem). 
+
+The goal of IFT is to get the model to behave like a chatbot, i.e., to follow natural lanugage instructions and conduct a conversation, rather than just continuing the input text
+
+
+## Intuition: Before IFT
+
+::: {style="background-color:#FEF2F2; border-left: 5px solid #DC2626; padding: 12px 16px; border-radius: 6px; margin-bottom: 10px;"}
+**Prompt:** What is the most delicious Spanish appetizer?
+
+**Response:** What is the most delicious Spanish appetizer? What is the most delicious Mexican appetizer? What is the most delicious Portuguese appetizer? These are the kinds of questions readers ask us all the time here on the blog, so we decided to put together a definitive ranking...
+:::
+
+- The raw model isn't "answering" so much as continuing the statistical pattern (predicting the next token)
+- The text might resemble some blog text about appetizers, but it is not answering the user's question directly
+
+## Intuition: After IFT
+
+::: {style="background-color:#F0FDF4; border-left: 5px solid #16A34A; padding: 12px 16px; border-radius: 6px; margin-bottom: 10px;"}
+**Prompt:** What is the most delicious Spanish appetizer?
+
+**Response:** A top pick is patatas bravas (fried potatoes with a spicy tomato sauce and aioli).
+:::
+
+- After instruction tuning, the model recognizes the input as a request directed at it
+- The model produces a direct answer instead of continuing a hypothetical document
+
+## Chat Templates
+
+Each major LLM has a template structure that organizes the main components of the chat so the model can recognize them.
+
+
+- Unambiguous structure
+- Allow multiturn conversations
+- Enables use of APIs 
+
+## Example
+
+```text
+messages = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Hello!"},
+    {"role": "assistant", "content": "Hi! How can I help you today?"},
+    {"role": "user", "content": "What's the weather?"},
+]
+```
+
+:::{.small-text}
+This example is taken from the Hugging Face LLM course
+:::
+
+
+- The format and keywords vary for some models
+- This is the style for OpenAI style and Qwen
+- `im` stands for *instruction message* (e.g., `im_start` refers to the start of the instruction message)
+
+```text
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+Hello!<|im_end|>
+<|im_start|>assistant
+Hi! How can I help you today?<|im_end|>
+<|im_start|>user
+What's the weather?<|im_start|>assistant
+```
+
+## IFT Best Practices
+
+- High quality completions needed 
+- Generally, modern LLMs train with on the order of 1 million prompts
+
+
+<table style="border-collapse: collapse; width: 100%;" border="1">
+<thead>
+<tr><td>Item</td><td>Pretraining</td><td>IFT</td></tr>
+</thead>
+<tbody>
+<tr><td>Data</td><td>enormous</td><td>ca. 1 million prompt completions</td></tr>
+<tr><td>Batch size</td><td>256</td><td>1024-2048</td></tr>
+<tr><td>Learning rate</td><td>$1\times 10^{-5}$</td><td>$3\times 10^{-4}$</td></tr>
+<tr><td>Loss function</td><td>CE</td><td>CE</td></tr>
+</tbody>
+</table>
+
+* **Learning Rate**: Lower the learning rate during instruction fine-tuning (IFT) to prevent overfitting on the narrower data distribution.
+* **Loss Masking**: Apply cross-entropy (CE) loss exclusively on the assistant tokens rather than the prompt tokens.
+
 ## RL, GPT, and ChatGPT
 
 ::: {.mybox}

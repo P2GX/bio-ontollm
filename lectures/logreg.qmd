@@ -640,7 +640,7 @@ $$
 \frac{d\sigma(x)}{dx} = \sigma(x)(1-\sigma(x))
 $$
 
-- Substituing and remembering that we define
+- Substituting and remembering that we define
 $$
 \hat{y} = \sigma(\mathbf{w}\cdot\mathbf{x} + b)
 $$
@@ -878,7 +878,7 @@ $$
 
 - Stochastic gradient descent is called stochastic because it chooses a single random
 example at a time
-- Batch training trains over all examples before adjusting parenters
+- Batch training trains over all examples before adjusting parameters
 - Since the total Cost $J$ is the average of all individual losses ($\frac{1}{m} \sum \mathcal{L}$), the derivative of the total cost is simply the average of the individual derivatives:$$\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}$$
 - In **Mini-batch** training, we train on a group of examples at a time, and take the average loss of these examples.
 - Modern hardware lets mini-batch training be vectorized for efficiency 
@@ -1269,4 +1269,11 @@ $$J(\mathbf{w}) = \mathcal{L}_{\text{cross-entropy}}(\mathbf{w}) + \mathcal{L}_{
 - We still need to decide which value to use for $\lambda$, which is a [hyperparameter]{style="color: green; font-weight: bold;"}.
 - The optimal value of $\lambda$ can be estimated with $k$-Fold Cross-Validation
 
--  [HOMEWORK]{.hw-badge} You will receive code for "do-it-yourself" logisitic regression in Python and be askeed to add L2 regularization.
+-  [HOMEWORK]{.hw-badge} You will receive code for "do-it-yourself" logistic regression in Python and be askeed to add L2 regularization.
+
+
+
+## Sources and Suggested Rewarding
+
+
+- James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). [An introduction to statistical learning. Springer](https://link.springer.com/book/10.1007/978-3-031-38747-0)
