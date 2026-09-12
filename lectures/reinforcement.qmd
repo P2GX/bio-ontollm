@@ -1,6 +1,6 @@
 ---
 title: "Approaches to biomedical knowledge"
-subtitle: "Session #12: Reinforcement learning"
+subtitle: "Session #12: Posttraining: IFT and RLHF"
 author: "Peter N Robinson"
 institute: "Free University Berlin"
 date: 2026-04-26
@@ -26,16 +26,40 @@ format:
 
 ::: {.callout-note}
 ## Game plan
-This lecture provides an introduction to the Reinforcement Learning with an emphasis on its use to train LLMs
+Predicting the next token is great, but it does not a chatbot make.
+
+- Various additional training stages are performed to extend and refine the capabilities of models
+- The most important steps are  instruction fine tuning and reinforcement learning
+
 :::
 
-- [Reinforcment learning: Basic ideas](#basic-rl)
+- [Pretraining vs posttraining](#pre-vs-post)
+- [Instruction Fine Tuning (IFT)](#ift)
+- [Reinforcment learning: Basic ideas and relationship to RLHF](#basic-rl)
 - [Policy gradient optimization](#policy-gradient)
 - [Reward to go](#reward-to-go)
 - [Subtracting baselines](#baselines)
 
+## AI-human Alignment
 
-## Pretraining vs. Posttraining
+- An LLM is typically pretrained on massive amounts of data
+- With this, the LLM can complete the prompt in a reasonable way
+- What if we want to cause the model to have certain behaviors?
+    - Do not use offensive language
+    - Do not follow sexist or racist stereotypes
+    - Answer questions at an easy or sophisticated level
+
+
+:::{.mybox}
+### AI-human Alignment
+
+- The overall goal of AI alignment is to align a models output with some desired behavior
+- This is the point of post-training (IFT and RLHF)
+:::
+
+
+
+## Pretraining vs. Posttraining {#pre-vs-post}
 
 ```{python}
 #| echo: false
@@ -61,32 +85,61 @@ import matplotlib.pyplot as plt
 sys.path.append('utils') 
 import matplotlib.pyplot as plt
 from reinforce_plots import training_stages
-fig = training_stages(include=["Stage 2", "Stage 3"])
+fig = training_stages(include=["Stage 2"])
 plt.show()
 ```
 
 - Instruction fine tuning teaches the model to answer questions (to be a chatbot)
-- Preference fine tuning (Reinforcement learning) teaches the model to respond in ways that correspond to human preferences
 
+## Pretraining vs. Posttraining
 
-## Today
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+import matplotlib.pyplot as plt
+from reinforce_plots import training_stages
+fig = training_stages(include=["Stage 3"])
+plt.show()
+```
 
-- Today we will focus on instruction fine tuning and reinforcement learning with human feedback 
-- There is more than one way to do it: There is an enormous variety of posttraining approaches that we will not cover today. This is where the magic happens in modern LLMs, but it would require an additional course to do it justice
-- You will learning some basic ideas of posttraining that will put you in a good position to understand more sophisticated approaches
+- Preference fine tuning (Reinforcement learning) teaches the model to respond in ways that correspond to human preferences (to be a _useful_ chatbot)
 
-## IFT (Instruction Fine-Tuning) and SFT (Supervised Fine-Tuning) 
+## Pretraining vs. Posttraining
 
-::: {.mybox}
-** IFT vs SFT**:
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+import matplotlib.pyplot as plt
+from reinforce_plots import training_stages
+fig = training_stages(include=["Stage 4"])
+plt.show()
+```
 
-- These terms are nearly synonyms
+- Reasoning fine-tuning intends to improve multi-step logical deduction, problem-solving, mathematical capability, and coding performance of LLMs
+- We will not cover RFT in this course
+
+::: {.small-text}
+More information
+
+- Chen X et al. (2026) [Putting on the Thinking Hats: A Survey on Chain of Thought Fine-tuning from the Perspective of Human Reasoning Mechanism. arxiv 2510.13170](https://arxiv.org/abs/2510.13170)
 :::
 
-- SFT: fine-tuning a pretrained model on labeled input-output pairs using standard supervised learning (cross-entropy loss on target tokens, conditioned on some input).
-- **IFT**: A specific kind of SFT where the training data is specifically instruction/response pairs (e.g. "Summarize this text: ..." → summary; "Write a poem about X" → poem). 
 
-The goal of IFT is to get the model to behave like a chatbot, i.e., to follow natural lanugage instructions and conduct a conversation, rather than just continuing the input text
+## IFT (Instruction Fine-Tuning) and SFT (Supervised Fine-Tuning){#ift}
+
+
+- **SFT**: fine-tuning a pretrained model on labeled input-output pairs using standard supervised learning (cross-entropy loss on target tokens, conditioned on some input).
+- **IFT**: A specific kind of SFT where the training data is specifically instruction/response pairs, for instance:
+    - **prompt**: "Summarize this text: ..." → **completion**: An actual summary of the text
+    - **prompt**: "Write a poem about X" → **completion**: A poem about X. 
+
+The goal of IFT is therefore to get the model to behave like a chatbot, i.e., to follow natural language instructions and conduct a conversation, rather than just continuing the input text
 
 
 ## Intuition: Before IFT
@@ -94,7 +147,8 @@ The goal of IFT is to get the model to behave like a chatbot, i.e., to follow na
 ::: {style="background-color:#FEF2F2; border-left: 5px solid #DC2626; padding: 12px 16px; border-radius: 6px; margin-bottom: 10px;"}
 **Prompt:** What is the most delicious Spanish appetizer?
 
-**Response:** What is the most delicious Spanish appetizer? What is the most delicious Mexican appetizer? What is the most delicious Portuguese appetizer? These are the kinds of questions readers ask us all the time here on the blog, so we decided to put together a definitive ranking...
+**Response:** What is the most delicious Spanish appetizer? What is the most delicious Mexican appetizer? What is the most delicious Portuguese appetizer? 
+These are the kinds of questions that get asked all the time, so we decided to put together a definitive ranking...
 :::
 
 - The raw model isn't "answering" so much as continuing the statistical pattern (predicting the next token)
@@ -119,6 +173,13 @@ Each major LLM has a template structure that organizes the main components of th
 - Unambiguous structure
 - Allow multiturn conversations
 - Enables use of APIs 
+
+::: {.mybox}
+
+- chat templates are required to format data for training so the models recognize the components of the message (system, user, assistent, in some cases tools)
+
+:::
+
 
 ## Example
 
@@ -159,7 +220,7 @@ What's the weather?<|im_start|>assistant
 
 <table style="border-collapse: collapse; width: 100%;" border="1">
 <thead>
-<tr><td>Item</td><td>Pretraining</td><td>IFT</td></tr>
+<tr><td><b>Item</b></td><td><b>Pretraining</b></td><td><b>IFT</b></td></tr>
 </thead>
 <tbody>
 <tr><td>Data</td><td>enormous</td><td>ca. 1 million prompt completions</td></tr>
@@ -169,34 +230,68 @@ What's the weather?<|im_start|>assistant
 </tbody>
 </table>
 
-* **Learning Rate**: Lower the learning rate during instruction fine-tuning (IFT) to prevent overfitting on the narrower data distribution.
-* **Loss Masking**: Apply cross-entropy (CE) loss exclusively on the assistant tokens rather than the prompt tokens.
+## Question {.center background-color="#ffe1f5"}
 
-## RL, GPT, and ChatGPT
+![](img/stop-and-think-icon.svg){width=60%}
 
-::: {.mybox}
-- Reinforcement learning was a key idea to take early versions of GPT to the current versions of chat agents such as ChatGPT
-- We will not examine all technical details, but do intend to provide intuition for the **three main innovations**
+- The learning rate is typically $3\times 10^{-4}$ in pretraining but only $1\times 10^{-5}$ for IFT. _Why is this_?
+
+## Answer
+
+- A lower learning rate is used during instruction fine-tuning (IFT) than during pretraining
+- IFT uses a much smaller amoutn of training data and therefore has a narrower data distribution.
+- The lower learning rate is thought to help prevent overfitting on the IFT prompts
+
+## Question {.center background-color="#ffe1f5"}
+
+![](img/stop-and-think-icon.svg){width=60%}
+
+- During pretraining, the model learns to predict the next token. The entire input texts are used
+- Both pretraining and IFT use the same kind of cross-entropy (CE) loss
+- During IFT, the model is training on prompt-completion pairs. What part of this data is used for training?
+
+
+## Answer
+
+- **Loss Masking**: In IFT,  cross-entropy (CE) loss is applied exclusively on the assistant tokens (i.e., the completions, not the prompts)
+- **Prompt tokens**: The prompt tokens are masked (removed) from the loss calculation
+- We want the model's objective to be focussed on  generating accurate, context-aware completions
+- The foundational language model has already learned grammar, syntax, and general world knowledge during pretraining, and so the IFT phase can focus just on generation of completions
+
+::: {.small-text}
+More information:
+- Huerta-Enochian M and Ko SY (2024) [Instruction Fine-Tuning: Does Prompt Loss Matter? arXiv 2401.13586](https://arxiv.org/abs/2401.13586)
 :::
 
-1. **Policy gradient** 
-2. **Advantage**
-3. **PPO's clipped update** 
+
+## IFT pipeline
+
+<table class="no-border">
+<thead>
+<tr><td><b>Step</b></td><td><b>Key resource</b></td><td><b>Purpose</b></td></tr>
+</thead>
+<tbody>
+<tr class="fragment"><td>Dataset formatting</td><td>chat templates</td><td>architecture learns to distinguish between user inputs and assistant outputs.</td></tr>
+<tr class="fragment"><td>Tokenization and sequence packing</td><td>Raw text is tokenized into IDs and concatenated</td><td>maximize GPU memory utilization and minimize wasted padding compute</td></tr>
+<tr class="fragment"><td>Loss masking </td><td>CE loss computed only on the assistant completion tokens; prompt tokens assigned a loss weight of zero</td><td>gradients focus exclusively on generation quality</td></tr>
+<tr class="fragment"><td>Optimizer and learning rate configuration</td><td>AdamW optimizer with reduced peak learning rate</td><td>Do not erase pre-trained representations</td></tr>
+<tr class="fragment"><td>Parameter strategy selection</td><td>Full-parameter updates or Parameter-Efficient Fine-Tuning (PEFT) methods like LoRA or QLoRA</td><td>Target attention projections to adapt weights efficiently</td></tr>
+</tbody>
+</table>
 
 
-## AI-human Alignment
 
-- An LLM is typically pretrained on massive amounts of data
-- With this, the LLM can complete the prompt in a reasonable way
-- What if we want to cause the model to have certain behaviors?
-    - Do not use offensive language
-    - Do not follow sexist or racist stereotypes
-    - Answer questions at an easy or sophisticated level
+## RLHF, GPT, and ChatGPT {#basic-rl}
+
+:::{.mybox}
+- Reinforcement learning was a key idea to take early versions of GPT to the current versions of chat agents such as ChatGPT
+- We will present a somewhat simplified version of **InstructGPT**
+- This is a rapidly moving and important field with several major advances in recent years, such as those of DeepView
+:::
 
 
-- The overall goal of AI alignment is to align a models output with some desired behavior
 
-## RL process
+## Reinforcement Learning (RL): Basics
 
 - An **agent** iteratively takes **actions** within an **environment** according to a **policy**.
 - The state at time (step) $t$ is denote $s_t$, and the action that is proposed at this step is denote $a_t$
@@ -216,21 +311,17 @@ image source: Reinforcement Learning: An Introduction, Richard Sutton and Andrew
 ## Actions and Transitions
 
 
-- The policy outputs an action based on the current state. The probability of action $a_t$ is $\pi_\theta(a_t\mid s_t)$.
-- After the policy outputs an action, the state of the environment will be updated according to the **transition function**^[You will see this in general explanations of reinforcement learning, but it is trivial and often omitted in descriptions of RL as applied to LLMs]
+- The policy outputs an action based on the current state. The probability of action $a_t$ given that we are currently in state $s_t$ is
+$$
+\pi_\theta(a_t\mid s_t)
+$$ {#eq-policy-definition}
+
+- After the policy outputs an action, the state of the environment will be updated according to the **transition function**^[Note: the transition function is generally deterministic for LLM-RLHF]
 
 $$
 P(s_{t+1} |  s_t, a_t) 
 $$ {#eq-transition-fxn}
 
-- In the context of using reinforcement learning with LLMs, the softmax output is the policy $\pi_\theta(a_t\mid s_t)$
-- The next state (the new prompt with that token appended) follows deterministically so 
-$$
-P(s_{t+1} | a_t, s_t)= \begin{cases} 1 & \text{if } s_{t+1} \text{ is } s_{t} \text{ with } a_t \text{ appended }\\
-0 & \text{otherwise}
-\end{cases}
-$$
-- In our presentation of the reinforcement learning, we will usually retain the transition function for generality, but may omit it if clear from the context
 
 
 
@@ -279,16 +370,25 @@ $$
 $$
 
 
-## RL: Goal
+## RL: Recap
 
 ::: {.mybox}
-**Training**:
+**Reinforcement learning: in sum**:
 
 - RL training repeatedly samples different trajectories
 - The agent thereby explores the space of possible states and actions 
 :::
 
-- The goal of RL learning is to discover parameters that maximize reward of the most probable trajectories.
+- The goal of RL learning is to discover parameters $\theta$ that maximize reward of the most probable trajectories.
+
+![](./img/rl-loop.png){width=50% fig-align="center"}
+
+
+:::{.tiny-credit}
+- Image source: [RLHF Book](https://rlhfbook.com/), lecture 2.
+:::
+
+
 
 ## RL and LLMs
 
@@ -308,7 +408,7 @@ $$
 
 ![](./img/RL-LLM-model.png)
 
-- Prompt is the state ("My favorite food is"), and the action is the choice of the next token
+- Prompt is the state (``My favorite food is''), and the action is the choice of the next token
 - But how do we implement the reward model?
 
 ## RL/LLM - rewards
@@ -324,84 +424,117 @@ $$
 - Answers that are chosen get a high reward, those that are not get a low reward
 
 
-## Training an LLM
+## RLHF: Big picture
 
+:::: {.columns}
+::: {.column width=60%}
 
+![](./img/rlhf-overview.png)
 
-```{python}
-#| echo: false
-#| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-sys.path.append('utils') 
-import matplotlib.pyplot as plt
-from reinforce_plots import pipeline
-fig = pipeline()
-plt.show()
-```
-
-
-
-## Steps of LLM-RL
-
-::: {.mybox}
-**Warning**:
-
-- Reinforcement learning for LLMs is a very active area of research and there are many different approaches and algorithms
-- In this lecture, we will focus on the approach presented in the InstructGPT paper
-- This approach is no longer used in modern models, but it is a good place to start to learn about LLM-RL
-- At the end of the talk, we will present a selected list of new developments
+::: {.tiny-credit}
+Image source: Lambert, Illustrating Reinforcement Learning from Human Feedback (RLHF), [Hugging face blog](https://huggingface.co/blog/rlhf?utm_campaign=token-1-16-what-is-rlhf-reinforcement-learning-from-human-feedback&utm_medium=referral&utm_source=www.turingpost.com)
 :::
 
-- todo
-
-## pretraining
-
--- todo, summarize learn next token
-
-
-## Question {.center background-color="#ffe1f5"}
-
-![](img/stop-and-think-icon.svg){width=60%}
-
-- Why exactly are pretrained models not ready to chat with users?
-
-## Pretraining 
-::: {.mybox}
-**Base Model**:
-
-- Pretrained LLMs are trained to do next-token prediction or text continuation based on web-scale statistical association.
 :::
+::: {.column width=40%}
+
+- **Initial language model**: (from pretraining)
+- **Tuned language model**: iteratively adjusted by RLHF
+- **Reward model**: quantifies human preference between alternative completions
+- **KL prediction shift penalty**: keeps RLHF model from drifting too far from original model
+- **Update**: Method to update RLHF model
+- **Today**: We will explain these components
 
 ::: {.small-text}
-- For example, if the user prompt is
-
-> Translate the following English sentence to Spanish: "The weather is nice today!"
-
-- a language model trained only to predict the most likely continuations might respond:
-
-> Translate the following English sentence to Spanish: "The weather is nice today!" Also, I want to know how to order coffee in Spanish?
-
-- Whereas actually, we want a response such as
-
-> Translate the following English sentence to Spanish: "The weather is nice today!" "El tiempo está precioso hoy."
-
+- **Note**: There are many new developments that we will not touch upon
 :::
 
-## Supervised fine tuning (SFT)
+:::
+::::
 
-::: {.mybox}
-- Right after pretraining, the LLM is essentially trained to autocomplete
-- This is not necessarily what humans want.
-- To implement a chatbot, the LLM needs to respond in a question/answer format
+## Classical RL vs RLHF 
+
+:::: {.columns}
+::: {.column width=50%}
+**Classical RL**
+
+- Agent takes actions $a_t$ in an environment that has states $s_t$
+- Reward is a **known** function $r(s_t, a_t)$ from the environment that is evaluated once per step
+- We optimize a cumulative return over a trajectoy with $T$ total steps
+
+$$
+J(\pi) =
+\mathbf{E}_{\tau\sim\pi}\left[ \sum_{t=0}^T \gamma^t r(s_t,a_t)\right]
+$$
+:::
+::: {.column width=50%}
+**RLHF**
+
+- No environment - prompts are sampled from a dataset 
+- Reward is **learned** from human preferences
+- Response-level reward (for entire completion, not per-token)
+- Regularized with KL penalty (to stay close to base model)
+$$
+J(\pi) =
+\mathbf{E}\left[ r_\theta (x,y) - \beta D_{KL}(\pi\Vert \pi_{ref})\right]
+$$
+
+:::
+::::
+
+:::{.tiny-credit}
+- See [RLHF Book](https://rlhfbook.com/), lecture 2.
 :::
 
-- Start from a pretraining language model
-- Create a collection of desired model behavior (e.g., question answering)
-- Train with standard supervised learning on prompt-response pairs
-- Following SFT,^[SFT is also known as Instruction fune tuning (IFT)] the model can answer questions 
-- SFT can be used to adapt the base LLM to many other domains
+## Classical RL vs RLHF 
 
+:::: {.columns}
+::: {.column width=40%}
+**Classical RL**
+
+![](./img/rl-loop.png){width=90%}
+
+:::
+::: {.column width=60%}
+
+**RLHF**
+
+![](./img/rlhf-loop.png){width=90%}
+:::
+::::
+
+:::{.tiny-credit}
+- Image source: [RLHF Book](https://rlhfbook.com/), lecture 2.
+:::
+
+
+
+## Training with RLHF
+
+![](./img/instructGPT.png){width=100% fig-align="center"}
+
+* In InstructGPT, there are three main stages
+* We reviewed IFT/SFT above
+* We will now go over the second major step, **training the reward model**
+
+:::{.tiny-credit}
+Image source: Ouyang L, et al. (2022) [Training language models to follow instructions with human feedback. arXiv 2203.02155](https://arxiv.org/abs/2203.02155)
+:::
+
+
+## Training with RLHF: InstructGPT
+
+- The authors start with the IFT model as described
+- The final unembedding layer is removed
+    * Using the Supervised Fine-Tuned (SFT) model as the starting point for the reward model ensures that both the policy and the reward model share identical tokenizer vocabularies and low-level feature representations.
+    * The unembedding layer is used to project hidden states back to the output vocabulary
+    * This layer is removed and replaced by a linear project layer that yields a  single scalar value 
+    * Open AI used a smaller model (6.7 Billion parameters: the 6B model) for the reward model (trained separately from the largest policy model - the 175B Davinci model)
+    * Intuitively, Using a 6B reward model provides the necessary linguistic comprehension to evaluate complex prompts while  cutting down GPU memory and compute overhead required during the PPO reinforcement learning phase.
+
+:::{.tiny-credit}
+Ouyang L, et al. (2022) [Training language models to follow instructions with human feedback. arXiv 2203.02155](https://arxiv.org/abs/2203.02155)
+:::
 
 ## Architecture of the RL/LLM reward model  {#sec-reward-1}
 
