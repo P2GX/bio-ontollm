@@ -305,42 +305,56 @@
     "href": "lectures/reinforcement.html#overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview",
-    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provides an introduction to the Reinforcement Learning with an emphasis on its use to train LLMs\n\n\n\n\nReinforcment learning: Basic ideas\nPolicy gradient optimization\nReward to go\nSubtracting baselines"
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nPredicting the next token is great, but it does not a chatbot make.\n\nVarious additional training stages are performed to extend and refine the capabilities of models\nThe most important steps are instruction fine tuning and reinforcement learning\n\n\n\n\n\nPretraining vs posttraining\nInstruction Fine Tuning (IFT)\nReinforcment learning: Basic ideas and relationship to RLHF\nPolicy gradient optimization\nReward to go\nSubtracting baselines"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#ai-human-alignment",
+    "href": "lectures/reinforcement.html#ai-human-alignment",
+    "title": "Approaches to biomedical knowledge",
+    "section": "AI-human Alignment",
+    "text": "AI-human Alignment\n\nAn LLM is typically pretrained on massive amounts of data\nWith this, the LLM can complete the prompt in a reasonable way\nWhat if we want to cause the model to have certain behaviors?\n\nDo not use offensive language\nDo not follow sexist or racist stereotypes\nAnswer questions at an easy or sophisticated level\n\n\n\nAI-human Alignment\n\nThe overall goal of AI alignment is to align a models output with some desired behavior\nThis is the point of post-training (IFT and RLHF)"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#pre-vs-post",
+    "href": "lectures/reinforcement.html#pre-vs-post",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Pretraining vs. Posttraining",
+    "text": "Pretraining vs. Posttraining\n\n\n\n\n\n\n\n\n\n\nPretraining teaches the model to predict the next token"
   },
   {
     "objectID": "lectures/reinforcement.html#pretraining-vs.-posttraining",
     "href": "lectures/reinforcement.html#pretraining-vs.-posttraining",
     "title": "Approaches to biomedical knowledge",
     "section": "Pretraining vs. Posttraining",
-    "text": "Pretraining vs. Posttraining\n\n\n\n\n\n\n\n\n\n\nPretraining teaches the model to predict the next token"
+    "text": "Pretraining vs. Posttraining\n\n\n\n\n\n\n\n\n\n\nInstruction fine tuning teaches the model to answer questions (to be a chatbot)"
   },
   {
     "objectID": "lectures/reinforcement.html#pretraining-vs.-posttraining-1",
     "href": "lectures/reinforcement.html#pretraining-vs.-posttraining-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Pretraining vs. Posttraining",
-    "text": "Pretraining vs. Posttraining\n\n\n\n\n\n\n\n\n\n\nInstruction fine tuning teaches the model to answer questions (to be a chatbot)\nPreference fine tuning (Reinforcement learning) teaches the model to respond in ways that correspond to human preferences"
+    "text": "Pretraining vs. Posttraining\n\n\n\n\n\n\n\n\n\n\nPreference fine tuning (Reinforcement learning) teaches the model to respond in ways that correspond to human preferences (to be a useful chatbot)"
   },
   {
-    "objectID": "lectures/reinforcement.html#today",
-    "href": "lectures/reinforcement.html#today",
+    "objectID": "lectures/reinforcement.html#pretraining-vs.-posttraining-2",
+    "href": "lectures/reinforcement.html#pretraining-vs.-posttraining-2",
     "title": "Approaches to biomedical knowledge",
-    "section": "Today",
-    "text": "Today\n\nToday we will focus on instruction fine tuning and reinforcement learning with human feedback\nThere is more than one way to do it: There is an enormous variety of posttraining approaches that we will not cover today. This is where the magic happens in modern LLMs, but it would require an additional course to do it justice\nYou will learning some basic ideas of posttraining that will put you in a good position to understand more sophisticated approaches"
+    "section": "Pretraining vs. Posttraining",
+    "text": "Pretraining vs. Posttraining\n\n\n\n\n\n\n\n\n\n\nReasoning fine-tuning intends to improve multi-step logical deduction, problem-solving, mathematical capability, and coding performance of LLMs\nWe will not cover RFT in this course\n\n\nMore information\n\nChen X et al. (2026) Putting on the Thinking Hats: A Survey on Chain of Thought Fine-tuning from the Perspective of Human Reasoning Mechanism. arxiv 2510.13170"
   },
   {
-    "objectID": "lectures/reinforcement.html#ift-instruction-fine-tuning-and-sft-supervised-fine-tuning",
-    "href": "lectures/reinforcement.html#ift-instruction-fine-tuning-and-sft-supervised-fine-tuning",
+    "objectID": "lectures/reinforcement.html#ift",
+    "href": "lectures/reinforcement.html#ift",
     "title": "Approaches to biomedical knowledge",
     "section": "IFT (Instruction Fine-Tuning) and SFT (Supervised Fine-Tuning)",
-    "text": "IFT (Instruction Fine-Tuning) and SFT (Supervised Fine-Tuning)\n\n** IFT vs SFT**:\n\nThese terms are nearly synonyms\n\n\n\nSFT: fine-tuning a pretrained model on labeled input-output pairs using standard supervised learning (cross-entropy loss on target tokens, conditioned on some input).\nIFT: A specific kind of SFT where the training data is specifically instruction/response pairs (e.g. “Summarize this text: …” → summary; “Write a poem about X” → poem).\n\nThe goal of IFT is to get the model to behave like a chatbot, i.e., to follow natural lanugage instructions and conduct a conversation, rather than just continuing the input text"
+    "text": "IFT (Instruction Fine-Tuning) and SFT (Supervised Fine-Tuning)\n\nSFT: fine-tuning a pretrained model on labeled input-output pairs using standard supervised learning (cross-entropy loss on target tokens, conditioned on some input).\nIFT: A specific kind of SFT where the training data is specifically instruction/response pairs, for instance:\n\nprompt: “Summarize this text: …” → completion: An actual summary of the text\nprompt: “Write a poem about X” → completion: A poem about X.\n\n\nThe goal of IFT is therefore to get the model to behave like a chatbot, i.e., to follow natural language instructions and conduct a conversation, rather than just continuing the input text"
   },
   {
     "objectID": "lectures/reinforcement.html#intuition-before-ift",
     "href": "lectures/reinforcement.html#intuition-before-ift",
     "title": "Approaches to biomedical knowledge",
     "section": "Intuition: Before IFT",
-    "text": "Intuition: Before IFT\n\nPrompt: What is the most delicious Spanish appetizer?\nResponse: What is the most delicious Spanish appetizer? What is the most delicious Mexican appetizer? What is the most delicious Portuguese appetizer? These are the kinds of questions readers ask us all the time here on the blog, so we decided to put together a definitive ranking…\n\n\nThe raw model isn’t “answering” so much as continuing the statistical pattern (predicting the next token)\nThe text might resemble some blog text about appetizers, but it is not answering the user’s question directly"
+    "text": "Intuition: Before IFT\n\nPrompt: What is the most delicious Spanish appetizer?\nResponse: What is the most delicious Spanish appetizer? What is the most delicious Mexican appetizer? What is the most delicious Portuguese appetizer? These are the kinds of questions that get asked all the time, so we decided to put together a definitive ranking…\n\n\nThe raw model isn’t “answering” so much as continuing the statistical pattern (predicting the next token)\nThe text might resemble some blog text about appetizers, but it is not answering the user’s question directly"
   },
   {
     "objectID": "lectures/reinforcement.html#intuition-after-ift",
@@ -354,7 +368,7 @@
     "href": "lectures/reinforcement.html#chat-templates",
     "title": "Approaches to biomedical knowledge",
     "section": "Chat Templates",
-    "text": "Chat Templates\nEach major LLM has a template structure that organizes the main components of the chat so the model can recognize them.\n\nUnambiguous structure\nAllow multiturn conversations\nEnables use of APIs"
+    "text": "Chat Templates\nEach major LLM has a template structure that organizes the main components of the chat so the model can recognize them.\n\nUnambiguous structure\nAllow multiturn conversations\nEnables use of APIs\n\n\n\nchat templates are required to format data for training so the models recognize the components of the message (system, user, assistent, in some cases tools)"
   },
   {
     "objectID": "lectures/reinforcement.html#example",
@@ -368,35 +382,63 @@
     "href": "lectures/reinforcement.html#ift-best-practices",
     "title": "Approaches to biomedical knowledge",
     "section": "IFT Best Practices",
-    "text": "IFT Best Practices\n\nHigh quality completions needed\nGenerally, modern LLMs train with on the order of 1 million prompts\n\n\n\n\n\nItem\n\n\nPretraining\n\n\nIFT\n\n\n\n\n\n\nData\n\n\nenormous\n\n\nca. 1 million prompt completions\n\n\n\n\nBatch size\n\n\n256\n\n\n1024-2048\n\n\n\n\nLearning rate\n\n\n\\(1\\times 10^{-5}\\)\n\n\n\\(3\\times 10^{-4}\\)\n\n\n\n\nLoss function\n\n\nCE\n\n\nCE\n\n\n\n\n\nLearning Rate: Lower the learning rate during instruction fine-tuning (IFT) to prevent overfitting on the narrower data distribution.\nLoss Masking: Apply cross-entropy (CE) loss exclusively on the assistant tokens rather than the prompt tokens."
+    "text": "IFT Best Practices\n\nHigh quality completions needed\nGenerally, modern LLMs train with on the order of 1 million prompts\n\n\n\n\n\nItem\n\n\nPretraining\n\n\nIFT\n\n\n\n\n\n\nData\n\n\nenormous\n\n\nca. 1 million prompt completions\n\n\n\n\nBatch size\n\n\n256\n\n\n1024-2048\n\n\n\n\nLearning rate\n\n\n\\(1\\times 10^{-5}\\)\n\n\n\\(3\\times 10^{-4}\\)\n\n\n\n\nLoss function\n\n\nCE\n\n\nCE"
   },
   {
-    "objectID": "lectures/reinforcement.html#rl-gpt-and-chatgpt",
-    "href": "lectures/reinforcement.html#rl-gpt-and-chatgpt",
+    "objectID": "lectures/reinforcement.html#question",
+    "href": "lectures/reinforcement.html#question",
     "title": "Approaches to biomedical knowledge",
-    "section": "RL, GPT, and ChatGPT",
-    "text": "RL, GPT, and ChatGPT\n\n\nReinforcement learning was a key idea to take early versions of GPT to the current versions of chat agents such as ChatGPT\nWe will not examine all technical details, but do intend to provide intuition for the three main innovations\n\n\n\nPolicy gradient\nAdvantage\nPPO’s clipped update"
+    "section": "Question",
+    "text": "Question\n\n\nThe learning rate is typically \\(3\\times 10^{-4}\\) in pretraining but only \\(1\\times 10^{-5}\\) for IFT. Why is this?"
   },
   {
-    "objectID": "lectures/reinforcement.html#ai-human-alignment",
-    "href": "lectures/reinforcement.html#ai-human-alignment",
+    "objectID": "lectures/reinforcement.html#answer",
+    "href": "lectures/reinforcement.html#answer",
     "title": "Approaches to biomedical knowledge",
-    "section": "AI-human Alignment",
-    "text": "AI-human Alignment\n\nAn LLM is typically pretrained on massive amounts of data\nWith this, the LLM can complete the prompt in a reasonable way\nWhat if we want to cause the model to have certain behaviors?\n\nDo not use offensive language\nDo not follow sexist or racist stereotypes\nAnswer questions at an easy or sophisticated level\n\nThe overall goal of AI alignment is to align a models output with some desired behavior"
+    "section": "Answer",
+    "text": "Answer\n\nA lower learning rate is used during instruction fine-tuning (IFT) than during pretraining\nIFT uses a much smaller amoutn of training data and therefore has a narrower data distribution.\nThe lower learning rate is thought to help prevent overfitting on the IFT prompts"
   },
   {
-    "objectID": "lectures/reinforcement.html#rl-process",
-    "href": "lectures/reinforcement.html#rl-process",
+    "objectID": "lectures/reinforcement.html#question-1",
+    "href": "lectures/reinforcement.html#question-1",
     "title": "Approaches to biomedical knowledge",
-    "section": "RL process",
-    "text": "RL process\n\nAn agent iteratively takes actions within an environment according to a policy.\nThe state at time (step) \\(t\\) is denote \\(s_t\\), and the action that is proposed at this step is denote \\(a_t\\)\nThe policy \\(\\pi_\\theta\\) can either be deterministic or stochastic\n\n\n\nWhen using reinforcement learning for LLMs, the policy is stochastic.\nThe policy \\(\\pi_\\theta\\) outputs a distribution over the set of possible actions, and the probability of a specific action is \\(\\pi_\\theta(a_t\\mid s_t)\\)\nAfter an action is taken, the environment emits a reward representing the desirability of the resulting state. The reward \\(r_t\\) may be negative, zero, or positive\n\n\nimage source: Reinforcement Learning: An Introduction, Richard Sutton and Andrew G. Barto"
+    "section": "Question",
+    "text": "Question\n\n\nDuring pretraining, the model learns to predict the next token. The entire input texts are used\nBoth pretraining and IFT use the same kind of cross-entropy (CE) loss\nDuring IFT, the model is training on prompt-completion pairs. What part of this data is used for training?"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#answer-1",
+    "href": "lectures/reinforcement.html#answer-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Answer",
+    "text": "Answer\n\nLoss Masking: In IFT, cross-entropy (CE) loss is applied exclusively on the assistant tokens (i.e., the completions, not the prompts)\nPrompt tokens: The prompt tokens are masked (removed) from the loss calculation\nWe want the model’s objective to be focussed on generating accurate, context-aware completions\nThe foundational language model has already learned grammar, syntax, and general world knowledge during pretraining, and so the IFT phase can focus just on generation of completions\n\n\nMore information: - Huerta-Enochian M and Ko SY (2024) Instruction Fine-Tuning: Does Prompt Loss Matter? arXiv 2401.13586"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#ift-pipeline",
+    "href": "lectures/reinforcement.html#ift-pipeline",
+    "title": "Approaches to biomedical knowledge",
+    "section": "IFT pipeline",
+    "text": "IFT pipeline\n\n\n\n\nStep\n\n\nKey resource\n\n\nPurpose\n\n\n\n\n\n\nDataset formatting\n\n\nchat templates\n\n\narchitecture learns to distinguish between user inputs and assistant outputs.\n\n\n\n\nTokenization and sequence packing\n\n\nRaw text is tokenized into IDs and concatenated\n\n\nmaximize GPU memory utilization and minimize wasted padding compute\n\n\n\n\nLoss masking\n\n\nCE loss computed only on the assistant completion tokens; prompt tokens assigned a loss weight of zero\n\n\ngradients focus exclusively on generation quality\n\n\n\n\nOptimizer and learning rate configuration\n\n\nAdamW optimizer with reduced peak learning rate\n\n\nDo not erase pre-trained representations\n\n\n\n\nParameter strategy selection\n\n\nFull-parameter updates or Parameter-Efficient Fine-Tuning (PEFT) methods like LoRA or QLoRA\n\n\nTarget attention projections to adapt weights efficiently"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#basic-rl",
+    "href": "lectures/reinforcement.html#basic-rl",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RLHF, GPT, and ChatGPT",
+    "text": "RLHF, GPT, and ChatGPT\n\n\nReinforcement learning was a key idea to take early versions of GPT to the current versions of chat agents such as ChatGPT\nWe will present a somewhat simplified version of InstructGPT\nThis is a rapidly moving and important field with several major advances in recent years, such as those of DeepView"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#reinforcement-learning-rl-basics",
+    "href": "lectures/reinforcement.html#reinforcement-learning-rl-basics",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Reinforcement Learning (RL): Basics",
+    "text": "Reinforcement Learning (RL): Basics\n\nAn agent iteratively takes actions within an environment according to a policy.\nThe state at time (step) \\(t\\) is denote \\(s_t\\), and the action that is proposed at this step is denote \\(a_t\\)\nThe policy \\(\\pi_\\theta\\) can either be deterministic or stochastic\n\n\n\nWhen using reinforcement learning for LLMs, the policy is stochastic.\nThe policy \\(\\pi_\\theta\\) outputs a distribution over the set of possible actions, and the probability of a specific action is \\(\\pi_\\theta(a_t\\mid s_t)\\)\nAfter an action is taken, the environment emits a reward representing the desirability of the resulting state. The reward \\(r_t\\) may be negative, zero, or positive\n\n\nimage source: Reinforcement Learning: An Introduction, Richard Sutton and Andrew G. Barto"
   },
   {
     "objectID": "lectures/reinforcement.html#actions-and-transitions",
     "href": "lectures/reinforcement.html#actions-and-transitions",
     "title": "Approaches to biomedical knowledge",
     "section": "Actions and Transitions",
-    "text": "Actions and Transitions\n\nThe policy outputs an action based on the current state. The probability of action \\(a_t\\) is \\(\\pi_\\theta(a_t\\mid s_t)\\).\nAfter the policy outputs an action, the state of the environment will be updated according to the transition function1\n\n\\[\nP(s_{t+1} |  s_t, a_t)\n\\tag{1}\\]\n\nIn the context of using reinforcement learning with LLMs, the softmax output is the policy \\(\\pi_\\theta(a_t\\mid s_t)\\)\nThe next state (the new prompt with that token appended) follows deterministically so \\[\nP(s_{t+1} | a_t, s_t)= \\begin{cases} 1 & \\text{if } s_{t+1} \\text{ is } s_{t} \\text{ with } a_t \\text{ appended }\\\\\n0 & \\text{otherwise}\n\\end{cases}\n\\]\nIn our presentation of the reinforcement learning, we will usually retain the transition function for generality, but may omit it if clear from the context\n\nYou will see this in general explanations of reinforcement learning, but it is trivial and often omitted in descriptions of RL as applied to LLMs"
+    "text": "Actions and Transitions\n\nThe policy outputs an action based on the current state. The probability of action \\(a_t\\) given that we are currently in state \\(s_t\\) is \\[\n\\pi_\\theta(a_t\\mid s_t)\n\\tag{1}\\]\nAfter the policy outputs an action, the state of the environment will be updated according to the transition function1\n\n\\[\nP(s_{t+1} |  s_t, a_t)\n\\tag{2}\\]\nNote: the transition function is generally deterministic for LLM-RLHF"
   },
   {
     "objectID": "lectures/reinforcement.html#reinforcement-learning-example",
@@ -413,11 +455,11 @@
     "text": "RL: Trajectories\nIntuitively, we can conceptualize RL as a trial and error process. As our agent acts in its environment, the training process reinforces—either positively or negatively—observed behavior via the reward. Hence, the name “reinforcement” learning.\n\nA trajectory is a sequence of states\nWe begin from an initial state \\(s_0\\)\nThe agent iteratively\n\nSamples action \\(a_t\\) based on the current state \\(s_t\\)\nTransitions to the next state \\(s_{t+1}\\)\nReceives reward \\(r_t\\)\n\nThe trajectory continues until the final state \\(s_T\\) is reached (terminal state or because a maximum number of states was reached)\nThe trajectory \\(\\tau\\)1 is represented as follows: \\[\n\\tau = \\left(\\underbrace{s_0,a_0,r_0}_{t=0},  \n\\underbrace{s_1,a_1,r_1}_{t=1}, \\ldots,\n\\underbrace{s_{T-1},a_{T-1},r_{T-1}}_{t=T-1},\n\\underbrace{s_T}_{t=T}\\right)\n\\]\n\n\\(\\tau\\)=tau"
   },
   {
-    "objectID": "lectures/reinforcement.html#rl-goal",
-    "href": "lectures/reinforcement.html#rl-goal",
+    "objectID": "lectures/reinforcement.html#rl-recap",
+    "href": "lectures/reinforcement.html#rl-recap",
     "title": "Approaches to biomedical knowledge",
-    "section": "RL: Goal",
-    "text": "RL: Goal\n\nTraining:\n\nRL training repeatedly samples different trajectories\nThe agent thereby explores the space of possible states and actions\n\n\n\nThe goal of RL learning is to discover parameters that maximize reward of the most probable trajectories."
+    "section": "RL: Recap",
+    "text": "RL: Recap\n\nReinforcement learning: in sum:\n\nRL training repeatedly samples different trajectories\nThe agent thereby explores the space of possible states and actions\n\n\n\nThe goal of RL learning is to discover parameters \\(\\theta\\) that maximize reward of the most probable trajectories.\n\n\n\n\nImage source: RLHF Book, lecture 2."
   },
   {
     "objectID": "lectures/reinforcement.html#rl-and-llms",
@@ -431,7 +473,7 @@
     "href": "lectures/reinforcement.html#rl-and-llms-1",
     "title": "Approaches to biomedical knowledge",
     "section": "RL and LLMs",
-    "text": "RL and LLMs\n\n\nPrompt is the state (“My favorite food is”), and the action is the choice of the next token\nBut how do we implement the reward model?"
+    "text": "RL and LLMs\n\n\nPrompt is the state (``My favorite food is’’), and the action is the choice of the next token\nBut how do we implement the reward model?"
   },
   {
     "objectID": "lectures/reinforcement.html#rlllm---rewards",
@@ -441,46 +483,39 @@
     "text": "RL/LLM - rewards\n\n\n\n\n\n\n\n\n\nQuestion (Prompt)\nAnswer 1\n Answer 2\nChosen\n\n\n\n\nWhere is Jena?\nNiedersachsen\n Thüringen\n2\n\n\nWhat is 2+3?\n5\n42\n 1\n\n\nExplain quantum mechanics\nIt’s about cats\nQuantum mechanics is the rulebook for super tiny things that act like magic.\n 2\n\n\n\n\n\nWe ask humans to indicate which answer they prefer and rank the answers\nAnswers that are chosen get a high reward, those that are not get a low reward"
   },
   {
-    "objectID": "lectures/reinforcement.html#training-an-llm",
-    "href": "lectures/reinforcement.html#training-an-llm",
+    "objectID": "lectures/reinforcement.html#rlhf-big-picture",
+    "href": "lectures/reinforcement.html#rlhf-big-picture",
     "title": "Approaches to biomedical knowledge",
-    "section": "Training an LLM",
-    "text": "Training an LLM"
+    "section": "RLHF: Big picture",
+    "text": "RLHF: Big picture\n\n\n\n\nImage source: Lambert, Illustrating Reinforcement Learning from Human Feedback (RLHF), Hugging face blog\n\n\n\nInitial language model: (from pretraining)\nTuned language model: iteratively adjusted by RLHF\nReward model: quantifies human preference between alternative completions\nKL prediction shift penalty: keeps RLHF model from drifting too far from original model\nUpdate: Method to update RLHF model\nToday: We will explain these components\n\n\n\nNote: There are many new developments that we will not touch upon"
   },
   {
-    "objectID": "lectures/reinforcement.html#steps-of-llm-rl",
-    "href": "lectures/reinforcement.html#steps-of-llm-rl",
+    "objectID": "lectures/reinforcement.html#classical-rl-vs-rlhf",
+    "href": "lectures/reinforcement.html#classical-rl-vs-rlhf",
     "title": "Approaches to biomedical knowledge",
-    "section": "Steps of LLM-RL",
-    "text": "Steps of LLM-RL\n\nWarning:\n\nReinforcement learning for LLMs is a very active area of research and there are many different approaches and algorithms\nIn this lecture, we will focus on the approach presented in the InstructGPT paper\nThis approach is no longer used in modern models, but it is a good place to start to learn about LLM-RL\nAt the end of the talk, we will present a selected list of new developments\n\n\n\ntodo"
+    "section": "Classical RL vs RLHF",
+    "text": "Classical RL vs RLHF\n\n\nClassical RL\n\nAgent takes actions \\(a_t\\) in an environment that has states \\(s_t\\)\nReward is a known function \\(r(s_t, a_t)\\) from the environment that is evaluated once per step\nWe optimize a cumulative return over a trajectoy with \\(T\\) total steps\n\n\\[\nJ(\\pi) =\n\\mathbf{E}_{\\tau\\sim\\pi}\\left[ \\sum_{t=0}^T \\gamma^t r(s_t,a_t)\\right]\n\\]\n\nRLHF\n\nNo environment - prompts are sampled from a dataset\nReward is learned from human preferences\nResponse-level reward (for entire completion, not per-token)\nRegularized with KL penalty (to stay close to base model) \\[\nJ(\\pi) =\n\\mathbf{E}\\left[ r_\\theta (x,y) - \\beta D_{KL}(\\pi\\Vert \\pi_{ref})\\right]\n\\]\n\n\n\n\nSee RLHF Book, lecture 2."
   },
   {
-    "objectID": "lectures/reinforcement.html#pretraining",
-    "href": "lectures/reinforcement.html#pretraining",
+    "objectID": "lectures/reinforcement.html#classical-rl-vs-rlhf-1",
+    "href": "lectures/reinforcement.html#classical-rl-vs-rlhf-1",
     "title": "Approaches to biomedical knowledge",
-    "section": "pretraining",
-    "text": "pretraining\n– todo, summarize learn next token"
+    "section": "Classical RL vs RLHF",
+    "text": "Classical RL vs RLHF\n\n\nClassical RL\n\n\nRLHF\n\n\n\n\nImage source: RLHF Book, lecture 2."
   },
   {
-    "objectID": "lectures/reinforcement.html#question",
-    "href": "lectures/reinforcement.html#question",
+    "objectID": "lectures/reinforcement.html#training-with-rlhf",
+    "href": "lectures/reinforcement.html#training-with-rlhf",
     "title": "Approaches to biomedical knowledge",
-    "section": "Question",
-    "text": "Question\n\n\nWhy exactly are pretrained models not ready to chat with users?"
+    "section": "Training with RLHF",
+    "text": "Training with RLHF\n\n\nIn InstructGPT, there are three main stages\nWe reviewed IFT/SFT above\nWe will now go over the second major step, training the reward model\n\n\nImage source: Ouyang L, et al. (2022) Training language models to follow instructions with human feedback. arXiv 2203.02155"
   },
   {
-    "objectID": "lectures/reinforcement.html#pretraining-1",
-    "href": "lectures/reinforcement.html#pretraining-1",
+    "objectID": "lectures/reinforcement.html#training-with-rlhf-instructgpt",
+    "href": "lectures/reinforcement.html#training-with-rlhf-instructgpt",
     "title": "Approaches to biomedical knowledge",
-    "section": "Pretraining",
-    "text": "Pretraining\n\nBase Model:\n\nPretrained LLMs are trained to do next-token prediction or text continuation based on web-scale statistical association.\n\n\n\n\nFor example, if the user prompt is\n\n\nTranslate the following English sentence to Spanish: “The weather is nice today!”\n\n\na language model trained only to predict the most likely continuations might respond:\n\n\nTranslate the following English sentence to Spanish: “The weather is nice today!” Also, I want to know how to order coffee in Spanish?\n\n\nWhereas actually, we want a response such as\n\n\nTranslate the following English sentence to Spanish: “The weather is nice today!” “El tiempo está precioso hoy.”"
-  },
-  {
-    "objectID": "lectures/reinforcement.html#supervised-fine-tuning-sft",
-    "href": "lectures/reinforcement.html#supervised-fine-tuning-sft",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Supervised fine tuning (SFT)",
-    "text": "Supervised fine tuning (SFT)\n\n\nRight after pretraining, the LLM is essentially trained to autocomplete\nThis is not necessarily what humans want.\nTo implement a chatbot, the LLM needs to respond in a question/answer format\n\n\n\nStart from a pretraining language model\nCreate a collection of desired model behavior (e.g., question answering)\nTrain with standard supervised learning on prompt-response pairs\nFollowing SFT,1 the model can answer questions\nSFT can be used to adapt the base LLM to many other domains\n\nSFT is also known as Instruction fune tuning (IFT)"
+    "section": "Training with RLHF: InstructGPT",
+    "text": "Training with RLHF: InstructGPT\n\nThe authors start with the IFT model as described\nThe final unembedding layer is removed\n\nUsing the Supervised Fine-Tuned (SFT) model as the starting point for the reward model ensures that both the policy and the reward model share identical tokenizer vocabularies and low-level feature representations.\nThe unembedding layer is used to project hidden states back to the output vocabulary\nThis layer is removed and replaced by a linear project layer that yields a single scalar value\nOpen AI used a smaller model (6.7 Billion parameters: the 6B model) for the reward model (trained separately from the largest policy model - the 175B Davinci model)\nIntuitively, Using a 6B reward model provides the necessary linguistic comprehension to evaluate complex prompts while cutting down GPU memory and compute overhead required during the PPO reinforcement learning phase.\n\n\n\nOuyang L, et al. (2022) Training language models to follow instructions with human feedback. arXiv 2203.02155"
   },
   {
     "objectID": "lectures/reinforcement.html#sec-reward-1",
@@ -501,28 +536,28 @@
     "href": "lectures/reinforcement.html#modelling-trajectories",
     "title": "Approaches to biomedical knowledge",
     "section": "Modelling trajectories",
-    "text": "Modelling trajectories\n\nA trajectory, represented by tau (\\(\\tau\\)), is a series of (state, action, reward) – see slide 16.\nThe probability of a trajectory \\(\\tau\\) given a policy \\(\\pi\\) is thus modeled as the probability of the initial state multiplied by the product of the transition probability and the policy for each step: \\[\nP(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi(a_t\\mid s_t)\n\\tag{2}\\]\n\n\n\nWhere\n\n\\(\\rho(s_0)\\) is the probability of starting at \\(s_0\\)\n\\(P(s_{t+1}\\mid s_t,a_t)\\): The transition function (See Equation 1)\n\\(\\pi(a_t\\mid s_t)\\) is the probability of choosing action \\(a_t\\) given we are in state \\(s_t\\)\n\nNote the trajectory is a Markov process - the next state is dependent only on the previous state, not on the entire history1\n\n\nSee lecture 4 for background on Markov chains"
+    "text": "Modelling trajectories\n\nA trajectory, represented by tau (\\(\\tau\\)), is a series of (state, action, reward) – see slide 22.\nThe probability of a trajectory \\(\\tau\\) given a policy \\(\\pi\\) is thus modeled as the probability of the initial state multiplied by the product of the transition probability and the policy for each step: \\[\nP(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi(a_t\\mid s_t)\n\\tag{3}\\]\n\n\n\nWhere\n\n\\(\\rho(s_0)\\) is the probability of starting at \\(s_0\\)\n\\(P(s_{t+1}\\mid s_t,a_t)\\): The transition function (See Equation 2)\n\\(\\pi(a_t\\mid s_t)\\) is the probability of choosing action \\(a_t\\) given we are in state \\(s_t\\)\n\nNote the trajectory is a Markov process - the next state is dependent only on the previous state, not on the entire history1\n\n\nSee lecture 4 for background on Markov chains"
   },
   {
     "objectID": "lectures/reinforcement.html#rewards",
     "href": "lectures/reinforcement.html#rewards",
     "title": "Approaches to biomedical knowledge",
     "section": "Rewards",
-    "text": "Rewards\n\nRewards as discounted (immediate rewards are worth more than future rewards), using a factor \\(0&lt;\\gamma&lt;1\\) \\[\nR(\\tau) = \\sum_{t=0}^{\\infty} \\gamma^t r_t\n\\]\nThe expected return of a policy is the expected reward over all possible Trajectories \\[\nJ(\\pi) = \\int_{\\tau} P(\\tau\\mid\\pi)\\cdot R(\\tau) = \\mathbb{E}_{\\tau\\sim \\pi}\\left[R(\\tau)\\right]\n\\tag{3}\\]"
+    "text": "Rewards\n\nRewards as discounted (immediate rewards are worth more than future rewards), using a factor \\(0&lt;\\gamma&lt;1\\) \\[\nR(\\tau) = \\sum_{t=0}^{\\infty} \\gamma^t r_t\n\\]\nThe expected return of a policy is the expected reward over all possible Trajectories \\[\nJ(\\pi) = \\int_{\\tau} P(\\tau\\mid\\pi)\\cdot R(\\tau) = \\mathbb{E}_{\\tau\\sim \\pi}\\left[R(\\tau)\\right]\n\\tag{4}\\]"
   },
   {
     "objectID": "lectures/reinforcement.html#llm-trajectories",
     "href": "lectures/reinforcement.html#llm-trajectories",
     "title": "Approaches to biomedical knowledge",
     "section": "LLM Trajectories",
-    "text": "LLM Trajectories\n\nA trajectory in an LLM is a series of prompts (see slide Section 16)\nIn this example, our original prompt is “Where is Berlin?” (\\(s_0\\))\nThe first action is the choice of the token “Berlin” (\\(a_0\\))\ndecoders are autoregressive, so our second prompt is “Where is Berlin? Berlin” (\\(s_1\\))"
+    "text": "LLM Trajectories\n\nA trajectory in an LLM is a series of prompts (see slide Section 22)\nIn this example, our original prompt is “Where is Berlin?” (\\(s_0\\))\nThe first action is the choice of the token “Berlin” (\\(a_0\\))\ndecoders are autoregressive, so our second prompt is “Where is Berlin? Berlin” (\\(s_1\\))"
   },
   {
     "objectID": "lectures/reinforcement.html#policy-gradient",
     "href": "lectures/reinforcement.html#policy-gradient",
     "title": "Approaches to biomedical knowledge",
     "section": "Policy gradient optimization",
-    "text": "Policy gradient optimization\n\nTo train an GPT-style LLM, our initial policy \\(\\pi_{\\theta}\\) is simply the decoder model\nOur goal with RL is to modify the parameters \\(\\theta\\) of the policy to maximize the expected return (Equation 3).\nFor a deep neural network, we change the parameters of the network to mimimize a loss function using stochastic gradient descent.\nHere, we want to maximize \\(J(\\pi)\\) so we use stochastic gradient ascent \\[\n\\theta_{k+1} = \\theta_k + \\eta\\nabla_{\\theta}J(\\pi_{\\theta})\\mid_{\\theta_k}\n\\]\nIn the context of RL, the gradient is known as the policy gradient and the algorithms that optimize it are known as the policy gradient algorithms.\nProblem: To optimize \\(J(\\pi) = \\int_{\\tau} P(\\tau\\mid\\pi)\\cdot R(\\tau) = \\mathbb{E}_{\\tau\\sim \\pi}\\left[R(\\tau)\\right]\\), we would need to evaluate it over all possible trajectories, which is computationally intractable.\n\n\nWe will present Policy gradient optimization, showing how to modify the gradient to simplify the expression and reduce variance (which tends to improve convergence of training)"
+    "text": "Policy gradient optimization\n\nTo train an GPT-style LLM, our initial policy \\(\\pi_{\\theta}\\) is simply the decoder model\nOur goal with RL is to modify the parameters \\(\\theta\\) of the policy to maximize the expected return (Equation 4).\nFor a deep neural network, we change the parameters of the network to mimimize a loss function using stochastic gradient descent.\nHere, we want to maximize \\(J(\\pi)\\) so we use stochastic gradient ascent \\[\n\\theta_{k+1} = \\theta_k + \\eta\\nabla_{\\theta}J(\\pi_{\\theta})\\mid_{\\theta_k}\n\\]\nIn the context of RL, the gradient is known as the policy gradient and the algorithms that optimize it are known as the policy gradient algorithms.\nProblem: To optimize \\(J(\\pi) = \\int_{\\tau} P(\\tau\\mid\\pi)\\cdot R(\\tau) = \\mathbb{E}_{\\tau\\sim \\pi}\\left[R(\\tau)\\right]\\), we would need to evaluate it over all possible trajectories, which is computationally intractable.\n\n\nWe will present Policy gradient optimization, showing how to modify the gradient to simplify the expression and reduce variance (which tends to improve convergence of training)"
   },
   {
     "objectID": "lectures/reinforcement.html#terminology",
@@ -543,7 +578,7 @@
     "href": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Policy gradient optimization: Deriving the gradient",
-    "text": "Policy gradient optimization: Deriving the gradient\n\ncontinuing, recalling Equation 2 for the probability of a trajectory: \\(P(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi_{\\theta}(a_t\\mid s_t)\\)\n\n\\[\n\\begin{align}\n\\nabla_{\\theta}J(\\pi_{\\theta}) &=\\int_{\\tau} P(\\tau\\mid\\theta) \\nabla_{\\theta} \\log P(\\tau\\mid\\theta) R(\\tau)&\\\\\n&=\\mathbb{E}_{\\tau\\sim \\pi}\\left[ \\underbrace{\\nabla_{\\theta} \\log P(\\tau\\mid\\theta)}_{\\text{let's focus on this}} R(\\tau)\\right] &\\bullet \\text{equivalent representation as an expectation}\\\\\n\\end{align}\n\\]"
+    "text": "Policy gradient optimization: Deriving the gradient\n\ncontinuing, recalling Equation 3 for the probability of a trajectory: \\(P(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi_{\\theta}(a_t\\mid s_t)\\)\n\n\\[\n\\begin{align}\n\\nabla_{\\theta}J(\\pi_{\\theta}) &=\\int_{\\tau} P(\\tau\\mid\\theta) \\nabla_{\\theta} \\log P(\\tau\\mid\\theta) R(\\tau)&\\\\\n&=\\mathbb{E}_{\\tau\\sim \\pi}\\left[ \\underbrace{\\nabla_{\\theta} \\log P(\\tau\\mid\\theta)}_{\\text{let's focus on this}} R(\\tau)\\right] &\\bullet \\text{equivalent representation as an expectation}\\\\\n\\end{align}\n\\]"
   },
   {
     "objectID": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-2",
@@ -564,21 +599,21 @@
     "href": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-4",
     "title": "Approaches to biomedical knowledge",
     "section": "Policy gradient optimization: Deriving the gradient",
-    "text": "Policy gradient optimization: Deriving the gradient\n\nIt is clearly not tractable to calculate all \\(100^{100000}\\) trajectories…\nInstead, we generate a sample \\(\\mathcal{D}\\) of trajectories and calculate the sample mean \\[\n\\hat{g} = \\frac{1}{|\\mathcal{D}|} \\sum_{\\tau\\in\\mathcal{D}}\\sum_{t=0}^{T-1} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)R(\\tau)\n\\tag{4}\\]\nand then use this to update the parameters \\[\n\\theta_{k+1} = \\theta_k + \\eta\\hat{g}\n\\]\nThis is known as stochastic gradient ascent.\nThe gradient typically would be calculated using automatic differentiation by pytorch (autograd)\nThe so-called reinforce algorithm repeatedly performs rounds of stochastic gradient ascent, updates parameters, runs \\(|\\mathcal{D}|\\) trajectories, etc."
+    "text": "Policy gradient optimization: Deriving the gradient\n\nIt is clearly not tractable to calculate all \\(100^{100000}\\) trajectories…\nInstead, we generate a sample \\(\\mathcal{D}\\) of trajectories and calculate the sample mean \\[\n\\hat{g} = \\frac{1}{|\\mathcal{D}|} \\sum_{\\tau\\in\\mathcal{D}}\\sum_{t=0}^{T-1} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)R(\\tau)\n\\tag{5}\\]\nand then use this to update the parameters \\[\n\\theta_{k+1} = \\theta_k + \\eta\\hat{g}\n\\]\nThis is known as stochastic gradient ascent.\nThe gradient typically would be calculated using automatic differentiation by pytorch (autograd)\nThe so-called reinforce algorithm repeatedly performs rounds of stochastic gradient ascent, updates parameters, runs \\(|\\mathcal{D}|\\) trajectories, etc."
   },
   {
     "objectID": "lectures/reinforcement.html#calculating-gradients",
     "href": "lectures/reinforcement.html#calculating-gradients",
     "title": "Approaches to biomedical knowledge",
     "section": "Calculating gradients",
-    "text": "Calculating gradients\n\nWhen we evaluate a trajectory, each hidden state encodes information only about previous states thanks to the causal mask applied during self-attention\nWe apply a linear projection to the hidden states to obtain scores for each token in the vocabulary\nThen we apply softmax to generate probabilities, so that \\(\\log \\pi_{\\theta}(a_t\\mid s_t) = \\log\\mathrm{softmax}(y_t)\\)\nAt each timestep \\(t\\), we select the log-probability assigned to the token that was actually generated (\\(y_t\\) has scores for every token in the vocabulary, so this lookup is easy)\nBecause of the causal mask, a single forward pass yields \\(\\log\\pi_{\\theta}(a_t\\mid s_t)\\) for every \\(t\\) simultaneously\nThis gives us the term needed inside the REINFORCE gradient estimator \\(\\hat{g}\\) from Equation 4."
+    "text": "Calculating gradients\n\nWhen we evaluate a trajectory, each hidden state encodes information only about previous states thanks to the causal mask applied during self-attention\nWe apply a linear projection to the hidden states to obtain scores for each token in the vocabulary\nThen we apply softmax to generate probabilities, so that \\(\\log \\pi_{\\theta}(a_t\\mid s_t) = \\log\\mathrm{softmax}(y_t)\\)\nAt each timestep \\(t\\), we select the log-probability assigned to the token that was actually generated (\\(y_t\\) has scores for every token in the vocabulary, so this lookup is easy)\nBecause of the causal mask, a single forward pass yields \\(\\log\\pi_{\\theta}(a_t\\mid s_t)\\) for every \\(t\\) simultaneously\nThis gives us the term needed inside the REINFORCE gradient estimator \\(\\hat{g}\\) from Equation 5."
   },
   {
     "objectID": "lectures/reinforcement.html#calculating-rewards",
     "href": "lectures/reinforcement.html#calculating-rewards",
     "title": "Approaches to biomedical knowledge",
     "section": "Calculating rewards",
-    "text": "Calculating rewards\n\nApply the linear layer to all positions that correspond to actions (i.e., tokens following the original prompt)\nSee slide Section 27.\nThis allows us to generate the reward for each time step/trajectory \\[\n\\sum_{t=0}^{T} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)\\underbrace{R(\\tau)}_{\\mathrm{reward}}\n\\]"
+    "text": "Calculating rewards\n\nApply the linear layer to all positions that correspond to actions (i.e., tokens following the original prompt)\nSee slide Section 32.\nThis allows us to generate the reward for each time step/trajectory \\[\n\\sum_{t=0}^{T} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)\\underbrace{R(\\tau)}_{\\mathrm{reward}}\n\\]"
   },
   {
     "objectID": "lectures/reinforcement.html#reward-to-go",
@@ -592,14 +627,14 @@
     "href": "lectures/reinforcement.html#factoring-the-trajectory-probability-recap-without-gamma",
     "title": "Approaches to biomedical knowledge",
     "section": "Factoring the Trajectory Probability (recap without \\(\\gamma\\))",
-    "text": "Factoring the Trajectory Probability (recap without \\(\\gamma\\))\nTrajectory probability factors as:\n\\[p(\\tau) = p(s_0)\\prod_{t=0}^T \\pi_\\theta(a_t|s_t)\\,p(s_{t+1}|s_t,a_t)\\]\nOnly the policy terms depend on \\(\\theta\\), so:\n\\[\n\\nabla_\\theta \\log \\pi_\\theta(\\tau) = \\sum_{t=0}^T \\nabla_\\theta \\log \\pi_\\theta(a_t|s_t)\n\\]\nThis gives the REINFORCE estimator:\n\\[\n\\nabla_\\theta J(\\theta) = \\mathbb{E}_\\tau\\left[\\left(\\sum_{t=0}^T \\nabla_\\theta \\log \\pi_\\theta(a_t|s_t)\\right)\\left(\\sum_{t'=0}^T r_{t'}\\right)\\right]\n\\tag{5}\\]"
+    "text": "Factoring the Trajectory Probability (recap without \\(\\gamma\\))\nTrajectory probability factors as:\n\\[p(\\tau) = p(s_0)\\prod_{t=0}^T \\pi_\\theta(a_t|s_t)\\,p(s_{t+1}|s_t,a_t)\\]\nOnly the policy terms depend on \\(\\theta\\), so:\n\\[\n\\nabla_\\theta \\log \\pi_\\theta(\\tau) = \\sum_{t=0}^T \\nabla_\\theta \\log \\pi_\\theta(a_t|s_t)\n\\]\nThis gives the REINFORCE estimator:\n\\[\n\\nabla_\\theta J(\\theta) = \\mathbb{E}_\\tau\\left[\\left(\\sum_{t=0}^T \\nabla_\\theta \\log \\pi_\\theta(a_t|s_t)\\right)\\left(\\sum_{t'=0}^T r_{t'}\\right)\\right]\n\\tag{6}\\]"
   },
   {
     "objectID": "lectures/reinforcement.html#rewarding-past-and-future-steps",
     "href": "lectures/reinforcement.html#rewarding-past-and-future-steps",
     "title": "Approaches to biomedical knowledge",
     "section": "Rewarding past and future steps…",
-    "text": "Rewarding past and future steps…\nEvery log-probability term \\(\\nabla_\\theta \\log\\pi_\\theta(a_t|s_t)\\) in Equation 5 gets multiplied by the entire trajectory return — including rewards \\(r_{t'}\\) that occurred before \\(a_t\\) was taken.\n\n\n\n\n\n\nNote\n\n\nAction \\(a_t\\) cannot have caused a reward that already happened.\n\n\n\n\nThese “past-reward” terms add variance to the gradient estimate without adding any real signal.\nThe reward to go approach splits the inner sum at \\(t\\):\n\n\\[\n\\nabla_\\theta J(\\theta) = \\sum_{t=0}^T \\mathbb{E}_\\tau\\left[\\nabla_\\theta \\log\\pi_\\theta(a_t|s_t)\\left(\\underbrace{\\sum_{t'&lt;t} r_{t'}}_{\\text{past}} + \\underbrace{\\sum_{t'\\geq t} r_{t'}}_{\\text{future}}\\right)\\right]\n\\]\n\nIf we can show the past term vanishes in expectation, dropping it doesn’t change the value of the gradient (i.e., it does not add bias)\nInstead, the approach reduces variance."
+    "text": "Rewarding past and future steps…\nEvery log-probability term \\(\\nabla_\\theta \\log\\pi_\\theta(a_t|s_t)\\) in Equation 6 gets multiplied by the entire trajectory return — including rewards \\(r_{t'}\\) that occurred before \\(a_t\\) was taken.\n\n\n\n\n\n\nNote\n\n\nAction \\(a_t\\) cannot have caused a reward that already happened.\n\n\n\n\nThese “past-reward” terms add variance to the gradient estimate without adding any real signal.\nThe reward to go approach splits the inner sum at \\(t\\):\n\n\\[\n\\nabla_\\theta J(\\theta) = \\sum_{t=0}^T \\mathbb{E}_\\tau\\left[\\nabla_\\theta \\log\\pi_\\theta(a_t|s_t)\\left(\\underbrace{\\sum_{t'&lt;t} r_{t'}}_{\\text{past}} + \\underbrace{\\sum_{t'\\geq t} r_{t'}}_{\\text{future}}\\right)\\right]\n\\]\n\nIf we can show the past term vanishes in expectation, dropping it doesn’t change the value of the gradient (i.e., it does not add bias)\nInstead, the approach reduces variance."
   },
   {
     "objectID": "lectures/reinforcement.html#proof-past-rewards-dont-depend-on-a_t",
@@ -620,7 +655,7 @@
     "href": "lectures/reinforcement.html#result-the-reward-to-go-estimator",
     "title": "Approaches to biomedical knowledge",
     "section": "Result: The Reward-to-Go Estimator",
-    "text": "Result: The Reward-to-Go Estimator\n\\[\n\\nabla_\\theta J(\\theta) = \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[\\sum_{t=0}^T \\left( \\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\right) \\cdot \\underbrace{\\sum_{t'=t}^{T} r_{t'}}_{G_t \\;=\\; \\text{reward-to-go}}\\right]\n\\tag{6}\\]\n\\(G_t\\) is the return accumulated from time \\(t\\) onward, not the full trajectory return. - Rewards to go means that at each step, we only focus on rewards that are not in the past! - This makes sense, because a reward cannot alter the rewards we received in the past!"
+    "text": "Result: The Reward-to-Go Estimator\n\\[\n\\nabla_\\theta J(\\theta) = \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[\\sum_{t=0}^T \\left( \\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\right) \\cdot \\underbrace{\\sum_{t'=t}^{T} r_{t'}}_{G_t \\;=\\; \\text{reward-to-go}}\\right]\n\\tag{7}\\]\n\\(G_t\\) is the return accumulated from time \\(t\\) onward, not the full trajectory return. - Rewards to go means that at each step, we only focus on rewards that are not in the past! - This makes sense, because a reward cannot alter the rewards we received in the past!"
   },
   {
     "objectID": "lectures/reinforcement.html#baselines",
@@ -4615,28 +4650,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.08%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.34%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.48%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.02%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.42%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.46%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 33.74%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 36.50%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
