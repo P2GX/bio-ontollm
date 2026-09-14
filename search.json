@@ -305,7 +305,7 @@
     "href": "lectures/reinforcement.html#overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview",
-    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nPredicting the next token is great, but it does not a chatbot make.\n\nVarious additional training stages are performed to extend and refine the capabilities of models\nThe most important steps are instruction fine tuning and reinforcement learning\n\n\n\n\n\nPretraining vs posttraining\nInstruction Fine Tuning (IFT)\nReinforcment learning: Basic ideas and relationship to RLHF\nPolicy gradient optimization\nReward to go\nSubtracting baselines"
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nPredicting the next token is great, but it does not a chatbot make.\n\nVarious additional training stages are performed to extend and refine the capabilities of models\nThe most important steps are instruction fine tuning and reinforcement learning\n\n\n\n\n\nPretraining vs posttraining\nInstruction Fine Tuning (IFT)\nReinforcment learning: Basic ideas and relationship to RLHF\nReward models\nPolicy gradient optimization\nReward to go\nSubtracting baselines"
   },
   {
     "objectID": "lectures/reinforcement.html#ai-human-alignment",
@@ -313,6 +313,20 @@
     "title": "Approaches to biomedical knowledge",
     "section": "AI-human Alignment",
     "text": "AI-human Alignment\n\nAn LLM is typically pretrained on massive amounts of data\nWith this, the LLM can complete the prompt in a reasonable way\nWhat if we want to cause the model to have certain behaviors?\n\nDo not use offensive language\nDo not follow sexist or racist stereotypes\nAnswer questions at an easy or sophisticated level\n\n\n\nAI-human Alignment\n\nThe overall goal of AI alignment is to align a models output with some desired behavior\nThis is the point of post-training (IFT and RLHF)"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#posttraining-with-rlhf-performance",
+    "href": "lectures/reinforcement.html#posttraining-with-rlhf-performance",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Posttraining with RLHF: Performance",
+    "text": "Posttraining with RLHF: Performance\n\n\nCurrent models have shown very substantial boosts in performance that are attributable to RLHF\nThis example shows how the performance of openAI’s o1 model scales with more RLHF train time\nAIME = American Invitational Mathematics Examination benchmark\n\n\n\nOpenAI (2024) Learning to reason with LLMs"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#posttraining-with-rlhf-performance-1",
+    "href": "lectures/reinforcement.html#posttraining-with-rlhf-performance-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Posttraining with RLHF: Performance",
+    "text": "Posttraining with RLHF: Performance\n\nMost of the LLM innovation in recent years has been in the realm of posttraining\nReinforcement learning with human feedback is the key technology\nThis lecture will provide an introduction to the main components of posttraining"
   },
   {
     "objectID": "lectures/reinforcement.html#pre-vs-post",
@@ -362,6 +376,20 @@
     "title": "Approaches to biomedical knowledge",
     "section": "Intuition: After IFT",
     "text": "Intuition: After IFT\n\nPrompt: What is the most delicious Spanish appetizer?\nResponse: A top pick is patatas bravas (fried potatoes with a spicy tomato sauce and aioli).\n\n\nAfter instruction tuning, the model recognizes the input as a request directed at it\nThe model produces a direct answer instead of continuing a hypothetical document"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#data-source",
+    "href": "lectures/reinforcement.html#data-source",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Data source",
+    "text": "Data source\n\nOpenAI hired a team of about 40 freelance labelers\nOur prompt dataset consists primarily of text prompts submitted to the OpenAI API\nCustomers using the Playground were informed that their data could be used to train further models v\nWe heuristically deduplicate prompts by checking for prompts that share a long common prefix, and we limit the number of prompts to 200 per user ID."
+  },
+  {
+    "objectID": "lectures/reinforcement.html#labelling-methods",
+    "href": "lectures/reinforcement.html#labelling-methods",
+    "title": "Approaches to biomedical knowledge",
+    "section": "labelling methods",
+    "text": "labelling methods\n\n\n\nOpen AI’s labelling interface for InstructGPT\nFor each output, labelers give a Likert score for overall quality on a 1-7 scale, and also provide various metadata labels.\nAfter evaluating each output individually, labelers rank all the outputs for a given prompt.\nThe team generated\n\n\\(\\sim\\) 13,000 training prompts for SFT/IFT\n\\(\\sim\\) 33,000 training prompts for the reward model training\n\\(\\sim\\) 31,000 training prompts for reinforcement learning (PPO)\n\n\n\n\n\n\n\n\n\n\nImage source: Ouyang L, et al. (2022) Training language models to follow instructions with human feedback. arXiv 2203.02155"
   },
   {
     "objectID": "lectures/reinforcement.html#chat-templates",
@@ -424,7 +452,7 @@
     "href": "lectures/reinforcement.html#basic-rl",
     "title": "Approaches to biomedical knowledge",
     "section": "RLHF, GPT, and ChatGPT",
-    "text": "RLHF, GPT, and ChatGPT\n\n\nReinforcement learning was a key idea to take early versions of GPT to the current versions of chat agents such as ChatGPT\nWe will present a somewhat simplified version of InstructGPT\nThis is a rapidly moving and important field with several major advances in recent years, such as those of DeepView"
+    "text": "RLHF, GPT, and ChatGPT\n\n\nReinforcement learning was a key idea to take early versions of GPT to the current versions of chat agents such as ChatGPT\n\n\nIn the following slides, we will present\n\nA brief introduction to (traditional) reinforcement learning (RL)\nAn explanation of the differences between RL and RL with human feedback (RLHF), which is used for LLMs\nReward models"
   },
   {
     "objectID": "lectures/reinforcement.html#reinforcement-learning-rl-basics",
@@ -466,14 +494,14 @@
     "href": "lectures/reinforcement.html#rl-and-llms",
     "title": "Approaches to biomedical knowledge",
     "section": "RL and LLMs",
-    "text": "RL and LLMs\n\n\nReinforcement Learning from Human Feedback (RLHF) is increasingly treated as a crucial ingredient for high performance large language models.\n\n\n\nAgent: The LLM\nState: the prompt (i.e., the input tokens)\nAction: which token is selected as the next token\nReward model: We reward the LLM for generating good responses and do not reward bad responses\nPolicy: The policy is the LLM itself, because the the next token function can easily be modelled as \\(a_t\\sim \\pi(\\cdot\\mid s_t)\\)"
+    "text": "RL and LLMs\n\n\nReinforcement Learning from Human Feedback (RLHF) is increasingly treated as a crucial ingredient for high performance large language models.\n\n\n\nAgent: The LLM\nState: the prompt (i.e., the input tokens)\nAction: which token is selected as the next token\nReward model: We reward the LLM for generating good responses and do not reward bad responses\nPolicy: The policy is the LLM itself, because the the next token function can easily be modelled as an action\n\n\\(a_t\\) is the next token\n\\(a_t\\) is distribution according to the policy with parameters \\(\\theta\\) (i.e., the LLM): \\(a_t\\sim \\pi_\\theta(\\cdot\\mid s_t)\\)\nstate \\(s_t\\) is the original prompt plus the completion up to step \\(t-1\\)."
   },
   {
     "objectID": "lectures/reinforcement.html#rl-and-llms-1",
     "href": "lectures/reinforcement.html#rl-and-llms-1",
     "title": "Approaches to biomedical knowledge",
     "section": "RL and LLMs",
-    "text": "RL and LLMs\n\n\nPrompt is the state (``My favorite food is’’), and the action is the choice of the next token\nBut how do we implement the reward model?"
+    "text": "RL and LLMs\n\n\nPrompt is the state (My favorite food is), and the action is the choice of the next token\nBut how do we implement the reward model?"
   },
   {
     "objectID": "lectures/reinforcement.html#rlllm---rewards",
@@ -483,8 +511,8 @@
     "text": "RL/LLM - rewards\n\n\n\n\n\n\n\n\n\nQuestion (Prompt)\nAnswer 1\n Answer 2\nChosen\n\n\n\n\nWhere is Jena?\nNiedersachsen\n Thüringen\n2\n\n\nWhat is 2+3?\n5\n42\n 1\n\n\nExplain quantum mechanics\nIt’s about cats\nQuantum mechanics is the rulebook for super tiny things that act like magic.\n 2\n\n\n\n\n\nWe ask humans to indicate which answer they prefer and rank the answers\nAnswers that are chosen get a high reward, those that are not get a low reward"
   },
   {
-    "objectID": "lectures/reinforcement.html#rlhf-big-picture",
-    "href": "lectures/reinforcement.html#rlhf-big-picture",
+    "objectID": "lectures/reinforcement.html#sec-rlhf-bigpic",
+    "href": "lectures/reinforcement.html#sec-rlhf-bigpic",
     "title": "Approaches to biomedical knowledge",
     "section": "RLHF: Big picture",
     "text": "RLHF: Big picture\n\n\n\n\nImage source: Lambert, Illustrating Reinforcement Learning from Human Feedback (RLHF), Hugging face blog\n\n\n\nInitial language model: (from pretraining)\nTuned language model: iteratively adjusted by RLHF\nReward model: quantifies human preference between alternative completions\nKL prediction shift penalty: keeps RLHF model from drifting too far from original model\nUpdate: Method to update RLHF model\nToday: We will explain these components\n\n\n\nNote: There are many new developments that we will not touch upon"
@@ -494,7 +522,7 @@
     "href": "lectures/reinforcement.html#classical-rl-vs-rlhf",
     "title": "Approaches to biomedical knowledge",
     "section": "Classical RL vs RLHF",
-    "text": "Classical RL vs RLHF\n\n\nClassical RL\n\nAgent takes actions \\(a_t\\) in an environment that has states \\(s_t\\)\nReward is a known function \\(r(s_t, a_t)\\) from the environment that is evaluated once per step\nWe optimize a cumulative return over a trajectoy with \\(T\\) total steps\n\n\\[\nJ(\\pi) =\n\\mathbf{E}_{\\tau\\sim\\pi}\\left[ \\sum_{t=0}^T \\gamma^t r(s_t,a_t)\\right]\n\\]\n\nRLHF\n\nNo environment - prompts are sampled from a dataset\nReward is learned from human preferences\nResponse-level reward (for entire completion, not per-token)\nRegularized with KL penalty (to stay close to base model) \\[\nJ(\\pi) =\n\\mathbf{E}\\left[ r_\\theta (x,y) - \\beta D_{KL}(\\pi\\Vert \\pi_{ref})\\right]\n\\]\n\n\n\n\nSee RLHF Book, lecture 2."
+    "text": "Classical RL vs RLHF\n\n\nClassical RL\n\nAgent takes actions \\(a_t\\) in an environment that has states \\(s_t\\)\nReward is a known function \\(r(s_t, a_t)\\) from the environment that is evaluated once per step\nWe optimize a cumulative return over a trajectoy with \\(T\\) total steps\n\n\\[\nJ(\\pi) =\n\\mathbf{E}_{\\tau\\sim\\pi}\\left[ \\sum_{t=0}^T \\gamma^t r(s_t,a_t)\\right]\n\\]\n\nRLHF\n\nNo environment - prompts are sampled from a dataset\nReward is learned from human preferences\nResponse-level reward (for entire completion, not per-token)\nRegularized with KL penalty (to stay close to base model) \\[\nJ(\\pi) =\n\\mathbf{E}\\left[ r_\\theta (x,y) - \\beta D_{KL}(\\pi\\Vert \\pi_{ref})\\right]\n\\]\n\n\n\nToday, we will focus on ways to calculate \\(r_\\theta (x,y)\\), the reward for a (prompt,completion) pair\nIn the second lecture on RLHF, we will explain the remaining pipeline with a focus on InstructGPT and a brief presentation of some newer approaches\n\n\n\nSee RLHF Book, lecture 2.\n\n\n## Language Models and RL\n\n\n\nMDP Concept\nLLM\n\n\n\n\nstate \\(s_t\\)\n Prompt + tokens so far: \\((x,y_{&lt;t})\\)\n\n\naction \\(a_t\\)\nnext token \\(y_t\\)\n\n\ntransiotion \\(P\\)\ndeterministic: append next token\n\n\nPolicy \\(\\pi_\\theta(a_t\\mid s_t)\\)\nLLM next token distribution\n\n\nreward \\(r\\)\nUsuaully terminal: RM score or verifier output\n\n\nDiscount \\(\\gamma\\)\ntypically \\(\\gamma=1\\) (no discounting)\n\n\n\nThe policy is the LM; factored over tokens $_(yx) = _t \\(\\pi_\\theta(y_t\\mid x, y_{&lt;t}})\\)"
   },
   {
     "objectID": "lectures/reinforcement.html#classical-rl-vs-rlhf-1",
@@ -504,88 +532,193 @@
     "text": "Classical RL vs RLHF\n\n\nClassical RL\n\n\nRLHF\n\n\n\n\nImage source: RLHF Book, lecture 2."
   },
   {
-    "objectID": "lectures/reinforcement.html#training-with-rlhf",
-    "href": "lectures/reinforcement.html#training-with-rlhf",
+    "objectID": "lectures/reinforcement.html#reward",
+    "href": "lectures/reinforcement.html#reward",
     "title": "Approaches to biomedical knowledge",
-    "section": "Training with RLHF",
-    "text": "Training with RLHF\n\n\nIn InstructGPT, there are three main stages\nWe reviewed IFT/SFT above\nWe will now go over the second major step, training the reward model\n\n\nImage source: Ouyang L, et al. (2022) Training language models to follow instructions with human feedback. arXiv 2203.02155"
+    "section": "Training the reward model",
+    "text": "Training the reward model\n\n\nIn InstructGPT, there are three main stages\nWe reviewed IFT/SFT above\nWe will now go over the second major step, training the reward model\n\n\nImage source: Ouyang L, et al. (2022) Training language models to follow instructions with human feedback. arXiv 2203.02155"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#reward-models-completions",
+    "href": "lectures/reinforcement.html#reward-models-completions",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Reward Models: completions",
+    "text": "Reward Models: completions\n\nA human annotator sees two responses to a prompt and picks the better one - this preference pair is the training data for the reward model\n\n\n\nPrompt: Explain why bananas are curvy in one sentence\nCompletion (Response A): Bananas grow upwards toward the sun against gravity through a process called negative geotropism, which causes their shape to bend into a distinctive curve.\n\nPrompt: Explain why bananas are curvy in one sentence\nCompletion (Response B): Bananas start out growing toward the ground, but then they turn and stretch upward toward the sun, which makes them bend into a funny curve."
+  },
+  {
+    "objectID": "lectures/reinforcement.html#bradley-terry-model-of-preferences",
+    "href": "lectures/reinforcement.html#bradley-terry-model-of-preferences",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Bradley-Terry Model of preferences",
+    "text": "Bradley-Terry Model of preferences\n\nGiven two responses, \\(i\\) and \\(j\\), the probability that a judge prefers i over j, is modelled as\n\n\\[\nP(i&gt;j) = \\frac{p_i}{p_i+p_j}\n\\]\nAccording to this model, each item has a latent strength \\(p_i&gt;0\\) with \\(\\sum_i p_i = 1\\).\nReparameterizing with \\(p_i=e^(r_j)\\) allows us to work with unbounded scores \\(r_j\\in \\mathcal{R}\\) (ranging from \\(-\\infty\\) to \\(+\\infty\\)), such as the output of a neural network: \\[\nP(i&gt;j) = \\frac{e^{r_i}}{e^r_i + e^r_j} = \\sigma(r_i-r_j)\n\\]\n\nThus, only score differences matter\nHOMEWORK Prove that \\(\\tfrac{e^{r_i}}{e^r_i + e^r_j} = \\sigma(r_i-r_j)\\)"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#bradley-terry-model-for-rlhf",
+    "href": "lectures/reinforcement.html#bradley-terry-model-for-rlhf",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Bradley-Terry Model for RLHF",
+    "text": "Bradley-Terry Model for RLHF\n\n\nWe are given a prompt \\(x\\), a chosen completion \\(y_c\\), and a rejected completion \\(y_r\\).\nWe score both with a reward model \\(r_\\theta\\)\n\n\n\nA reward model in RLHF is a neural network trained to act as a computational proxy for human judgment.\nThe reward model prompt and a model-generated response (or pair of responses) as input and outputs a scalar score (or logit) representing how well the output aligns with human preferences, values, helpfulness, and safety criteria.\nThey are initialized from a pretrained or instruction-tuned language model, modified to output a single scalar value, and trained on preference datasets using ranking objectives (like the Bradley-Terry pairwise loss) where the model learns to assign higher scores to responses preferred by humans over rejected offensive\nThe reward model will be used in the actual reinforcement learning step (e.g. PPO), where we need to score millions of iterations - thus, it will act as a proxy for human judgement"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#bradley-terry-model-for-rlhf-1",
+    "href": "lectures/reinforcement.html#bradley-terry-model-for-rlhf-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Bradley-Terry Model for RLHF",
+    "text": "Bradley-Terry Model for RLHF\n\nThis is the reward model \\(r_\\theta\\)\n\n\\[\nP(y_c &gt; y_r \\mid x) = \\dfrac{e^{r_\\theta(y_c\\mid x)}}{e^{r_\\theta(y_c\\mid x)} + e^{r_\\theta(y_r\\mid x)}}\n\\tag{3}\\]\n\nThe goal of reward model training is to find the \\(\\theta\\) that maximiizes this probability (the probability that the model assigns a higher score to the preferrend answer)\nMake Equation 3 into a loss function\n\n\\[\n\\theta^{*} = \\arg\\max_\\theta  \\dfrac{e^{r_\\theta(y_c\\mid x)}}{e^{r_\\theta(y_c\\mid x)} + e^{r_\\theta(y_r\\mid x)}}\n\\]"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#bradley-terry-model-for-rlhf-derive-loss-function",
+    "href": "lectures/reinforcement.html#bradley-terry-model-for-rlhf-derive-loss-function",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Bradley-Terry Model for RLHF: Derive loss function",
+    "text": "Bradley-Terry Model for RLHF: Derive loss function\n\nstarting from\n\n\\[\n\\theta^{*} = \\arg\\max_\\theta  \\dfrac{e^{r_\\theta(y_c\\mid x)}}{e^{r_\\theta(y_c\\mid x)} + e^{r_\\theta(y_r\\mid x)}}\n\\] - divide numerator and denominator by \\(e^{r_\\theta(y_c\\mid x)}\\) and using the \\(\\exp\\) notation to unclutter\n\\[\n\\theta^{*} = \\arg\\max_\\theta  \n\\dfrac{\\frac{\\exp(r_\\theta(y_c\\mid x))}{\\exp(r_\\theta(y_c\\mid x))}}{\\frac{\\exp(r_\\theta(y_c\\mid x)) + \\exp(r_\\theta(y_r\\mid x))}{\\exp(r_\\theta(y_c\\mid x))}}\n=  \\arg\\max_\\theta  \n\\dfrac{1}{1 + \\frac{\\exp(r_\\theta(y_r\\mid x))}{\\exp(r_\\theta(y_c\\mid x))}}\n\\] - This simplifies to \\[\n\\theta^{*} = \\arg\\max_\\theta  \n\\dfrac{1}{1 + \\exp(r_\\theta(y_r\\mid x) - r_\\theta(y_c\\mid x))}\n\\]"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#bradley-terry-model-for-rlhf-derive-loss-function-1",
+    "href": "lectures/reinforcement.html#bradley-terry-model-for-rlhf-derive-loss-function-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Bradley-Terry Model for RLHF: Derive loss function",
+    "text": "Bradley-Terry Model for RLHF: Derive loss function\n\nRecalling that \\(\\sigma(z)=\\tfrac{1}{1+e^{-z}}\\), we obtain finally \\[\n\\theta^{*} = \\arg\\max_\\theta  \\sigma(r_\\theta(y_c\\mid x) - r_\\theta(y_r\\mid x) )\n\\]\nIt is easier to work in log space, and so recalling that log is monotonic we have that \\[\n\\arg\\max_\\theta  \\sigma(r_\\theta(y_c\\mid x) - r_\\theta(y_r\\mid x) ) = \\arg\\max_\\theta  \\log \\sigma(r_\\theta(y_c\\mid x) - r_\\theta(y_r\\mid x) )\n\\]\nFinally, multiply by minus 1 to transform into a loss function to be minimized \\[\n\\mathcal{L}(\\theta) =   - \\log \\sigma(r_\\theta(y_c\\mid x) - r_\\theta(y_r\\mid x) )\n\\tag{4}\\]\nThis will be the loss that we can minimize by gradient descent\nThis is a binary cross-entropy loss"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#preferences-and-rl-training",
+    "href": "lectures/reinforcement.html#preferences-and-rl-training",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Preferences and RL training",
+    "text": "Preferences and RL training\n\n\n\n\n\n\n\n\n\n\nTraining a preference reward model requires pairs of chosen and rejected completions.\nWe take the predicted reward at the end of each sequence (only one reward for each sequence)"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#preferences-and-rl-training-1",
+    "href": "lectures/reinforcement.html#preferences-and-rl-training-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Preferences and RL training",
+    "text": "Preferences and RL training\n\n\nLoss derived from predicted difference in reward for each sequence (the models predict the reward at the EOS token)\nAt inference (RL), we can pass in only one completion to the model!"
   },
   {
     "objectID": "lectures/reinforcement.html#training-with-rlhf-instructgpt",
     "href": "lectures/reinforcement.html#training-with-rlhf-instructgpt",
     "title": "Approaches to biomedical knowledge",
     "section": "Training with RLHF: InstructGPT",
-    "text": "Training with RLHF: InstructGPT\n\nThe authors start with the IFT model as described\nThe final unembedding layer is removed\n\nUsing the Supervised Fine-Tuned (SFT) model as the starting point for the reward model ensures that both the policy and the reward model share identical tokenizer vocabularies and low-level feature representations.\nThe unembedding layer is used to project hidden states back to the output vocabulary\nThis layer is removed and replaced by a linear project layer that yields a single scalar value\nOpen AI used a smaller model (6.7 Billion parameters: the 6B model) for the reward model (trained separately from the largest policy model - the 175B Davinci model)\nIntuitively, Using a 6B reward model provides the necessary linguistic comprehension to evaluate complex prompts while cutting down GPU memory and compute overhead required during the PPO reinforcement learning phase.\n\n\n\nOuyang L, et al. (2022) Training language models to follow instructions with human feedback. arXiv 2203.02155"
+    "text": "Training with RLHF: InstructGPT\n\nThe authors start with the IFT model as described\nThe final unembedding layer is removed\n\nUsing the Supervised Fine-Tuned (SFT) model as the starting point for the reward model ensures that both the policy and the reward model share identical tokenizer vocabularies and low-level feature representations.\nThe unembedding layer is used to project hidden states back to the output vocabulary\nThis layer is removed and replaced by a linear project layer that yields a single scalar value\nOpen AI used a smaller model (6.7 Billion parameters: the 6B model) for the reward model (trained separately from the largest policy model - the 175B Davinci model)\nIntuitively, Using a 6B reward model provides the necessary linguistic comprehension to evaluate complex prompts while cutting down GPU memory and compute overhead required during the PPO reinforcement learning phase.\n\nEach prompt had between \\(K=4\\) to \\(K=9\\) completions. Therefore, for each prompt, up to \\({K\\choose 2}\\) comparisons can be made\nSee Appendix C.2 of Ouyang et al. (2022) for Details of RM training\n\n\nOuyang L, et al. (2022) Training language models to follow instructions with human feedback. arXiv 2203.02155"
   },
   {
-    "objectID": "lectures/reinforcement.html#sec-reward-1",
-    "href": "lectures/reinforcement.html#sec-reward-1",
+    "objectID": "lectures/reinforcement.html#python-sketch-of-reward-modelling",
+    "href": "lectures/reinforcement.html#python-sketch-of-reward-modelling",
     "title": "Approaches to biomedical knowledge",
-    "section": "Architecture of the RL/LLM reward model",
-    "text": "Architecture of the RL/LLM reward model\n\n\nThe LLM is pretrained on a large corpus\nInput to the LLM is the entire prompt plus the response\nTo generate a reward for the response, we add a linear output layer to the last hidden state of the response"
+    "section": "Python: Sketch of Reward Modelling",
+    "text": "Python: Sketch of Reward Modelling\n\nRecall that our implementation replaces the previous unembedding head (which projects each position’s final hidden state to a distribution over the vocabulary) with a reward head: a linear layer that projects the hidden state at the EOS token position to a single scalar — the model’s learned rating of the completion.\n\nimport torch.nn as nn\nclass BradleyTerryRewardModel(nn.Module):\n    \n    def __init__(self, base_lm):\n        super().__init__()\n        self.lm = base_lm\n        self.head = nn.Linear(self.lm.config.hidden_size, 1)\n    def forward(self, input_ids, attention_mask, eos_positions):\n        # see next slide\n\nThe argument base_lm refers to a pretrained, instruction-tuned model — its transformer body is reused, just with the unembedding head swapped out.\nThe head maps a hidden state of dimension \\(h\\) h to a scalar: nn.Linear(h, 1) stores its weight as a \\((1,h)\\) matrix internally and (by default) also learns a bias term, computing the reward as \\(r=\\mathbf{w}^T\\mathbf{x}+b\\)."
   },
   {
-    "objectID": "lectures/reinforcement.html#reward-model-loss",
-    "href": "lectures/reinforcement.html#reward-model-loss",
+    "objectID": "lectures/reinforcement.html#python-sketch-of-reward-modelling-2",
+    "href": "lectures/reinforcement.html#python-sketch-of-reward-modelling-2",
     "title": "Approaches to biomedical knowledge",
-    "section": "Reward model loss",
-    "text": "Reward model loss\n\nFor training, we need to define a loss\nImagine we have two answers to each question, that a human has classified as good (\\(y_w\\)) or bad (\\(y_l\\))\nThen we define the loss as \\[\n\\mathrm{Loss} = - \\log \\sigma(r(x,y_w) - r(x,y_l))\n\\]\n\\(r(x,y_w)\\) is calculated as in the previous slide by concatenating the prompt \\(x\\) with the good answer \\(y_w\\), i.e., with the answer a human rater prefered\n\\(r(x,y_l)\\) is for the answer to the prompt that a human did not prefer\nIf \\(r(x,y_w) &gt; r(x,y_l)\\), then the value is positive and \\(\\sigma\\) will return a value greater than 0.5. \\(\\log(0.5)=-0.69\\), and so the loss will always be less than 0.69\nIf \\(r(x,y_w) &lt; r(x,y_l)\\), then the value is negative and \\(\\sigma\\) will return a value less than 0.5, and the loss is a larger positive number\nThis forces the model to give high rewards to good answers and low rewards to bad answers!1\n\nSee lecture 4 to review the sigma function"
+    "section": "Python: Sketch of Reward Modelling (2)",
+    "text": "Python: Sketch of Reward Modelling (2)\n\nimport torch.nn as nn\nimport torch\nclass BradleyTerryRewardModel(nn.Module):\n    def __init__(self, base_lm):\n        # see previous slide\n    def forward(self, input_ids, attention_mask):\n        hidden = self.lm(input_ids=input_ids, \n                        attention_mask=attention_mask, \n                        output_hidden_states=True, \n                        return_dict=True).hidden_states[-1]\n        lengths = attention_mask.sum(dim=1) -1\n        batch_idx = torch.arange(hidden.size(0), device=hidden.device)\n        seq_repr = hidden[batch_idx, lengths]\n        return self.head(seq_repr).squeeze(-1)\n\n\nforward pass over base model\noutput_hidden_states=True: return the hidden states from every transformer layer (normally it only returns the final one).\n.hidden_states is a tuple of tensors, one per layer, each of shape (batch, seq_len, hidden_size)\n[-1] selects the last layer’s output — i.e. the final contextualized representation of every token in every sequence.\n\n\n\nhidden has shape (batch, seq_len, hidden_size)\nbatch: number of sequences processed in parallel (e.g., 32)\nseq_len: the number of token positions in the (padded) sequence\nhidden_size: model’s hidden dimension (\\(h\\))"
   },
   {
-    "objectID": "lectures/reinforcement.html#modelling-trajectories",
-    "href": "lectures/reinforcement.html#modelling-trajectories",
+    "objectID": "lectures/reinforcement.html#python-sketch-of-reward-modelling-3",
+    "href": "lectures/reinforcement.html#python-sketch-of-reward-modelling-3",
     "title": "Approaches to biomedical knowledge",
-    "section": "Modelling trajectories",
-    "text": "Modelling trajectories\n\nA trajectory, represented by tau (\\(\\tau\\)), is a series of (state, action, reward) – see slide 22.\nThe probability of a trajectory \\(\\tau\\) given a policy \\(\\pi\\) is thus modeled as the probability of the initial state multiplied by the product of the transition probability and the policy for each step: \\[\nP(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi(a_t\\mid s_t)\n\\tag{3}\\]\n\n\n\nWhere\n\n\\(\\rho(s_0)\\) is the probability of starting at \\(s_0\\)\n\\(P(s_{t+1}\\mid s_t,a_t)\\): The transition function (See Equation 2)\n\\(\\pi(a_t\\mid s_t)\\) is the probability of choosing action \\(a_t\\) given we are in state \\(s_t\\)\n\nNote the trajectory is a Markov process - the next state is dependent only on the previous state, not on the entire history1\n\n\nSee lecture 4 for background on Markov chains"
+    "section": "Python: Sketch of Reward Modelling (3)",
+    "text": "Python: Sketch of Reward Modelling (3)\n\nimport torch.nn as nn\nimport torch\nclass BradleyTerryRewardModel(nn.Module):\n    def __init__(self, base_lm):\n        # see previous slide\n    def forward(self, input_ids, attention_mask):\n        hidden = self.lm(input_ids=input_ids, \n                        attention_mask=attention_mask, \n                        output_hidden_states=True, \n                        return_dict=True).hidden_states[-1]\n        lengths = attention_mask.sum(dim=1) -1\n        batch_idx = torch.arange(hidden.size(0), device=hidden.device)\n        seq_repr = hidden[batch_idx, lengths]\n        return self.head(seq_repr).squeeze(-1)\n\n\nattention_mask is 1 for real tokens and 0 for padding.\nSumming along the sequence dimension gives each sequence’s true (unpadded) length\nsubtracting 1 converts that count into a zero-based index pointing at the last real token — which, in this pipeline, is the EOS token.\n\n\n\nRecall that we only calculate the reward for the EOS token"
   },
   {
-    "objectID": "lectures/reinforcement.html#rewards",
-    "href": "lectures/reinforcement.html#rewards",
+    "objectID": "lectures/reinforcement.html#python-sketch-of-reward-modelling-4",
+    "href": "lectures/reinforcement.html#python-sketch-of-reward-modelling-4",
     "title": "Approaches to biomedical knowledge",
-    "section": "Rewards",
-    "text": "Rewards\n\nRewards as discounted (immediate rewards are worth more than future rewards), using a factor \\(0&lt;\\gamma&lt;1\\) \\[\nR(\\tau) = \\sum_{t=0}^{\\infty} \\gamma^t r_t\n\\]\nThe expected return of a policy is the expected reward over all possible Trajectories \\[\nJ(\\pi) = \\int_{\\tau} P(\\tau\\mid\\pi)\\cdot R(\\tau) = \\mathbb{E}_{\\tau\\sim \\pi}\\left[R(\\tau)\\right]\n\\tag{4}\\]"
+    "section": "Python: Sketch of Reward Modelling (4)",
+    "text": "Python: Sketch of Reward Modelling (4)\n\nimport torch.nn as nn\nimport torch\nclass BradleyTerryRewardModel(nn.Module):\n    def __init__(self, base_lm):\n        # see previous slide\n    def forward(self, input_ids, attention_mask):\n        hidden = self.lm(input_ids=input_ids, \n                        attention_mask=attention_mask, \n                        output_hidden_states=True, \n                        return_dict=True).hidden_states[-1]\n        lengths = attention_mask.sum(dim=1) -1\n        batch_idx = torch.arange(hidden.size(0), device=hidden.device)\n        seq_repr = hidden[batch_idx, lengths]\n        return self.head(seq_repr).squeeze(-1)\n\n\nhidden.size(0): pulls out the first dimension, which is the batch size (e.g. 32)\ntorch.arange(hidden.size(0), device=hidden.device): give the range \\(0,1,\\ldots,31\\) (the data lives on the device, e.g. cuda:0)\n\n\n\nhidden has shape `(batch, seq_len, hidden_size)``\nbatch_idx has shape (batch,) — the values [0, 1, 2, ..., batch-1]\nlengths has shape (batch,) — the values `[len_0, len_1, len_2, …, len_{batch-1}]``\nThen, hidden[i, lengths[i], :] → sequence i’s hidden vector at its own last-token position\n\n\n\n\nRecall that we only calculate the reward for the EOS token"
   },
   {
-    "objectID": "lectures/reinforcement.html#llm-trajectories",
-    "href": "lectures/reinforcement.html#llm-trajectories",
+    "objectID": "lectures/reinforcement.html#python-sketch-of-reward-modelling-5",
+    "href": "lectures/reinforcement.html#python-sketch-of-reward-modelling-5",
     "title": "Approaches to biomedical knowledge",
-    "section": "LLM Trajectories",
-    "text": "LLM Trajectories\n\nA trajectory in an LLM is a series of prompts (see slide Section 22)\nIn this example, our original prompt is “Where is Berlin?” (\\(s_0\\))\nThe first action is the choice of the token “Berlin” (\\(a_0\\))\ndecoders are autoregressive, so our second prompt is “Where is Berlin? Berlin” (\\(s_1\\))"
+    "section": "Python: Sketch of Reward Modelling (5)",
+    "text": "Python: Sketch of Reward Modelling (5)\n\nimport torch.nn as nn\nimport torch\nclass BradleyTerryRewardModel(nn.Module):\n    def __init__(self, base_lm):\n        # see previous slide\n    def forward(self, input_ids, attention_mask):\n        hidden = self.lm(input_ids=input_ids, \n                        attention_mask=attention_mask, \n                        output_hidden_states=True, \n                        return_dict=True).hidden_states[-1]\n        lengths = attention_mask.sum(dim=1) -1\n        batch_idx = torch.arange(hidden.size(0), device=hidden.device)\n        seq_repr = hidden[batch_idx, lengths]\n        return self.head(seq_repr).squeeze(-1)\n\n\nFeeds each sequence’s EOS hidden vector through the linear reward head from the init method\nThis yields the shape (batch, 1).\nsqueeze(-1) drops the trailing size-1 dimension so the output is a flat (batch,) tensor of scalar rewards — one number per sequence\nEach entry will be either a chosen or a reject completion."
+  },
+  {
+    "objectID": "lectures/reinforcement.html#python-sketch-of-reward-modelling-6",
+    "href": "lectures/reinforcement.html#python-sketch-of-reward-modelling-6",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Python: Sketch of Reward Modelling (6)",
+    "text": "Python: Sketch of Reward Modelling (6)\n\ndef bradley_terry_loss(model, chosen_batch, rejected_batch):\n    r_chosen = model(chosen_batch[\"input_ids\"], chosen_batch[\"attention_mask\"])   # shape (batch,)\n    r_rejected = model(rejected_batch[\"input_ids\"], rejected_batch[\"attention_mask\"])  # shape (batch,)\n\n    loss = -torch.nn.functional.logsigmoid(r_chosen - r_rejected)\n    return loss.mean()\n\n\nTo calculate the loss, we need to run the model separately for the chosen completions and the rejected completions (batch)\n-logsigmoid(r_chosen - r_rejected) implements Equation 4, which we show again here: \\[\\mathcal{L}(\\theta) =   - \\log \\sigma(r_\\theta(y_c\\mid x) - r_\\theta(y_r\\mid x) )\\]\nmean() averages the per-example loss down to a single scalar\nBackpropagation will start with this average loss for the batch"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#outcome-of-reward-modelling",
+    "href": "lectures/reinforcement.html#outcome-of-reward-modelling",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Outcome of reward Modelling",
+    "text": "Outcome of reward Modelling\n\nFor the reward model training stage specifically: all parameters are trainable\nThus, weights of both the copied transformer body and the newly-initialized linear head get updated by the Bradley-Terry loss.\nThe result is an LLM that has been trained to reward completions.\nOnce RM training finishes, the weights of the reward model are fixed and the model is only used to score the policy’s outputs, producing the reward signal for PPO."
+  },
+  {
+    "objectID": "lectures/reinforcement.html#rlhf-big-picture",
+    "href": "lectures/reinforcement.html#rlhf-big-picture",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RLHF: Big picture",
+    "text": "RLHF: Big picture\n\n\n\n\nImage source: Lambert, Illustrating Reinforcement Learning from Human Feedback (RLHF), Hugging face blog\n\n\n\nWe will now start to explain the RLHF\nSee also slide 31\nToday, we will explain policy gradients\nThe second lecture on RL will present the KL divergence shift policy, various strategies for RLHF learning, and some new developments"
   },
   {
     "objectID": "lectures/reinforcement.html#policy-gradient",
     "href": "lectures/reinforcement.html#policy-gradient",
     "title": "Approaches to biomedical knowledge",
     "section": "Policy gradient optimization",
-    "text": "Policy gradient optimization\n\nTo train an GPT-style LLM, our initial policy \\(\\pi_{\\theta}\\) is simply the decoder model\nOur goal with RL is to modify the parameters \\(\\theta\\) of the policy to maximize the expected return (Equation 4).\nFor a deep neural network, we change the parameters of the network to mimimize a loss function using stochastic gradient descent.\nHere, we want to maximize \\(J(\\pi)\\) so we use stochastic gradient ascent \\[\n\\theta_{k+1} = \\theta_k + \\eta\\nabla_{\\theta}J(\\pi_{\\theta})\\mid_{\\theta_k}\n\\]\nIn the context of RL, the gradient is known as the policy gradient and the algorithms that optimize it are known as the policy gradient algorithms.\nProblem: To optimize \\(J(\\pi) = \\int_{\\tau} P(\\tau\\mid\\pi)\\cdot R(\\tau) = \\mathbb{E}_{\\tau\\sim \\pi}\\left[R(\\tau)\\right]\\), we would need to evaluate it over all possible trajectories, which is computationally intractable.\n\n\nWe will present Policy gradient optimization, showing how to modify the gradient to simplify the expression and reduce variance (which tends to improve convergence of training)"
+    "text": "Policy gradient optimization\n\nTo train an GPT-style LLM, our initial policy \\(\\pi_{\\theta}\\) is simply the decoder model\nOur goal with RL is to modify the parameters \\(\\theta\\) of the policy to maximize the expected return (Equation 5).\nFor a deep neural network, we change the parameters of the network to mimimize a loss function using stochastic gradient descent.\nIn the context of RLHF, the gradient \\(\\nabla_\\theta  J(\\pi)\\) is known as the policy gradient and the algorithms that optimize it are known as the policy gradient algorithms.\nProblem: To optimize \\(J(\\pi) = \\int_{\\tau} P(\\tau\\mid\\pi)\\cdot R(\\tau) = \\mathbb{E}_{\\tau\\sim \\pi}\\left[R(\\tau)\\right]\\), we would need to evaluate it over all possible trajectories, which is computationally intractable.\n\n\nWe will present Policy gradient optimization, showing how to modify the gradient to simplify the expression and reduce variance (which tends to improve convergence of training)"
   },
   {
     "objectID": "lectures/reinforcement.html#terminology",
     "href": "lectures/reinforcement.html#terminology",
     "title": "Approaches to biomedical knowledge",
     "section": "Terminology",
-    "text": "Terminology\n\nIt is important to keep the distinction between these three concepts clear!\n\n\nReward (denoted \\(r_t\\)): a scalar signal emitted by the environment at a single timestep, in response to one action taken from one state.\nReturn (denoted \\(R(\\tau)\\) or ): the (typically discounted) sum of rewards over one specific trajectory\n\n\\(R(\\tau)=\\sum_{t=0}^T \\gamma^t r_t\\): rewards over the entire trajectory\n\\(G_t = \\sum_{t=t'}^T \\gamma^t r_{t'}\\): reward-to-go, the rewards from a certain step onwards\n\nExpected return: the expectation of return over the distribution of trajectories induced by a policy: \\(J(\\pi)= \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[R(\\tau)\\right]\\)\n\nThe expected return is an average return over (in principle) infinitely many rollouts.\nIn reinforcement learning, we are trying to maximize the expected return\nWe will introduce \\(V^\\pi\\) and \\(Q^\\pi\\) below - these are expected returns conditioned on a certain current state (\\(V^\\pi\\)) or current state-action pair (\\(Q^\\pi\\))."
+    "text": "Terminology\n\nIt is important to keep the distinction between these three concepts clear!\n\n\nReward (denoted \\(r_t\\)): a scalar signal emitted by the environment at a single timestep, in response to one action taken from one state.\nReturn (denoted \\(R(\\tau)\\) or ): the (typically discounted) sum of rewards over one specific trajectory\n\n\\(R(\\tau)=\\sum_{t=0}^T \\gamma^t r_t\\): rewards over the entire trajectory\n\\(G_t = \\sum_{t=t'}^T \\gamma^t r_{t'}\\): reward-to-go, the rewards from a certain step onwards\n\nExpected return: the expectation of return over the distribution of trajectories induced by a policy: \\[\nJ(\\pi)= \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[R(\\tau)\\right]\n  \\tag{5}\\]\n\nThe expected return is an average return over (in principle) infinitely many rollouts.\nIn reinforcement learning, we are trying to maximize the expected return\nWe will introduce \\(V^\\pi\\) and \\(Q^\\pi\\) below - these are expected returns conditioned on a certain current state (\\(V^\\pi\\)) or current state-action pair (\\(Q^\\pi\\))."
+  },
+  {
+    "objectID": "lectures/reinforcement.html#understanding-policy-gradients",
+    "href": "lectures/reinforcement.html#understanding-policy-gradients",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Understanding policy gradients",
+    "text": "Understanding policy gradients\n\nWe want to choose parameters \\(\\theta\\) to maximize the expected reward \\[\nJ(\\theta) = \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[\\sum_t R(\\tau) \\right]\n\\]\nIn practice we cannot calculate the expectation directly because it would mean integrating over all possible trajectories\nTherefore, we estimate the expectation with a sample over rollouts (trajectories) \\[\nJ(\\theta) \\approx \\frac{1}{N}\\sum_{i=1}^N R(\\tau_i) \\qquad \\text{ with } \\tau_i\\sim \\pi_\\theta\n\\]\n\n\nThe meaning of \\(\\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[\\sum_t \\gamma^t r(s_t,a_t)\\right]\\) is \\[\n\\int_\\tau p_\\theta(\\tau)R(\\tau)\\mathrm{d}\\tau\n\\]"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#understanding-policy-gradients-1",
+    "href": "lectures/reinforcement.html#understanding-policy-gradients-1",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Understanding policy gradients",
+    "text": "Understanding policy gradients\nWe define the policy gradient \\(\\Delta \\theta\\) as\n\\[\n\\Delta \\theta \\propto \\Psi_t\\nabla_\\theta \\log \\pi_\\theta(a_t\\mid s_t)\n\\]\nThe two parts of this statement:\n\n\\(\\nabla_\\theta \\log \\pi_\\theta(a_t\\mid s_t)\\): how do parameters of \\(\\theta\\) influence which action is chosen for a state \\(s_t\\)?\n\\(\\Psi_t\\): How good was the action? (scalar value)\n\\(\\Psi_t\\) is a placeholder that can stand for one of several options\nThe choice of \\(\\Psi_t\\) determines the algorithm bias and variance and computational complexity\n\n\n\n\n\nTable 1: Common choices of \\(\\Psi_t\\) in the generalized policy gradient\n\n\n\n\n\n\n\n\n\n\\(\\Psi_t\\)\nName\n\n\n\n\n\\(\\sum_t r_t\\)\nTotal trajectory reward (vanilla REINFORCE)\n\n\n\\(\\sum_{t' \\geq t} r_{t'}\\)\nReward-to-go\n\n\n\\(\\sum_{t' \\geq t} r_{t'} - b(s_t)\\)\nBaselined reward-to-go\n\n\n\\(Q^\\pi(s_t, a_t)\\)\nAction-value function\n\n\n\\(A^\\pi(s_t, a_t) = Q^\\pi(s_t,a_t) - V^\\pi(s_t)\\)\nAdvantage function\n\n\n\\(r_t + V^\\pi(s_{t+1}) - V^\\pi(s_t)\\)\nTD residual (1-step advantage estimate)"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#value-action-and-advantage",
+    "href": "lectures/reinforcement.html#value-action-and-advantage",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Value, Action, and Advantage",
+    "text": "Value, Action, and Advantage\nValue function \\(V_\\pi(s)\\): expected return starting in state \\(s\\), following \\(\\pi\\) thereafter.\n\\[V_\\pi(s) = \\mathbb{E}_{\\tau\\sim\\pi}\\left[\\sum_{t'=t}^{T}\\gamma^{t'-t} r_{t'} \\,\\Big|\\, s_t=s\\right]\\]\nAction-value \\(Q_\\pi(s,a)\\): expected return starting in state \\(s\\), taking action \\(a\\), then following \\(\\pi\\).\n\\[Q_\\pi(s,a) = \\mathbb{E}_{\\tau\\sim\\pi}\\left[\\sum_{t'=t}^{T}\\gamma^{t'-t} r_{t'} \\,\\Big|\\, s_t=s,\\, a_t=a\\right]\\]\nAdvantage Function: How much better or worse than the policy’s own average behavior is this specific action?\n\\[\nA_\\pi(s_t,a_t) \\;=\\; Q_\\pi(s_t,a_t) - V_\\pi(s_t)\n\\tag{6}\\]\n\n\\(A_\\pi(s,a) &gt; 0\\): better than average at \\(s\\)\n\\(A_\\pi(s,a) &lt; 0\\): worse than average\n\\(A_\\pi(s,a) = 0\\): exactly average\n\n\nIn RLHF \\(\\gamma=1\\), because we optimize entire completions rather than individual steps"
   },
   {
     "objectID": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient",
     "href": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient",
     "title": "Approaches to biomedical knowledge",
     "section": "Policy gradient optimization: Deriving the gradient",
-    "text": "Policy gradient optimization: Deriving the gradient\n\nTo maximize the expected retrun\n\n\\[\n\\begin{align}\n\\nabla_{\\theta}J(\\pi) &=\\nabla_{\\theta}\\mathbb{E}_{\\tau\\sim \\pi}\\left[R(\\tau)\\right] & \\bullet \\text{take gradient of expected return}\\\\\n&=\\nabla_{\\theta}\\int_{\\tau}P(\\tau\\mid\\theta) R(\\tau) &\\bullet \\text{definition of expected return}\\\\\n&=\\int_{\\tau}\\nabla_{\\theta} P(\\tau\\mid\\theta) R(\\tau) & \\bullet \\text{linearity of gradient operator}\\\\\n&=\\int_{\\tau} P(\\tau\\mid\\theta) \\nabla_{\\theta} \\log P(\\tau\\mid\\theta) R(\\tau) & \\bullet \\text{log derivative trick}\\\\\n\\end{align}\n\\] - To understand the log derivative trick, consider that \\(\\tfrac{d}{dx}\\log f(x) = \\tfrac{1}{f(x)}\\tfrac{d}{dx}f(x)\\)"
+    "text": "Policy gradient optimization: Deriving the gradient\nWritten as an integral, the objective is \\[\nJ(\\theta) = \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[R(\\tau\\right]\n= \\int_\\tau P_\\theta(\\tau)R(\\tau)\\mathrm{d}\\tau\\qquad \\bullet\\text{ by definition of expectation}\n\\] Take the gradient of the reward (scalar) with respect to the parameters (vector) \\[\n\\nabla_\\theta J(\\theta) = \\nabla_\\theta \\int_\\tau P_\\theta(\\tau)R(\\tau)\\mathrm{d}\\tau =  \\int_\\tau \\nabla_\\theta P_\\theta(\\tau)R(\\tau)\\mathrm{d}\\tau\n\\]\n\nAlthough we can sample trajectories from \\(P_\\theta(\\tau)\\) we cannot from \\(\\nabla_\\theta P_\\theta(\\tau)\\)\nThis is why the log derivative trick is needed"
   },
   {
     "objectID": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-1",
     "href": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Policy gradient optimization: Deriving the gradient",
-    "text": "Policy gradient optimization: Deriving the gradient\n\ncontinuing, recalling Equation 3 for the probability of a trajectory: \\(P(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi_{\\theta}(a_t\\mid s_t)\\)\n\n\\[\n\\begin{align}\n\\nabla_{\\theta}J(\\pi_{\\theta}) &=\\int_{\\tau} P(\\tau\\mid\\theta) \\nabla_{\\theta} \\log P(\\tau\\mid\\theta) R(\\tau)&\\\\\n&=\\mathbb{E}_{\\tau\\sim \\pi}\\left[ \\underbrace{\\nabla_{\\theta} \\log P(\\tau\\mid\\theta)}_{\\text{let's focus on this}} R(\\tau)\\right] &\\bullet \\text{equivalent representation as an expectation}\\\\\n\\end{align}\n\\]"
+    "text": "Policy gradient optimization: Deriving the gradient\n\nTo understand the log derivative trick, consider that \\(\\tfrac{d}{dx}\\log f(x) = \\tfrac{1}{f(x)}\\tfrac{d}{dx}f(x)\\)\nThis implies \\[\nf(x)\\tfrac{d}{dx}\\log f(x) = \\tfrac{d}{dx}f(x)\n\\]\n\n\\[\n\\begin{align}\n\\nabla_{\\theta}J(\\pi) &=\\int_{\\tau}\\nabla_{\\theta} P(\\tau\\mid\\theta) R(\\tau)\\mathrm{d}\\tau & \\bullet \\text{from previous slide}\\\\\n&=\\int_{\\tau} P(\\tau\\mid\\theta) \\nabla_{\\theta} \\log P(\\tau\\mid\\theta) R(\\tau) & \\bullet \\text{log derivative trick}\\\\\n&= \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[\\log P(\\tau\\mid\\theta)\\cdot R(\\tau)\\right] & \\bullet \\text{equivalent expectation form}\\\\\n\\end{align}\n\\]\n\nThis can be sampled (Monte Carlo sampling)\nIn Python code, the rollout generation (creation of prompts/completions) handles the sampling\nthe loss code handles the calculation of \\(\\log P(\\tau\\mid\\theta)\\cdot R(\\tau)\\)"
   },
   {
     "objectID": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-2",
     "href": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Policy gradient optimization: Deriving the gradient",
-    "text": "Policy gradient optimization: Deriving the gradient\n\nHere, we focus on simplifying the term \\(\\nabla_{\\theta} \\log P(\\tau\\mid\\theta)\\)\n\n\\[\n\\begin{align}\n\\nabla_{\\theta}\\log P(\\tau) &= \\nabla_{\\theta} \\log \\left[ \\rho(s_0)\\prod_{t=0}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi_{\\theta}(a_t\\mid s_t)\\right]&\\\\\n&= \\underbrace{\\nabla_{\\theta} \\log\\rho(s_0)}_{=0} + \\sum_{t=0}^{T-1}\\left[\\underbrace{\\nabla_{\\theta} \\log P(s_{t+1}\\mid s_t,a_t)}_{=0} + \\nabla_{\\theta} \\log\\pi_{\\theta}(a_t\\mid s_t)\\right]&\n\\dagger\\dagger\\\\\n&= \\sum_{t=0}^{T-1} \\nabla_{\\theta} \\log\\pi_{\\theta}(a_t\\mid s_t)\\\\\n\\end{align}\n\\]\n\n\\(\\theta\\) denotes the full set of trainable parameters of the LLM.\nIn the line marked with \\(\\dagger\\dagger\\), only the third term depends on \\(\\theta\\)\nNeither the distribution over the first state \\(\\rho(s_0)\\) nor the transition probability \\(P(s_{t+1}\\mid s_t,a_t)\\) depend on these weights\nRecall that for LLMs, the transition is a trivial deterministic function"
+    "text": "Policy gradient optimization: Deriving the gradient\n\nHere, we focus on simplifying the term \\(\\nabla_{\\theta} \\log P(\\tau\\mid\\theta)\\)\nRecalling the probability of a trajectory: \\(P(\\tau) = \\rho(s_0)\\prod_{t=o}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi_{\\theta}(a_t\\mid s_t)\\) (because it is a gradient of a probability and does not satisfy requirements for being a probability)\n\n\\[\n\\begin{align}\n\\nabla_{\\theta}\\log P(\\tau) &= \\nabla_{\\theta} \\log \\left[ \\rho(s_0)\\prod_{t=0}^{T-1}P(s_{t+1}\\mid s_t,a_t)\\pi_{\\theta}(a_t\\mid s_t)\\right]&\\\\\n&= \\underbrace{\\nabla_{\\theta} \\log\\rho(s_0)}_{=0} + \\sum_{t=0}^{T-1}\\left[\\underbrace{\\nabla_{\\theta} \\log P(s_{t+1}\\mid s_t,a_t)}_{=0} + \\nabla_{\\theta} \\log\\pi_{\\theta}(a_t\\mid s_t)\\right]&\n\\dagger\\dagger\\\\\n&= \\sum_{t=0}^{T-1} \\nabla_{\\theta} \\log\\pi_{\\theta}(a_t\\mid s_t)\\\\\n\\end{align}\n\\]\n\n\\(\\theta\\) denotes the full set of trainable parameters of the LLM.\nIn the line marked with \\(\\dagger\\dagger\\), only the third term depends on \\(\\theta\\)"
+  },
+  {
+    "objectID": "lectures/reinforcement.html#python-rlhf-loss",
+    "href": "lectures/reinforcement.html#python-rlhf-loss",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Python",
+    "text": "Python\nIn Python, the lines that correspond to this: \\[\n\\nabla_{\\theta}\\log P(\\tau)= \\sum_{t=0}^{T-1} \\nabla_{\\theta} \\log\\pi_{\\theta}(a_t\\mid s_t)\n\\]\nare something like this\n\nseq_log_probs = (token_log_probs * completion_mask).sum(dim=1)\nloss = -(seq_log_probs * advantages).mean()\nloss.backward()\n\n\nseq_log_probs implements \\(\\sum_{t=0}^T \\log \\pi_\\theta (a_t\\mid s_t)\\)\ncompletion_mask: 1 for tokens that are part of the completion, 0 for tokens that were part of the prompt\n.sum(dim=1)leaves seq_log_probs with dimension \\((\\mathrm{batch},)\\), one scalar per sequence, equal to \\(\\sum_{t=0}^T \\log \\pi_\\theta (a_t\\mid s_t)\\) but restricted to the completion tokens\nadvantages represent \\(\\Psi_t\\)\nloss.backward(): autograd calculation of the gradients"
   },
   {
     "objectID": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-3",
@@ -599,196 +732,70 @@
     "href": "lectures/reinforcement.html#policy-gradient-optimization-deriving-the-gradient-4",
     "title": "Approaches to biomedical knowledge",
     "section": "Policy gradient optimization: Deriving the gradient",
-    "text": "Policy gradient optimization: Deriving the gradient\n\nIt is clearly not tractable to calculate all \\(100^{100000}\\) trajectories…\nInstead, we generate a sample \\(\\mathcal{D}\\) of trajectories and calculate the sample mean \\[\n\\hat{g} = \\frac{1}{|\\mathcal{D}|} \\sum_{\\tau\\in\\mathcal{D}}\\sum_{t=0}^{T-1} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)R(\\tau)\n\\tag{5}\\]\nand then use this to update the parameters \\[\n\\theta_{k+1} = \\theta_k + \\eta\\hat{g}\n\\]\nThis is known as stochastic gradient ascent.\nThe gradient typically would be calculated using automatic differentiation by pytorch (autograd)\nThe so-called reinforce algorithm repeatedly performs rounds of stochastic gradient ascent, updates parameters, runs \\(|\\mathcal{D}|\\) trajectories, etc."
+    "text": "Policy gradient optimization: Deriving the gradient\n\nIt is clearly not tractable to calculate all \\(100^{100000}\\) trajectories…\nInstead, we generate a sample \\(\\mathcal{D}\\) of trajectories and calculate the sample mean \\[\n\\hat{g} = \\frac{1}{|\\mathcal{D}|} \\sum_{\\tau\\in\\mathcal{D}}\\sum_{t=0}^{T-1} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)R(\\tau)\n\\tag{7}\\]\nand then use this to update the parameters \\[\n\\theta_{k+1} = \\theta_k + \\eta\\hat{g}\n\\]\nThis is known as stochastic gradient ascent.\nThe gradient typically would be calculated using automatic differentiation by pytorch (autograd)\nThe so-called reinforce algorithm repeatedly performs rounds of stochastic gradient ascent, updates parameters, runs \\(|\\mathcal{D}|\\) trajectories, etc."
   },
   {
-    "objectID": "lectures/reinforcement.html#calculating-gradients",
-    "href": "lectures/reinforcement.html#calculating-gradients",
+    "objectID": "lectures/reinforcement.html#reinforce",
+    "href": "lectures/reinforcement.html#reinforce",
     "title": "Approaches to biomedical knowledge",
-    "section": "Calculating gradients",
-    "text": "Calculating gradients\n\nWhen we evaluate a trajectory, each hidden state encodes information only about previous states thanks to the causal mask applied during self-attention\nWe apply a linear projection to the hidden states to obtain scores for each token in the vocabulary\nThen we apply softmax to generate probabilities, so that \\(\\log \\pi_{\\theta}(a_t\\mid s_t) = \\log\\mathrm{softmax}(y_t)\\)\nAt each timestep \\(t\\), we select the log-probability assigned to the token that was actually generated (\\(y_t\\) has scores for every token in the vocabulary, so this lookup is easy)\nBecause of the causal mask, a single forward pass yields \\(\\log\\pi_{\\theta}(a_t\\mid s_t)\\) for every \\(t\\) simultaneously\nThis gives us the term needed inside the REINFORCE gradient estimator \\(\\hat{g}\\) from Equation 5."
+    "section": "REINFORCE",
+    "text": "REINFORCE\n\nOne of the original RL algorithms was entitled\n\nREward INcrement = Nonnegative Factor times Offset Reinforcement times Characteristic Eligibility\n\n\nWilliams R J (1992) Simple statistical gradient-following algorithms for connectionist reinforcement learning. Machine Learning: 8:229-256\n\n\n\nREINFORCE provides the update rule to maximize a reward\n\n\\[\n\\mathbb{E}_{x\\sim \\mathcal{D}, y\\sim\\pi_\\theta(\\cdot\\mid x)}\n\\left[R(x,y) \\nabla_\\theta \\log \\pi_\\theta (y\\mid x)\\right]\n\\]\n\nTypically this approach has a high variance because the reward \\(R(x,y)\\) reflects “how good is the next step”\nOne can reduce the variance of the solution by subtracting an appropriate baseline."
   },
   {
-    "objectID": "lectures/reinforcement.html#calculating-rewards",
-    "href": "lectures/reinforcement.html#calculating-rewards",
+    "objectID": "lectures/reinforcement.html#reinforce-2",
+    "href": "lectures/reinforcement.html#reinforce-2",
     "title": "Approaches to biomedical knowledge",
-    "section": "Calculating rewards",
-    "text": "Calculating rewards\n\nApply the linear layer to all positions that correspond to actions (i.e., tokens following the original prompt)\nSee slide Section 32.\nThis allows us to generate the reward for each time step/trajectory \\[\n\\sum_{t=0}^{T} \\nabla_{\\theta} \\log \\pi_{\\theta}(a_t\\mid s_t)\\underbrace{R(\\tau)}_{\\mathrm{reward}}\n\\]"
+    "section": "REINFORCE (2)",
+    "text": "REINFORCE (2)\n\nFor instance, “how much better or worse is the solution than average”?\nWe can calculate the moving average of rewards throughout training:\n\n\\[\nb_{MA} = \\frac{1}{S}\\sum_s R(x^s,y^s)\n\\]\n\nSubtracting this from the reward lowers variance but does not add bias\nProvides the model with a better sense of which rewards to favor\n\n\\[\n\\mathbb{E}_{x\\sim \\mathcal{D}, y\\sim\\pi_\\theta(\\cdot\\mid x)}\n\\left[\\left(R(x,y)-b_{MA}\\right) \\nabla_\\theta \\log \\pi_\\theta (y\\mid x)\\right]\n\\]"
   },
   {
-    "objectID": "lectures/reinforcement.html#reward-to-go",
-    "href": "lectures/reinforcement.html#reward-to-go",
+    "objectID": "lectures/reinforcement.html#reinforce-leave-one-out-rloo",
+    "href": "lectures/reinforcement.html#reinforce-leave-one-out-rloo",
     "title": "Approaches to biomedical knowledge",
-    "section": "reward to go",
-    "text": "reward to go\n\nReward to go\nA “trick” to reduce the variance of policy gradient.\n\n\nThe problem is that the policy gradients as discussed above have a high variance (are noisy)\nFor clarity, we will demonstrate the “trick” omitting the \\(\\gamma\\) factor that is used to down-weight noisy future estimates\nGoal: \\[J(\\theta) = \\mathbb{E}_{\\tau \\sim \\pi_\\theta}\\left[R(\\tau)\\right], \\qquad R(\\tau) = \\sum_{t=0}^{T} r_t\\]\n\nThe policy gradient theorem:\n\\[\\nabla_\\theta J(\\theta) = \\mathbb{E}_{\\tau \\sim \\pi_\\theta}\\left[\\nabla_\\theta \\log \\pi_\\theta(\\tau) \\, R(\\tau)\\right]\\]"
+    "section": "REINFORCE Leave-one-out: RLOO",
+    "text": "REINFORCE Leave-one-out: RLOO\n\nIdea: Use additional samples to create a baseline\nunbiased\nstronger than REINFORCE at the price of extra inference\n\n\\[\n\\frac{1}{k}\\sum_{i=1}^k[R(y_{(i)}, x) - \\frac{1}{k-1}\\sum_{j\\neq i}R(y_{(j)}, x)]\\nabla_\\theta \\log \\pi_\\theta(y_{(i)}\\mid x)\n\\qquad \\text{ for } \\quad\ny_{(1)},\\ldots,y_{(k)} \\sim \\pi_\\theta(\\cdot \\ x)\n\\]\n\nREINFORCE uses as a baseline the average across entire dataset\nRLOO instead creates (on the fly) a baseline of \\(k-1\\) completitions for each prompt \\(k\\)"
   },
   {
-    "objectID": "lectures/reinforcement.html#factoring-the-trajectory-probability-recap-without-gamma",
-    "href": "lectures/reinforcement.html#factoring-the-trajectory-probability-recap-without-gamma",
+    "objectID": "lectures/reinforcement.html#reinforcerloo",
+    "href": "lectures/reinforcement.html#reinforcerloo",
     "title": "Approaches to biomedical knowledge",
-    "section": "Factoring the Trajectory Probability (recap without \\(\\gamma\\))",
-    "text": "Factoring the Trajectory Probability (recap without \\(\\gamma\\))\nTrajectory probability factors as:\n\\[p(\\tau) = p(s_0)\\prod_{t=0}^T \\pi_\\theta(a_t|s_t)\\,p(s_{t+1}|s_t,a_t)\\]\nOnly the policy terms depend on \\(\\theta\\), so:\n\\[\n\\nabla_\\theta \\log \\pi_\\theta(\\tau) = \\sum_{t=0}^T \\nabla_\\theta \\log \\pi_\\theta(a_t|s_t)\n\\]\nThis gives the REINFORCE estimator:\n\\[\n\\nabla_\\theta J(\\theta) = \\mathbb{E}_\\tau\\left[\\left(\\sum_{t=0}^T \\nabla_\\theta \\log \\pi_\\theta(a_t|s_t)\\right)\\left(\\sum_{t'=0}^T r_{t'}\\right)\\right]\n\\tag{6}\\]"
+    "section": "REINFORCE/RLOO",
+    "text": "REINFORCE/RLOO\nReturning now to the Python code from [slide @python-rlhf-loss]:\n\nseq_log_probs = (token_log_probs * completion_mask).sum(dim=1)\nloss = -(seq_log_probs * advantages).mean()\nloss.backward()\n\n\nadvantages would be the reward calculated by REINFORCE of RLOO\nThis is broadcast to multiply the probabilities of each token of a given completion (seg_log_probs)\nThis is then used in a standard backpropagation approach to modify the weights of the model"
   },
   {
-    "objectID": "lectures/reinforcement.html#rewarding-past-and-future-steps",
-    "href": "lectures/reinforcement.html#rewarding-past-and-future-steps",
+    "objectID": "lectures/reinforcement.html#proximal-policy-optimization-ppo",
+    "href": "lectures/reinforcement.html#proximal-policy-optimization-ppo",
     "title": "Approaches to biomedical knowledge",
-    "section": "Rewarding past and future steps…",
-    "text": "Rewarding past and future steps…\nEvery log-probability term \\(\\nabla_\\theta \\log\\pi_\\theta(a_t|s_t)\\) in Equation 6 gets multiplied by the entire trajectory return — including rewards \\(r_{t'}\\) that occurred before \\(a_t\\) was taken.\n\n\n\n\n\n\nNote\n\n\nAction \\(a_t\\) cannot have caused a reward that already happened.\n\n\n\n\nThese “past-reward” terms add variance to the gradient estimate without adding any real signal.\nThe reward to go approach splits the inner sum at \\(t\\):\n\n\\[\n\\nabla_\\theta J(\\theta) = \\sum_{t=0}^T \\mathbb{E}_\\tau\\left[\\nabla_\\theta \\log\\pi_\\theta(a_t|s_t)\\left(\\underbrace{\\sum_{t'&lt;t} r_{t'}}_{\\text{past}} + \\underbrace{\\sum_{t'\\geq t} r_{t'}}_{\\text{future}}\\right)\\right]\n\\]\n\nIf we can show the past term vanishes in expectation, dropping it doesn’t change the value of the gradient (i.e., it does not add bias)\nInstead, the approach reduces variance."
+    "section": "Proximal Policy Optimization (PPO)",
+    "text": "Proximal Policy Optimization (PPO)\n\n\nREINFORCE and RLOO are relatively simple\nRLHF is a very active area of research\nPPO was derived from the RL toolkit and uses many of the same concepts, but is harder to describe in a single lecture\nUsed by many of leading commercial LLM, e.g., OpenAI, Gemini,…\n\n\n\n\nimage source: Zheng R et al (2023) Secrets of RLHF in Large Language Models Part I: PPO. arXiv 2307.04964"
   },
   {
-    "objectID": "lectures/reinforcement.html#proof-past-rewards-dont-depend-on-a_t",
-    "href": "lectures/reinforcement.html#proof-past-rewards-dont-depend-on-a_t",
+    "objectID": "lectures/reinforcement.html#deepseek-reinforcement-learning-with-verifiable-rewards-rlvr",
+    "href": "lectures/reinforcement.html#deepseek-reinforcement-learning-with-verifiable-rewards-rlvr",
     "title": "Approaches to biomedical knowledge",
-    "section": "Proof: Past Rewards Don’t Depend on \\(a_t\\)",
-    "text": "Proof: Past Rewards Don’t Depend on \\(a_t\\)\nFor \\(t' &lt; t\\), \\(r_{t'}\\) is fixed once we condition on the trajectory prefix up to \\(s_t\\) (i.e., \\(s_{0:t},a_{0:t-1}\\)). ::: {.small-text} Tower rule - The overall average of something can be obtained by first averaging within groups, then averaging those group-averages together. \\[\n\\mathbf{E}\\left[ X \\right] = \\mathbf{E}\\left[ \\mathbf{E}\\left[X\\mid Y\\right] \\right]\n\\] - We’ll use this with \\(Y\\) = “the trajectory prefix up to \\(s_t\\)” and \\(X\\) = the term we’re taking expectation of — averaging over \\(a_t\\) first, then over everything before it. :::\n-By the tower rule:\n\\[\\mathbb{E}_\\tau\\left[\\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\, r_{t'}\\right]\\] \\[= \\mathbb{E}_{s_{0:t},a_{0:t-1}}\\Big[ \\underbrace{\\mathbb{E}_{a_t\\sim\\pi_\\theta(\\cdot|s_t)}\\big[\\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\, r_{t'} \\mid s_{0:t},a_{0:t-1}\\big]}_{\\text{average over } a_t \\text{ only}}\\Big]\\]\nSince \\(r_{t'}\\) is already fixed given the prefix, it pulls out of the inner average:\n\\[= \\mathbb{E}_{s_{0:t},a_{0:t-1}}\\Big[ r_{t'} \\cdot \\mathbb{E}_{a_t\\sim\\pi_\\theta(\\cdot|s_t)}\\big[\\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\mid s_t\\big]\\Big]\\]\nThe inner expectation is the score-function identity."
+    "section": "DeepSeek: Reinforcement Learning with Verifiable Rewards (RLVR)",
+    "text": "DeepSeek: Reinforcement Learning with Verifiable Rewards (RLVR)\n\nReward signals are derived not from human preference but from objective, programmatically verifiable criteria\nMath for RLVR is similar to that for RLHF\n\n\n\nImage source: RLHF Book T"
   },
   {
-    "objectID": "lectures/reinforcement.html#the-score-function-identity",
-    "href": "lectures/reinforcement.html#the-score-function-identity",
+    "objectID": "lectures/reinforcement.html#deepseek-group-relative-policy-optimization-grpo",
+    "href": "lectures/reinforcement.html#deepseek-group-relative-policy-optimization-grpo",
     "title": "Approaches to biomedical knowledge",
-    "section": "The Score-Function Identity",
-    "text": "The Score-Function Identity\nThe Proof slide showed that each past term reduces (via the tower rule) to \\(r_{t'} \\cdot \\mathbb{E}_{a_t\\sim\\pi_\\theta(\\cdot|s_t)}\\big[\\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\mid s_t\\big]\\). We now show that factor is exactly zero.\nBy definition of expectation for a discrete random variable:\n\\[\n\\begin{align}\n\\mathbb{E}_{a\\sim\\pi_\\theta(\\cdot|s)}\\left[\\nabla_\\theta \\log\\pi_\\theta(a|s)\\right] &= \\sum_a \\pi_\\theta(a|s)\\, \\nabla_\\theta \\log\\pi_\\theta(a|s) &\\bullet \\text{by definition} \\\\\n& = \\sum_a \\pi_\\theta(a|s)\\,\\frac{\\nabla_\\theta \\pi_\\theta(a|s)}{\\pi_\\theta(a|s)}&\\bullet \\tfrac{d}{dx}\\log f(x) = \\frac{1}{f(x)} \\tfrac{d}{dx}f(x)\\\\\n&= \\sum_a  \\nabla_\\theta \\pi_\\theta(a|s) &\\bullet \\text{canceling} \\\\\n&=\\nabla_\\theta \\sum_a  \\pi_\\theta(a|s)    &\\bullet \\text{linearity of gradient operator} \\\\\n  &=\\nabla_\\theta 1 &\\bullet \\text{definition of probability} \\\\\n  &= 0\n\\end{align}\n\\]\n\nThus, every past-reward term contributes exactly zero to the expectation."
+    "section": "DeepSeek: Group Relative Policy Optimization (GRPO)",
+    "text": "DeepSeek: Group Relative Policy Optimization (GRPO)\n\nGRPO is similar to RLOO in that both generate multiple completions from a single prompt and compute relative advantage via intra-group comparisons\nGRPO \\[\n\\hat{A}_i = \\frac{R_i - \\mathrm{mean}(A_1,A_2,\\ldots,A_k)}{\\mathrm{std}(A_1,A_2,\\ldots,A_k)}\n\\]\n\n\nWen X et al. (2025) Reinforcement Learning with Verifiable Rewards Implicitly Incentivizes Correct Reasoning in Base LLMs. arXiv 2506.14245; The DeepSeek R1 paper"
   },
   {
-    "objectID": "lectures/reinforcement.html#result-the-reward-to-go-estimator",
-    "href": "lectures/reinforcement.html#result-the-reward-to-go-estimator",
+    "objectID": "lectures/reinforcement.html#kl-divergence",
+    "href": "lectures/reinforcement.html#kl-divergence",
     "title": "Approaches to biomedical knowledge",
-    "section": "Result: The Reward-to-Go Estimator",
-    "text": "Result: The Reward-to-Go Estimator\n\\[\n\\nabla_\\theta J(\\theta) = \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\left[\\sum_{t=0}^T \\left( \\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\right) \\cdot \\underbrace{\\sum_{t'=t}^{T} r_{t'}}_{G_t \\;=\\; \\text{reward-to-go}}\\right]\n\\tag{7}\\]\n\\(G_t\\) is the return accumulated from time \\(t\\) onward, not the full trajectory return. - Rewards to go means that at each step, we only focus on rewards that are not in the past! - This makes sense, because a reward cannot alter the rewards we received in the past!"
-  },
-  {
-    "objectID": "lectures/reinforcement.html#baselines",
-    "href": "lectures/reinforcement.html#baselines",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Subtracting Baselines",
-    "text": "Subtracting Baselines\n\nSubtracting a baseline from the rewards to go still results in an unbiased estimator and may further reduce variance\nreplacing \\(G_t\\) with \\(A_t = G_t - b(s_t)\\) leaves the gradient’s expectation completely unchanged because \\(b(s_t)\\) depends on the state \\(s_t\\) but not on the action \\(a_t\\).\nThe derivation is similar to the above\n\n\\[A_t = G_t - b(s_t)\\]\n\n\\(G_t\\): Intuitively, \\(G_t\\) has some baseline level that represents the goodness of the state as well as a component that is specific to the component taken."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#subtracting-baselines",
-    "href": "lectures/reinforcement.html#subtracting-baselines",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Subtracting Baselines",
-    "text": "Subtracting Baselines\n\nHow do we capture the idea of a baseline: good vs. bad state?\nAs a baseline, we will choose the value function \\(V^{\\pi}(s_t)\\) - If we start from state \\(s_t\\), what is the future expected reward of trajectories starting from state \\(s_t\\) and following policy \\(\\pi_{\\theta}\\)?\n\n\nFor instance, if our prompt is What is the capital of Niedersachsen? and our current state is\n\nWhat is the capital of Niedersachsen? The capital is\n\nthen overall the LLM state has high \\(V^{\\pi}(s_t)\\) (i.e., value or expected reward).\n\nIn contrast, if for some reason our current state is\nWhat is the capital of Niedersachsen? Cats are selfish because\n\nthen it is very unlikely we will generate the correct answer Hannover. This state has a low \\(V^{\\pi}(s_t)\\) (expected reward)"
-  },
-  {
-    "objectID": "lectures/reinforcement.html#how-do-we-calculate-the-value-function-vpis_t",
-    "href": "lectures/reinforcement.html#how-do-we-calculate-the-value-function-vpis_t",
-    "title": "Approaches to biomedical knowledge",
-    "section": "How do we calculate the value function \\(V^{\\pi}(s_t)\\)?",
-    "text": "How do we calculate the value function \\(V^{\\pi}(s_t)\\)?\n\nAdd an additional linear layer on top of the LLM (which is our policy \\(\\pi_\\theta\\)) that estimates the value of a state at each time step\nNote we are not referring to the logit layer, but to a linear layer that estimates reward"
-  },
-  {
-    "objectID": "lectures/reinforcement.html#q-and-v",
-    "href": "lectures/reinforcement.html#q-and-v",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Q and V",
-    "text": "Q and V\n\nThe rewards to go function is \\(G_t= \\sum_{t'=t}^{T} r_{t'} = \\sum_{t'=t}^{T}r(s_{t'}, a_{t'})\\). This is for one specific trajectory\nIn RL, this is known as the \\(Q\\) function, which is the expected return if the agent starts at state \\(s\\), takes action \\(a\\), and then acts according to policy for all steps of the trajectory after the current step \\(t'\\).\nBut \\(Q^{\\pi}(s,a)\\) is defined as the expectation of that sum over all trajectories starting from \\((s,a)\\):\n\n\\[\nQ^{\\pi}(s,a) = \\mathbb{E}_{\\tau\\sim\\pi}\\left[ \\sum_{t'}^T r(s_{t'},a_{t'}) \\big\\mid s_t=s,a_t=a \\right]\n\\]"
-  },
-  {
-    "objectID": "lectures/reinforcement.html#state-value-and-action-value-functions",
-    "href": "lectures/reinforcement.html#state-value-and-action-value-functions",
-    "title": "Approaches to biomedical knowledge",
-    "section": "State-Value and Action-Value Functions",
-    "text": "State-Value and Action-Value Functions\nState-value \\(V^\\pi(s)\\): expected return starting in state \\(s\\), following \\(\\pi\\) thereafter.\n\\[V^\\pi(s) = \\mathbb{E}_{\\tau\\sim\\pi}\\left[\\sum_{t'=t}^{T}\\gamma^{t'-t} r_{t'} \\,\\Big|\\, s_t=s\\right]\\]\nAction-value \\(Q^\\pi(s,a)\\): expected return starting in state \\(s\\), taking action \\(a\\), then following \\(\\pi\\).\n\\[Q^\\pi(s,a) = \\mathbb{E}_{\\tau\\sim\\pi}\\left[\\sum_{t'=t}^{T}\\gamma^{t'-t} r_{t'} \\,\\Big|\\, s_t=s,\\, a_t=a\\right]\\]\n\n\n\n\n\n\nNote\n\n\n\\(Q\\) conditions on the action too; \\(V\\) averages it out over the policy’s own action distribution."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#relating-v-to-q",
-    "href": "lectures/reinforcement.html#relating-v-to-q",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Relating \\(V\\) to \\(Q\\)",
-    "text": "Relating \\(V\\) to \\(Q\\)\n\\(V\\) is \\(Q\\) with the action integrated out, weighted by the policy — this is the tower rule again, conditioning on \\(a_t\\) instead of the trajectory prefix:\n\\[V^\\pi(s) = \\mathbb{E}_{a\\sim\\pi(\\cdot|s)}\\left[Q^\\pi(s,a)\\right] = \\sum_a \\pi(a|s)\\,Q^\\pi(s,a)\\]\nWhere \\(G_t\\) fits in: \\(G_t\\) is a single Monte Carlo sample of the return from one rollout; \\(Q^\\pi(s_t,a_t)\\) is its expectation over all rollouts from \\((s_t,a_t)\\):\n\\[Q^\\pi(s_t,a_t) = \\mathbb{E}_{\\tau\\sim\\pi}[G_t \\mid s_t,a_t]\\]\n\\(G_t\\) is a noisy, unbiased estimator of \\(Q^\\pi(s_t,a_t)\\) — replacing \\(G_t\\) with a learned \\(\\hat Q_\\phi(s,a)\\) trades a little bias for much lower variance."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#q-recursively-peeling-off-one-step",
-    "href": "lectures/reinforcement.html#q-recursively-peeling-off-one-step",
-    "title": "Approaches to biomedical knowledge",
-    "section": "\\(Q\\) Recursively: Peeling Off One Step",
-    "text": "\\(Q\\) Recursively: Peeling Off One Step\n\\(G_t\\) is a sum over an entire trajectory. Split off just the first term:\n\\[Q^\\pi(s,a) = \\mathbb{E}_{\\tau\\sim\\pi}\\left[r(s_t,a_t) + \\gamma\\sum_{t'=t+1}^{T}\\gamma^{t'-t-1} r(s_{t'},a_{t'}) \\,\\Big|\\, s_t=s,\\, a_t=a\\right]\\]\n\nThe first term, \\(r(s_t,a_t) = r(s,a)\\), is fixed given \\((s,a)\\)\nThe remaining sum is exactly \\(G_{t+1}\\) — a reward-to-go starting one step later, from whatever state \\(s_{t+1}\\) the trajectory happens to reach"
-  },
-  {
-    "objectID": "lectures/reinforcement.html#q-recursively-applying-the-tower-rule",
-    "href": "lectures/reinforcement.html#q-recursively-applying-the-tower-rule",
-    "title": "Approaches to biomedical knowledge",
-    "section": "\\(Q\\) Recursively: Applying the Tower Rule",
-    "text": "\\(Q\\) Recursively: Applying the Tower Rule\nCondition the remaining sum on the next state \\(s_{t+1}=s'\\sim p(\\cdot|s,a)\\) (environment dynamics), then the next action \\(a_{t+1}=a'\\sim\\pi(\\cdot|s')\\):\n\\[Q^\\pi(s,a) = r(s,a) + \\gamma\\,\\mathbb{E}_{s'\\sim p(\\cdot|s,a)}\\Big[\\,\\mathbb{E}_{a'\\sim\\pi(\\cdot|s')}\\big[\\underbrace{\\mathbb{E}_\\tau[\\cdots \\mid s_{t+1}=s',a_{t+1}=a']}_{=\\,Q^\\pi(s',a')\\text{ by definition, shifted one step}}\\big]\\Big]\\]\n\n\n\n\n\n\nNote\n\n\nSame trick as the Proof slide: average in stages — first over what happens after \\((s',a')\\), then over \\(a'\\), then over \\(s'\\)."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#the-bellman-equation-for-qpi",
-    "href": "lectures/reinforcement.html#the-bellman-equation-for-qpi",
-    "title": "Approaches to biomedical knowledge",
-    "section": "The Bellman Equation for \\(Q^\\pi\\)",
-    "text": "The Bellman Equation for \\(Q^\\pi\\)\nCollapsing the nested expectations gives the recursive (Bellman) form:\n\\[Q^\\pi(s,a) = r(s,a) + \\gamma\\,\\mathbb{E}_{s'\\sim p(\\cdot|s,a)}\\left[\\mathbb{E}_{a'\\sim\\pi(\\cdot|s')}\\big[Q^\\pi(s',a')\\big]\\right]\\]\n\nEquivalent to the sum-of-rewards definition — just expressed one step at a time instead of over the whole trajectory\nThis is what makes \\(Q\\) useful for bootstrapped / incremental estimation (actor-critic methods): update \\(\\hat Q_\\phi(s,a)\\) using only \\(r(s,a)\\) and \\(\\hat Q_\\phi(s',a')\\), without waiting for a full rollout\n\n\n\n\n\n\n\nNote\n\n\nNote: \\(r(s,a)\\) sits outside the \\(s'\\)-expectation here since it depends only on \\((s,a)\\). If your reward convention is \\(r(s,a,s')\\) instead, it moves inside."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#the-advantage-function",
-    "href": "lectures/reinforcement.html#the-advantage-function",
-    "title": "Approaches to biomedical knowledge",
-    "section": "The Advantage Function",
-    "text": "The Advantage Function\nPut \\(Q^\\pi(s_t,a_t)\\) in place of \\(G_t\\), and \\(V^\\pi(s_t)\\) in place of the baseline \\(b(s_t)\\):\n\\[A^\\pi(s_t,a_t) \\;=\\; Q^\\pi(s_t,a_t) - V^\\pi(s_t)\\]\n“How much better or worse than the policy’s own average behavior is this specific action?”\n\n\\(A^\\pi(s,a) &gt; 0\\): better than average at \\(s\\) — increase its probability\n\\(A^\\pi(s,a) &lt; 0\\): worse than average — decrease its probability\n\\(A^\\pi(s,a) = 0\\): exactly average — no gradient signal\n\n\n\n\n\n\n\nNote\n\n\nA state that’s great regardless of the action taken (all actions have high \\(Q\\)) contributes no gradient signal for any particular action — correctly, since the policy doesn’t need to change anything there."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#tying-back-a_t-estimates-api",
-    "href": "lectures/reinforcement.html#tying-back-a_t-estimates-api",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Tying Back: \\(A_t\\) Estimates \\(A^\\pi\\)",
-    "text": "Tying Back: \\(A_t\\) Estimates \\(A^\\pi\\)\nFrom the deck: \\(A_t = G_t - b(s_t)\\), with \\(b(s_t) = V^\\pi(s_t)\\).\nSince \\(\\mathbb{E}[G_t\\mid s_t,a_t] = Q^\\pi(s_t,a_t)\\):\n\\[A_t = G_t - V^\\pi(s_t) \\quad\\text{is a (noisy) unbiased estimator of}\\quad A^\\pi(s_t,a_t) = Q^\\pi(s_t,a_t) - V^\\pi(s_t)\\]\nSame object — sample vs. expectation. This is exactly what appears in A2C / PPO’s objective."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#baselines-come-from-the-same-argument",
-    "href": "lectures/reinforcement.html#baselines-come-from-the-same-argument",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Baselines Come From the Same Argument",
-    "text": "Baselines Come From the Same Argument\nThe same zero-mean identity justifies subtracting a baseline \\(b(s_t)\\) (commonly \\(V^\\pi(s_t)\\)):\n\\[A_t = G_t - b(s_t)\\]\n\\[\\mathbb{E}\\left[\\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\,b(s_t)\\right] = 0\\]\nThis is the standard justification for A2C / PPO-style advantage estimators."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#subtracting-baselines-1",
-    "href": "lectures/reinforcement.html#subtracting-baselines-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Subtracting Baselines",
-    "text": "Subtracting Baselines\n\nHow do we capture the idea of a baseline: good vs. bad state? As a baseline, we will choose the value function \\(V^{\\pi}(s_t)\\)\n\nIf we start from state \\(s_t\\), what is the future expected reward of trajectories starting from state \\(s_t\\) and following policy \\(\\pi_{\\theta}\\)?\n\n\n\nFor instance, if our prompt is What is the capital of Niedersachsen? and our current state is\n\nWhat is the capital of Niedersachsen? The capital is\n\nthen overall the LLM state has high \\(V^{\\pi}(s_t)\\) (i.e., value or expected reward).\n\nIn contrast, if for some reason our current state is\nWhat is the capital of Niedersachsen? Cats are selfish because\n\nthen it is very unlikely we will generate the correct answer Hannover. This state has a low \\(V^{\\pi}(s_t)\\) (expected reward)"
-  },
-  {
-    "objectID": "lectures/reinforcement.html#relating-v-to-q-1",
-    "href": "lectures/reinforcement.html#relating-v-to-q-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Relating \\(V\\) to \\(Q\\)",
-    "text": "Relating \\(V\\) to \\(Q\\)\n\\(V\\) is \\(Q\\) with the action integrated out, weighted by the policy — this is the tower rule again, conditioning on \\(a_t\\) instead of the trajectory prefix:\n\\[V^\\pi(s) = \\mathbb{E}_{a\\sim\\pi(\\cdot|s)}\\left[Q^\\pi(s,a)\\right] = \\sum_a \\pi(a|s)\\,Q^\\pi(s,a)\\]\nWhere \\(G_t\\) fits in: \\(G_t\\) is a single Monte Carlo sample of the return from one rollout; \\(Q^\\pi(s_t,a_t)\\) is its expectation over all rollouts from \\((s_t,a_t)\\):\n\\[Q^\\pi(s_t,a_t) = \\mathbb{E}_{\\tau\\sim\\pi}[G_t \\mid s_t,a_t]\\]\n\\(G_t\\) is a noisy, unbiased estimator of \\(Q^\\pi(s_t,a_t)\\) — replacing \\(G_t\\) with a learned \\(\\hat Q_\\phi(s,a)\\) trades a little bias for much lower variance."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#the-advantage-function-1",
-    "href": "lectures/reinforcement.html#the-advantage-function-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "The Advantage Function",
-    "text": "The Advantage Function\nPut \\(Q^\\pi(s_t,a_t)\\) in place of \\(G_t\\), and \\(V^\\pi(s_t)\\) in place of the baseline \\(b(s_t)\\):\n\\[A^\\pi(s_t,a_t) \\;=\\; Q^\\pi(s_t,a_t) - V^\\pi(s_t)\\]\n“How much better or worse than the policy’s own average behavior is this specific action?”\n\n\\(A^\\pi(s,a) &gt; 0\\): better than average at \\(s\\) — increase its probability\n\\(A^\\pi(s,a) &lt; 0\\): worse than average — decrease its probability\n\\(A^\\pi(s,a) = 0\\): exactly average — no gradient signal\n\n\n\n\n\n\n\nNote\n\n\nA state that’s great regardless of the action taken (all actions have high \\(Q\\)) contributes no gradient signal for any particular action — correctly, since the policy doesn’t need to change anything there."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#tying-back-a_t-estimates-api-1",
-    "href": "lectures/reinforcement.html#tying-back-a_t-estimates-api-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Tying Back: \\(A_t\\) Estimates \\(A^\\pi\\)",
-    "text": "Tying Back: \\(A_t\\) Estimates \\(A^\\pi\\)\nFrom the deck: \\(A_t = G_t - b(s_t)\\), with \\(b(s_t) = V^\\pi(s_t)\\).\nSince \\(\\mathbb{E}[G_t\\mid s_t,a_t] = Q^\\pi(s_t,a_t)\\):\n\\[A_t = G_t - V^\\pi(s_t) \\quad\\text{is a (noisy) unbiased estimator of}\\quad A^\\pi(s_t,a_t) = Q^\\pi(s_t,a_t) - V^\\pi(s_t)\\]\nSame object — sample vs. expectation. This is exactly what appears in A2C / PPO’s objective."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#baselines-come-from-the-same-argument-1",
-    "href": "lectures/reinforcement.html#baselines-come-from-the-same-argument-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Baselines Come From the Same Argument",
-    "text": "Baselines Come From the Same Argument\nThe same zero-mean identity justifies subtracting a baseline \\(b(s_t)\\) (commonly \\(V^\\pi(s_t)\\)):\n\\[A_t = G_t - b(s_t)\\]\n\\[\\mathbb{E}\\left[\\nabla_\\theta\\log\\pi_\\theta(a_t|s_t)\\,b(s_t)\\right] = 0\\]\nThis is the standard justification for A2C / PPO-style advantage estimators."
-  },
-  {
-    "objectID": "lectures/reinforcement.html#in-pytorch",
-    "href": "lectures/reinforcement.html#in-pytorch",
-    "title": "Approaches to biomedical knowledge",
-    "section": "In PyTorch",
-    "text": "In PyTorch\n# G_t (or A_t) is treated as a fixed scalar coefficient —\n# NOT something we backprop through\nreturns = compute_reward_to_go(rewards, gamma)   # tensor\nreturns = returns.detach()\n\nlog_probs = policy_dist.log_prob(actions)        # differentiable\nloss = -(log_probs * returns).mean()\n\nloss.backward()   # autograd differentiates only log pi_theta\noptimizer.step()\nAutograd differentiates only \\(\\log\\pi_\\theta(a_t|s_t)\\) through the policy network — \\(G_t\\) is .detach()-ed."
+    "section": "KL divergence",
+    "text": "KL divergence\n\nWe have not touched on the topic of KL divergence\nThe Kullback-Leibler (KL) divergence from a distribution q(x) to a reference p(x) is defined as \\[\nD_{KL}(q\\Vert p) = \\mathbb{E}_{x\\sim q}\\left[\\frac{q(x)}{p(x)}\\right]\n\\]\nRLHF fine-tunes a policy \\(\\pi_\\theta\\) to produce responses \\(y\\) to prompts \\(x\\) that maximize a reward \\(r(x, y)\\) derived from human preferences.\nPure reward maximization may cause reward hacking and distribution drift from a trusted SFT policy.\nTo counteract this, RLHF adds a KL penalty loss that regularizes the policy toward a fixed reference \\(\\pi_{ref}\\) \\[\nJ(\\pi) =\n\\mathbf{E}\\left[ r_\\theta (x,y) - \\beta D_{KL}(\\pi\\Vert \\pi_{ref})\\right]\n\\]\nA KL divergence term is used in the practical implementations of the algorithms discussed above."
   },
   {
     "objectID": "lectures/reinforcement.html#sources",
     "href": "lectures/reinforcement.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\n\nAhmadian A et al., Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs(2024) arXiv 2402.14740\nWolfe CR, Reinforcement Learning for LLMs: The Complete Guide, blog"
+    "text": "Sources\nLectures and blogs\n\nRLHF Book Together with accompanying online lectures, this is a truly excellent resource for learning about RL, RLHF, and many of the developments in the field\nJulia Turc Excellent “AI explainer” videos including an intuitive explanation of PPO\nReinforcement Learning from Human Feedback explained with math derivations and the PyTorch code: Excellent explanation of RL leading up to RLHF with Python code\nWolfe CR, Reinforcement Learning for LLMs: The Complete Guide, blog\n\nFurther Reading\n\n\nAhmadian A et al., Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs(2024) arXiv 2402.14740: REINFORCE, RLOO\nStiennon N et al. (2022) Learning to summarize from human feedback arXiv 2009.01325: PPO\nOuyang et al. (2022) Training language models to follow instructions with human feedback: InstructGPT (OpenAI API)\nRafailov R et al (2023) Direct preference optimization: your language model is secretly a reward model. NIPS ’23: DPO\nPang RY et al (2024) Iterative Reasoning Preference Optimization"
   },
   {
     "objectID": "lectures/overview.html#course-overview",
@@ -807,7 +814,19 @@
     "href": "lectures/overview.html#topics",
     "title": "Approaches to biomedical knowledge",
     "section": "Topics",
-    "text": "Topics\nThe course explores the synergy between two paradigms:\n\n\n🕸️ Ontologies\nStructured Knowledge\n\nFormal Semantics (OWL/RDF)\nLogical Consistency\nInteroperability (OBO)\n\n\n🧠 LLMs\nProbabilistic Knowledge\n\nPattern Recognition\nNatural Language Interface\nReasoning via Inference",
+    "text": "Topics\nThe course explores two paradigms for representing human knowledge computationally:\n\n\n🕸️ Ontologies\nStructured Knowledge\n\nFormal Semantics (OWL/RDF)\nLogical Consistency\nInteroperability (OBO)\nAlgorithms for GO and HPO\n\n\n🧠 LLMs\nProbabilistic Knowledge\n\nPattern Recognition\nNatural Language Interface\nReasoning via Inference",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/overview.html#prerequisites",
+    "href": "lectures/overview.html#prerequisites",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Prerequisites",
+    "text": "Prerequisites\n\nThere will be a lot of math in this course\nOur goal is to use a mathematical perspective to deepen understanding of algorithms\nYou should have some background in the following Topics:\n\ncalculus\n\ndifferentiation\noptimization\n\nlinear algebra\n\nvectors, matrices\nmatrix multiplication\n\nmachine learning:\n\ntraining, testing, overfitting\nbasic neural networks\n\n\nWe will provide additional background and explanations in the practicals\nPeruse the slides for lectures in the ontology and LLM sections of the course to see if your preparation is sufficient",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4650,28 +4669,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.34%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.48%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.02%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.58%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.46%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.08%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 36.50%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.30%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
