@@ -1,6 +1,6 @@
 ---
 title: "Approaches to biomedical knowledge"
-subtitle: "Session #12: Posttraining: IFT and RLHF"
+subtitle: "Session #12: Posttraining: IFT and RLHF (1/2)"
 author: "Peter N Robinson"
 institute: "Free University Berlin"
 date: 2026-04-26
@@ -36,6 +36,7 @@ Predicting the next token is great, but it does not a chatbot make.
 - [Pretraining vs posttraining](#pre-vs-post)
 - [Instruction Fine Tuning (IFT)](#ift)
 - [Reinforcment learning: Basic ideas and relationship to RLHF](#basic-rl)
+- [Reward models](#reward)
 - [Policy gradient optimization](#policy-gradient)
 - [Reward to go](#reward-to-go)
 - [Subtracting baselines](#baselines)
@@ -57,6 +58,23 @@ Predicting the next token is great, but it does not a chatbot make.
 - This is the point of post-training (IFT and RLHF)
 :::
 
+## Posttraining with RLHF: Performance
+
+![](./img/o1-aime-accuracy.png){width=90% fig-align="center"}
+
+- Current models have shown very substantial boosts in performance that are attributable to RLHF
+- This example shows how the performance of openAI's o1 model scales with more RLHF train time
+- AIME = American Invitational Mathematics Examination benchmark
+
+:::{.tiny-credit}
+- [OpenAI (2024) Learning to reason with LLMs](https://openai.com/index/learning-to-reason-with-llms/)
+:::
+
+## Posttraining with RLHF: Performance
+
+- Most of the LLM innovation in recent years has been in the realm of posttraining
+- Reinforcement learning with human feedback is the key technology
+- This lecture will provide an introduction to the main components of posttraining
 
 
 ## Pretraining vs. Posttraining {#pre-vs-post}
@@ -164,6 +182,43 @@ These are the kinds of questions that get asked all the time, so we decided to p
 
 - After instruction tuning, the model recognizes the input as a request directed at it
 - The model produces a direct answer instead of continuing a hypothetical document
+
+
+## Data source
+
+- OpenAI hired a team of about 40 freelance labelers
+
+- Our prompt dataset consists primarily of text prompts submitted to the OpenAI API
+- Customers using the Playground were
+informed that their data could be used to train further models v
+-  We heuristically deduplicate prompts by checking for prompts that share a long common
+prefix, and we limit the number of prompts to 200 per user ID.
+
+## labelling methods
+
+::::{.columns}
+:::{.column width=50%}
+
+- Open AI's labelling interface for InstructGPT
+- For each output, labelers give a Likert score for overall quality on a 1-7 scale, and also provide various metadata labels. 
+-  After evaluating each output individually, labelers rank all the outputs for a given prompt. 
+- The team generated
+    - $\sim$ 13,000 training prompts for SFT/IFT
+    - $\sim$ 33,000 training prompts for the reward model training
+    - $\sim$ 31,000 training prompts for reinforcement learning (PPO)
+
+:::
+:::{.column width=50%}
+
+![](./img/labelling.png){ width=80% fig-align="center}
+
+:::
+::::
+
+:::{.tiny-credit}
+Image source: Ouyang L, et al. (2022) [Training language models to follow instructions with human feedback. arXiv 2203.02155](https://arxiv.org/abs/2203.02155)
+:::
+
 
 ## Chat Templates
 
@@ -285,9 +340,13 @@ More information:
 
 :::{.mybox}
 - Reinforcement learning was a key idea to take early versions of GPT to the current versions of chat agents such as ChatGPT
-- We will present a somewhat simplified version of **InstructGPT**
-- This is a rapidly moving and important field with several major advances in recent years, such as those of DeepView
 :::
+
+In the following slides, we will present
+
+- A brief introduction to (traditional) reinforcement learning (RL)
+- An explanation of the differences between RL and RL with human feedback (RLHF), which is used for LLMs
+- Reward models
 
 
 
@@ -400,7 +459,10 @@ $$
 - **State**: the prompt (i.e., the input tokens)
 - **Action**: which token is selected as the next token
 - **Reward model**: We reward the LLM for generating *good responses* and do not reward *bad responses*
-- **Policy**: The policy is the LLM itself, because the the next token function can easily be modelled as $a_t\sim \pi(\cdot\mid s_t)$
+- **Policy**: The policy is the LLM itself, because the the next token function can easily be modelled as an action
+    - $a_t$ is the next token
+    - $a_t$ is distribution according to the policy with parameters $\theta$ (i.e., the LLM): $a_t\sim \pi_\theta(\cdot\mid s_t)$
+    - state $s_t$ is the original prompt plus the completion up to step $t-1$.
 
 
 
@@ -408,7 +470,7 @@ $$
 
 ![](./img/RL-LLM-model.png)
 
-- Prompt is the state (``My favorite food is''), and the action is the choice of the next token
+- Prompt is the state (_My favorite food is_), and the action is the choice of the next token
 - But how do we implement the reward model?
 
 ## RL/LLM - rewards
@@ -424,7 +486,7 @@ $$
 - Answers that are chosen get a high reward, those that are not get a low reward
 
 
-## RLHF: Big picture
+## RLHF: Big picture {#sec-rlhf-bigpic}
 
 :::: {.columns}
 ::: {.column width=60%}
@@ -482,9 +544,29 @@ $$
 :::
 ::::
 
+* Today, we will focus on ways to calculate $r_\theta (x,y)$, the reward for a `(prompt,completion)` pair
+* In the second lecture on RLHF, we will explain the remaining pipeline with a focus on InstructGPT and a brief presentation of some newer approaches
+
 :::{.tiny-credit}
 - See [RLHF Book](https://rlhfbook.com/), lecture 2.
 :::
+
+ ## Language Models and RL
+
+ | MDP Concept | LLM |
+ |------------|-------|
+ | state $s_t$ | Prompt + tokens so far: $(x,y_{<t})$|
+ | action $a_t$ | next token $y_t$ |
+ | transiotion $P$ | deterministic: append next token|
+ | Policy $\pi_\theta(a_t\mid s_t)$ | LLM next token distribution |
+ | reward $r$ | Usuaully terminal: RM score or verifier output |
+ | Discount $\gamma$ | typically $\gamma=1$ (no discounting) |
+
+ The policy is the LM; factored over tokens
+ $\pi_\theta(y\mid x) = \prod_t $\pi_\theta(y_t\mid x, y_{<t}})$
+
+
+
 
 ## Classical RL vs RLHF 
 
@@ -509,7 +591,7 @@ $$
 
 
 
-## Training with RLHF
+## Training the reward model {#reward}
 
 ![](./img/instructGPT.png){width=100% fig-align="center"}
 
@@ -521,6 +603,136 @@ $$
 Image source: Ouyang L, et al. (2022) [Training language models to follow instructions with human feedback. arXiv 2203.02155](https://arxiv.org/abs/2203.02155)
 :::
 
+## Reward Models: completions
+
+- A human annotator sees two responses to a prompt and picks the better one - this preference pair is the training data for the reward model
+
+:::: {.columns}
+::: {.column width=50%}
+
+**Prompt**: *Explain why bananas are curvy in one sentence*
+
+**Completion (Response A)**: Bananas grow upwards toward the sun against gravity through a process called negative geotropism, which causes their shape to bend into a distinctive curve.
+
+:::
+::: {.column width=50%}
+
+**Prompt**: *Explain why bananas are curvy in one sentence*
+
+**Completion (Response B)**: Bananas start out growing toward the ground, but then they turn and stretch upward toward the sun, which makes them bend into a funny curve.
+
+:::
+::::
+
+## Bradley-Terry Model of preferences
+
+- Given two responses, $i$ and $j$, the probability that a judge prefers *i* over *j*, is modelled as
+
+$$
+P(i>j) = \frac{p_i}{p_i+p_j}
+$$
+
+According to this model, each item has a latent strength $p_i>0$ with $\sum_i p_i = 1$.
+
+Reparameterizing with $p_i=e^(r_j)$ allows us to work with unbounded scores $r_j\in \mathcal{R}$ (ranging from $-\infty$ to $+\infty$), such as the output of a neural network:
+$$
+P(i>j) = \frac{e^{r_i}}{e^r_i + e^r_j} = \sigma(r_i-r_j)
+$$
+
+- Thus, only score differences matter
+- [HOMEWORK]{.hw-badge} Prove that $\tfrac{e^{r_i}}{e^r_i + e^r_j} = \sigma(r_i-r_j)$
+
+## Bradley-Terry Model for RLHF
+
+:::{.mybox}
+- We are given a prompt $x$, a chosen completion $y_c$, and a rejected completion $y_r$.
+- We score both with a reward model $r_\theta$
+:::
+
+- A **reward model** in RLHF is a neural network trained to act as a computational proxy for human judgment.
+- The **reward model** prompt and a model-generated response (or pair of responses) as input and outputs a scalar score (or logit) representing how well the output aligns with human preferences, values, helpfulness, and safety criteria.
+- They are initialized from a pretrained or instruction-tuned language model, modified to output a single scalar value, and trained on preference datasets using ranking objectives (like the Bradley-Terry pairwise loss) where the model learns to assign higher scores to responses preferred by humans over rejected offensive
+- The **reward model** will be used in the actual reinforcement learning step (e.g. PPO), where we need to score millions of iterations - thus, it will act as a proxy for human judgement
+
+
+## Bradley-Terry Model for RLHF
+
+- This is the reward model $r_\theta$
+
+$$
+P(y_c > y_r \mid x) = \dfrac{e^{r_\theta(y_c\mid x)}}{e^{r_\theta(y_c\mid x)} + e^{r_\theta(y_r\mid x)}}
+$$ {#eq-reward-model}
+
+- The goal of reward model training is to find the $\theta$ that maximiizes this probability (the probability that the model assigns a higher score to the preferrend answer)
+- Make @eq-reward-model into a loss function
+
+$$
+\theta^{*} = \arg\max_\theta  \dfrac{e^{r_\theta(y_c\mid x)}}{e^{r_\theta(y_c\mid x)} + e^{r_\theta(y_r\mid x)}}
+$$
+
+
+## Bradley-Terry Model for RLHF: Derive loss function
+- starting from 
+
+$$
+\theta^{*} = \arg\max_\theta  \dfrac{e^{r_\theta(y_c\mid x)}}{e^{r_\theta(y_c\mid x)} + e^{r_\theta(y_r\mid x)}}
+$$
+- divide numerator and denominator by $e^{r_\theta(y_c\mid x)}$ and using the $\exp$ notation to unclutter
+
+$$
+\theta^{*} = \arg\max_\theta  
+\dfrac{\frac{\exp(r_\theta(y_c\mid x))}{\exp(r_\theta(y_c\mid x))}}{\frac{\exp(r_\theta(y_c\mid x)) + \exp(r_\theta(y_r\mid x))}{\exp(r_\theta(y_c\mid x))}}
+=  \arg\max_\theta  
+\dfrac{1}{1 + \frac{\exp(r_\theta(y_r\mid x))}{\exp(r_\theta(y_c\mid x))}}
+$$
+- This simplifies to
+$$
+\theta^{*} = \arg\max_\theta  
+\dfrac{1}{1 + \exp(r_\theta(y_r\mid x) - r_\theta(y_c\mid x))}
+$$
+
+## Bradley-Terry Model for RLHF: Derive loss function
+
+- Recalling that $\sigma(z)=\tfrac{1}{1+e^{-z}}$, we obtain finally
+$$
+\theta^{*} = \arg\max_\theta  \sigma(r_\theta(y_c\mid x) - r_\theta(y_r\mid x) )
+$$
+- It is easier to work in log space, and so recalling that log is monotonic we have that
+$$
+\arg\max_\theta  \sigma(r_\theta(y_c\mid x) - r_\theta(y_r\mid x) ) = \arg\max_\theta  \log \sigma(r_\theta(y_c\mid x) - r_\theta(y_r\mid x) )
+$$
+- Finally, multiply by minus 1 to transform into a loss function to be minimized
+$$
+\mathcal{L}(\theta) =   - \log \sigma(r_\theta(y_c\mid x) - r_\theta(y_r\mid x) )
+$$ {#eq-logsigmoid-loss}
+
+- This will be the loss that we can minimize by gradient descent
+- This is a binary cross-entropy loss
+
+## Preferences and RL training 
+
+```{python}
+#| echo: false
+#| fig-align: center
+import sys
+import matplotlib.pyplot as plt
+sys.path.append('utils') 
+import matplotlib.pyplot as plt
+from reinforce_plots import preference_plot
+fig = preference_plot()
+plt.show()
+```
+
+* Training a preference reward model requires pairs of chosen and rejected completions.
+* We take the predicted reward at the end of each sequence (only one reward for each sequence)
+
+
+## Preferences and RL training 
+
+![](./img/rl-llm-1.png)
+
+* Loss derived from predicted difference in reward for each sequence (the models predict the reward at the **EOS** token)
+* At inference (RL), we can pass in only one completion to the model!
 
 ## Training with RLHF: InstructGPT
 
@@ -531,81 +743,229 @@ Image source: Ouyang L, et al. (2022) [Training language models to follow instru
     * This layer is removed and replaced by a linear project layer that yields a  single scalar value 
     * Open AI used a smaller model (6.7 Billion parameters: the 6B model) for the reward model (trained separately from the largest policy model - the 175B Davinci model)
     * Intuitively, Using a 6B reward model provides the necessary linguistic comprehension to evaluate complex prompts while  cutting down GPU memory and compute overhead required during the PPO reinforcement learning phase.
+- Each prompt had between $K=4$ to $K=9$ completions. Therefore, for each prompt, up to ${K\choose 2}$ comparisons can be made
+- See Appendix C.2 of Ouyang et al. (2022) for Details of RM training
 
 :::{.tiny-credit}
 Ouyang L, et al. (2022) [Training language models to follow instructions with human feedback. arXiv 2203.02155](https://arxiv.org/abs/2203.02155)
 :::
 
-## Architecture of the RL/LLM reward model  {#sec-reward-1}
+## Python: Sketch of Reward Modelling
 
-![](./img/rl-llm-2.png)
+- Recall that our implementation replaces the previous **unembedding head** (which projects each position's final hidden state to a distribution over the vocabulary) with a **reward head**: a linear layer that projects the hidden state at the EOS token position to a single scalar — the model's learned rating of the completion.
+```python 
+import torch.nn as nn
+class BradleyTerryRewardModel(nn.Module):
+    
+    def __init__(self, base_lm):
+        super().__init__()
+        self.lm = base_lm
+        self.head = nn.Linear(self.lm.config.hidden_size, 1)
+    def forward(self, input_ids, attention_mask, eos_positions):
+        # see next slide
+```
 
-- The LLM is pretrained on a large corpus
-- Input to the LLM is the entire prompt plus the response
-- To generate a reward for the response, we add a linear output layer to the last hidden state of the response
+* The argument `base_lm` refers to a pretrained, instruction-tuned model — its transformer body is reused, just with the unembedding head swapped out.
+* The head maps a hidden state of dimension $h$ h to a scalar: `nn.Linear(h, 1)` stores its weight as a $(1,h)$ matrix internally and (by default) also learns a bias term, computing the reward as
+$r=\mathbf{w}^T\mathbf{x}+b$.
 
-## Reward model loss
+## Python: Sketch of Reward Modelling (2)
 
-- For training, we need to define a loss 
-- Imagine we have two answers to each question, that a human has classified as good ($y_w$) or bad ($y_l$)
-- Then we define the loss as
-$$
-\mathrm{Loss} = - \log \sigma(r(x,y_w) - r(x,y_l))
-$$
-- $r(x,y_w)$ is calculated as in the previous slide by concatenating the prompt $x$ with the good answer $y_w$, i.e., with the answer a human rater prefered
-- $r(x,y_l)$ is for the answer to the prompt that a human did not prefer
-- If $r(x,y_w) > r(x,y_l)$, then the value is positive and $\sigma$ will return a value greater than 0.5. $\log(0.5)=-0.69$, and so the loss will always be less than 0.69
-- If $r(x,y_w) < r(x,y_l)$, then the value is negative and $\sigma$ will return a value less than 0.5, and the loss is a larger positive number 
-- This forces the model to give high rewards to good answers and low rewards to bad answers!^[See lecture 4 to review the sigma function]
+```{python} 
+#| fig-align: center
+#| echo: true
+#| eval: false
+#| code-line-numbers: "7-10"
+import torch.nn as nn
+import torch
+class BradleyTerryRewardModel(nn.Module):
+    def __init__(self, base_lm):
+        # see previous slide
+    def forward(self, input_ids, attention_mask):
+        hidden = self.lm(input_ids=input_ids, 
+                        attention_mask=attention_mask, 
+                        output_hidden_states=True, 
+                        return_dict=True).hidden_states[-1]
+        lengths = attention_mask.sum(dim=1) -1
+        batch_idx = torch.arange(hidden.size(0), device=hidden.device)
+        seq_repr = hidden[batch_idx, lengths]
+        return self.head(seq_repr).squeeze(-1)
+```
 
-## Modelling trajectories
+* forward pass over base model
+* `output_hidden_states=True`: return the hidden states from every transformer layer (normally it only returns the final one).
+* `.hidden_states` is a tuple of tensors, one per layer, each of shape `(batch, seq_len, hidden_size)`
+* `[-1]` selects the last layer's output — i.e. the final contextualized representation of every token in every sequence.
 
-- A **trajectory**, represented by tau ($\tau$), is a series of (state, action, reward) -- see [slide @sec-trajectory].
-
-
-- The **probability** of a trajectory $\tau$ given a policy $\pi$ is thus modeled as the probability of the initial state multiplied by the product of the transition probability and the policy for each step:
-$$
-P(\tau) = \rho(s_0)\prod_{t=o}^{T-1}P(s_{t+1}\mid s_t,a_t)\pi(a_t\mid s_t)
-$$ {#eq-trajectory-prob}
 
 :::{.small-text}
-- Where
-    - $\rho(s_0)$ is the probability of starting at $s_0$
-    - $P(s_{t+1}\mid s_t,a_t)$: The transition function (See @eq-transition-fxn)
-    - $\pi(a_t\mid s_t)$ is the probability of choosing action $a_t$ given we are in state $s_t$
-- Note the trajectory is a Markov process - the next state is dependent only on the previous state, not on the entire history^[See lecture 4 for background on Markov chains]
+- `hidden` has shape `(batch, seq_len, hidden_size)`
+- `batch`:  number of sequences processed in parallel (e.g., 32)
+- `seq_len`: the number of token positions in the (padded) sequence
+- `hidden_size`: model's hidden dimension ($h$)
 :::
 
-## Rewards
+## Python: Sketch of Reward Modelling (3)
 
-- Rewards as **discounted** (immediate rewards are worth more than future rewards), using a factor $0<\gamma<1$
-$$
-R(\tau) = \sum_{t=0}^{\infty} \gamma^t r_t
-$$
-- The **expected return** of a policy is the expected reward over all possible Trajectories
-$$
-J(\pi) = \int_{\tau} P(\tau\mid\pi)\cdot R(\tau) = \mathbb{E}_{\tau\sim \pi}\left[R(\tau)\right]
-$$ {#eq-expected-return}
+```{python} 
+#| fig-align: center
+#| echo: true
+#| eval: false
+#| code-line-numbers: "11"
+import torch.nn as nn
+import torch
+class BradleyTerryRewardModel(nn.Module):
+    def __init__(self, base_lm):
+        # see previous slide
+    def forward(self, input_ids, attention_mask):
+        hidden = self.lm(input_ids=input_ids, 
+                        attention_mask=attention_mask, 
+                        output_hidden_states=True, 
+                        return_dict=True).hidden_states[-1]
+        lengths = attention_mask.sum(dim=1) -1
+        batch_idx = torch.arange(hidden.size(0), device=hidden.device)
+        seq_repr = hidden[batch_idx, lengths]
+        return self.head(seq_repr).squeeze(-1)
+```
 
-## LLM Trajectories
+* `attention_mask` is 1 for real tokens and 0 for padding. 
+* Summing along the sequence dimension gives each sequence's true (unpadded) length
+* subtracting 1 converts that count into a zero-based index pointing at the last real token — which, in this pipeline, is the `EOS` token.
 
-- A trajectory in an LLM is a series of prompts (see slide @sec-trajectory)
-- In this example, our original prompt is "Where is Berlin?" ($s_0$)
-- The first action is the choice of the token "Berlin" ($a_0$)
-- decoders are autoregressive, so our second prompt is "Where is Berlin? Berlin" ($s_1$)
 
-![](./img/where-is-berlin.png)
+:::{.small-text}
+- Recall that we only calculate the reward for the `EOS` token
+:::
+
+
+## Python: Sketch of Reward Modelling (4)
+
+```{python} 
+#| fig-align: center
+#| echo: true
+#| eval: false
+#| code-line-numbers: "12-13"
+import torch.nn as nn
+import torch
+class BradleyTerryRewardModel(nn.Module):
+    def __init__(self, base_lm):
+        # see previous slide
+    def forward(self, input_ids, attention_mask):
+        hidden = self.lm(input_ids=input_ids, 
+                        attention_mask=attention_mask, 
+                        output_hidden_states=True, 
+                        return_dict=True).hidden_states[-1]
+        lengths = attention_mask.sum(dim=1) -1
+        batch_idx = torch.arange(hidden.size(0), device=hidden.device)
+        seq_repr = hidden[batch_idx, lengths]
+        return self.head(seq_repr).squeeze(-1)
+```
+
+* `hidden.size(0)`: pulls out the first dimension, which is the batch size (e.g. 32)
+* `torch.arange(hidden.size(0), device=hidden.device)`: give the range $0,1,\ldots,31$ (the data lives on the device, e.g. cuda:0)
+
+::: {.small-text}
+- `hidden` has shape `(batch, seq_len, hidden_size)``
+- `batch_idx` has shape `(batch,)` — the values `[0, 1, 2, ..., batch-1]`
+- `lengths` has shape `(batch,)` — the values `[len_0, len_1, len_2, ..., len_{batch-1}]``
+- Then, `hidden[i, lengths[i], :]` → sequence `i`'s hidden vector at its own last-token position
+:::
+
+:::{.small-text}
+- Recall that we only calculate the reward for the `EOS` token
+:::
+
+
+
+## Python: Sketch of Reward Modelling (5)
+
+```{python} 
+#| fig-align: center
+#| echo: true
+#| eval: false
+#| code-line-numbers: "14"
+import torch.nn as nn
+import torch
+class BradleyTerryRewardModel(nn.Module):
+    def __init__(self, base_lm):
+        # see previous slide
+    def forward(self, input_ids, attention_mask):
+        hidden = self.lm(input_ids=input_ids, 
+                        attention_mask=attention_mask, 
+                        output_hidden_states=True, 
+                        return_dict=True).hidden_states[-1]
+        lengths = attention_mask.sum(dim=1) -1
+        batch_idx = torch.arange(hidden.size(0), device=hidden.device)
+        seq_repr = hidden[batch_idx, lengths]
+        return self.head(seq_repr).squeeze(-1)
+```
+
+* Feeds each sequence's EOS hidden vector through the linear reward head from the init method
+* This yields the shape `(batch, 1)`. 
+* `squeeze(-1)` drops the trailing size-1 dimension so the output is a flat (batch,) tensor of scalar rewards — one number per sequence
+* Each entry will be either a chosen or a reject completion.
+
+
+## Python: Sketch of Reward Modelling (6)
+
+
+```{python} 
+#| fig-align: center
+#| echo: true
+#| eval: false
+def bradley_terry_loss(model, chosen_batch, rejected_batch):
+    r_chosen = model(chosen_batch["input_ids"], chosen_batch["attention_mask"])   # shape (batch,)
+    r_rejected = model(rejected_batch["input_ids"], rejected_batch["attention_mask"])  # shape (batch,)
+
+    loss = -torch.nn.functional.logsigmoid(r_chosen - r_rejected)
+    return loss.mean()
+```
+
+* To calculate the loss, we need to run the model separately for the chosen completions and the rejected completions (batch)
+* `-logsigmoid(r_chosen - r_rejected)` implements @eq-logsigmoid-loss, which we show again here:
+$$\mathcal{L}(\theta) =   - \log \sigma(r_\theta(y_c\mid x) - r_\theta(y_r\mid x) )$$
+* `mean()` averages the per-example loss down to a single scalar 
+* Backpropagation will start with this average loss for the batch
+
+
+## Outcome of reward Modelling
+
+* For the reward model training stage specifically: all parameters are trainable
+* Thus, weights of both the copied transformer body and the newly-initialized linear head get updated by the Bradley-Terry loss.
+* The result is an LLM that has been trained to reward completions.
+* Once RM training finishes, the weights of the reward model are fixed and the model is only used to score the policy's outputs, producing the reward signal for PPO. 
+
+
+
+## RLHF: Big picture
+
+:::: {.columns}
+::: {.column width=60%}
+
+![](./img/rlhf-overview.png)
+
+::: {.tiny-credit}
+Image source: Lambert, Illustrating Reinforcement Learning from Human Feedback (RLHF), [Hugging face blog](https://huggingface.co/blog/rlhf?utm_campaign=token-1-16-what-is-rlhf-reinforcement-learning-from-human-feedback&utm_medium=referral&utm_source=www.turingpost.com)
+:::
+
+:::
+::: {.column width=40%}
+
+- We will now start to explain the RLHF
+- See also [slide @sec-rlhf-bigpic]
+- Today, we will explain policy gradients
+- The second lecture on RL will present the KL divergence shift policy, various strategies for RLHF learning, and some new developments
+
+
+:::
+::::
 
 ## Policy gradient optimization {#policy-gradient}
 
 - To train an GPT-style LLM, our initial policy $\pi_{\theta}$ is simply the decoder model
 - Our goal with RL is to modify the parameters $\theta$ of the policy to maximize the expected return (@eq-expected-return).
 - For a deep neural network, we  change the parameters of the network to mimimize a loss function using **stochastic gradient descent**. 
-- Here, we want to maximize $J(\pi)$ so we use **stochastic gradient ascent**
-$$
-\theta_{k+1} = \theta_k + \eta\nabla_{\theta}J(\pi_{\theta})\mid_{\theta_k}
-$$
-- In the context of RL, the gradient is known as the **policy gradient** and the algorithms that optimize it are known as the **policy gradient algorithms**.
+- In the context of RLHF, the gradient $\nabla_\theta  J(\pi)$ is known as the **policy gradient** and the algorithms that optimize it are known as the **policy gradient algorithms**.
 - **Problem**: To optimize $J(\pi) = \int_{\tau} P(\tau\mid\pi)\cdot R(\tau) = \mathbb{E}_{\tau\sim \pi}\left[R(\tau)\right]$, we would need to evaluate it over all possible trajectories, which is computationally intractable.
 
 ::: {.mybox}
@@ -623,43 +983,130 @@ It is important to keep the distinction between these three concepts clear!
     - $R(\tau)=\sum_{t=0}^T \gamma^t r_t$: rewards over the entire trajectory
     -  $G_t = \sum_{t=t'}^T \gamma^t r_{t'}$: reward-to-go, the rewards from a certain step onwards
 - **Expected return**: the expectation of return over the distribution of trajectories induced by a policy:
- $J(\pi)= \mathbb{E}_{\tau\sim\pi_\theta}\left[R(\tau)\right]$
+ $$
+ J(\pi)= \mathbb{E}_{\tau\sim\pi_\theta}\left[R(\tau)\right]
+ $$ {#eq-expected-return}
     - The expected return is an average return over (in principle) infinitely many rollouts.
     - In reinforcement learning, we are trying to **maximize** the expected return
     - We will introduce $V^\pi$ and $Q^\pi$ below - these are expected returns conditioned on a certain current state ($V^\pi$) or current state-action pair ($Q^\pi$).
 
 
+## Understanding policy gradients
+
+- We want to choose parameters $\theta$ to maximize the expected reward
+$$
+J(\theta) = \mathbb{E}_{\tau\sim\pi_\theta}\left[\sum_t R(\tau) \right]
+$$
+- In practice we cannot calculate the expectation directly because it would mean integrating over all possible trajectories
+- Therefore, we estimate the expectation with a sample over rollouts (trajectories)
+$$
+J(\theta) \approx \frac{1}{N}\sum_{i=1}^N R(\tau_i) \qquad \text{ with } \tau_i\sim \pi_\theta
+$$
+
+::: {.small-text}
+The meaning of $\mathbb{E}_{\tau\sim\pi_\theta}\left[\sum_t \gamma^t r(s_t,a_t)\right]$ is
+$$
+\int_\tau p_\theta(\tau)R(\tau)\mathrm{d}\tau
+$$
+:::
+
+
+## Understanding policy gradients
+
+We define the policy gradient $\Delta \theta$ as
+
+$$
+\Delta \theta \propto \Psi_t\nabla_\theta \log \pi_\theta(a_t\mid s_t)
+$$
+
+The two parts of this statement:
+
+- $\nabla_\theta \log \pi_\theta(a_t\mid s_t)$: how do parameters of $\theta$ influence which action is chosen for a state $s_t$?
+- $\Psi_t$: How good was the action? (scalar value)
+- $\Psi_t$ is a placeholder that can stand for one of several options
+- The choice of $\Psi_t$ determines the algorithm bias and variance and computational complexity
+
+:::{.small-text}
+
+| $\Psi_t$ | Name |
+|---|---|
+| $\sum_t r_t$ | Total trajectory reward (vanilla REINFORCE) |
+| $\sum_{t' \geq t} r_{t'}$ | Reward-to-go |
+| $\sum_{t' \geq t} r_{t'} - b(s_t)$ | Baselined reward-to-go |
+| $Q^\pi(s_t, a_t)$ | Action-value function |
+| $A^\pi(s_t, a_t) = Q^\pi(s_t,a_t) - V^\pi(s_t)$ | Advantage function |
+| $r_t + V^\pi(s_{t+1}) - V^\pi(s_t)$ | TD residual (1-step advantage estimate) |
+
+: Common choices of $\Psi_t$ in the generalized policy gradient {#tbl-psi-choices}
+:::
+
+
+
+
+## Value, Action, and Advantage 
+
+**Value function** $V_\pi(s)$: expected return starting in state $s$, following $\pi$ thereafter.
+
+$$V_\pi(s) = \mathbb{E}_{\tau\sim\pi}\left[\sum_{t'=t}^{T}\gamma^{t'-t} r_{t'} \,\Big|\, s_t=s\right]$$
+
+**Action-value** $Q_\pi(s,a)$: expected return starting in state $s$, taking action $a$, *then* following $\pi$.
+
+$$Q_\pi(s,a) = \mathbb{E}_{\tau\sim\pi}\left[\sum_{t'=t}^{T}\gamma^{t'-t} r_{t'} \,\Big|\, s_t=s,\, a_t=a\right]$$
+
+**Advantage Function**: How much better or worse than the policy's own average behavior is this specific action?
+
+$$
+A_\pi(s_t,a_t) \;=\; Q_\pi(s_t,a_t) - V_\pi(s_t)
+$$ {#eq-advantage-fxn}
+
+- $A_\pi(s,a) > 0$: better than average at $s$ 
+- $A_\pi(s,a) < 0$: worse than average 
+- $A_\pi(s,a) = 0$: exactly average
+
+::: {.small-text}
+In RLHF $\gamma=1$, because we optimize entire completions rather than individual steps
+:::
+
+## Policy gradient optimization: Deriving the gradient
+
+Written as an integral, the objective is
+$$
+J(\theta) = \mathbb{E}_{\tau\sim\pi_\theta}\left[R(\tau\right]
+= \int_\tau P_\theta(\tau)R(\tau)\mathrm{d}\tau\qquad \bullet\text{ by definition of expectation}
+$$
+Take the gradient of the reward (scalar) with respect to the parameters (vector)
+$$
+\nabla_\theta J(\theta) = \nabla_\theta \int_\tau P_\theta(\tau)R(\tau)\mathrm{d}\tau =  \int_\tau \nabla_\theta P_\theta(\tau)R(\tau)\mathrm{d}\tau
+$$
+
+- Although we can sample trajectories from $P_\theta(\tau)$ we cannot from $\nabla_\theta P_\theta(\tau)$
+- This is why the log derivative trick is needed
 
 
 ## Policy gradient optimization: Deriving the gradient
 
-- To maximize the expected retrun
-
-$$
-\begin{align}
-\nabla_{\theta}J(\pi) &=\nabla_{\theta}\mathbb{E}_{\tau\sim \pi}\left[R(\tau)\right] & \bullet \text{take gradient of expected return}\\
-&=\nabla_{\theta}\int_{\tau}P(\tau\mid\theta) R(\tau) &\bullet \text{definition of expected return}\\
-&=\int_{\tau}\nabla_{\theta} P(\tau\mid\theta) R(\tau) & \bullet \text{linearity of gradient operator}\\
-&=\int_{\tau} P(\tau\mid\theta) \nabla_{\theta} \log P(\tau\mid\theta) R(\tau) & \bullet \text{log derivative trick}\\
-\end{align}
-$$
 - To understand the log derivative trick, consider that $\tfrac{d}{dx}\log f(x) = \tfrac{1}{f(x)}\tfrac{d}{dx}f(x)$
-
-
-## Policy gradient optimization: Deriving the gradient
-
-- continuing, recalling @eq-trajectory-prob for the probability of a trajectory: $P(\tau) = \rho(s_0)\prod_{t=o}^{T-1}P(s_{t+1}\mid s_t,a_t)\pi_{\theta}(a_t\mid s_t)$
+- This implies
+$$
+f(x)\tfrac{d}{dx}\log f(x) = \tfrac{d}{dx}f(x)
+$$
 
 $$
 \begin{align}
-\nabla_{\theta}J(\pi_{\theta}) &=\int_{\tau} P(\tau\mid\theta) \nabla_{\theta} \log P(\tau\mid\theta) R(\tau)&\\
-&=\mathbb{E}_{\tau\sim \pi}\left[ \underbrace{\nabla_{\theta} \log P(\tau\mid\theta)}_{\text{let's focus on this}} R(\tau)\right] &\bullet \text{equivalent representation as an expectation}\\
+\nabla_{\theta}J(\pi) &=\int_{\tau}\nabla_{\theta} P(\tau\mid\theta) R(\tau)\mathrm{d}\tau & \bullet \text{from previous slide}\\
+&=\int_{\tau} P(\tau\mid\theta) \nabla_{\theta} \log P(\tau\mid\theta) R(\tau) & \bullet \text{log derivative trick}\\
+&= \mathbb{E}_{\tau\sim\pi_\theta}\left[\log P(\tau\mid\theta)\cdot R(\tau)\right] & \bullet \text{equivalent expectation form}\\
 \end{align}
 $$
+
+- This can be sampled (Monte Carlo sampling)
+- In Python code, the rollout generation (creation of prompts/completions) handles the sampling
+- the loss code handles the calculation of $\log P(\tau\mid\theta)\cdot R(\tau)$
 
 
 ## Policy gradient optimization: Deriving the gradient
 - Here, we focus on simplifying the term $\nabla_{\theta} \log P(\tau\mid\theta)$
+- Recalling the probability of a trajectory: $P(\tau) = \rho(s_0)\prod_{t=o}^{T-1}P(s_{t+1}\mid s_t,a_t)\pi_{\theta}(a_t\mid s_t)$ (because it is a gradient of a probability and does not satisfy requirements for being a probability)
 
 $$
 \begin{align}
@@ -672,8 +1119,30 @@ $$
 
 - $\theta$ denotes the full set of trainable parameters of the LLM. 
 - In the line marked with $\dagger\dagger$, only the third term depends on $\theta$
-- Neither the distribution over the first state $\rho(s_0)$ nor the transition probability $P(s_{t+1}\mid s_t,a_t)$ depend on these weights
-- Recall that for LLMs, the transition is a trivial deterministic function
+
+
+## Python {#python-rlhf-loss}
+
+In Python, the lines that correspond to this:
+$$
+\nabla_{\theta}\log P(\tau)= \sum_{t=0}^{T-1} \nabla_{\theta} \log\pi_{\theta}(a_t\mid s_t)
+$$
+
+are something like this
+```{python} 
+#| fig-align: center
+#| echo: true
+#| eval: false
+seq_log_probs = (token_log_probs * completion_mask).sum(dim=1)
+loss = -(seq_log_probs * advantages).mean()
+loss.backward()
+```
+
+* `seq_log_probs` implements $\sum_{t=0}^T \log \pi_\theta (a_t\mid s_t)$
+* `completion_mask`: 1 for tokens that are part of the completion, 0 for tokens that were part of the prompt
+* `.sum(dim=1)`leaves `seq_log_probs` with dimension $(\mathrm{batch},)$, one scalar per sequence, equal to $\sum_{t=0}^T \log \pi_\theta (a_t\mid s_t)$ but restricted to the completion tokens
+* `advantages` represent $\Psi_t$
+* `loss.backward()`: autograd calculation of the gradients
 
 ## Policy gradient optimization: Deriving the gradient
 
@@ -711,404 +1180,147 @@ $$
 - The so-called **reinforce** algorithm repeatedly performs rounds of stochastic gradient ascent, updates parameters, runs $|\mathcal{D}|$ trajectories, etc.
 
 
+## REINFORCE
 
-## Calculating gradients
+- One of the original RL algorithms was entitled
 
-- When we evaluate a trajectory, each hidden state encodes information only about previous states thanks to the causal mask applied during self-attention
-- We apply a linear projection to the hidden states to obtain scores for each token in the vocabulary
-- Then we apply softmax to generate probabilities, so that $\log \pi_{\theta}(a_t\mid s_t) = \log\mathrm{softmax}(y_t)$
-- At each timestep $t$, we select the log-probability assigned to the token that was actually generated ($y_t$ has scores for every token in the vocabulary, so this lookup is easy)
-- Because of the causal mask, a single forward pass yields $\log\pi_{\theta}(a_t\mid s_t)$ for every $t$ simultaneously
-- This gives us the term needed inside the REINFORCE gradient estimator $\hat{g}$ from @eq-reinforce.
+**RE**ward **IN**crement = Nonnegative **F**actor times **O**ffset **R**einforcement times **C**haracteristic **E**ligibility
 
-![](./img/rl-llm-3.png){fig-align="center"}
-
-## Calculating rewards
-- Apply the linear layer to all positions that correspond to actions (i.e., tokens following the original prompt)
-- See slide @sec-reward-1.
-- This allows us to generate the reward for each time step/trajectory
-$$
-\sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}(a_t\mid s_t)\underbrace{R(\tau)}_{\mathrm{reward}}
-$$
-
-![](./img/rl-llm-4.png)
-
-## reward to go {#reward-to-go}
-
-::: {.mybox}
-**Reward to go**
-
-A "trick" to reduce the variance of policy gradient. 
-:::
-
-- The problem is that the policy gradients as discussed above have a high variance (are noisy)
-- For clarity, we will demonstrate the "trick" omitting the $\gamma$ factor that is used to down-weight noisy future estimates
-- Goal:
-$$J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\left[R(\tau)\right], \qquad R(\tau) = \sum_{t=0}^{T} r_t$$
-
-The **policy gradient theorem**:
-
-$$\nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\left[\nabla_\theta \log \pi_\theta(\tau) \, R(\tau)\right]$$
-
-
-## Factoring the Trajectory Probability (recap without $\gamma$)
-
-Trajectory probability factors as:
-
-$$p(\tau) = p(s_0)\prod_{t=0}^T \pi_\theta(a_t|s_t)\,p(s_{t+1}|s_t,a_t)$$
-
-Only the policy terms depend on $\theta$, so:
-
-$$
-\nabla_\theta \log \pi_\theta(\tau) = \sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t|s_t)
-$$ 
-
-This gives the **REINFORCE** estimator:
-
-$$
-\nabla_\theta J(\theta) = \mathbb{E}_\tau\left[\left(\sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t|s_t)\right)\left(\sum_{t'=0}^T r_{t'}\right)\right]
-$$ {#eq-REINFORCE}
-
-
-## Rewarding past and future steps...
-
-Every log-probability term $\nabla_\theta \log\pi_\theta(a_t|s_t)$ in @eq-REINFORCE gets multiplied by the **entire** trajectory return — including rewards $r_{t'}$ that occurred **before** $a_t$ was taken.
-
-::: {.callout-note}
-Action $a_t$ cannot have caused a reward that already happened.
-:::
-
-- These "past-reward" terms add variance to the gradient estimate without adding any real signal.
-- The reward to go approach splits the inner sum at $t$:
-
-$$
-\nabla_\theta J(\theta) = \sum_{t=0}^T \mathbb{E}_\tau\left[\nabla_\theta \log\pi_\theta(a_t|s_t)\left(\underbrace{\sum_{t'<t} r_{t'}}_{\text{past}} + \underbrace{\sum_{t'\geq t} r_{t'}}_{\text{future}}\right)\right]
-$$
-
-- If we can show the past term vanishes in expectation, dropping it doesn't change the value of the gradient (i.e., it does not add bias) 
-- Instead, the approach reduces variance. 
-
-
-## Proof: Past Rewards Don't Depend on $a_t$
-
-For $t' < t$, $r_{t'}$ is fixed once we condition on the trajectory prefix up to $s_t$ (i.e., $s_{0:t},a_{0:t-1}$). 
 ::: {.small-text}
-**Tower rule**
-- The overall average of something can be obtained by first averaging within groups, then averaging those group-averages together.
-$$
-\mathbf{E}\left[ X \right] = \mathbf{E}\left[ \mathbf{E}\left[X\mid Y\right] \right]
-$$
-- We'll use this with $Y$ = "the trajectory prefix up to $s_t$" and $X$ = the term we're taking expectation of — averaging over $a_t$ first, then over everything before it.
+- Williams R J (1992) [Simple statistical gradient-following algorithms for connectionist reinforcement learning. *Machine Learning*: **8**:229-256](https://link.springer.com/article/10.1007/BF00992696)
 :::
 
--By the tower rule:
-
-$$\mathbb{E}_\tau\left[\nabla_\theta\log\pi_\theta(a_t|s_t)\, r_{t'}\right]$$
-$$= \mathbb{E}_{s_{0:t},a_{0:t-1}}\Big[ \underbrace{\mathbb{E}_{a_t\sim\pi_\theta(\cdot|s_t)}\big[\nabla_\theta\log\pi_\theta(a_t|s_t)\, r_{t'} \mid s_{0:t},a_{0:t-1}\big]}_{\text{average over } a_t \text{ only}}\Big]$$
-
-Since $r_{t'}$ is already fixed given the prefix, it pulls out of the inner average:
-
-$$= \mathbb{E}_{s_{0:t},a_{0:t-1}}\Big[ r_{t'} \cdot \mathbb{E}_{a_t\sim\pi_\theta(\cdot|s_t)}\big[\nabla_\theta\log\pi_\theta(a_t|s_t)\mid s_t\big]\Big]$$
-
-The inner expectation is the **score-function identity**.
-
-
-## The Score-Function Identity
-
-The Proof slide showed that each past term reduces (via the tower rule) to $r_{t'} \cdot \mathbb{E}_{a_t\sim\pi_\theta(\cdot|s_t)}\big[\nabla_\theta\log\pi_\theta(a_t|s_t)\mid s_t\big]$. We now show that factor is exactly zero.
-
-By definition of expectation for a discrete random variable:
+- REINFORCE provides the update rule to maximize a reward
 
 $$
-\begin{align}
-\mathbb{E}_{a\sim\pi_\theta(\cdot|s)}\left[\nabla_\theta \log\pi_\theta(a|s)\right] &= \sum_a \pi_\theta(a|s)\, \nabla_\theta \log\pi_\theta(a|s) &\bullet \text{by definition} \\
-& = \sum_a \pi_\theta(a|s)\,\frac{\nabla_\theta \pi_\theta(a|s)}{\pi_\theta(a|s)}&\bullet \tfrac{d}{dx}\log f(x) = \frac{1}{f(x)} \tfrac{d}{dx}f(x)\\
-&= \sum_a  \nabla_\theta \pi_\theta(a|s) &\bullet \text{canceling} \\
- &=\nabla_\theta \sum_a  \pi_\theta(a|s)    &\bullet \text{linearity of gradient operator} \\
-  &=\nabla_\theta 1 &\bullet \text{definition of probability} \\
-  &= 0
-\end{align}
+\mathbb{E}_{x\sim \mathcal{D}, y\sim\pi_\theta(\cdot\mid x)}
+\left[R(x,y) \nabla_\theta \log \pi_\theta (y\mid x)\right]
 $$
 
-- Thus, every past-reward term contributes **exactly zero** to the expectation.
+- Typically this approach has a high variance because the reward $R(x,y)$ reflects "how good is the next step"
+- One can reduce the variance of the solution by subtracting an appropriate baseline.
 
-## Result: The Reward-to-Go Estimator
+## REINFORCE (2)
 
-$$
-\nabla_\theta J(\theta) = \mathbb{E}_{\tau\sim\pi_\theta}\left[\sum_{t=0}^T \left( \nabla_\theta\log\pi_\theta(a_t|s_t)\right) \cdot \underbrace{\sum_{t'=t}^{T} r_{t'}}_{G_t \;=\; \text{reward-to-go}}\right]
-$$ {#eq-reward-to-go}
-
-$G_t$ is the return accumulated **from time $t$ onward**, not the full trajectory return.
-- Rewards to go means that at each step, we only focus on rewards that are not in the past!
-- This makes sense, because a reward cannot alter the rewards we received in the past!
-
-
-
-
-## Subtracting Baselines {#baselines}
-
-- Subtracting a baseline from the rewards to go still results in an unbiased estimator and may further reduce variance
-- replacing $G_t$ with $A_t = G_t - b(s_t)$ leaves the gradient's expectation completely unchanged because $b(s_t)$ depends on the state $s_t$ but not on the action $a_t$.
-- The derivation is similar to the above
-
-$$A_t = G_t - b(s_t)$$
-
-::: {.mybox}
-**$G_t$**:
-Intuitively, $G_t$ has some baseline level that represents the goodness of the state as well as a component that is specific to the component taken.
-:::
-
-## Subtracting Baselines 
-
-::: {.mybox}
-**How do we capture the idea of a baseline: good  vs. bad state?**
-
-As a baseline, we will choose the **value function** $V^{\pi}(s_t)$
-- If we start from state $s_t$, what is the future expected reward of trajectories starting from state $s_t$ and following policy $\pi_{\theta}$?
-:::
-
-- For instance, if our prompt is **What is the capital of Niedersachsen?** and our current state is 
-
-**What is the capital of Niedersachsen? The capital is**
-
-- then overall the LLM state has high $V^{\pi}(s_t)$ (i.e., value or expected reward). 
-
-In contrast, if for some reason our current state is
-
-**What is the capital of Niedersachsen? Cats are selfish because**
-
-- then it is very unlikely we will generate the correct answer *Hannover*. This state has a low $V^{\pi}(s_t)$ (expected reward)
-
-
-
-## How do we calculate the value function $V^{\pi}(s_t)$?
-
-- Add an additional linear layer on top of the LLM (which is our policy $\pi_\theta$) that estimates the value of a state at each time step
-- Note we are not referring to the logit layer, but to a linear layer that estimates reward
-
-
-![](./img/rl-llm-5.png){width="70%" fig-align="center"}
-
-## Q and V
-
-- The rewards to go function is $G_t= \sum_{t'=t}^{T} r_{t'} = \sum_{t'=t}^{T}r(s_{t'}, a_{t'})$. This is for one specific trajectory
-- In RL, this is known as the $Q$ function, which is the expected return if the agent starts at state $s$, takes action $a$, and then acts according to policy for all steps of the trajectory after the current step $t'$.
-- But $Q^{\pi}(s,a)$ is defined as the expectation of that sum over all trajectories starting from $(s,a)$:
-
-
+- For instance, "how much better or worse is the solution than average"?
+- We can calculate the moving average of rewards throughout training:
 
 $$
-Q^{\pi}(s,a) = \mathbb{E}_{\tau\sim\pi}\left[ \sum_{t'}^T r(s_{t'},a_{t'}) \big\mid s_t=s,a_t=a \right]
+b_{MA} = \frac{1}{S}\sum_s R(x^s,y^s)
+$$
+
+- Subtracting this from the reward lowers variance but does not add bias
+- Provides the model with a better sense of which rewards to favor
+
+$$
+\mathbb{E}_{x\sim \mathcal{D}, y\sim\pi_\theta(\cdot\mid x)}
+\left[\left(R(x,y)-b_{MA}\right) \nabla_\theta \log \pi_\theta (y\mid x)\right]
 $$
 
 
-## State-Value and Action-Value Functions
+## REINFORCE Leave-one-out: RLOO
 
-**State-value** $V^\pi(s)$: expected return starting in state $s$, following $\pi$ thereafter.
+* Idea: Use additional samples to create a baseline
+* unbiased
+* stronger than REINFORCE at the price of extra inference
 
-$$V^\pi(s) = \mathbb{E}_{\tau\sim\pi}\left[\sum_{t'=t}^{T}\gamma^{t'-t} r_{t'} \,\Big|\, s_t=s\right]$$
+$$
+\frac{1}{k}\sum_{i=1}^k[R(y_{(i)}, x) - \frac{1}{k-1}\sum_{j\neq i}R(y_{(j)}, x)]\nabla_\theta \log \pi_\theta(y_{(i)}\mid x)
+\qquad \text{ for } \quad
+y_{(1)},\ldots,y_{(k)} \sim \pi_\theta(\cdot \ x)
+$$
 
-**Action-value** $Q^\pi(s,a)$: expected return starting in state $s$, taking action $a$, *then* following $\pi$.
+- REINFORCE uses as a baseline the average across entire dataset
+- RLOO instead creates (on the fly) a baseline of $k-1$ completitions for each prompt $k$
 
-$$Q^\pi(s,a) = \mathbb{E}_{\tau\sim\pi}\left[\sum_{t'=t}^{T}\gamma^{t'-t} r_{t'} \,\Big|\, s_t=s,\, a_t=a\right]$$
 
-::: {.callout-note}
-$Q$ conditions on the action too; $V$ averages it out over the policy's own action distribution.
-:::
+## REINFORCE/RLOO 
 
+Returning now to the Python code from [slide @python-rlhf-loss]:
 
-
-## Relating $V$ to $Q$
-
-$V$ is $Q$ with the action integrated out, weighted by the policy — this is the tower rule again, conditioning on $a_t$ instead of the trajectory prefix:
-
-$$V^\pi(s) = \mathbb{E}_{a\sim\pi(\cdot|s)}\left[Q^\pi(s,a)\right] = \sum_a \pi(a|s)\,Q^\pi(s,a)$$
-
-**Where $G_t$ fits in:** $G_t$ is a single Monte Carlo *sample* of the return from one rollout; $Q^\pi(s_t,a_t)$ is its **expectation** over all rollouts from $(s_t,a_t)$:
-
-$$Q^\pi(s_t,a_t) = \mathbb{E}_{\tau\sim\pi}[G_t \mid s_t,a_t]$$
-
-$G_t$ is a noisy, unbiased estimator of $Q^\pi(s_t,a_t)$ — replacing $G_t$ with a learned $\hat Q_\phi(s,a)$ trades a little bias for much lower variance.
-
----
-
-## $Q$ Recursively: Peeling Off One Step
-
-$G_t$ is a sum over an entire trajectory. Split off just the first term:
-
-$$Q^\pi(s,a) = \mathbb{E}_{\tau\sim\pi}\left[r(s_t,a_t) + \gamma\sum_{t'=t+1}^{T}\gamma^{t'-t-1} r(s_{t'},a_{t'}) \,\Big|\, s_t=s,\, a_t=a\right]$$
-
-- The first term, $r(s_t,a_t) = r(s,a)$, is fixed given $(s,a)$
-- The remaining sum is *exactly* $G_{t+1}$ — a reward-to-go starting one step later, from whatever state $s_{t+1}$ the trajectory happens to reach
-
----
-
-## $Q$ Recursively: Applying the Tower Rule
-
-Condition the remaining sum on the next state $s_{t+1}=s'\sim p(\cdot|s,a)$ (environment dynamics), then the next action $a_{t+1}=a'\sim\pi(\cdot|s')$:
-
-$$Q^\pi(s,a) = r(s,a) + \gamma\,\mathbb{E}_{s'\sim p(\cdot|s,a)}\Big[\,\mathbb{E}_{a'\sim\pi(\cdot|s')}\big[\underbrace{\mathbb{E}_\tau[\cdots \mid s_{t+1}=s',a_{t+1}=a']}_{=\,Q^\pi(s',a')\text{ by definition, shifted one step}}\big]\Big]$$
-
-::: {.callout-note}
-Same trick as the Proof slide: average in stages — first over what happens after $(s',a')$, then over $a'$, then over $s'$.
-:::
-
----
-
-## The Bellman Equation for $Q^\pi$
-
-Collapsing the nested expectations gives the recursive (Bellman) form:
-
-$$Q^\pi(s,a) = r(s,a) + \gamma\,\mathbb{E}_{s'\sim p(\cdot|s,a)}\left[\mathbb{E}_{a'\sim\pi(\cdot|s')}\big[Q^\pi(s',a')\big]\right]$$
-
-- Equivalent to the sum-of-rewards definition — just expressed **one step at a time** instead of over the whole trajectory
-- This is what makes $Q$ useful for **bootstrapped / incremental** estimation (actor-critic methods): update $\hat Q_\phi(s,a)$ using only $r(s,a)$ and $\hat Q_\phi(s',a')$, without waiting for a full rollout
-
-::: {.callout-note}
-Note: $r(s,a)$ sits *outside* the $s'$-expectation here since it depends only on $(s,a)$. If your reward convention is $r(s,a,s')$ instead, it moves inside.
-:::
-
----
-
-## The Advantage Function
-
-Put $Q^\pi(s_t,a_t)$ in place of $G_t$, and $V^\pi(s_t)$ in place of the baseline $b(s_t)$:
-
-$$A^\pi(s_t,a_t) \;=\; Q^\pi(s_t,a_t) - V^\pi(s_t)$$
-
-"How much better or worse than the policy's own average behavior is this specific action?"
-
-- $A^\pi(s,a) > 0$: better than average at $s$ — increase its probability
-- $A^\pi(s,a) < 0$: worse than average — decrease its probability
-- $A^\pi(s,a) = 0$: exactly average — no gradient signal
-
-::: {.callout-note}
-A state that's great regardless of the action taken (all actions have high $Q$) contributes **no** gradient signal for any particular action — correctly, since the policy doesn't need to change anything there.
-:::
-
----
-
-## Tying Back: $A_t$ Estimates $A^\pi$
-
-From the deck: $A_t = G_t - b(s_t)$, with $b(s_t) = V^\pi(s_t)$.
-
-Since $\mathbb{E}[G_t\mid s_t,a_t] = Q^\pi(s_t,a_t)$:
-
-$$A_t = G_t - V^\pi(s_t) \quad\text{is a (noisy) unbiased estimator of}\quad A^\pi(s_t,a_t) = Q^\pi(s_t,a_t) - V^\pi(s_t)$$
-
-Same object — sample vs. expectation. This is exactly what appears in A2C / PPO's objective.
-
----
-
-## Baselines Come From the Same Argument
-
-The same zero-mean identity justifies subtracting a **baseline** $b(s_t)$ (commonly $V^\pi(s_t)$):
-
-$$A_t = G_t - b(s_t)$$
-
-$$\mathbb{E}\left[\nabla_\theta\log\pi_\theta(a_t|s_t)\,b(s_t)\right] = 0$$
-
-This is the standard justification for **A2C / PPO**-style advantage estimators.
-
----
-
-## Subtracting Baselines
-
-::: {.mybox}
-**How do we capture the idea of a baseline: good vs. bad state?**
-As a baseline, we will choose the **value function** $V^{\pi}(s_t)$
-
-- If we start from state $s_t$, what is the future expected reward of trajectories starting from state $s_t$ and following policy $\pi_{\theta}$?
-:::
-
-- For instance, if our prompt is **What is the capital of Niedersachsen?** and our current state is
-
-**What is the capital of Niedersachsen? The capital is**
-
-- then overall the LLM state has high $V^{\pi}(s_t)$ (i.e., value or expected reward).
-
-In contrast, if for some reason our current state is
-
-**What is the capital of Niedersachsen? Cats are selfish because**
-
-- then it is very unlikely we will generate the correct answer *Hannover*. This state has a low $V^{\pi}(s_t)$ (expected reward)
-
-## Relating $V$ to $Q$
-
-$V$ is $Q$ with the action integrated out, weighted by the policy — this is the tower rule again, conditioning on $a_t$ instead of the trajectory prefix:
-
-$$V^\pi(s) = \mathbb{E}_{a\sim\pi(\cdot|s)}\left[Q^\pi(s,a)\right] = \sum_a \pi(a|s)\,Q^\pi(s,a)$$
-
-**Where $G_t$ fits in:** $G_t$ is a single Monte Carlo *sample* of the return from one rollout; $Q^\pi(s_t,a_t)$ is its **expectation** over all rollouts from $(s_t,a_t)$:
-
-$$Q^\pi(s_t,a_t) = \mathbb{E}_{\tau\sim\pi}[G_t \mid s_t,a_t]$$
-
-$G_t$ is a noisy, unbiased estimator of $Q^\pi(s_t,a_t)$ — replacing $G_t$ with a learned $\hat Q_\phi(s,a)$ trades a little bias for much lower variance.
-
----
-
-## The Advantage Function
-
-Put $Q^\pi(s_t,a_t)$ in place of $G_t$, and $V^\pi(s_t)$ in place of the baseline $b(s_t)$:
-
-$$A^\pi(s_t,a_t) \;=\; Q^\pi(s_t,a_t) - V^\pi(s_t)$$
-
-"How much better or worse than the policy's own average behavior is this specific action?"
-
-- $A^\pi(s,a) > 0$: better than average at $s$ — increase its probability
-- $A^\pi(s,a) < 0$: worse than average — decrease its probability
-- $A^\pi(s,a) = 0$: exactly average — no gradient signal
-
-::: {.callout-note}
-A state that's great regardless of the action taken (all actions have high $Q$) contributes **no** gradient signal for any particular action — correctly, since the policy doesn't need to change anything there.
-:::
-
----
-
-## Tying Back: $A_t$ Estimates $A^\pi$
-
-From the deck: $A_t = G_t - b(s_t)$, with $b(s_t) = V^\pi(s_t)$.
-
-Since $\mathbb{E}[G_t\mid s_t,a_t] = Q^\pi(s_t,a_t)$:
-
-$$A_t = G_t - V^\pi(s_t) \quad\text{is a (noisy) unbiased estimator of}\quad A^\pi(s_t,a_t) = Q^\pi(s_t,a_t) - V^\pi(s_t)$$
-
-Same object — sample vs. expectation. This is exactly what appears in A2C / PPO's objective.
-
----
-
-## Baselines Come From the Same Argument
-
-The same zero-mean identity justifies subtracting a **baseline** $b(s_t)$ (commonly $V^\pi(s_t)$):
-
-$$A_t = G_t - b(s_t)$$
-
-$$\mathbb{E}\left[\nabla_\theta\log\pi_\theta(a_t|s_t)\,b(s_t)\right] = 0$$
-
-This is the standard justification for **A2C / PPO**-style advantage estimators.
-
----
-
-
-## In PyTorch
-
-```python
-# G_t (or A_t) is treated as a fixed scalar coefficient —
-# NOT something we backprop through
-returns = compute_reward_to_go(rewards, gamma)   # tensor
-returns = returns.detach()
-
-log_probs = policy_dist.log_prob(actions)        # differentiable
-loss = -(log_probs * returns).mean()
-
-loss.backward()   # autograd differentiates only log pi_theta
-optimizer.step()
+```{python} 
+#| fig-align: center
+#| echo: true
+#| eval: false
+seq_log_probs = (token_log_probs * completion_mask).sum(dim=1)
+loss = -(seq_log_probs * advantages).mean()
+loss.backward()
 ```
+* advantages would be the reward calculated by REINFORCE of RLOO
+* This is broadcast to multiply the probabilities of each token of a given completion (`seg_log_probs`)
+* This is then used in a standard backpropagation approach to modify the weights of the model
 
-Autograd differentiates only $\log\pi_\theta(a_t|s_t)$ through the policy network — $G_t$ is `.detach()`-ed.
+
+## Proximal Policy Optimization (PPO)
+
+::: {.mybox}
+- REINFORCE and RLOO are relatively simple
+- RLHF is a very active area of research 
+- PPO was derived from the RL toolkit and uses many of the same concepts, but is harder to describe in a single lecture
+- Used by many of leading commercial LLM, e.g., OpenAI, Gemini,...
+:::
+
+![](./img/ppo_framework.png){width=50% fig-align="center"}
+
+::: {.tiny-credit}
+image source: Zheng R et al (2023) [Secrets of RLHF in Large Language Models Part I: PPO. arXiv 2307.04964](https://arxiv.org/abs/2307.04964)
+:::
+
+## DeepSeek: Reinforcement Learning with Verifiable Rewards (RLVR)
+
+- Reward signals are derived not from human preference but from objective, programmatically verifiable criteria
+- Math for RLVR is similar to that for RLHF
+
+
+![](./img/rlvr-system){width=80% fig-align="center"}
+
+:::{.tiny-credit}
+Image source: [RLHF Book](https://rlhfbook.com/) T
+:::
+
+
+## DeepSeek: Group Relative Policy Optimization (GRPO)
+
+- GRPO is similar to RLOO in that both generate multiple completions from a single prompt and compute relative advantage via intra-group comparisons
+- GRPO
+$$
+\hat{A}_i = \frac{R_i - \mathrm{mean}(A_1,A_2,\ldots,A_k)}{\mathrm{std}(A_1,A_2,\ldots,A_k)}
+$$
+
+::: {.small-text}
+Wen X et al. (2025) [Reinforcement Learning with Verifiable Rewards Implicitly Incentivizes Correct Reasoning in Base LLMs. arXiv 2506.14245](https://arxiv.org/abs/2506.14245); The DeepSeek R1 paper
+:::
+
+## KL divergence
+
+- We have not touched on the topic of KL divergence
+- The Kullback-Leibler (KL) divergence from a distribution q(x) to a reference p(x) is defined as
+$$
+D_{KL}(q\Vert p) = \mathbb{E}_{x\sim q}\left[\frac{q(x)}{p(x)}\right]
+$$
+- RLHF fine-tunes a policy $\pi_\theta$ to produce responses $y$ to prompts $x$ that maximize a reward $r(x, y)$ derived from human preferences. 
+- Pure reward maximization may cause reward hacking and **distribution drift** from a trusted SFT policy. 
+- To counteract this, RLHF adds a KL penalty loss that **regularizes** the policy toward a fixed reference $\pi_{ref}$
+$$
+J(\pi) =
+\mathbf{E}\left[ r_\theta (x,y) - \beta D_{KL}(\pi\Vert \pi_{ref})\right]
+$$
+- A KL divergence term is used in the practical implementations of the algorithms discussed above.
 
 
 ## Sources
 
-- [Ahmadian A et al., Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs(2024) arXiv 2402.14740](https://arxiv.org/abs/2402.14740)
+### Lectures and blogs
+- [RLHF Book](https://rlhfbook.com/) Together with accompanying online lectures, this is a truly excellent resource for learning about RL, RLHF, and many of the developments in the field
+- [Julia Turc](https://www.youtube.com/@juliaturc1) Excellent "AI explainer" videos including an [intuitive explanation of PPO](https://www.youtube.com/watch?v=8jtAzxUwDj0)
+- [Reinforcement Learning from Human Feedback explained with math derivations and the PyTorch code](https://www.youtube.com/watch?v=qGyFrqc34yc&t=3872s): Excellent explanation of RL leading up to RLHF with Python code
 - [Wolfe CR, Reinforcement Learning for LLMs: The Complete Guide, blog](https://cameronrwolfe.substack.com/p/llm-rl)
+
+### Further Reading
+:::{.small-text}
+- [Ahmadian A et al., Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs(2024) arXiv 2402.14740](https://arxiv.org/abs/2402.14740): REINFORCE, RLOO
+- [Stiennon N et al. (2022) Learning to summarize from human feedback arXiv 2009.01325](https://arxiv.org/abs/2009.01325): PPO
+- [Ouyang et al. (2022) Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155): InstructGPT (OpenAI API)
+- [Rafailov R et al (2023) Direct preference optimization: your language model is secretly a reward model. NIPS '23](https://arxiv.org/abs/2305.18290): DPO
+- [Pang RY et al (2024) Iterative Reasoning Preference Optimization](https://arxiv.org/abs/2404.19733)
+:::

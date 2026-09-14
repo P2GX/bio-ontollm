@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.path import Path
-from matplotlib.patches import FancyBboxPatch, Circle, FancyArrowPatch
+from matplotlib.patches import FancyBboxPatch, Circle, FancyArrowPatch,Rectangle
 from matplotlib.lines import Line2D
 
 
@@ -341,4 +341,107 @@ def agent_env_loop(
     fig.tight_layout(pad=0.3)
     return fig
 
+
+def preference_plot():
+    
+    NAVY = "#1A1A2E"
+    BORDER = "#2B2B6B"
+    GREEN = "#22C55E"
+    GREEN_FACE = "#DCFCE7"
+    PINK = "#EC4899"
+    PINK_FACE = "#FCE7F3"
+    GREY = "#6B7280"
+    WHITE = "#FFFFFF"
+
+
+    def _token_width(token, char_w=0.11, min_w=0.45, pad=0.18):
+        return max(min_w, len(token) * char_w + pad)
+
+
+    def _draw_token_row(ax, tokens, y, label, box_h=0.5, gap=0.08,
+                        start_x=1.7, highlight_last=None):
+        """Draw one row of token boxes; returns the x position after the row."""
+        ax.text(start_x - 0.15, y, label, ha="right", va="center",
+                fontsize=11, fontweight="bold", color=NAVY)
+
+        x = start_x
+        for i, tok in enumerate(tokens):
+            w = _token_width(tok)
+            is_last = (i == len(tokens) - 1)
+            if is_last and highlight_last is not None:
+                face, edge, lw = highlight_last["face"], highlight_last["edge"], 2.4
+            else:
+                face, edge, lw = WHITE, BORDER, 1.2
+            box = FancyBboxPatch(
+                (x, y - box_h / 2), w, box_h,
+                boxstyle="round,pad=0,rounding_size=0.05",
+                linewidth=lw, edgecolor=edge, facecolor=face, zorder=3,
+            )
+            ax.add_patch(box)
+            ax.text(x + w / 2, y, tok, ha="center", va="center",
+                    fontsize=10, color=NAVY, zorder=4)
+            x += w + gap
+        return x
+
+
+    def preference_rm_diagram(
+        chosen_tokens,
+        rejected_tokens,
+        title="Training a Preference RM: Pairwise Comparison at EOS",
+        loss_text=r"Loss: $\mathcal{L} = -\log \sigma(r_c - r_r)$   |   Only score difference matters",
+        fig_width=11.5,
+        fig_height=3.8,
+    ):
+        """
+        Draw a token-box diagram illustrating preference reward-model training:
+        a "Chosen" row and a "Rejected" row of tokens, each ending in an EOS
+        token highlighted in green (chosen) or pink (rejected), with a legend,
+        loss formula, and caption underneath.
+
+        chosen_tokens / rejected_tokens: lists of strings, e.g.
+            ["<|eos|>", "What", "is", "12", "\u00d7", "8", "?",
+            "The", "answer", "is", "96", ".", "<|eos|>"]
+
+        Returns the matplotlib Figure.
+        """
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+        ax.set_xlim(0, fig_width)
+        ax.set_ylim(0, fig_height)
+        ax.axis("off")
+
+        top_y = fig_height - 0.55
+        ax.text(fig_width / 2, top_y, title, ha="center", va="center",
+                fontsize=14, fontweight="bold", color=NAVY)
+
+        # legend, upper right
+        leg_x = fig_width - 1.9
+        leg_y1 = top_y - 0.05
+        leg_y2 = leg_y1 - 0.32
+        ax.add_patch(Rectangle((leg_x, leg_y1 - 0.09), 0.22, 0.18,
+                                facecolor=GREEN_FACE, edgecolor=GREEN, linewidth=1.6, zorder=4))
+        ax.text(leg_x + 0.32, leg_y1, "Supervised", ha="left", va="center", fontsize=8.5, color=NAVY)
+        ax.add_patch(Rectangle((leg_x, leg_y2 - 0.09), 0.22, 0.18,
+                                facecolor=PINK_FACE, edgecolor=PINK, linewidth=1.6, zorder=4))
+        ax.text(leg_x + 0.32, leg_y2, "Rejected", ha="left", va="center", fontsize=8.5, color=NAVY)
+
+        row1_y = top_y - 1.05
+        row2_y = row1_y - 0.85
+
+        _draw_token_row(ax, chosen_tokens, row1_y, "Chosen:",
+                        highlight_last={"face": GREEN_FACE, "edge": GREEN})
+        _draw_token_row(ax, rejected_tokens, row2_y, "Rejected:",
+                        highlight_last={"face": PINK_FACE, "edge": PINK})
+
+        ax.text(fig_width / 2, row2_y - 0.55, loss_text,
+                ha="center", va="center", fontsize=10, style="italic", color=NAVY)
+        #ax.text(0.15, row2_y - 1.05, caption=None, ha="left", va="center", fontsize=8.5, color=GREY)
+
+        fig.tight_layout(pad=0.4)
+        return fig
+    chosen = ["<|eos|>", "What", "is", "12", "\u00d7", "8", "?",
+                  "The", "answer", "is", "96", ".", "<|eos|>"]
+    rejected = ["<|eos|>", "What", "is", "12", "\u00d7", "8", "?",
+                    "The", "answer", "is", "84", ".", "<|eos|>"]
+    fig = preference_rm_diagram(chosen, rejected)
+    return fig
 

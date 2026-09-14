@@ -43,7 +43,7 @@ This course is part of the [Master Curriculum](https://link-to-fu.de) in Bioinfo
 
 ## Topics
 
-The course explores the synergy between two paradigms:
+The course explores two paradigms for representing human knowledge computationally:
 
 ::: {.columns}
 
@@ -54,6 +54,7 @@ The course explores the synergy between two paradigms:
 - Formal Semantics (OWL/RDF)
 - Logical Consistency
 - Interoperability (OBO)
+- Algorithms for GO and HPO
 :::
 
 ::: {.column width="50%"}
@@ -66,6 +67,23 @@ The course explores the synergy between two paradigms:
 :::
 
 :::
+
+## Prerequisites
+
+- There will be a lot of math in this course
+- Our goal is to use a mathematical perspective to deepen understanding of algorithms
+- You should have some background in the following Topics:
+  - calculus
+    * differentiation
+    * optimization
+  - linear algebra
+    * vectors, matrices
+    * matrix multiplication
+  - machine learning:
+    * training, testing, overfitting
+    * basic neural networks
+- We will provide additional background and explanations in the practicals
+- Peruse the slides for lectures in the ontology and LLM sections of the course to see if your preparation is sufficient
 
 ## Is AI ruining our skills?
 
