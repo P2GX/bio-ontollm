@@ -3059,7 +3059,7 @@
     "href": "index.html",
     "title": "Approaches to biomedical knowledge",
     "section": "",
-    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Tokens\nLecture 9: Transformers\nLecture 10: Transformers (continued)\nLecture 11: BERT and Sentence BERT\nLecture 12: Reinforcement learning and LLMs\nLecture 13: RAG, Fine tuning, Structured Outputs\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
+    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Tokens\nLecture 9: Transformers\nLecture 10: Transformers (continued)\nLecture 11: BERT and Sentence BERT\nLecture 12: Reinforcement learning and LLMs\nLecture 13: RAG, RAG-HPO, SPIRES\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework."
   },
   {
     "objectID": "lectures/bert.html#overview",
@@ -4669,28 +4669,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 30.80%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.24%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.30%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.22%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.38%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.40%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.40%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.14%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -5500,7 +5500,7 @@
     "href": "lectures/rag.html#overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview",
-    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture will cover several algorithmic aproaches that have been used to improve the performance of LLMs in various settings.\n\nIn the homework we will develop Python code to apply RAG and other approaches to support LLM-based named entity recognition (detection of ontology terms in texts)\n\n\n\n\n\nRetrieval augmented generation (RAG)\nRAG example\nRAG-HPO"
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture will cover several algorithmic aproaches that have been used to improve the performance of LLMs in various settings.\n\nIn the homework we will develop Python code to apply RAG and other approaches to support LLM-based named entity recognition (detection of ontology terms in texts)\n\n\n\n\n\nRetrieval augmented generation (RAG)\nRAG example\nRAG-HPO\nSPIRES"
   },
   {
     "objectID": "lectures/rag.html#rag",
@@ -5592,6 +5592,27 @@
     "title": "Approaches to biomedical knowledge",
     "section": "RAG-HPO: Motivation",
     "text": "RAG-HPO: Motivation\n\nLLMs are resource-intensive and slow in their reasoning compared to other machine learning methods\nLLMs are prone to hallucinations, in which the model generates incorrect information and confidently asserts it as fact\nLLMs can be fine-tuned, but this is computationally expensive and requires substantial expertise\n\n\ne.g., Yang J, et al. (2023) Enhancing phenotype recognition in clinical notes using large language models: PhenoBCBERT and PhenoGPT. Patterns (N Y) 5:100887\n\n\nRAG on the other hand is more cost-effective and adaptable and is relatively easy to keep up to date, which is important for a resource such as HPO that is updated many times a year"
+  },
+  {
+    "objectID": "lectures/rag.html#rag-hpo-implementation-of-the-vector-database",
+    "href": "lectures/rag.html#rag-hpo-implementation-of-the-vector-database",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RAG-HPO: Implementation of the vector database",
+    "text": "RAG-HPO: Implementation of the vector database\nData preparation, embedding, and vectorization The vector database used by RAG-HPO utilizes a Python dictionary with key-value pairs, where keys are clinical words and phrases that reliably match to HPO ID numerical values (e.g., furrowed tongue: HP:0000221). The initial dictionary was extracted from the HPO database and includes term titles, names, definitions, and synonyms paired with their respective HPO IDs."
+  },
+  {
+    "objectID": "lectures/rag.html#spires",
+    "href": "lectures/rag.html#spires",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES)",
+    "text": "Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES)\n\n\nCaufield JH, et al. (2024) Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. Bioinformatics 40:btae104"
+  },
+  {
+    "objectID": "lectures/rag.html#sources",
+    "href": "lectures/rag.html#sources",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Sources",
+    "text": "Sources\n\nBackground: Huang, Y. et al. (2026) A Survey on Retrieval-Augmented Text Generation for Large Language Models. ACM Comput. Surv 12:1-38\nSPIRES: Caufield JH, et al. (2024) Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. Bioinformatics 40:btae104\nRAG-HPO: Garcia BT, et al. (2025) Improving automated deep phenotyping through large language models using retrieval-augmented generation. Genome Med 17:91"
   },
   {
     "objectID": "lectures/transformer.html#overview",
