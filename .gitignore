@@ -154,3 +154,6 @@ _site/
 **.log
 lectures/encoder_files/
 lectures/lstm_files/
+lectures/embeddings_files/
+lectures/logreg_files/
+attic/

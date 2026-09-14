@@ -32,9 +32,9 @@ This lecture will cover several algorithmic aproaches that have been used to imp
 :::
 
 - [Retrieval augmented generation (RAG)](#rag)
-- [Fine Tuning](#lora)
-- [LLM Settings and structured output](#settings)
-- [LLM-based NER](#ner)
+- [RAG example](#moby)
+- [RAG-HPO](#rag-hpo)
+
 
 ## Retrieval augmented generation (RAG) {#rag}
 
@@ -70,3 +70,245 @@ We will examine the RAG workflow as well as some typical applications in detail.
 ::: {.tiny-credit}
 image adapted from: Huang, Y. et al. (2026) [A Survey on Retrieval-Augmented Text Generation for Large Language Models. *ACM Comput. Surv* **12**:1-38](https://dl.acm.org/doi/10.1145/3805774)
 :::
+
+## RAG: Example
+
+- The basic algorithm of RAg is heuristic and can be most easily explained by an example.
+- [HOMEWORK]{.hw-badge}  We will construct a somewhat artificial example that can be run on a laptop and ask you to extend the example.
+- Moby Dick, by Herman Melville, is one of the classics of American Literature.
+- The story gets started on the island of Nantucket. A classic soup dish from the time that is still popular is called Clam Chowder
+
+![](./img/moby.jpg){width=50% fig-align="center"}
+
+## RAG: Example {#moby}
+- We will use RAG to show how to answer the question 
+
+::: {.mybox}
+ What is a good place to eat chowder in early nineteenth century Nantucket?
+:::
+
+- If we ask this question of a small local LLM (gemma3:12b, which is available via olamma or on hugging face), we do not get a satisfactory answer 
+- Imagine we have a database of books about Nantucket. Each book has a certain number of chapters
+- We suspect that the answer can be found in on or other of the chapters. 
+- RAG uses vector similarity to retrieve chapters that display semantic similarity with a query
+- RAG then presents the chapters to the LLM and asks the LLM to craft a responce based on the information in the chapter
+
+:::{.small-text}
+- Although our example is rather artificial, you can imagine that this approach could be useful for
+    * Archives of private files
+    * Information about current events (from newspapers etc.) that took place after the LLM was trained
+    * Specialised information in biomedical databases or ontologies
+:::
+
+## RAG: Moby Dick
+
+- We download the text from [Project Gutenberg](https://www.gutenberg.org/cache/epub/2701/pg2701-images.html) and split the text into the 135 chapters
+
+```text
+This text is a comb...
+CHAPTER 1. Loomings.: Call me Ishmael. Some years ago—never mind how long precisel...
+CHAPTER 2. The Carpet-Bag.: I stuffed a shirt or two into my old carpet-bag, tucked it u...
+CHAPTER 3. The Spouter-Inn.: Entering that gable-ended Spouter-Inn, you found yourself in...
+CHAPTER 4. The Counterpane.: Upon waking next morning about daylight, I found Queequeg’s ...
+CHAPTER 5. Breakfast.: I quickly followed suit, and descending into the bar-room ac...
+CHAPTER 6. The Street.: If I had been astonished at first catching a glimpse of so o...
+CHAPTER 7. The Chapel.: In this same New Bedford there stands a Whaleman’s Chapel, a...
+CHAPTER 8. The Pulpit.: I had not been seated very long ere a man of a certain vener...
+CHAPTER 9. The Sermon.: Father Mapple rose, and in a mild voice of unassuming author...
+(...)
+```
+
+- See homework for the corresponding Python code
+
+## Langchain: Document
+
+
+- [LangChain](https://www.langchain.com/) is a Python library that accelerates LLM application development
+    - modular abstractions for chaining prompts, memory, and external tools together.
+    - foundation for building agents, retrieval-augmented generation (RAG) systems, and complex workflows.
+- We encourage students to explore LangChain in the homework.
+- `Document`: LangChain's standard container for a piece of text plus its associated metadata 
+
+```{python}
+#| echo: true
+#| eval: false
+from langchain_core.documents import Document
+
+chapter_docs = [
+    Document(page_content=body, metadata={"chapter": header})
+    for header, body in real_chapters
+]
+```
+
+
+## Langchain: Vector DB
+
+- `Chroma`: an open-source vector database that runs locally
+- Initializing Chroma embeds the chapters using the `nomic-embed-text` model
+- `vector_store.add_documents(chapter_docs)`: Creates one vector for each of the documents
+- Chroma stores the triple — the original text, its vector, and its metadata (the chapter tag) — all together in `moby_dick_chapters`.
+- `vector_store` (line 12) now contains a searchable index of all chapters
+
+```{python}
+#| echo: true
+#| eval: false
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
+
+# Get Embeddings Model
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+# Initialize ChromaDB as Vector Store
+vector_store = Chroma(
+    collection_name="moby_dick_chapters",
+    embedding_function=embeddings
+)
+vector_store.add_documents(chapter_docs) 
+```
+
+## Naive query
+
+::: {.mybox}
+Let's first try the query without RAG
+
+- `gemma3:12b` is a small (quantized) version of a Gemini model (about 7Gb)
+:::
+
+```{python}
+#| echo: true
+#| eval: false
+llm = ChatOllama(model="gemma3:12b", temperature=0)
+chowder_question = "What is a good place to eat chowder in early nineteenth century Nantucket?"
+no_rag_response = llm.invoke(chowder_question)
+print(no_rag_response.content)
+```
+
+- The response is amusing (and hallucinated)
+```{text}
+Okay, let's dive into finding some chowder for a hungry traveler on Nantucket in the early 19th century (roughly 1800-1830). It's trickier than just looking up a restaurant review site! Here's what we can deduce and where you might have found good chowder, along with considerations about the dining experience.
+
+**Understanding Early 19th Century Nantucket Dining:**
+
+*   **No Restaurants as We Know Them:** The concept of a dedicated "restaurant" serving a menu to anyone who walks in wasn’t really established yet.  Dining was primarily done at:
+(...)
+Here's a breakdown of places you might find chowder, ranked roughly by probability and with what to expect:
+
+1.  **The Main Taverns in Nantucket Town:** **(Most Likely - High Probability)**
+    *   **The Globe Tavern:** This was one of the most prominent taverns on the island. It would have been a central gathering place for locals, sailors, and visitors. They *certainly* served chowder. Expect it to be hearty, rustic, and likely made with whatever fish was available that day (cod, hake, or even clams if they were plentiful).
+    *   **The Union Hotel/Tavern:** Another significant establishment in Nantucket Town. Similar to the Globe, it would have been a reliable source for meals, including chowder.
+    *   **Other Taverns:** There were several other smaller taverns scattered around Nantucket Town and even in some of the outlying areas (like Madaket).  These would also likely offer chowder. Look for signs advertising "Meals & Lodging."
+    *   **Expectations at a Tavern:** The dining room would be communal, with tables shared by different groups. Service was basic – you'd order from a chalkboard or ask the proprietor what was available. Cleanliness might not have been up to modern standards.
+
+(...)
+```
+
+## LangChain: RAG
+
+```{python}
+#| echo: true
+#| eval: false
+from langchain_ollama import ChatOllama
+from langchain_core.prompts import PromptTemplate
+
+retriever = vector_store.as_retriever()
+
+prompt_template = """Use the context provided to answer 
+the user's question below. If you do not know the answer 
+based on the context provided, tell the user that you do 
+not know the answer to their question based on the context
+provided and that you are sorry.
+
+context: {context}
+
+question: {query}
+
+answer: """
+
+# Create Prompt Instance from template
+custom_rag_prompt = PromptTemplate.from_template(prompt_template)
+```
+
+- `retriever`: wraps `vector_store` so it can be used to fetch semantically similar objects
+- `custom_rag_prompt` is a PromptTemplate object — a structured representation of a prompt with named variable slots
+
+## LangChain: RAG - create the chain of commands
+
+```{python}
+#| echo: true
+#| eval: false
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
+rag_chain = (
+    {"context": retriever | format_docs, "query": RunnablePassthrough()}
+    | custom_rag_prompt
+    | llm
+    | StrOutputParser()
+)
+```
+
+- `rag_chain` is written in LangChain Expression Language (LCEL) — chains built with the | operator
+- Works like Unix pipes, where each stage's output becomes the next stage's input.
+- `retriever | format_docs` — the raw input (i.e., the chowder question) is fed into `retriever`, producing a list of `Documents``
+- The `Document` obejcts are piped into `format_docs`, producing one joined string. This becomes the value at key "context".
+- `custom_rag_prompt`: Takes the result of the query and formats it into a prompt text according to the template
+- `llm`: Sends the prompt to our LLM (gemma)
+- `StrOutputParser()`: formats output of the LLM
+
+
+## LangChain: RAG - run the query
+
+- The following code invokes the chain of commands from the previous slide using our chowder question.
+
+```{python}
+#| echo: true
+#| eval: false
+rag_chain.invoke(
+  chowder_question
+)
+```
+Now we receive a much more useful answer
+
+```{text}
+According to the text, a good place to eat chowder in early nineteenth-century Nantucket is at the Try Pots, 
+which is run by Hosea Hussey. 
+The narrator and Queequeg were recommended to it by the landlord of the Spouter-Inn and 
+found it to be an excellent establishment known for its chowders.
+```
+
+# RAG-HPO {#rag-hpo}
+
+- We will now present RAG-HPO, which brings together ontologies, LLMs, and RAG in a novel combination.
+
+![](./img/raghpo-f2.png)
+
+::: {.small-text}
+Garcia BT, et al. (2025) [Improving automated deep phenotyping through large language models using retrieval-augmented generation. *Genome Med* **17**:91](https://pubmed.ncbi.nlm.nih.gov/40826123/)
+:::
+
+# RAG-HPO: Goals
+
+- Human Phenotype Ontology (HPO) providing a standardized language for capturing clinical phenotypes (See [lecture 4](./hpo.qmd))
+- To use HPO analysis, users need to generate a list of HPO terms representing the clinical manifestations of a patient
+- Various text-mining approaches have been used in the past, but their performance is limited by many factors and manual review is often needed
+- LLMs have also been used, but are prone to "hallucinations" that also necessitate manual review
+
+:::{.mybox}
+RAG-HPO is a Python-based tool that leverages retrieval-augmented generation (RAG) to elevate accuracy of HPO term assignment by LLM. 
+:::
+
+## RAG-HPO: Motivation
+
+- LLMs are resource-intensive and slow in their reasoning compared to other machine learning methods 
+- LLMs are prone to hallucinations, in which the model generates incorrect information and confidently asserts it as fact
+- LLMs can be fine-tuned, but this is computationally expensive and requires substantial expertise
+
+:::{.tiny-credit}
+e.g., [Yang J, et al. (2023) Enhancing phenotype recognition in clinical notes using large language models: PhenoBCBERT and PhenoGPT. *Patterns (N Y)* **5**:100887](https://pubmed.ncbi.nlm.nih.gov/38264716/)
+:::
+
+- RAG on the other hand is more cost-effective and adaptable and is relatively easy to keep up to date, which is important for a resource such as HPO that is updated many times a year
+
