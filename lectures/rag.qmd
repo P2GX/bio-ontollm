@@ -1,6 +1,6 @@
 ---
 title: "Approaches to biomedical knowledge"
-subtitle: "Session #13: RAG, Fine tuning, Grounding, Structured Outputs"
+subtitle: "Session #13: RAG, RAG-HPO, SPIRES"
 author: "Peter N Robinson"
 institute: "Free University Berlin"
 date: 2026-04-26
@@ -34,6 +34,7 @@ This lecture will cover several algorithmic aproaches that have been used to imp
 - [Retrieval augmented generation (RAG)](#rag)
 - [RAG example](#moby)
 - [RAG-HPO](#rag-hpo)
+- [SPIRES](#spires)
 
 
 ## Retrieval augmented generation (RAG) {#rag}
@@ -311,4 +312,32 @@ e.g., [Yang J, et al. (2023) Enhancing phenotype recognition in clinical notes u
 :::
 
 - RAG on the other hand is more cost-effective and adaptable and is relatively easy to keep up to date, which is important for a resource such as HPO that is updated many times a year
+
+## RAG-HPO: Implementation of the vector database
+
+Data preparation, embedding, and vectorization
+The vector database used by RAG-HPO utilizes a Python dictionary with key-value pairs, where keys are clinical words and phrases that reliably match to HPO ID numerical values (e.g., furrowed tongue: HP:0000221). The initial dictionary was extracted from the HPO database and includes term titles, names, definitions, and synonyms paired with their respective HPO IDs. 
+
+
+
+
+
+## Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES) {#spires}
+
+
+![](./img/spires.png){width=40% fig-align="center"}
+
+
+::: {.tiny-credit}
+
+Caufield JH, et al. (2024) [Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. *Bioinformatics* **40**:btae104](https://pubmed.ncbi.nlm.nih.gov/38383067/)
+:::
+
+
+## Sources
+
+
+- Background: Huang, Y. et al. (2026) [A Survey on Retrieval-Augmented Text Generation for Large Language Models. *ACM Comput. Surv* **12**:1-38](https://dl.acm.org/doi/10.1145/3805774)
+- SPIRES: Caufield JH, et al. (2024) [Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. *Bioinformatics* **40**:btae104](https://pubmed.ncbi.nlm.nih.gov/38383067/)
+- RAG-HPO: Garcia BT, et al. (2025) [Improving automated deep phenotyping through large language models using retrieval-augmented generation. *Genome Med* **17**:91](https://pubmed.ncbi.nlm.nih.gov/40826123/)
 
