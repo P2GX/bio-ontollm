@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>RAG-HPO – Approaches to biomedical knowledge: Ontologies and LLMs</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-2fd729341d7b238b10199e8519284195.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Approaches to biomedical knowledge: Ontologies and LLMs</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">RAG-HPO</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Lectures</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Approaches to biomedical knowledge</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/ontology1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Approaches to biomedical knowledge</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">lectures/ontology2.qmd</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">lectures/ontology3.qmd</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">lectures/ontology4.qmd</span>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/logreg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Approaches to biomedical knowledge</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/neural.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Approaches to biomedical knowledge</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">lectures/encoder.qmd</span>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">RAG-HPO</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Adapted from the code for <a href="https://pubmed.ncbi.nlm.nih.gov/40826123/">HPO-RAG, 2025, Genome Med</a></p>
+<p>To run the notebook, install the following packages</p>
+<pre class="{python}"><code>pip install hpo-toolkit
+pip install fastembed
+pip install sentence_transformers</code></pre>
+<div id="ecae98ae" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> defaultdict</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pp</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tabulate</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> traceback</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> unicodedata</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Dict, List, Any</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastembed <span class="im">import</span> TextEmbedding</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/peterrobinson/GIT/bio-ontollm-hm/.venv/lib/python3.12/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm</code></pre>
+</div>
+</div>
+<section id="faiss-package" class="level1">
+<h1>FAISS Package</h1>
+<p>Faiss is a library for efficient similarity search and clustering of dense vectors. See the <a href="https://github.com/facebookresearch/faiss">documentation</a> for details on how to install. We are install cpu only version, it is also possible to install a GPU version on many architectures. It was necessary to set the number of threads to one because sentence-transformers/torch initializes its own bundled OpenMP runtime and faiss (also OpenMP-parallelized internally) initializes a second, separate one. Running these in parallel (more than one thread) lead to a segfault on the Macbook this notebook was developed on. It may not be required on other architectures.</p>
+<div id="5750658f" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! pip install faiss-cpu</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> faiss</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>faiss.omp_set_num_threads(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="initialization" class="level1">
+<h1>Initialization</h1>
+<p>The following functions are required to load the vector databases and metainformation that we created in the <code>hpo_vectorization</code> notebook.</p>
+<section id="clean_text" class="level3">
+<h3 class="anchored" data-anchor-id="clean_text">clean_text</h3>
+<p>Heuristic to remove non-standard characters that would not play nicely with the embedding model (HPO texts are ASCII-only).</p>
+<div id="87255715" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>PAT <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r'</span><span class="dv">\s</span><span class="op">*</span><span class="ch">\(</span><span class="pp">[^)]</span><span class="op">*</span><span class="ch">\)</span><span class="dv">\s</span><span class="op">*</span><span class="vs">'</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_text(txt: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    txt <span class="op">=</span> PAT.sub(<span class="st">' '</span>, txt)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    txt <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="dv">\s</span><span class="op">+</span><span class="vs">'</span>, <span class="st">' '</span>, txt).strip().lower()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    txt <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="pp">[^</span><span class="dv">\w\s</span><span class="pp">]</span><span class="op">+</span><span class="dv">$</span><span class="vs">'</span>, <span class="st">''</span>, txt)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="get_embedding_model" class="level3">
+<h3 class="anchored" data-anchor-id="get_embedding_model">get_embedding_model</h3>
+<p>We are retrieving the same embedding model used in the HPO_Vectorization script so that we can work with these embeddings.</p>
+<div id="72e25769" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_embedding_model(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    use_sbert: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    sbert_model: <span class="bu">str</span> <span class="op">=</span> <span class="st">'pritamdeka/SapBERT-mnli-snli-scinli-scitail-mednli-stsb'</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    bge_model: <span class="bu">str</span> <span class="op">=</span> <span class="st">'BAAI/bge-small-en-v1.5'</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> use_sbert:</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> SentenceTransformer(sbert_model)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Loading BGE model: </span><span class="sc">{</span>bge_model<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> TextEmbedding(model_name<span class="op">=</span>bge_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="create_faiss_index" class="level3">
+<h3 class="anchored" data-anchor-id="create_faiss_index">create_faiss_index</h3>
+<p>FAISS (Facebook AI Similarity Search) is a library for storing a large set of vectors and quickly finding the ones most similar to a given query vector. We build an index from the HPO vectors, meaning we can compare the vectors using the fast FAISS code rather than one-by-one in vanilla Python.</p>
+<div id="52a78e24" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_faiss_index(emb_matrix: np.ndarray, metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Build FAISS index for embeddings</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    dim <span class="op">=</span> emb_matrix.shape[<span class="dv">1</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> metric <span class="op">==</span> <span class="st">'cosine'</span>:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        faiss.normalize_L2(emb_matrix)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        index <span class="op">=</span> faiss.IndexFlatIP(dim)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        index <span class="op">=</span> faiss.IndexFlatL2(dim)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    index.add(emb_matrix)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="loading-metadata-and-embeddings" class="level1">
+<h1>Loading metadata and embeddings</h1>
+<p>This function loads the files <code>hpo_meta.json</code> and <code>hpo_embedded.npz</code> that were created in the <code>HPO_Vectorization.ipynb</code> notebook.</p>
+<div id="37983e05" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_vector_db(meta_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">'hpo_meta.json'</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                   vec_path:  <span class="bu">str</span> <span class="op">=</span> <span class="st">'hpo_embedded.npz'</span>):</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ─── Sanity checks ───</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> os.path.exists(meta_path) <span class="kw">or</span> <span class="kw">not</span> os.path.exists(vec_path):</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">FileNotFoundError</span>(<span class="ss">f"DB files not found: </span><span class="sc">{</span>meta_path<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>vec_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ─── Load the condensed JSON ───</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(meta_path, <span class="st">'r'</span>, encoding<span class="op">=</span><span class="st">'utf-8'</span>) <span class="im">as</span> f:</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            combined <span class="op">=</span> json.load(f)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            constants <span class="op">=</span> combined.get(<span class="st">'constants'</span>, {})</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            entries  <span class="op">=</span> combined.get(<span class="st">'entries'</span>, [])</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="ss">f"[FATAL] Could not load metadata JSON: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ─── Load the embeddings ───</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        arr <span class="op">=</span> np.load(vec_path)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Loaded arr"</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        emb_matrix <span class="op">=</span> arr[<span class="st">'emb'</span>].astype(np.float32)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Loading emb matrix"</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="ss">f"[FATAL] Could not load embedding npz: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(entries) <span class="op">!=</span> emb_matrix.shape[<span class="dv">0</span>]:</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"[WARN] Metadata entries count and embedding rows mismatch "</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"(</span><span class="sc">{</span><span class="bu">len</span>(entries)<span class="sc">}</span><span class="ss"> vs </span><span class="sc">{</span>emb_matrix<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    docs <span class="op">=</span> []</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entry, vec <span class="kw">in</span> <span class="bu">zip</span>(entries, emb_matrix):</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        hp_id <span class="op">=</span> entry.get(<span class="st">'hp_id'</span>)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        const <span class="op">=</span> constants.get(hp_id, {})</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>        doc <span class="op">=</span> {</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">'hp_id'</span>:          hp_id,</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">'info'</span>:           entry.get(<span class="st">'info'</span>),</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">'lineage'</span>:        const.get(<span class="st">'lineage'</span>),</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>            <span class="st">'organ_system'</span>:   const.get(<span class="st">'organ_system'</span>),</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>            <span class="st">'direction'</span>:      entry.get(<span class="st">'direction'</span>),</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>            <span class="co"># preserve these keys even if absent in the new JSON:</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>            <span class="st">'depth'</span>:          const.get(<span class="st">'depth'</span>),</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>            <span class="st">'parent_count'</span>:   const.get(<span class="st">'parent_count'</span>),</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>            <span class="st">'child_count'</span>:    const.get(<span class="st">'child_count'</span>),</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>            <span class="st">'descendant_count'</span>: const.get(<span class="st">'descendant_count'</span>),</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>            <span class="st">'embedding'</span>:      vec</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>        docs.append(doc)</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> docs, emb_matrix</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="embed_query" class="level3">
+<h3 class="anchored" data-anchor-id="embed_query">embed_query</h3>
+<p>Creates an embedded vector represent the query that we wish to compare to the HPO vector database.</p>
+<div id="c16ff684" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> embed_query(text: <span class="bu">str</span>, model, metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">hasattr</span>(model, <span class="st">'encode'</span>):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> model.encode(text, convert_to_numpy<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> np.array(<span class="bu">list</span>(model.embed([text]))[<span class="dv">0</span>], dtype<span class="op">=</span>np.float32)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> vec.ndim <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> vec.reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> metric <span class="op">==</span> <span class="st">'cosine'</span>:</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        faiss.normalize_L2(vec)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="collect_metadata_best" class="level3">
+<h3 class="anchored" data-anchor-id="collect_metadata_best">_collect_metadata_best</h3>
+<p><strong>Purpose</strong>: Given a phrase (and its precomputed embedding), retrieve a shortlist of candidate HPO terms from the vector index — a hybrid of semantic similarity search and lexical (token) overlap — to be passed downstream (e.g.&nbsp;to system_message_II’s LLM-based term selection) as the candidate list.</p>
+<ul>
+<li>Run a FAISS approximate nearest-neighbor search for the top top_k (default 500) most similar embeddings to query_vec.</li>
+<li>Tokenize the input phrase into a lowercase word set for overlap checking.</li>
+<li>Iterate candidates in descending similarity order, and for each one accepts it into the results if any of three conditions hold:
+<ul>
+<li>its info text shares at least one word with the query phrase (lexical overlap), or</li>
+<li>its cosine similarity is at or above similarity_threshold (default 0.35), or fewer than min_unique (default 15) results have been accepted so far (a guaranteed-fill fallback, so weakly-matching phrases still return a usable minimum candidate set).</li>
+</ul></li>
+<li>Deduplicate by hp_id (a term already added is skipped if seen again), and stops once max_unique (default 20) results are collected.</li>
+<li>Return a list of dicts with hp_id, phrase, definition, organ_system, and similarity for each accepted candidate.</li>
+</ul>
+<div id="9c6f34de" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ======================= Phenotype Processing =======================</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _collect_metadata_best(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    phrase: <span class="bu">str</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    query_vec: np.ndarray,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    index: faiss.Index,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    docs: List[Dict[<span class="bu">str</span>, Any]],</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    top_k: <span class="bu">int</span> <span class="op">=</span> <span class="dv">500</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    similarity_threshold: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.35</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    min_unique: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    max_unique: <span class="bu">int</span> <span class="op">=</span> <span class="dv">20</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> List[Dict[<span class="bu">str</span>, Any]]:</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">    Single‐pass hybrid retrieval: token overlap, threshold, fill to min_unique.</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    clean_tokens <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\w</span><span class="op">+</span><span class="vs">'</span>, phrase.lower()))</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    dists, idxs <span class="op">=</span> index.search(query_vec, top_k)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    sims, indices <span class="op">=</span> dists[<span class="dv">0</span>], idxs[<span class="dv">0</span>]</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    seen_hp <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> sim, idx <span class="kw">in</span> <span class="bu">sorted</span>(<span class="bu">zip</span>(sims, indices), key<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="dv">0</span>], reverse<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(results) <span class="op">&gt;=</span> max_unique:</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>        doc <span class="op">=</span> docs[idx]</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        hp <span class="op">=</span> doc.get(<span class="st">'hp_id'</span>)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> hp <span class="kw">or</span> hp <span class="kw">in</span> seen_hp:</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>        info <span class="op">=</span> doc.get(<span class="st">'info'</span>, <span class="st">''</span>) <span class="kw">or</span> <span class="st">''</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>        token_overlap <span class="op">=</span> <span class="bu">bool</span>(clean_tokens <span class="op">&amp;</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\w</span><span class="op">+</span><span class="vs">'</span>, info.lower())))</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># accept if token overlap, or above similarity threshold, or to reach min_unique</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> token_overlap <span class="kw">or</span> sim <span class="op">&gt;=</span> similarity_threshold <span class="kw">or</span> <span class="bu">len</span>(results) <span class="op">&lt;</span> min_unique:</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>            seen_hp.add(hp)</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>            results.append({</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">'hp_id'</span>: hp,</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>                <span class="st">'phrase'</span>: info,</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>                <span class="st">'definition'</span>: doc.get(<span class="st">'definition'</span>),</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>                <span class="st">'organ_system'</span>: doc.get(<span class="st">'organ_system'</span>),</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>                <span class="st">'similarity'</span>: <span class="bu">float</span>(sim)</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="parsing-json-response" class="level3">
+<h3 class="anchored" data-anchor-id="parsing-json-response">Parsing JSON response</h3>
+<p>We have the LLM return its response(the <strong>findings</strong>) in JSON format. The following functions parse the JSON</p>
+<div id="3387b28c" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_and_parse(s: <span class="bu">str</span>):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extracts and parses JSON from string</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> re.search(<span class="vs">r'</span><span class="ch">\{</span><span class="dv">.</span><span class="op">*</span><span class="ch">\}</span><span class="vs">'</span>, s, flags<span class="op">=</span>re.S)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        js_str <span class="op">=</span> m.group(<span class="dv">0</span>) <span class="cf">if</span> m <span class="cf">else</span> s.strip()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> json.loads(js_str)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span>:</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_findings(response: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extracts findings from LLM response</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> response:</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    parsed <span class="op">=</span> clean_and_parse(response)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(parsed, <span class="bu">dict</span>):</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> parsed.get(<span class="st">"phenotypes"</span>, [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="process_findings" class="level3">
+<h3 class="anchored" data-anchor-id="process_findings">process_findings</h3>
+<p><strong>Purpose</strong>: Takes the list of phenotype findings extracted by the first LLM pass (system_message_I) and, for each finding, enriches it with candidate HPO metadata and the original clinical sentence it came from — producing a DataFrame ready for the next LLM stage (system_message_II) to pick the best HPO match from.</p>
+<ul>
+<li><strong>Sentence splitting</strong>: splits clinical_note into sentences on ., used later for context matching. (Naive — see caveat below.)</li>
+<li><strong>Embedding</strong>: for each finding’s phrase, computes its embedding vector via embed_query. — <strong>Candidate retrieval</strong>: calls _collect_metadata_best (the function from your previous message) to get up to keep_top candidate HPO terms — note min_unique and max_unique are both set to keep_top, which pins the result to exactly keep_top candidates rather than “up to” that many, removing the variable-size flexibility that function otherwise supports. — <strong>Best sentence match</strong>: finds which original sentence in the note shares the most word-overlap with the phrase, using simple bag-of-words intersection count — this becomes original_sentence, giving the downstream LLM the full-sentence context (as system_message_II’s prompt format expects).</li>
+<li><strong>Row assembly</strong>: builds one output row per finding, containing the phrase, its category, its candidate metadata list, the best-matching sentence, and a patient_id.</li>
+</ul>
+<p><strong>Output</strong>: a DataFrame with one row per extracted finding, columns phrase, category, unique_metadata (list of candidate dicts), original_sentence, patient_id.</p>
+<div id="128e6b91" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_findings(findings, clinical_note: <span class="bu">str</span>, embeddings_model, index, docs,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                    metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                    keep_top: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>):</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Processes findings and returns DataFrame with phrase, category,</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">    metadata, sentence, patient_id.</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">    - keep_top: number of unique metadata entries to retrieve.</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ─── Position A: Split note into sentences for context matching ───</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    sentences <span class="op">=</span> [s.strip() <span class="cf">for</span> s <span class="kw">in</span> clinical_note.split(<span class="st">'.'</span>) <span class="cf">if</span> s.strip()]</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> []</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> findings:</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        phrase <span class="op">=</span> f.get(<span class="st">'phrase'</span>, <span class="st">''</span>).strip()</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        category <span class="op">=</span> f.get(<span class="st">'category'</span>, <span class="st">''</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> phrase:</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ─── Position B: Embed the phrase ───</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        qv <span class="op">=</span> embed_query(phrase, embeddings_model, metric<span class="op">=</span>metric)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ─── Position C: Retrieve best metadata candidates ───</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        unique_metadata <span class="op">=</span> _collect_metadata_best(</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>            phrase<span class="op">=</span>phrase,               <span class="co"># literal text for token-phase</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>            query_vec<span class="op">=</span>qv,                <span class="co"># embedded vector</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>            index<span class="op">=</span>index,                 <span class="co"># FAISS index</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>            docs<span class="op">=</span>docs,                   <span class="co"># list of HPO docs</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>            top_k<span class="op">=</span><span class="dv">500</span>,                   <span class="co"># FAISS retrieval size</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>            similarity_threshold<span class="op">=</span><span class="fl">0.35</span>,   <span class="co"># max distance for semantic matches</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>            min_unique<span class="op">=</span>keep_top,         <span class="co"># ensure at least keep_top entries</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>            max_unique<span class="op">=</span>keep_top          <span class="co"># cap at keep_top entries</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ─── Position D: Find the best-matching sentence ───</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>        fw <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\b\w</span><span class="op">+</span><span class="dv">\b</span><span class="vs">'</span>, phrase.lower()))</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>        best_sent, best_score <span class="op">=</span> <span class="va">None</span>, <span class="dv">0</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> s <span class="kw">in</span> sentences:</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>            sw <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\b\w</span><span class="op">+</span><span class="dv">\b</span><span class="vs">'</span>, s.lower()))</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>            score <span class="op">=</span> <span class="bu">len</span>(fw <span class="op">&amp;</span> sw)</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> score <span class="op">&gt;</span> best_score:</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>                best_score, best_sent <span class="op">=</span> score, s</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ─── Position E: Collect row ───</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>        rows.append({</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>            <span class="st">'phrase'</span>:           phrase,</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>            <span class="st">'category'</span>:         category,</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>            <span class="st">'unique_metadata'</span>:  unique_metadata,</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>            <span class="st">'original_sentence'</span>: best_sent,</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>            <span class="st">'patient_id'</span>:       f.get(<span class="st">'patient_id'</span>)</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(rows)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="rag-hpo-pipeline" class="level1">
+<h1>RAG-HPO Pipeline</h1>
+<p>With all of the setup done, we can now present a simplified version of the RAG-HPO pipeline</p>
+<section id="system-prompts" class="level3">
+<h3 class="anchored" data-anchor-id="system-prompts">System prompts</h3>
+<p>Tell the model what we expect of it.</p>
+<ul>
+<li><strong>system_message_I</strong>: Extraction and triage. Scans the full clinical note and pulls out every phenotype-related phrase, sorting each into one of five categories (Abnormal, Normal, Family History, Other, Suspected). Only the <strong>Abnormal</strong> findings are kept for HPO mapping — this stage’s job is to cast a wide net over the note and filter out everything that isn’t an actual observed abnormal finding (history, demographics, suspected-but-unconfirmed diagnoses, etc.) before the more expensive HPO-matching stage runs.</li>
+<li><strong>system_message_II</strong>: Constrained selection. Given a single abnormal phrase, its originating sentence, and a fixed list of candidate HPO terms (already retrieved via embedding + token-overlap search), picks the <em>one</em> best-matching term — strictly from the supplied candidates, never inventing a new ID. This stage doesn’t search the ontology itself; it disambiguates among options <code>_collect_metadata_best</code> already narrowed down, using the surrounding sentence for context and returning <code>null</code> when no candidate is a good enough fit.</li>
+</ul>
+<div id="17376f8e" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>system_message_I <span class="op">=</span> <span class="st">"You are a highly specialized clinical information extraction system. Your task is to identify *all* phenotypic mentions in a clinical note and categorize them into exactly one of: Abnormal, Normal, Family History, Other, or Suspected.</span><span class="ch">\n\n</span><span class="st">**Instructions:**</span><span class="ch">\n</span><span class="st">1. **Scan Every Sentence**: Extract every phrase that describes a phenotype—signs, symptoms, abnormal findings, test results, anatomical observations—or any diagnostic conjecture or history statement.</span><span class="ch">\n</span><span class="st">2. **Assign One Category**:</span><span class="ch">\n</span><span class="st">   • **Abnormal**: Any *observed* finding deviating from healthy (disease signs, lab abnormalities, pathological conditions). *These will be sent on for HPO mapping.*</span><span class="ch">\n</span><span class="st">   • **Normal**: Explicit statements of normalcy.</span><span class="ch">\n</span><span class="st">   • **Family History**: Phenotypes in relatives.</span><span class="ch">\n</span><span class="st">   • **Other**: Personal medical history, risk factors, demographics, or any non‐finding statement (e.g., “history of HIV,” “smoker,” “height 5′10″”).</span><span class="ch">\n</span><span class="st">   • **Suspected**: Any mention of a possible or rule‐out diagnosis (e.g., “possible sciatica,” “rule out PE”).</span><span class="ch">\n</span><span class="st">3. **Preserve Specificity**: Extract the phrasing exactly as written.</span><span class="ch">\n</span><span class="st">4. **Output JSON Only**: Return `{ </span><span class="ch">\"</span><span class="st">phenotypes</span><span class="ch">\"</span><span class="st">: [ { </span><span class="ch">\"</span><span class="st">phrase</span><span class="ch">\"</span><span class="st">: ..., </span><span class="ch">\"</span><span class="st">category</span><span class="ch">\"</span><span class="st">: ... }, … ] }`.</span><span class="ch">\n\n</span><span class="st">**Post‐processing:** Immediately drop anything not labeled Abnormal before HPO mapping."</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>system_message_II <span class="op">=</span> <span class="st">"You are an expert clinical phenotype mapper.  </span><span class="ch">\n</span><span class="st">Given one abnormal phenotype phrase and a list of candidate HPO terms, select exactly one best matching HPO term—and only from those candidates.  Do not invent, hallucinate, or suggest any term not in the provided list.  </span><span class="ch">\n\n</span><span class="st">When you receive input, it will be a JSON object:</span><span class="ch">\n</span><span class="st">{</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">phrase</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">category</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">original_sentence</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">candidates</span><span class="ch">\"</span><span class="st">: [ {</span><span class="ch">\"</span><span class="st">term</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">, </span><span class="ch">\"</span><span class="st">id</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">HP:…​</span><span class="ch">\"</span><span class="st">}, … ]</span><span class="ch">\n</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">Decision steps:</span><span class="ch">\n</span><span class="st">1. Leverage context: Use the original_sentence to capture nuance.  </span><span class="ch">\n</span><span class="st">2. Match specificity: Pick the candidate whose term description most precisely matches the phenotype.  </span><span class="ch">\n</span><span class="st">3. If two are equally good, choose the one with the highest semantic similarity score.  </span><span class="ch">\n</span><span class="st">4. If none fits well (similarity &lt; 80 or no clear match), return null.  </span><span class="ch">\n\n</span><span class="st">Output requirement:</span><span class="ch">\n</span><span class="st">Return exactly one JSON object, nothing else:</span><span class="ch">\n\n</span><span class="st">    {</span><span class="ch">\"</span><span class="st">hpo_id</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">HP:0001234</span><span class="ch">\"</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">or</span><span class="ch">\n\n</span><span class="st">    {</span><span class="ch">\"</span><span class="st">hpo_id</span><span class="ch">\"</span><span class="st">: null</span><span class="ch">\"</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">—no commentary, no extra keys, no surrounding text."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="initialize-the-llm-model-via-ollama" class="level3">
+<h3 class="anchored" data-anchor-id="initialize-the-llm-model-via-ollama">Initialize the LLM model via ollama</h3>
+<p>We will use the relatively small gemma3:12b model which can be downloaded from ollama (ca. 8GB) and can be run on many laptops.</p>
+<div id="574d2a0f" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> ChatOllama</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>llm_client <span class="op">=</span> ChatOllama(model<span class="op">=</span><span class="st">"gemma3:12b"</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-clinical-query" class="level3">
+<h3 class="anchored" data-anchor-id="the-clinical-query">The clinical query</h3>
+<p>This is a description of a patient encounter. Our goal is to extract HPO terms that describe the clinical manifestations of the affected individual. The description here is taken from the training data presented in the RAG-HPO GitHub repository.</p>
+<div id="72dc5a9e" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>clinical_note <span class="op">=</span> <span class="st">"A 43-year-old Caucasian female experienced MCAS symptoms at age 18: specific foods and odours caused flushing, rashes, itching, wheezing, dizziness and nausea. At age 20, she noted problems with postprandial bloating/pain, constipation, evacuating stool and flatus with rotten egg odour. Restless legs syndrome (RLS) gradually developed. At age 23, she developed orthostatic lightheadedness and tachycardia, body pain, generalised weakness and painful dependent leg oedema. Ultimately, she suffered from 45 individual clinically significant symptoms (table 1). For 6 years, she became disabled owing to orthostatic symptoms, fatigue and body pain. Faecal evacuation resulted in syncope with efforts &gt;3 min. Early satiety led to a liquid diet. Pressure-induced hives and angioedema, paraesthesia and nocturnal urination (seven times nightly) interfered with sleep. Over 16 years, 19 physicians failed to diagnose POTS and MCAS which were established at a second location of the Mayo Clinic. Supine pulse of 80 beats/min increased to 160 after standing 10 min. Facial rash and oedema, cold, blue hands, Terry’s fingernails and dermatographism were present. "</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="timememory-tracker" class="level3">
+<h3 class="anchored" data-anchor-id="timememory-tracker">Time/Memory tracker</h3>
+<p>Not necessary, but interesting to see how many resources are consumed in each step</p>
+<div id="f1ec2999" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psutil, os, time</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> contextlib <span class="im">import</span> contextmanager</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>process <span class="op">=</span> psutil.Process(os.getpid())</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="at">@contextmanager</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> track(step_name: <span class="bu">str</span>):</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    mem_before <span class="op">=</span> process.memory_info().rss <span class="op">/</span> <span class="fl">1e9</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    t0 <span class="op">=</span> time.perf_counter()</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    elapsed <span class="op">=</span> time.perf_counter() <span class="op">-</span> t0</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    mem_after <span class="op">=</span> process.memory_info().rss <span class="op">/</span> <span class="fl">1e9</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"[</span><span class="sc">{</span>step_name<span class="sc">}</span><span class="ss">] time: </span><span class="sc">{</span>elapsed<span class="sc">:.2f}</span><span class="ss">s | "</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"memory: </span><span class="sc">{</span>mem_before<span class="sc">:.2f}</span><span class="ss"> GB → </span><span class="sc">{</span>mem_after<span class="sc">:.2f}</span><span class="ss"> GB "</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"(Δ </span><span class="sc">{</span>mem_after <span class="op">-</span> mem_before<span class="sc">:+.2f}</span><span class="ss"> GB)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="3f100f34" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Load embedding model"</span>):</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    emd_model <span class="op">=</span> get_embedding_model()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Load vector DB"</span>):</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    docs, emb_matrix <span class="op">=</span> load_vector_db(meta_path<span class="op">=</span><span class="st">"hpo_meta.json"</span>, vec_path<span class="op">=</span><span class="st">"hpo_embedded.npz"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Build FAISS index"</span>):</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> create_faiss_index(emb_matrix, metric<span class="op">=</span><span class="st">'cosine'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|██████████| 199/199 [00:00&lt;00:00, 58684.28it/s]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[Load embedding model] time: 3.59s | memory: 0.60 GB → 0.63 GB (Δ +0.03 GB)
+Loaded arr
+Loading emb matrix
+[Load vector DB] time: 0.26s | memory: 0.63 GB → 1.45 GB (Δ +0.82 GB)
+[Build FAISS index] time: 0.04s | memory: 1.45 GB → 1.89 GB (Δ +0.44 GB)</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="explain" class="level1">
+<h1>explain</h1>
+<div id="8deb7c06" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_core.messages <span class="im">import</span> SystemMessage, HumanMessage</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    SystemMessage(content<span class="op">=</span>system_message_I),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    HumanMessage(content<span class="op">=</span>clinical_note),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> llm_client.invoke(messages)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.content)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>```json
+{
+  "phenotypes": [
+    {
+      "phrase": "MCAS symptoms",
+      "category": "Suspected"
+    },
+    {
+      "phrase": "flushing",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "rashes",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "itching",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "wheezing",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "dizziness",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "nausea",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "postprandial bloating/pain",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "constipation",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "evacuating stool",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "flatus with rotten egg odour",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "Restless legs syndrome (RLS)",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "orthostatic lightheadedness",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "tachycardia",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "body pain",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "generalised weakness",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "painful dependent leg oedema",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "45 individual clinically significant symptoms",
+      "category": "Other"
+    },
+    {
+      "phrase": "disabled owing to orthostatic symptoms",
+      "category": "Other"
+    },
+    {
+      "phrase": "fatigue",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "Faecal evacuation resulted in syncope",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "early satiety",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "Pressure-induced hives",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "angioedema",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "paraesthesia",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "nocturnal urination (seven times nightly)",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "POTS",
+      "category": "Suspected"
+    },
+    {
+      "phrase": "MCAS",
+      "category": "Suspected"
+    },
+    {
+      "phrase": "pulse of 80 beats/min increased to 160 after standing 10 min",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "Facial rash",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "oedema",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "cold, blue hands",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "Terry’s fingernails",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "dermatographism",
+      "category": "Abnormal"
+    }
+  ]
+}
+```</code></pre>
+</div>
+</div>
+<div id="cf32bc2a" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>findings_d <span class="op">=</span> extract_findings(response.content)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>findings_d</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>[{'phrase': 'MCAS symptoms', 'category': 'Suspected'},
+ {'phrase': 'flushing', 'category': 'Abnormal'},
+ {'phrase': 'rashes', 'category': 'Abnormal'},
+ {'phrase': 'itching', 'category': 'Abnormal'},
+ {'phrase': 'wheezing', 'category': 'Abnormal'},
+ {'phrase': 'dizziness', 'category': 'Abnormal'},
+ {'phrase': 'nausea', 'category': 'Abnormal'},
+ {'phrase': 'postprandial bloating/pain', 'category': 'Abnormal'},
+ {'phrase': 'constipation', 'category': 'Abnormal'},
+ {'phrase': 'evacuating stool', 'category': 'Abnormal'},
+ {'phrase': 'flatus with rotten egg odour', 'category': 'Abnormal'},
+ {'phrase': 'Restless legs syndrome (RLS)', 'category': 'Abnormal'},
+ {'phrase': 'orthostatic lightheadedness', 'category': 'Abnormal'},
+ {'phrase': 'tachycardia', 'category': 'Abnormal'},
+ {'phrase': 'body pain', 'category': 'Abnormal'},
+ {'phrase': 'generalised weakness', 'category': 'Abnormal'},
+ {'phrase': 'painful dependent leg oedema', 'category': 'Abnormal'},
+ {'phrase': '45 individual clinically significant symptoms',
+  'category': 'Other'},
+ {'phrase': 'disabled owing to orthostatic symptoms', 'category': 'Other'},
+ {'phrase': 'fatigue', 'category': 'Abnormal'},
+ {'phrase': 'Faecal evacuation resulted in syncope', 'category': 'Abnormal'},
+ {'phrase': 'early satiety', 'category': 'Abnormal'},
+ {'phrase': 'Pressure-induced hives', 'category': 'Abnormal'},
+ {'phrase': 'angioedema', 'category': 'Abnormal'},
+ {'phrase': 'paraesthesia', 'category': 'Abnormal'},
+ {'phrase': 'nocturnal urination (seven times nightly)',
+  'category': 'Abnormal'},
+ {'phrase': 'POTS', 'category': 'Suspected'},
+ {'phrase': 'MCAS', 'category': 'Suspected'},
+ {'phrase': 'pulse of 80 beats/min increased to 160 after standing 10\u2009min',
+  'category': 'Abnormal'},
+ {'phrase': 'Facial rash', 'category': 'Abnormal'},
+ {'phrase': 'oedema', 'category': 'Abnormal'},
+ {'phrase': 'cold, blue hands', 'category': 'Abnormal'},
+ {'phrase': 'Terry’s fingernails', 'category': 'Abnormal'},
+ {'phrase': 'dermatographism', 'category': 'Abnormal'}]</code></pre>
+</div>
+</div>
+<div id="b8119735" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># restrict to abnormal findings</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>findings <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> findings_d <span class="cf">if</span> <span class="bu">isinstance</span>(f, <span class="bu">dict</span>) <span class="kw">and</span> f.get(<span class="st">'category'</span>) <span class="op">==</span> <span class="st">'Abnormal'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="8a0b919d" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>required_cols <span class="op">=</span> [<span class="st">'phrase'</span>, <span class="st">'category'</span>, <span class="st">'unique_metadata'</span>, <span class="st">'original_sentence'</span>, <span class="st">'patient_id'</span>]</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Continue processing</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> process_findings(findings, clinical_note, emd_model, index, docs)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure all required columns are present</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> required_cols:</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> df.columns:</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> np.nan</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">phrase</th>
+<th data-quarto-table-cell-role="th">category</th>
+<th data-quarto-table-cell-role="th">unique_metadata</th>
+<th data-quarto-table-cell-role="th">original_sentence</th>
+<th data-quarto-table-cell-role="th">patient_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>flushing</td>
+<td>Abnormal</td>
+<td>[{'hp_id': 'HP:0031284', 'phrase': 'flushing',...</td>
+<td>A 43-year-old Caucasian female experienced MCA...</td>
+<td>None</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>rashes</td>
+<td>Abnormal</td>
+<td>[{'hp_id': 'HP:0000988', 'phrase': 'rash', 'de...</td>
+<td>A 43-year-old Caucasian female experienced MCA...</td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>itching</td>
+<td>Abnormal</td>
+<td>[{'hp_id': 'HP:0000989', 'phrase': 'itching', ...</td>
+<td>A 43-year-old Caucasian female experienced MCA...</td>
+<td>None</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>wheezing</td>
+<td>Abnormal</td>
+<td>[{'hp_id': 'HP:0030828', 'phrase': 'wheezing',...</td>
+<td>A 43-year-old Caucasian female experienced MCA...</td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>dizziness</td>
+<td>Abnormal</td>
+<td>[{'hp_id': 'HP:0002321', 'phrase': 'dizziness'...</td>
+<td>A 43-year-old Caucasian female experienced MCA...</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="compare-without-rag" class="level1">
+<h1>Compare without RAG</h1>
+<div id="2ffd8209" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>system_message_no_RAG <span class="op">=</span> <span class="st">"You are a highly specialized clinical information extraction system. Your task is to identify *all* phenotypic mentions in a clinical note and extract the corresponding Human Phenotype Ontology (HPO). Categorize them into exactly one of: Abnormal, Normal, Family History, Other, or Suspected.</span><span class="ch">\n\n</span><span class="st">**Instructions:**</span><span class="ch">\n</span><span class="st">1. **Scan Every Sentence**: Extract every phrase that describes a phenotype—signs, symptoms, abnormal findings, test results, anatomical observations—or any diagnostic conjecture or history statement.</span><span class="ch">\n</span><span class="st">2. **Assign One Category**:</span><span class="ch">\n</span><span class="st">   • **Abnormal**: Any *observed* finding deviating from healthy (disease signs, lab abnormalities, pathological conditions). *These will be sent on for HPO mapping.*</span><span class="ch">\n</span><span class="st">   • **Normal**: Explicit statements of normalcy.</span><span class="ch">\n</span><span class="st">   • **Family History**: Phenotypes in relatives.</span><span class="ch">\n</span><span class="st">   • **Other**: Personal medical history, risk factors, demographics, or any non‐finding statement (e.g., “history of HIV,” “smoker,” “height 5′10″”).</span><span class="ch">\n</span><span class="st">   • **Suspected**: Any mention of a possible or rule‐out diagnosis (e.g., “possible sciatica,” “rule out PE”).</span><span class="ch">\n</span><span class="st">3. **Preserve Specificity**: Extract the phrasing exactly as written.</span><span class="ch">\n</span><span class="st">4. **Output JSON Only**: Return `{ </span><span class="ch">\"</span><span class="st">phenotypes</span><span class="ch">\"</span><span class="st">: [ { </span><span class="ch">\"</span><span class="st">phrase</span><span class="ch">\"</span><span class="st">: ..., </span><span class="ch">\"</span><span class="st">category</span><span class="ch">\"</span><span class="st">: ... , </span><span class="ch">\"</span><span class="st">HPO id</span><span class="ch">\"</span><span class="st">: ..., </span><span class="ch">\"</span><span class="st">HPO label</span><span class="ch">\"</span><span class="st">: ...,}, … ] }`.</span><span class="ch">\n\n</span><span class="st">**Post‐processing:** Immediately drop anything not labeled Abnormal before HPO mapping."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="a723a801" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    SystemMessage(content<span class="op">=</span>system_message_no_RAG),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    HumanMessage(content<span class="op">=</span>clinical_note),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> llm_client.invoke(messages)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.content)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>```json
+{
+  "phenotypes": [
+    {
+      "phrase": "flushing",
+      "category": "Abnormal",
+      "HPO id": "HP:0000981",
+      "HPO label": "Skin flushing"
+    },
+    {
+      "phrase": "rashes",
+      "category": "Abnormal",
+      "HPO id": "HP:0000981",
+      "HPO label": "Skin rash"
+    },
+    {
+      "phrase": "itching",
+      "category": "Abnormal",
+      "HPO id": "HP:0000981",
+      "HPO label": "Itching"
+    },
+    {
+      "phrase": "wheezing",
+      "category": "Abnormal",
+      "HPO id": "HP:0002090",
+      "HPO label": "Wheezing"
+    },
+    {
+      "phrase": "dizziness",
+      "category": "Abnormal",
+      "HPO id": "HP:0000403",
+      "HPO label": "Dizziness"
+    },
+    {
+      "phrase": "nausea",
+      "category": "Abnormal",
+      "HPO id": "HP:0000311",
+      "HPO label": "Nausea"
+    },
+    {
+      "phrase": "postprandial bloating/pain",
+      "category": "Abnormal",
+      "HPO id": "HP:0002047",
+      "HPO label": "Abdominal bloating"
+    },
+    {
+      "phrase": "constipation",
+      "category": "Abnormal",
+      "HPO id": "HP:0000705",
+      "HPO label": "Constipation"
+    },
+    {
+      "phrase": "flatus with rotten egg odour",
+      "category": "Abnormal",
+      "HPO id": "HP:0033478",
+      "HPO label": "Foul-smelling flatulence"
+    },
+    {
+      "phrase": "Restless legs syndrome (RLS)",
+      "category": "Abnormal",
+      "HPO id": "HP:0000765",
+      "HPO label": "Restless legs syndrome"
+    },
+    {
+      "phrase": "orthostatic lightheadedness",
+      "category": "Abnormal",
+      "HPO id": "HP:0001742",
+      "HPO label": "Orthostatic lightheadedness"
+    },
+    {
+      "phrase": "tachycardia",
+      "category": "Abnormal",
+      "HPO id": "HP:0001945",
+      "HPO label": "Tachycardia"
+    },
+    {
+      "phrase": "body pain",
+      "category": "Abnormal",
+      "HPO id": "HP:0001924",
+      "HPO label": "Body pain"
+    },
+    {
+      "phrase": "generalised weakness",
+      "category": "Abnormal",
+      "HPO id": "HP:0001324",
+      "HPO label": "Generalized weakness"
+    },
+    {
+      "phrase": "painful dependent leg oedema",
+      "category": "Abnormal",
+      "HPO id": "HP:0000898",
+      "HPO label": "Dependent edema"
+    },
+    {
+      "phrase": "syncope with efforts &gt;3 min",
+      "category": "Abnormal",
+      "HPO id": "HP:0000308",
+      "HPO label": "Syncope"
+    },
+    {
+      "phrase": "early satiety",
+      "category": "Abnormal",
+      "HPO id": "HP:0001999",
+      "HPO label": "Early satiety"
+    },
+    {
+      "phrase": "Pressure-induced hives",
+      "category": "Abnormal",
+      "HPO id": "HP:0000981",
+      "HPO label": "Skin rash"
+    },
+    {
+      "phrase": "angioedema",
+      "category": "Abnormal",
+      "HPO id": "HP:0000891",
+      "HPO label": "Angioedema"
+    },
+    {
+      "phrase": "paraesthesia",
+      "category": "Abnormal",
+      "HPO id": "HP:0001017",
+      "HPO label": "Paraesthesia"
+    },
+    {
+      "phrase": "nocturnal urination (seven times nightly)",
+      "category": "Abnormal",
+      "HPO id": "HP:0001629",
+      "HPO label": "Nocturia"
+    },
+    {
+      "phrase": "supine pulse of 80 beats/min increased to 160 after standing 10 min",
+      "category": "Abnormal",
+      "HPO id": "HP:0001945",
+      "HPO label": "Tachycardia"
+    },
+    {
+      "phrase": "facial rash",
+      "category": "Abnormal",
+      "HPO id": "HP:0000981",
+      "HPO label": "Skin rash"
+    },
+    {
+      "phrase": "facial oedema",
+      "category": "Abnormal",
+      "HPO id": "HP:0000891",
+      "HPO label": "Angioedema"
+    },
+    {
+      "phrase": "cold, blue hands",
+      "category": "Abnormal",
+      "HPO id": "HP:0000973",
+      "HPO label": "Cyanosis"
+    },
+    {
+      "phrase": "Terry’s fingernails",
+      "category": "Abnormal",
+      "HPO id": "HP:0000323",
+      "HPO label": "Nail discoloration"
+    },
+    {
+      "phrase": "dermatographism",
+      "category": "Abnormal",
+      "HPO id": "HP:0000979",
+      "HPO label": "Dermatographism"
+    }
+  ]
+}
+```</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/P2GX\.github\.io\/bio-ontollm\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
