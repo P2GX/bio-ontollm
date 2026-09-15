@@ -48,8 +48,19 @@ both topics as well as several sessions in which we show how ontologies and LLMs
 * [Lecture 11: BERT and Sentence BERT](lectures/bert.qmd)
 * [Lecture 12: Reinforcement learning and LLMs](lectures/reinforcement.qmd)
 * [Lecture 13: RAG, RAG-HPO, SPIRES](lectures/rag.qmd)
-* [Lecture 14: Applications of LLMs in Medicine: Problems and opportunities](applications.qmd)
+* [Lecture 14: Applications of LLMs in Medicine: Problems and opportunities](lectures/applications.qmd)
 
 ### Homework
 
 * Each lecture will be accompanied by a practical session to go over background material and review the homework.
+
+
+### Examples
+
+:::{.small-text}
+* This course does not intend to teach practical coding skills, but in some cases it can be instructional to study Python implementations of the algorithms presented in the lectures.
+* The following notebooks present simplified versions of algorithms and approaches and are not intended to be full implementations.
+:::
+
+* [HPO vectorization (for RAG-HPO)](notebooks/hpo_vectorization.ipynb){target="_blank"}
+* [RAG-HPO](notebooks/rag-hpo.ipynb){target="_blank"}

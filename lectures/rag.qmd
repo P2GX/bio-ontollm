@@ -313,17 +313,403 @@ e.g., [Yang J, et al. (2023) Enhancing phenotype recognition in clinical notes u
 
 - RAG on the other hand is more cost-effective and adaptable and is relatively easy to keep up to date, which is important for a resource such as HPO that is updated many times a year
 
-## RAG-HPO: Implementation of the vector database
-
-Data preparation, embedding, and vectorization
-The vector database used by RAG-HPO utilizes a Python dictionary with key-value pairs, where keys are clinical words and phrases that reliably match to HPO ID numerical values (e.g., furrowed tongue: HP:0000221). The initial dictionary was extracted from the HPO database and includes term titles, names, definitions, and synonyms paired with their respective HPO IDs. 
 
 
+## RAG-HPO workflow
+
+- To set the stage for RAG-HPO, some amount of coding is needed that we will not cover in detail in this lecture.
+- We will provide a bird's eye view of the preparation and focus on the final query stages
+- Main stages:
+    - Ingest the HPO file (hp.json)
+    - Extract the main components of each HPO term (label, definition, synonyms, organ category, ancestry)
+    - Create a vector database with one vector for each HPO term
+    - Initialize a large language model (locally, for this example)
+    - Encode the query using the same embedding model
+    - Have the LLM extract phrases from the input text that it thinks are clinical descriptions
+    - For each clinical description
+        - Find the $k$ most similar HPO vectors using cosine similarity
+        - Ask the LLM to decide if the clinical description can be represented by one of the $k$ HPO terms
+        - If yes, return the HPO term together with metadata including the HPO id
 
 
 
-## Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES) {#spires}
+## RAG-HPO: Structuring HPO data prior to vectorization
 
+:::{.mybox}
+**Intuition**: Vector similarity is implemented using SBERT (c.f., [lecture 11](./bert.qmd)). 
+
+- Similarity will depend on the text chosen to represent each HPO term.
+- Do we use the term label? Do we include other texts?
+- The authors of RAG-HPO chose to represent the label, definition, synonyms, major organ system, and ancestry lineage: This provides more information to find potentially matching HPO terms based on similarity with clinical texts.
+:::
+
+```text
+------------------------------------------------------------
+HP ID:       HP:0004227
+Info:        brachytelophalangism v
+Direction:   0
+Organ system:Limbs
+Lineage:     All (HP:0000001) -> Phenotypic abnormality (HP:0000118) -> \
+    Abnormality of limbs (HP:0040064) -> Abnormality of the upper limb (HP:0002817) -> \
+    Abnormality of the hand (HP:0001155) -> Abnormal finger morphology (HP:0001167) -> \
+    Aplasia/Hypoplasia of fingers (HP:0006265) -> Aplasia/Hypoplasia of the 5th finger (HP:0006262) -> \
+    Short 5th finger (HP:0009237) -> Short distal phalanx of the 5th finger (HP:0004227)
+Definition:  Hypoplastic/small distal phalanx of the fifth finger.
+------------------------------------------------------------
+```
+
+* Information is extracted from each HPO term as shown above. This is the _sentence_ that is used for vectorization
+* See [hpo vectorization (Jupyter notebook)](../notebooks/hpo_vectorization.ipynb){target="_blank"} for implementation details.
+
+## RAG-HPO: Set up
+
+```{python}
+#| echo: true
+#| eval: false
+from langchain_ollama import ChatOllama
+llm_client = ChatOllama(model="gemma3:12b", temperature=0)
+emd_model = get_embedding_model()
+docs, emb_matrix = load_vector_db(meta_path="hpo_meta.json", vec_path="hpo_embedded.npz")
+index = create_faiss_index(emb_matrix, metric='cosine')
+```
+
+- We initialize a gemma model as our LLM. This is a relatively small (less than 8GB) but surprisingly powerful LLM that can be run on a decent laptop with Ollama 
+- We load the embedding vectors and metadata as created above 
+- We index the vectors using the FAISS library for quicker searching 
+
+## RAG-HPO: Build the prompt
+
+```{python}
+#| echo: true
+#| eval: false
+from langchain_core.messages import SystemMessage, HumanMessage
+
+messages = [
+    SystemMessage(content=system_message_I),
+    HumanMessage(content=clinical_note),
+]
+
+response = llm_client.invoke(messages)
+```
+
+- This `langchain` code initializes a prompt message from a System and a Human component. 
+- Here, we would exchange the human message for eaach diagnostic query
+
+## RAG-HPO Prompt (System message)
+
+
+You are a highly specialized clinical information extraction system. Your 
+task is to identify *all* phenotypic mentions in a clinical note and 
+categorize them into exactly one of: Abnormal, Normal, Family History, 
+Other, or Suspected.
+
+
+**Instructions:**
+
+1. **Scan Every Sentence**: Extract every phrase that describes a phenotype—signs, symptoms, abnormal findings, test results, anatomical observations—or any diagnostic conjecture or history statement.\n'
+2. **Assign One Category**:
+    - **Abnormal**: Any *observed* finding deviating from healthy (disease signs, lab abnormalities, pathological conditions). *These will be sent on for HPO mapping.
+    - **Normal**: Explicit statements of normalcy.
+    - **Family History**: Phenotypes in relatives.'
+    - **Other**: Personal medical history, risk factors, demographics, or any non‐finding statement (e.g., “history of HIV,” “smoker,” “height 5′10″”).
+    - **Suspected**: Any mention of a possible or rule‐out diagnosis (e.g., “possible sciatica,” “rule out PE”).
+ 3. **Preserve Specificity**: Extract the phrasing exactly as written.\n'
+ 4. **Output JSON Only**: Return `{ "phenotypes": [ { "phrase": ..., category": ... }, ... ] }`
+
+ **Post‐processing:** Immediately drop anything not labeled Abnormal before HPO mapping.
+
+
+
+## RAG-HPO Prompt (Human Message)
+
+- The following is a clinical description of an individual who has presented for diagnostic evaluation
+- The goal of analysis is to extract [Human Phenotype Ontology (HPO)]() terms from the text so that the terms can be entered into an analysis tool (c.f. [lecture 4](hpo.qmd))
+
+::: {.small-text}
+A 43-year-old Caucasian female experienced MCAS symptoms at age 18: specific foods and odours caused flushing, rashes, itching, wheezing, dizziness and nausea.
+ At age 20, she noted problems with postprandial bloating/pain, constipation, evacuating stool and flatus with rotten egg odour. Restless legs syndrome (RLS) 
+ gradually developed. At age 23, she developed orthostatic lightheadedness and tachycardia, body pain, generalised weakness and painful dependent leg oedema. 
+ Ultimately, she suffered from 45 individual clinically significant symptoms (table 1). For 6 years, she became disabled owing to orthostatic symptoms, 
+ fatigue and body pain. Faecal evacuation resulted in syncope with efforts >3 min. Early satiety led to a liquid diet. Pressure-induced hives and angioedema, 
+ paraesthesia and nocturnal urination (seven times nightly) interfered with sleep. Over 16 years, 19 physicians failed to diagnose POTS and MCAS which were 
+ established at a second location of the Mayo Clinic. Supine pulse of 80 beats/min increased to 160 after standing 10 min. Facial rash and oedema, cold.
+:::
+
+
+## RAG-HPO: First response
+
+- The first step in RAG-HPO is to get the LLM to find pieces of text that could potentially represent phenotypic features.
+- The point of RAG-HPO is that we can use these **candidates** to scan the HPO ontology for potential matches using a vector database
+- We can then ask the LLM in a second step which of the HPO terms returned by the vector database are actually good matches.
+
+Here is an excerpt of the LLM response:
+
+```{text}
+{
+  "phenotypes": [
+    {
+      "phrase": "MCAS symptoms",
+      "category": "Suspected"
+    },
+    {
+      "phrase": "flushing",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "rashes",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "itching",
+      "category": "Abnormal"
+    },
+    {
+      "phrase": "disabled owing to orthostatic symptoms",
+      "category": "Other"
+    },
+    (...)
+}
+```
+
+## RAG-HPO
+
+- For each of the `phrase` entries, RAG-HPO then asks for the best $k$ matches from the vector database
+
+```{python}
+#| echo: true
+#| eval: false
+qv = embed_query(phrase, embeddings_model, metric=metric)
+```
+
+```text
+prepare md
+[{'hp_id': 'HP:0031284', 'phrase': 'flushing', 'definition': None, 'organ_system': 'Integument', 'similarity': 0.9999998807907104}, 
+{'hp_id': 'HP:0001033', 'phrase': 'facial flushing after alcohol intake', 'definition': None, 'organ_system': 'Integument', 'similarity': 0.6326053142547607}, 
+{'hp_id': 'HP:0033349', 'phrase': 'seizure flurries', 'definition': None, 'organ_system': 'Other', 'similarity': 0.5522459149360657}, 
+{'hp_id': 'HP:0032762', 'phrase': 'focal autonomic seizure with pallor/flushing', 'definition': None, 'organ_system': 'Nervous System', 'similarity': 0.5467579364776611}, 
+{'hp_id': 'HP:4000054', 'phrase': 'exanthem', 'definition': None, 'organ_system': 'Integument', 'similarity': 0.5450245141983032}, 
+{'hp_id': 'HP:0001041', 'phrase': 'blushing', 'definition': None, 'organ_system': 'Cardiovascular System', 'similarity': 0.5421429872512817}, 
+{'hp_id': 'HP:0032761', 'phrase': 'focal aware autonomic seizure with pallor/flushing', 'definition': None, 'organ_system': 'Nervous System', 'similarity': 0.5294724106788635}, 
+{'hp_id': 'HP:0002105', 'phrase': 'hemoptysis', 'definition': None, 'organ_system': 'Respiratory System', 'similarity': 0.5229952931404114}, 
+{'hp_id': 'HP:0002380', 'phrase': 'fasciculation', 'definition': None, 'organ_system': 'Nervous System', 'similarity': 0.5166743993759155}, 
+{'hp_id': 'HP:0034249', 'phrase': 'severe influenza', 'definition': None, 'organ_system': 'Other', 'similarity': 0.5164532661437988}, 
+(...)
+```
+
+* Not surprisingly in this example, the HPO vector with the highest similarity to "flushing" is the vector for flushing (HP:0031284), at 99.99%
+* The second-best hit has a simialrity of 63.2% etc.
+
+## Understanding thre vector DB searchable
+
+```{python}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "11"
+def _collect_metadata_best(
+    phrase: str,
+    query_vec: np.ndarray,
+    index: faiss.Index,
+    docs: List[Dict[str, Any]],
+    top_k: int = 500,
+    similarity_threshold: float = 0.35,
+    min_unique: int = 15,
+    max_unique: int = 20
+) -> List[Dict[str, Any]]:
+    clean_tokens = set(re.findall(r'\w+', phrase.lower()))
+    dists, idxs = index.search(query_vec, top_k)
+    sims, indices = dists[0], idxs[0]
+
+    seen_hp = set()
+    results = []
+
+    for sim, idx in sorted(zip(sims, indices), key=lambda x: x[0], reverse=True):
+        if len(results) >= max_unique:
+            break
+        doc = docs[idx]
+        hp = doc.get('hp_id')
+        if not hp or hp in seen_hp:
+            continue
+
+        info = doc.get('info', '') or ''
+        token_overlap = bool(clean_tokens & set(re.findall(r'\w+', info.lower())))
+
+        #see next slide
+```
+
+* line 11 Tokenizes the input phrase into a lowercase set of word-tokens — e.g. "facial rash" → {"facial", "rash"}
+
+
+## Understanding thre vector DB search (2)
+
+```{python}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "12-13"
+def _collect_metadata_best(
+    phrase: str,
+    query_vec: np.ndarray,
+    index: faiss.Index,
+    docs: List[Dict[str, Any]],
+    top_k: int = 500,
+    similarity_threshold: float = 0.35,
+    min_unique: int = 15,
+    max_unique: int = 20
+) -> List[Dict[str, Any]]:
+    clean_tokens = set(re.findall(r'\w+', phrase.lower()))
+    dists, idxs = index.search(query_vec, top_k)
+    sims, indices = dists[0], idxs[0]
+
+    seen_hp = set()
+    results = []
+
+    for sim, idx in sorted(zip(sims, indices), key=lambda x: x[0], reverse=True):
+        if len(results) >= max_unique:
+            break
+        doc = docs[idx]
+        hp = doc.get('hp_id')
+        if not hp or hp in seen_hp:
+            continue
+
+        info = doc.get('info', '') or ''
+        token_overlap = bool(clean_tokens & set(re.findall(r'\w+', info.lower())))
+
+        #see next slide
+```
+
+* **line 12**: Runs the actual FAISS similarity search: for query_vec (the phrase's embedding), find the top_k (default 500) nearest neighbors in the index. index.search returns 2D arrays because FAISS supports batched queries (searching many query vectors at once) 
+* **line 13**: so `dists[0]`  (for the first, and in this case, only query) unwraps the single row of results. 
+* `sims` is an array of 500 similarity scores (cosine similarities)
+* `indices` is the corresponding array of 500 row-indices into docs.
+
+
+
+## Understanding the vector DB search (3)
+
+```{python}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "18,21,26-27"
+def _collect_metadata_best(
+    phrase: str,
+    query_vec: np.ndarray,
+    index: faiss.Index,
+    docs: List[Dict[str, Any]],
+    top_k: int = 500,
+    similarity_threshold: float = 0.35,
+    min_unique: int = 15,
+    max_unique: int = 20
+) -> List[Dict[str, Any]]:
+    clean_tokens = set(re.findall(r'\w+', phrase.lower()))
+    dists, idxs = index.search(query_vec, top_k)
+    sims, indices = dists[0], idxs[0]
+
+    seen_hp = set()
+    results = []
+
+    for sim, idx in sorted(zip(sims, indices), key=lambda x: x[0], reverse=True):
+        if len(results) >= max_unique:
+            break
+        doc = docs[idx]
+        hp = doc.get('hp_id')
+        if not hp or hp in seen_hp:
+            continue
+
+        info = doc.get('info', '') or ''
+        token_overlap = bool(clean_tokens & set(re.findall(r'\w+', info.lower())))
+
+        #see next slide
+```
+
+* **line 18**: Pairs up each similarity score with its doc index, and sorts descending by similarity.
+* **line 21**: `docs[idx]`gives us the metadata at index `idx`. We skip if it is malformed or if we have already `seen` this entry
+* **line 26**: `info` holds the cleaned text of a single HPO label or synonym, e.g., "flushing", "arachnodactyly"
+* **line 27**: `token_overlap` is `True` iff `info` shares any word with the input phrase's tokens.
+
+
+
+## Understanding the vector DB search (4)
+
+```{python}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "12"
+def _collect_metadata_best(
+    phrase: str,
+    query_vec: np.ndarray,
+    index: faiss.Index,
+    docs: List[Dict[str, Any]],
+    top_k: int = 500,
+    similarity_threshold: float = 0.35,
+    min_unique: int = 15,
+    max_unique: int = 20
+) -> List[Dict[str, Any]]:
+        #see previous slide
+        if token_overlap or sim >= similarity_threshold or len(results) < min_unique:
+            seen_hp.add(hp)
+            results.append({
+                'hp_id': hp,
+                'phrase': info,
+                'definition': doc.get('definition'),
+                'organ_system': doc.get('organ_system'),
+                'similarity': float(sim)
+            })
+    return results
+```
+
+* **line 12**: A candidate is accepted if any of three things is true:
+    - it shares a word with the query phrase, or
+    - its cosine similarity is ≥ 0.35, or
+    - `min_unique` accepted results has not been achieved yet (a fallback that accepts anything, regardless of quality, purely to guarantee a minimum count)
+
+
+
+
+
+## Understanding the vector DB search (5)
+
+```{python}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "21"
+def _collect_metadata_best(
+    phrase: str,
+    query_vec: np.ndarray,
+    index: faiss.Index,
+    docs: List[Dict[str, Any]],
+    top_k: int = 500,
+    similarity_threshold: float = 0.35,
+    min_unique: int = 15,
+    max_unique: int = 20
+) -> List[Dict[str, Any]]:
+        #see previous slide
+        if token_overlap or sim >= similarity_threshold or len(results) < min_unique:
+            seen_hp.add(hp)
+            results.append({
+                'hp_id': hp,
+                'phrase': info,
+                'definition': doc.get('definition'),
+                'organ_system': doc.get('organ_system'),
+                'similarity': float(sim)
+            })
+    return results
+```
+
+* **line 21**: Following the for loop, we return a list of candidates
+
+
+
+
+:::{.small-text}
+| hp_id       | phrase                                        | organ_system   | similarity |
+|-------------|------------------------------------------------|----------------|-----------:|
+| HP:0031284  | flushing                                        | Integument     | 1.000      |
+| HP:0001033  | facial flushing after alcohol intake            | Integument     | 0.633      |
+| HP:0033349  | seizure flurries                                | Other          | 0.552      |
+| HP:0032762  | focal autonomic seizure with pallor/flushing    | Nervous System | 0.547      |
+| HP:4000054  | exanthem                                        | Integument     | 0.545      |
+:::
+
+# SPIRES
 
 ![](./img/spires.png){width=40% fig-align="center"}
 
@@ -333,6 +719,34 @@ The vector database used by RAG-HPO utilizes a Python dictionary with key-value 
 Caufield JH, et al. (2024) [Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. *Bioinformatics* **40**:btae104](https://pubmed.ncbi.nlm.nih.gov/38383067/)
 :::
 
+## SPIRES: Motivation
+
+- Knowledge Bases and ontologies (KBs) encode domain knowledge in a structure that is amenable to precise querying and reasoning.
+- However, the vast majority of human knowledge is communicated via natural language
+- Large Language Models (LLMs) have shown great promise in interpreting biomedical texts, but often fail to identify ontology term identifiers and relations that are need to extract computable knowledge for KBs
+- SPIRES aims to we use LLMs to build KBs using NLP at the time of KB construction
+- This can assist manual knowledge curation and acquisition while validating facts prior to insertion into KBs such as HPO and many others.
+
+## SPIRES: Main steps
+
+- **Literature triage**: aids selection of relevant texts to curate
+- **Named Entity Recognition (NER)**: identify textual spans mentioning relevant things or concepts such as genes or ingredients
+- **grounding maps** these spans to persistent identifiers in databases or ontologies (e.g., the HPO term label `Arachnodactly` is mapped to its identifier `HP:0001166`)
+- **Relation Extraction (RE)** connects named entities via predicates such as ‘causes’ into simple triple statements. 
+
+
+## Knowledge Bases: Challenges
+
+Most KBs are built upon detailed knowledge schemas which prove challenging to populate. 
+
+- Schemas describe the forms in which data should be structured within a domain. 
+- For example, a food recipe KB may break a recipe down into a sequence of dependent steps
+    - each step is a complex knowledge structure involving an action, utensils, and quantified inputs and outputs. 
+
+- Inputs and outputs might be a tuple of a food type plus a state (e.g. cooked)
+
+
+![](./img/spires-food.png){width=50% fig-align="center"}
 
 ## Sources
 
