@@ -1,0 +1,6 @@
+
+fastembed
+hpo-toolkit
+langchain_ollama
+pandas
+sentence_transformers
