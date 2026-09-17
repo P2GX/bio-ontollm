@@ -234,12 +234,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Adapted from the code for <a href="https://pubmed.ncbi.nlm.nih.gov/40826123/">HPO-RAG, 2025, Genome Med</a></p>
+<ul>
+<li>Retrieval-Augmented Generation to support HPO text mining</li>
+<li>Method developed by the Posey Lab, Baylor University</li>
+<li>Adapted from the code for <a href="https://pubmed.ncbi.nlm.nih.gov/40826123/">HPO-RAG, 2025, Genome Med</a></li>
+</ul>
 <p>To run the notebook, install the following packages</p>
 <pre class="{python}"><code>pip install hpo-toolkit
 pip install fastembed
-pip install sentence_transformers</code></pre>
-<div id="ecae98ae" class="cell" data-execution_count="38">
+pip install sentence_transformers
+pip install faiss-cpu</code></pre>
+<div id="ecae98ae" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hpotk</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pp</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span>
@@ -250,22 +255,26 @@ pip install sentence_transformers</code></pre>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Dict, List, Any</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastembed <span class="im">import</span> TextEmbedding</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/peterrobinson/GIT/bio-ontollm-hm/.venv/lib/python3.12/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm</code></pre>
+</div>
 </div>
 <section id="initialize-the-hpo" class="level1">
 <h1>Initialize the HPO</h1>
-<p>We only need this to check the labels of the HPO ids that are returned from the model</p>
-<div id="8d297b55" class="cell" data-execution_count="39">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>store <span class="op">=</span> hpotk.configure_ontology_store()</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>hpo <span class="op">=</span> store.load_hpo()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>We need the full HPO ontology in this notebook to check the labels of the HPO ids that are returned from the LLM, not to perform the RAG itself.</p>
+<div id="8d297b55" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>store <span class="op">=</span> hpotk.configure_ontology_store()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>hpo <span class="op">=</span> store.load_hpo()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="faiss-package" class="level1">
 <h1>FAISS Package</h1>
 <p>Faiss is a library for efficient similarity search and clustering of dense vectors. See the <a href="https://github.com/facebookresearch/faiss">documentation</a> for details on how to install. We are install cpu only version, it is also possible to install a GPU version on many architectures. It was necessary to set the number of threads to one because sentence-transformers/torch initializes its own bundled OpenMP runtime and faiss (also OpenMP-parallelized internally) initializes a second, separate one. Running these in parallel (more than one thread) lead to a segfault on the Macbook this notebook was developed on. It may not be required on other architectures.</p>
-<div id="5750658f" class="cell" data-execution_count="40">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! pip install faiss-cpu</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> faiss</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>faiss.omp_set_num_threads(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="5750658f" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! pip install faiss-cpu</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> faiss</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>faiss.omp_set_num_threads(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="initialization" class="level1">
@@ -274,89 +283,89 @@ pip install sentence_transformers</code></pre>
 <section id="get_embedding_model" class="level3">
 <h3 class="anchored" data-anchor-id="get_embedding_model">get_embedding_model</h3>
 <p>We are retrieving the same embedding model used in the HPO_Vectorization script so that we can work with these embeddings.</p>
-<div id="72e25769" class="cell" data-execution_count="41">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_embedding_model(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    sbert_model: <span class="bu">str</span> <span class="op">=</span> <span class="st">'pritamdeka/SapBERT-mnli-snli-scinli-scitail-mednli-stsb'</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SentenceTransformer(sbert_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="72e25769" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_embedding_model(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    sbert_model: <span class="bu">str</span> <span class="op">=</span> <span class="st">'pritamdeka/SapBERT-mnli-snli-scinli-scitail-mednli-stsb'</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SentenceTransformer(sbert_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="create_faiss_index" class="level3">
 <h3 class="anchored" data-anchor-id="create_faiss_index">create_faiss_index</h3>
 <p>FAISS (Facebook AI Similarity Search) is a library for storing a large set of vectors and quickly finding the ones most similar to a given query vector. We build an index from the HPO vectors, meaning we can compare the vectors using the fast FAISS code rather than one-by-one in vanilla Python.</p>
-<div id="52a78e24" class="cell" data-execution_count="42">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_faiss_index(emb_matrix: np.ndarray, metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Build FAISS index for embeddings</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    dim <span class="op">=</span> emb_matrix.shape[<span class="dv">1</span>]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> metric <span class="op">==</span> <span class="st">'cosine'</span>:</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        faiss.normalize_L2(emb_matrix)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        index <span class="op">=</span> faiss.IndexFlatIP(dim)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        index <span class="op">=</span> faiss.IndexFlatL2(dim)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    index.add(emb_matrix)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="52a78e24" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_faiss_index(emb_matrix: np.ndarray, metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Build FAISS index for embeddings</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    dim <span class="op">=</span> emb_matrix.shape[<span class="dv">1</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> metric <span class="op">==</span> <span class="st">'cosine'</span>:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        faiss.normalize_L2(emb_matrix)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        index <span class="op">=</span> faiss.IndexFlatIP(dim)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        index <span class="op">=</span> faiss.IndexFlatL2(dim)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    index.add(emb_matrix)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
 <section id="loading-metadata-and-embeddings" class="level1">
 <h1>Loading metadata and embeddings</h1>
 <p>This function loads the files <code>hpo_meta.json</code> and <code>hpo_embedded.npz</code> that were created in the <code>HPO_Vectorization.ipynb</code> notebook.</p>
-<div id="37983e05" class="cell" data-execution_count="43">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_vector_db(meta_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">'hpo_meta.json'</span>,</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                   vec_path:  <span class="bu">str</span> <span class="op">=</span> <span class="st">'hpo_embedded.npz'</span>):</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> os.path.exists(meta_path) <span class="kw">or</span> <span class="kw">not</span> os.path.exists(vec_path):</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">FileNotFoundError</span>(<span class="ss">f"DB files not found: </span><span class="sc">{</span>meta_path<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>vec_path<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(meta_path, <span class="st">'r'</span>, encoding<span class="op">=</span><span class="st">'utf-8'</span>) <span class="im">as</span> f:</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>            combined <span class="op">=</span> json.load(f)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>            constants <span class="op">=</span> combined.get(<span class="st">'constants'</span>, {})</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            entries  <span class="op">=</span> combined.get(<span class="st">'entries'</span>, [])</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="ss">f"[FATAL] Could not load metadata JSON: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        arr <span class="op">=</span> np.load(vec_path)</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        emb_matrix <span class="op">=</span> arr[<span class="st">'emb'</span>].astype(np.float32)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="ss">f"[FATAL] Could not load embedding npz: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(entries) <span class="op">!=</span> emb_matrix.shape[<span class="dv">0</span>]:</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"[WARN] Metadata entries count and embedding rows mismatch "</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"(</span><span class="sc">{</span><span class="bu">len</span>(entries)<span class="sc">}</span><span class="ss"> vs </span><span class="sc">{</span>emb_matrix<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">)"</span>)</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ─── Reconstruct docs list in the original output format ───</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    docs <span class="op">=</span> []</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entry, vec <span class="kw">in</span> <span class="bu">zip</span>(entries, emb_matrix):</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        hp_id <span class="op">=</span> entry.get(<span class="st">'hp_id'</span>)</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        const <span class="op">=</span> constants.get(hp_id, {})</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        doc <span class="op">=</span> {</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>            <span class="st">'hp_id'</span>:          hp_id,</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>            <span class="st">'info'</span>:           entry.get(<span class="st">'info'</span>),</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">'lineage'</span>:        const.get(<span class="st">'lineage'</span>),</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">'organ_system'</span>:   const.get(<span class="st">'organ_system'</span>),</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">'direction'</span>:      entry.get(<span class="st">'direction'</span>),</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>            <span class="co"># preserve these keys even if absent in the new JSON:</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">'depth'</span>:          const.get(<span class="st">'depth'</span>),</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">'parent_count'</span>:   const.get(<span class="st">'parent_count'</span>),</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">'child_count'</span>:    const.get(<span class="st">'child_count'</span>),</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>            <span class="st">'descendant_count'</span>: const.get(<span class="st">'descendant_count'</span>),</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>            <span class="st">'embedding'</span>:      vec</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        docs.append(doc)</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> docs, emb_matrix</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="37983e05" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_vector_db(meta_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">'hpo_meta.json'</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                   vec_path:  <span class="bu">str</span> <span class="op">=</span> <span class="st">'hpo_embedded.npz'</span>):</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> os.path.exists(meta_path) <span class="kw">or</span> <span class="kw">not</span> os.path.exists(vec_path):</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">FileNotFoundError</span>(<span class="ss">f"DB files not found: </span><span class="sc">{</span>meta_path<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>vec_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(meta_path, <span class="st">'r'</span>, encoding<span class="op">=</span><span class="st">'utf-8'</span>) <span class="im">as</span> f:</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>            combined <span class="op">=</span> json.load(f)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            constants <span class="op">=</span> combined.get(<span class="st">'constants'</span>, {})</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            entries  <span class="op">=</span> combined.get(<span class="st">'entries'</span>, [])</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="ss">f"[FATAL] Could not load metadata JSON: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        arr <span class="op">=</span> np.load(vec_path)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        emb_matrix <span class="op">=</span> arr[<span class="st">'emb'</span>].astype(np.float32)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="ss">f"[FATAL] Could not load embedding npz: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(entries) <span class="op">!=</span> emb_matrix.shape[<span class="dv">0</span>]:</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"[WARN] Metadata entries count and embedding rows mismatch "</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"(</span><span class="sc">{</span><span class="bu">len</span>(entries)<span class="sc">}</span><span class="ss"> vs </span><span class="sc">{</span>emb_matrix<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ─── Reconstruct docs list in the original output format ───</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    docs <span class="op">=</span> []</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entry, vec <span class="kw">in</span> <span class="bu">zip</span>(entries, emb_matrix):</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        hp_id <span class="op">=</span> entry.get(<span class="st">'hp_id'</span>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        const <span class="op">=</span> constants.get(hp_id, {})</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        doc <span class="op">=</span> {</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>            <span class="st">'hp_id'</span>:          hp_id,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>            <span class="st">'info'</span>:           entry.get(<span class="st">'info'</span>),</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">'lineage'</span>:        const.get(<span class="st">'lineage'</span>),</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">'organ_system'</span>:   const.get(<span class="st">'organ_system'</span>),</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">'direction'</span>:      entry.get(<span class="st">'direction'</span>),</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            <span class="co"># preserve these keys even if absent in the new JSON:</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">'depth'</span>:          const.get(<span class="st">'depth'</span>),</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">'parent_count'</span>:   const.get(<span class="st">'parent_count'</span>),</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">'child_count'</span>:    const.get(<span class="st">'child_count'</span>),</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>            <span class="st">'descendant_count'</span>: const.get(<span class="st">'descendant_count'</span>),</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>            <span class="st">'embedding'</span>:      vec</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>        docs.append(doc)</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> docs, emb_matrix</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="embed_query" class="level3">
 <h3 class="anchored" data-anchor-id="embed_query">embed_query</h3>
 <p>Creates an embedded vector represent the query that we wish to compare to the HPO vector database.</p>
-<div id="c16ff684" class="cell" data-execution_count="44">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> embed_query(text: <span class="bu">str</span>, model, metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">hasattr</span>(model, <span class="st">'encode'</span>):</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> model.encode(text, convert_to_numpy<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> np.array(<span class="bu">list</span>(model.embed([text]))[<span class="dv">0</span>], dtype<span class="op">=</span>np.float32)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> vec.ndim <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> vec.reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> metric <span class="op">==</span> <span class="st">'cosine'</span>:</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        faiss.normalize_L2(vec)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="c16ff684" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> embed_query(text: <span class="bu">str</span>, model, metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">hasattr</span>(model, <span class="st">'encode'</span>):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> model.encode(text, convert_to_numpy<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> np.array(<span class="bu">list</span>(model.embed([text]))[<span class="dv">0</span>], dtype<span class="op">=</span>np.float32)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> vec.ndim <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        vec <span class="op">=</span> vec.reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> metric <span class="op">==</span> <span class="st">'cosine'</span>:</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        faiss.normalize_L2(vec)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="collect_metadata_best" class="level3">
@@ -373,73 +382,72 @@ pip install sentence_transformers</code></pre>
 <li>Deduplicate by hp_id (a term already added is skipped if seen again), and stops once max_unique (default 20) results are collected.</li>
 <li>Return a list of dicts with hp_id, phrase, definition, organ_system, and similarity for each accepted candidate.</li>
 </ul>
-<div id="9c6f34de" class="cell" data-execution_count="45">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ======================= Phenotype Processing =======================</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _collect_metadata_best(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    phrase: <span class="bu">str</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    query_vec: np.ndarray,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    index: faiss.Index,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    docs: List[Dict[<span class="bu">str</span>, Any]],</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    top_k: <span class="bu">int</span> <span class="op">=</span> <span class="dv">500</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    similarity_threshold: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.35</span>,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    min_unique: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>,</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    max_unique: <span class="bu">int</span> <span class="op">=</span> <span class="dv">20</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> List[Dict[<span class="bu">str</span>, Any]]:</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">    Single‐pass hybrid retrieval: token overlap, threshold, fill to min_unique.</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    clean_tokens <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\w</span><span class="op">+</span><span class="vs">'</span>, phrase.lower()))</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    dists, idxs <span class="op">=</span> index.search(query_vec, top_k)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    sims, indices <span class="op">=</span> dists[<span class="dv">0</span>], idxs[<span class="dv">0</span>]</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    seen_hp <span class="op">=</span> <span class="bu">set</span>()</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> sim, idx <span class="kw">in</span> <span class="bu">sorted</span>(<span class="bu">zip</span>(sims, indices), key<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="dv">0</span>], reverse<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(results) <span class="op">&gt;=</span> max_unique:</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        doc <span class="op">=</span> docs[idx]</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        hp <span class="op">=</span> doc.get(<span class="st">'hp_id'</span>)</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> hp <span class="kw">or</span> hp <span class="kw">in</span> seen_hp:</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        info <span class="op">=</span> doc.get(<span class="st">'info'</span>, <span class="st">''</span>) <span class="kw">or</span> <span class="st">''</span></span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        token_overlap <span class="op">=</span> <span class="bu">bool</span>(clean_tokens <span class="op">&amp;</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\w</span><span class="op">+</span><span class="vs">'</span>, info.lower())))</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># accept if token overlap, or above similarity threshold, or to reach min_unique</span></span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> token_overlap <span class="kw">or</span> sim <span class="op">&gt;=</span> similarity_threshold <span class="kw">or</span> <span class="bu">len</span>(results) <span class="op">&lt;</span> min_unique:</span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>            seen_hp.add(hp)</span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>            results.append({</span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">'hp_id'</span>: hp,</span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>                <span class="st">'phrase'</span>: info,</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>                <span class="st">'definition'</span>: doc.get(<span class="st">'definition'</span>),</span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>                <span class="st">'organ_system'</span>: doc.get(<span class="st">'organ_system'</span>),</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>                <span class="st">'similarity'</span>: <span class="bu">float</span>(sim)</span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>            })</span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9c6f34de" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _collect_metadata_best(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    phrase: <span class="bu">str</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    query_vec: np.ndarray,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    index: faiss.Index,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    docs: List[Dict[<span class="bu">str</span>, Any]],</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    top_k: <span class="bu">int</span> <span class="op">=</span> <span class="dv">500</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    similarity_threshold: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.35</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    min_unique: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    max_unique: <span class="bu">int</span> <span class="op">=</span> <span class="dv">20</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> List[Dict[<span class="bu">str</span>, Any]]:</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">    Single‐pass hybrid retrieval: token overlap, threshold, fill to min_unique.</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    clean_tokens <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\w</span><span class="op">+</span><span class="vs">'</span>, phrase.lower()))</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    dists, idxs <span class="op">=</span> index.search(query_vec, top_k)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    sims, indices <span class="op">=</span> dists[<span class="dv">0</span>], idxs[<span class="dv">0</span>]</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    seen_hp <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> sim, idx <span class="kw">in</span> <span class="bu">sorted</span>(<span class="bu">zip</span>(sims, indices), key<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="dv">0</span>], reverse<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(results) <span class="op">&gt;=</span> max_unique:</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        doc <span class="op">=</span> docs[idx]</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>        hp <span class="op">=</span> doc.get(<span class="st">'hp_id'</span>)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> hp <span class="kw">or</span> hp <span class="kw">in</span> seen_hp:</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>        info <span class="op">=</span> doc.get(<span class="st">'info'</span>, <span class="st">''</span>) <span class="kw">or</span> <span class="st">''</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>        token_overlap <span class="op">=</span> <span class="bu">bool</span>(clean_tokens <span class="op">&amp;</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\w</span><span class="op">+</span><span class="vs">'</span>, info.lower())))</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>        <span class="co"># accept if token overlap, or above similarity threshold, or to reach min_unique</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> token_overlap <span class="kw">or</span> sim <span class="op">&gt;=</span> similarity_threshold <span class="kw">or</span> <span class="bu">len</span>(results) <span class="op">&lt;</span> min_unique:</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>            seen_hp.add(hp)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>            results.append({</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>                <span class="st">'hp_id'</span>: hp,</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">'phrase'</span>: info,</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>                <span class="st">'definition'</span>: doc.get(<span class="st">'definition'</span>),</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>                <span class="st">'organ_system'</span>: doc.get(<span class="st">'organ_system'</span>),</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>                <span class="st">'similarity'</span>: <span class="bu">float</span>(sim)</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="parsing-json-response" class="level3">
 <h3 class="anchored" data-anchor-id="parsing-json-response">Parsing JSON response</h3>
 <p>We have the LLM return its response(the <strong>findings</strong>) in JSON format. The following functions parse the JSON</p>
-<div id="3387b28c" class="cell" data-execution_count="46">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_and_parse(s: <span class="bu">str</span>):</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extracts and parses JSON from string</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> re.search(<span class="vs">r'</span><span class="ch">\{</span><span class="dv">.</span><span class="op">*</span><span class="ch">\}</span><span class="vs">'</span>, s, flags<span class="op">=</span>re.S)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        js_str <span class="op">=</span> m.group(<span class="dv">0</span>) <span class="cf">if</span> m <span class="cf">else</span> s.strip()</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> json.loads(js_str)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span>:</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_findings(response: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extracts findings from LLM response</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> response:</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    parsed <span class="op">=</span> clean_and_parse(response)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(parsed, <span class="bu">dict</span>):</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> parsed.get(<span class="st">"phenotypes"</span>, [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="3387b28c" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_and_parse(s: <span class="bu">str</span>):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extracts and parses JSON from string</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> re.search(<span class="vs">r'</span><span class="ch">\{</span><span class="dv">.</span><span class="op">*</span><span class="ch">\}</span><span class="vs">'</span>, s, flags<span class="op">=</span>re.S)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        js_str <span class="op">=</span> m.group(<span class="dv">0</span>) <span class="cf">if</span> m <span class="cf">else</span> s.strip()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> json.loads(js_str)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span>:</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_findings(response: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extracts findings from LLM response</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> response:</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    parsed <span class="op">=</span> clean_and_parse(response)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(parsed, <span class="bu">dict</span>):</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> parsed.get(<span class="st">"phenotypes"</span>, [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="process_findings" class="level3">
@@ -451,59 +459,54 @@ pip install sentence_transformers</code></pre>
 <li><strong>Row assembly</strong>: builds one output row per finding, containing the phrase, its category, its candidate metadata list, the best-matching sentence, and a patient_id.</li>
 </ul>
 <p><strong>Output</strong>: a DataFrame with one row per extracted finding, columns phrase, category, unique_metadata (list of candidate dicts), original_sentence, patient_id.</p>
-<div id="128e6b91" class="cell" data-execution_count="47">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_findings(findings, clinical_note: <span class="bu">str</span>, embeddings_model, index, docs,</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                    metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    keep_top: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>):</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Processes findings and returns DataFrame with phrase, category,</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">    metadata, sentence, patient_id.</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">    - keep_top: number of unique metadata entries to retrieve.</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ─── Position A: Split note into sentences for context matching ───</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    sentences <span class="op">=</span> [s.strip() <span class="cf">for</span> s <span class="kw">in</span> clinical_note.split(<span class="st">'.'</span>) <span class="cf">if</span> s.strip()]</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> []</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> findings:</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        phrase <span class="op">=</span> f.get(<span class="st">'phrase'</span>, <span class="st">''</span>).strip()</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        category <span class="op">=</span> f.get(<span class="st">'category'</span>, <span class="st">''</span>)</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> phrase:</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ─── Position B: Embed the phrase ───</span></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        qv <span class="op">=</span> embed_query(phrase, embeddings_model, metric<span class="op">=</span>metric)</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ─── Position C: Retrieve best metadata candidates ───</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        unique_metadata <span class="op">=</span> _collect_metadata_best(</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>            phrase<span class="op">=</span>phrase,               <span class="co"># literal text for token-phase</span></span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>            query_vec<span class="op">=</span>qv,                <span class="co"># embedded vector</span></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>            index<span class="op">=</span>index,                 <span class="co"># FAISS index</span></span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>            docs<span class="op">=</span>docs,                   <span class="co"># list of HPO docs</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>            top_k<span class="op">=</span><span class="dv">500</span>,                   <span class="co"># FAISS retrieval size</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>            similarity_threshold<span class="op">=</span><span class="fl">0.35</span>,   <span class="co"># max distance for semantic matches</span></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>            min_unique<span class="op">=</span>keep_top,         <span class="co"># ensure at least keep_top entries</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>            max_unique<span class="op">=</span>keep_top          <span class="co"># cap at keep_top entries</span></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ─── Position D: Find the best-matching sentence ───</span></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>        fw <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\b\w</span><span class="op">+</span><span class="dv">\b</span><span class="vs">'</span>, phrase.lower()))</span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>        best_sent, best_score <span class="op">=</span> <span class="va">None</span>, <span class="dv">0</span></span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> s <span class="kw">in</span> sentences:</span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>            sw <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\b\w</span><span class="op">+</span><span class="dv">\b</span><span class="vs">'</span>, s.lower()))</span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>            score <span class="op">=</span> <span class="bu">len</span>(fw <span class="op">&amp;</span> sw)</span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> score <span class="op">&gt;</span> best_score:</span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>                best_score, best_sent <span class="op">=</span> score, s</span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ─── Position E: Collect row ───</span></span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>        rows.append({</span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>            <span class="st">'phrase'</span>:           phrase,</span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>            <span class="st">'category'</span>:         category,</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>            <span class="st">'unique_metadata'</span>:  unique_metadata,</span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>            <span class="st">'original_sentence'</span>: best_sent,</span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>            <span class="st">'patient_id'</span>:       f.get(<span class="st">'patient_id'</span>)</span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(rows)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="128e6b91" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_findings(findings, clinical_note: <span class="bu">str</span>, embeddings_model, index, docs,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                    metric: <span class="bu">str</span> <span class="op">=</span> <span class="st">'cosine'</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                    keep_top: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>):</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Processes findings and returns DataFrame with phrase, category,</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">    metadata, sentence, patient_id.</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">    - keep_top: number of unique metadata entries to retrieve.</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ─── Split note into sentences for context matching ───</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    sentences <span class="op">=</span> [s.strip() <span class="cf">for</span> s <span class="kw">in</span> clinical_note.split(<span class="st">'.'</span>) <span class="cf">if</span> s.strip()]</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> []</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> findings:</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        phrase <span class="op">=</span> f.get(<span class="st">'phrase'</span>, <span class="st">''</span>).strip()</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        category <span class="op">=</span> f.get(<span class="st">'category'</span>, <span class="st">''</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> phrase:</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        qv <span class="op">=</span> embed_query(phrase, embeddings_model, metric<span class="op">=</span>metric)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        unique_metadata <span class="op">=</span> _collect_metadata_best(</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>            phrase<span class="op">=</span>phrase,               <span class="co"># literal text for token-phase</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>            query_vec<span class="op">=</span>qv,                <span class="co"># embedded vector</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>            index<span class="op">=</span>index,                 <span class="co"># FAISS index</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>            docs<span class="op">=</span>docs,                   <span class="co"># list of HPO docs</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>            top_k<span class="op">=</span><span class="dv">500</span>,                   <span class="co"># FAISS retrieval size</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>            similarity_threshold<span class="op">=</span><span class="fl">0.35</span>,   <span class="co"># max distance for semantic matches</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>            min_unique<span class="op">=</span>keep_top,         <span class="co"># ensure at least keep_top entries</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>            max_unique<span class="op">=</span>keep_top          <span class="co"># cap at keep_top entries</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>        fw <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\b\w</span><span class="op">+</span><span class="dv">\b</span><span class="vs">'</span>, phrase.lower()))</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>        best_sent, best_score <span class="op">=</span> <span class="va">None</span>, <span class="dv">0</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> s <span class="kw">in</span> sentences:</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>            sw <span class="op">=</span> <span class="bu">set</span>(re.findall(<span class="vs">r'</span><span class="dv">\b\w</span><span class="op">+</span><span class="dv">\b</span><span class="vs">'</span>, s.lower()))</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>            score <span class="op">=</span> <span class="bu">len</span>(fw <span class="op">&amp;</span> sw)</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> score <span class="op">&gt;</span> best_score:</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>                best_score, best_sent <span class="op">=</span> score, s</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>        rows.append({</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>            <span class="st">'phrase'</span>:           phrase,</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>            <span class="st">'category'</span>:         category,</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>            <span class="st">'unique_metadata'</span>:  unique_metadata,</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>            <span class="st">'original_sentence'</span>: best_sent,</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>            <span class="st">'patient_id'</span>:       f.get(<span class="st">'patient_id'</span>)</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(rows)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -517,61 +520,62 @@ pip install sentence_transformers</code></pre>
 <li><strong>system_message_I</strong>: Extraction and triage. Scans the full clinical note and pulls out every phenotype-related phrase, sorting each into one of five categories (Abnormal, Normal, Family History, Other, Suspected). Only the <strong>Abnormal</strong> findings are kept for HPO mapping — this stage’s job is to cast a wide net over the note and filter out everything that isn’t an actual observed abnormal finding (history, demographics, suspected-but-unconfirmed diagnoses, etc.) before the more expensive HPO-matching stage runs.</li>
 <li><strong>system_message_II</strong>: Constrained selection. Given a single abnormal phrase, its originating sentence, and a fixed list of candidate HPO terms (already retrieved via embedding + token-overlap search), picks the <em>one</em> best-matching term — strictly from the supplied candidates, never inventing a new ID. This stage doesn’t search the ontology itself; it disambiguates among options <code>_collect_metadata_best</code> already narrowed down, using the surrounding sentence for context and returning <code>null</code> when no candidate is a good enough fit.</li>
 </ul>
-<div id="17376f8e" class="cell" data-execution_count="48">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>system_message_I <span class="op">=</span> <span class="st">"You are a highly specialized clinical information extraction system. Your task is to identify *all* phenotypic mentions in a clinical note and categorize them into exactly one of: Abnormal, Normal, Family History, Other, or Suspected.</span><span class="ch">\n\n</span><span class="st">**Instructions:**</span><span class="ch">\n</span><span class="st">1. **Scan Every Sentence**: Extract every phrase that describes a phenotype—signs, symptoms, abnormal findings, test results, anatomical observations—or any diagnostic conjecture or history statement.</span><span class="ch">\n</span><span class="st">2. **Assign One Category**:</span><span class="ch">\n</span><span class="st">   • **Abnormal**: Any *observed* finding deviating from healthy (disease signs, lab abnormalities, pathological conditions). *These will be sent on for HPO mapping.*</span><span class="ch">\n</span><span class="st">   • **Normal**: Explicit statements of normalcy.</span><span class="ch">\n</span><span class="st">   • **Family History**: Phenotypes in relatives.</span><span class="ch">\n</span><span class="st">   • **Other**: Personal medical history, risk factors, demographics, or any non‐finding statement (e.g., “history of HIV,” “smoker,” “height 5′10″”).</span><span class="ch">\n</span><span class="st">   • **Suspected**: Any mention of a possible or rule‐out diagnosis (e.g., “possible sciatica,” “rule out PE”).</span><span class="ch">\n</span><span class="st">3. **Preserve Specificity**: Extract the phrasing exactly as written.</span><span class="ch">\n</span><span class="st">4. **Output JSON Only**: Return `{ </span><span class="ch">\"</span><span class="st">phenotypes</span><span class="ch">\"</span><span class="st">: [ { </span><span class="ch">\"</span><span class="st">phrase</span><span class="ch">\"</span><span class="st">: ..., </span><span class="ch">\"</span><span class="st">category</span><span class="ch">\"</span><span class="st">: ... }, … ] }`.</span><span class="ch">\n\n</span><span class="st">**Post‐processing:** Immediately drop anything not labeled Abnormal before HPO mapping."</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>system_message_II <span class="op">=</span> <span class="st">"You are an expert clinical phenotype mapper.  </span><span class="ch">\n</span><span class="st">Given one abnormal phenotype phrase and a list of candidate HPO terms, select exactly one best matching HPO term—and only from those candidates.  Do not invent, hallucinate, or suggest any term not in the provided list.  </span><span class="ch">\n\n</span><span class="st">When you receive input, it will be a JSON object:</span><span class="ch">\n</span><span class="st">{</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">phrase</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">category</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">original_sentence</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">candidates</span><span class="ch">\"</span><span class="st">: [ {</span><span class="ch">\"</span><span class="st">term</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">, </span><span class="ch">\"</span><span class="st">id</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">HP:…​</span><span class="ch">\"</span><span class="st">}, … ]</span><span class="ch">\n</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">Decision steps:</span><span class="ch">\n</span><span class="st">1. Leverage context: Use the original_sentence to capture nuance.  </span><span class="ch">\n</span><span class="st">2. Match specificity: Pick the candidate whose term description most precisely matches the phenotype.  </span><span class="ch">\n</span><span class="st">3. If two are equally good, choose the one with the highest semantic similarity score.  </span><span class="ch">\n</span><span class="st">4. If none fits well (similarity &lt; 80 or no clear match), return null.  </span><span class="ch">\n\n</span><span class="st">Output requirement:</span><span class="ch">\n</span><span class="st">Return exactly one JSON object, nothing else:</span><span class="ch">\n\n</span><span class="st">    {</span><span class="ch">\"</span><span class="st">hpo_id</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">HP:0001234</span><span class="ch">\"</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">or</span><span class="ch">\n\n</span><span class="st">    {</span><span class="ch">\"</span><span class="st">hpo_id</span><span class="ch">\"</span><span class="st">: null</span><span class="ch">\"</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">—no commentary, no extra keys, no surrounding text."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="17376f8e" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>system_message_I <span class="op">=</span> <span class="st">"You are a highly specialized clinical information extraction system. Your task is to identify *all* phenotypic mentions in a clinical note and categorize them into exactly one of: Abnormal, Normal, Family History, Other, or Suspected.</span><span class="ch">\n\n</span><span class="st">**Instructions:**</span><span class="ch">\n</span><span class="st">1. **Scan Every Sentence**: Extract every phrase that describes a phenotype—signs, symptoms, abnormal findings, test results, anatomical observations—or any diagnostic conjecture or history statement.</span><span class="ch">\n</span><span class="st">2. **Assign One Category**:</span><span class="ch">\n</span><span class="st">   • **Abnormal**: Any *observed* finding deviating from healthy (disease signs, lab abnormalities, pathological conditions). *These will be sent on for HPO mapping.*</span><span class="ch">\n</span><span class="st">   • **Normal**: Explicit statements of normalcy.</span><span class="ch">\n</span><span class="st">   • **Family History**: Phenotypes in relatives.</span><span class="ch">\n</span><span class="st">   • **Other**: Personal medical history, risk factors, demographics, or any non‐finding statement (e.g., “history of HIV,” “smoker,” “height 5′10″”).</span><span class="ch">\n</span><span class="st">   • **Suspected**: Any mention of a possible or rule‐out diagnosis (e.g., “possible sciatica,” “rule out PE”).</span><span class="ch">\n</span><span class="st">3. **Preserve Specificity**: Extract the phrasing exactly as written.</span><span class="ch">\n</span><span class="st">4. **Output JSON Only**: Return `{ </span><span class="ch">\"</span><span class="st">phenotypes</span><span class="ch">\"</span><span class="st">: [ { </span><span class="ch">\"</span><span class="st">phrase</span><span class="ch">\"</span><span class="st">: ..., </span><span class="ch">\"</span><span class="st">category</span><span class="ch">\"</span><span class="st">: ... }, … ] }`.</span><span class="ch">\n\n</span><span class="st">**Post‐processing:** Immediately drop anything not labeled Abnormal before HPO mapping."</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>system_message_II <span class="op">=</span> <span class="st">"You are an expert clinical phenotype mapper.  </span><span class="ch">\n</span><span class="st">Given one abnormal phenotype phrase and a list of candidate HPO terms, select exactly one best matching HPO term—and only from those candidates.  Do not invent, hallucinate, or suggest any term not in the provided list.  </span><span class="ch">\n\n</span><span class="st">When you receive input, it will be a JSON object:</span><span class="ch">\n</span><span class="st">{</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">phrase</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">category</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">original_sentence</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">,</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">candidates</span><span class="ch">\"</span><span class="st">: [ {</span><span class="ch">\"</span><span class="st">term</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">​…​</span><span class="ch">\"</span><span class="st">, </span><span class="ch">\"</span><span class="st">id</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">HP:…​</span><span class="ch">\"</span><span class="st">}, … ]</span><span class="ch">\n</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">Decision steps:</span><span class="ch">\n</span><span class="st">1. Leverage context: Use the original_sentence to capture nuance.  </span><span class="ch">\n</span><span class="st">2. Match specificity: Pick the candidate whose term description most precisely matches the phenotype.  </span><span class="ch">\n</span><span class="st">3. If two are equally good, choose the one with the highest semantic similarity score.  </span><span class="ch">\n</span><span class="st">4. If none fits well (similarity &lt; 80 or no clear match), return null.  </span><span class="ch">\n\n</span><span class="st">Output requirement:</span><span class="ch">\n</span><span class="st">Return exactly one JSON object, nothing else:</span><span class="ch">\n\n</span><span class="st">    {</span><span class="ch">\"</span><span class="st">hpo_id</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">HP:0001234</span><span class="ch">\"</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">or</span><span class="ch">\n\n</span><span class="st">    {</span><span class="ch">\"</span><span class="st">hpo_id</span><span class="ch">\"</span><span class="st">: null</span><span class="ch">\"</span><span class="st">}</span><span class="ch">\n\n</span><span class="st">—no commentary, no extra keys, no surrounding text."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="initialize-the-llm-model-via-ollama" class="level3">
 <h3 class="anchored" data-anchor-id="initialize-the-llm-model-via-ollama">Initialize the LLM model via ollama</h3>
 <p>We will use the relatively small gemma3:12b model which can be downloaded from ollama (ca. 8GB) and can be run on many laptops.</p>
-<div id="574d2a0f" class="cell" data-execution_count="49">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> ChatOllama</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>llm_client <span class="op">=</span> ChatOllama(model<span class="op">=</span><span class="st">"gemma3:12b"</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="574d2a0f" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> ChatOllama</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>llm_client <span class="op">=</span> ChatOllama(model<span class="op">=</span><span class="st">"gemma3:12b"</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="the-clinical-query" class="level3">
 <h3 class="anchored" data-anchor-id="the-clinical-query">The clinical query</h3>
 <p>This is a description of a patient encounter. Our goal is to extract HPO terms that describe the clinical manifestations of the affected individual. The description here is taken from the training data presented in the RAG-HPO GitHub repository.</p>
-<div id="72dc5a9e" class="cell" data-execution_count="50">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>clinical_note <span class="op">=</span> <span class="st">"A 43-year-old Caucasian female experienced MCAS symptoms at age 18: specific foods and odours caused flushing, rashes, itching, wheezing, dizziness and nausea. At age 20, she noted problems with postprandial bloating/pain, constipation, evacuating stool and flatus with rotten egg odour. Restless legs syndrome (RLS) gradually developed. At age 23, she developed orthostatic lightheadedness and tachycardia, body pain, generalised weakness and painful dependent leg oedema. Ultimately, she suffered from 45 individual clinically significant symptoms (table 1). For 6 years, she became disabled owing to orthostatic symptoms, fatigue and body pain. Faecal evacuation resulted in syncope with efforts &gt;3 min. Early satiety led to a liquid diet. Pressure-induced hives and angioedema, paraesthesia and nocturnal urination (seven times nightly) interfered with sleep. Over 16 years, 19 physicians failed to diagnose POTS and MCAS which were established at a second location of the Mayo Clinic. Supine pulse of 80 beats/min increased to 160 after standing 10 min. Facial rash and oedema, cold, blue hands, Terry’s fingernails and dermatographism were present. "</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="72dc5a9e" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>clinical_note <span class="op">=</span> <span class="st">"A 43-year-old Caucasian female experienced MCAS symptoms at age 18: specific foods and odours caused flushing, rashes, itching, wheezing, dizziness and nausea. At age 20, she noted problems with postprandial bloating/pain, constipation, evacuating stool and flatus with rotten egg odour. Restless legs syndrome (RLS) gradually developed. At age 23, she developed orthostatic lightheadedness and tachycardia, body pain, generalised weakness and painful dependent leg oedema. Ultimately, she suffered from 45 individual clinically significant symptoms (table 1). For 6 years, she became disabled owing to orthostatic symptoms, fatigue and body pain. Faecal evacuation resulted in syncope with efforts &gt;3 min. Early satiety led to a liquid diet. Pressure-induced hives and angioedema, paraesthesia and nocturnal urination (seven times nightly) interfered with sleep. Over 16 years, 19 physicians failed to diagnose POTS and MCAS which were established at a second location of the Mayo Clinic. Supine pulse of 80 beats/min increased to 160 after standing 10 min. Facial rash and oedema, cold, blue hands, Terry’s fingernails and dermatographism were present. "</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="timememory-tracker" class="level3">
 <h3 class="anchored" data-anchor-id="timememory-tracker">Time/Memory tracker</h3>
 <p>Not necessary, but interesting to see how many resources are consumed in each step</p>
-<div id="f1ec2999" class="cell" data-execution_count="51">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psutil, os, time</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> contextlib <span class="im">import</span> contextmanager</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>process <span class="op">=</span> psutil.Process(os.getpid())</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="at">@contextmanager</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> track(step_name: <span class="bu">str</span>):</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    mem_before <span class="op">=</span> process.memory_info().rss <span class="op">/</span> <span class="fl">1e9</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    t0 <span class="op">=</span> time.perf_counter()</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    elapsed <span class="op">=</span> time.perf_counter() <span class="op">-</span> t0</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    mem_after <span class="op">=</span> process.memory_info().rss <span class="op">/</span> <span class="fl">1e9</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"[</span><span class="sc">{</span>step_name<span class="sc">}</span><span class="ss">] time: </span><span class="sc">{</span>elapsed<span class="sc">:.2f}</span><span class="ss">s | "</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"memory: </span><span class="sc">{</span>mem_before<span class="sc">:.2f}</span><span class="ss"> GB → </span><span class="sc">{</span>mem_after<span class="sc">:.2f}</span><span class="ss"> GB "</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"(Δ </span><span class="sc">{</span>mem_after <span class="op">-</span> mem_before<span class="sc">:+.2f}</span><span class="ss"> GB)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="f1ec2999" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psutil, os, time</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> contextlib <span class="im">import</span> contextmanager</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>process <span class="op">=</span> psutil.Process(os.getpid())</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="at">@contextmanager</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> track(step_name: <span class="bu">str</span>):</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    mem_before <span class="op">=</span> process.memory_info().rss <span class="op">/</span> <span class="fl">1e9</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    t0 <span class="op">=</span> time.perf_counter()</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    elapsed <span class="op">=</span> time.perf_counter() <span class="op">-</span> t0</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    mem_after <span class="op">=</span> process.memory_info().rss <span class="op">/</span> <span class="fl">1e9</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"[</span><span class="sc">{</span>step_name<span class="sc">}</span><span class="ss">] time: </span><span class="sc">{</span>elapsed<span class="sc">:.2f}</span><span class="ss">s | "</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"memory: </span><span class="sc">{</span>mem_before<span class="sc">:.2f}</span><span class="ss"> GB → </span><span class="sc">{</span>mem_after<span class="sc">:.2f}</span><span class="ss"> GB "</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"(Δ </span><span class="sc">{</span>mem_after <span class="op">-</span> mem_before<span class="sc">:+.2f}</span><span class="ss"> GB)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="3f100f34" class="cell" data-execution_count="52">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Load embedding model"</span>):</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    emd_model <span class="op">=</span> get_embedding_model()</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Load vector DB"</span>):</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    docs, emb_matrix <span class="op">=</span> load_vector_db(meta_path<span class="op">=</span><span class="st">"hpo_meta.json"</span>, vec_path<span class="op">=</span><span class="st">"hpo_embedded.npz"</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Build FAISS index"</span>):</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> create_faiss_index(emb_matrix, metric<span class="op">=</span><span class="st">'cosine'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="3f100f34" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Load embedding model"</span>):</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    emd_model <span class="op">=</span> get_embedding_model()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Load vector DB"</span>):</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    docs, emb_matrix <span class="op">=</span> load_vector_db(meta_path<span class="op">=</span><span class="st">"hpo_meta.json"</span>, vec_path<span class="op">=</span><span class="st">"hpo_embedded.npz"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> track(<span class="st">"Build FAISS index"</span>):</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> create_faiss_index(emb_matrix, metric<span class="op">=</span><span class="st">'cosine'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Loading weights: 100%|██████████| 199/199 [00:00&lt;00:00, 70716.47it/s]</code></pre>
+<pre><code>Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|██████████| 199/199 [00:00&lt;00:00, 47079.16it/s]</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[Load embedding model] time: 3.63s | memory: 0.69 GB → 0.69 GB (Δ -0.00 GB)
-[Load vector DB] time: 0.34s | memory: 0.69 GB → 1.46 GB (Δ +0.77 GB)
-[Build FAISS index] time: 1.13s | memory: 1.46 GB → 1.60 GB (Δ +0.14 GB)</code></pre>
+<pre><code>[Load embedding model] time: 3.46s | memory: 0.70 GB → 0.72 GB (Δ +0.03 GB)
+[Load vector DB] time: 0.28s | memory: 0.72 GB → 1.53 GB (Δ +0.80 GB)
+[Build FAISS index] time: 0.06s | memory: 1.53 GB → 1.97 GB (Δ +0.44 GB)</code></pre>
 </div>
 </div>
 </section>
@@ -583,18 +587,18 @@ pip install sentence_transformers</code></pre>
 <li><strong>HumanMessage</strong>: Represents the actual question provided by the user (in this case, s clinical_note).</li>
 <li><strong>invoke</strong>: Sends the structured list of messages to the LLM (here, our local gemini model)</li>
 </ul>
-<div id="8deb7c06" class="cell" data-execution_count="53">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_core.messages <span class="im">import</span> SystemMessage, HumanMessage</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    SystemMessage(content<span class="op">=</span>system_message_I),</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    HumanMessage(content<span class="op">=</span>clinical_note),</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> llm_client.invoke(messages)</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>findings_list <span class="op">=</span> extract_findings(response.content) <span class="co"># a list of dictionaries, these are the unstructured medical phrases identified by the LLM</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>findings_list[:<span class="dv">10</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="53">
+<div id="8deb7c06" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_core.messages <span class="im">import</span> SystemMessage, HumanMessage</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    SystemMessage(content<span class="op">=</span>system_message_I),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    HumanMessage(content<span class="op">=</span>clinical_note),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> llm_client.invoke(messages)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>findings_list <span class="op">=</span> extract_findings(response.content) <span class="co"># a list of dictionaries, these are the unstructured medical phrases identified by the LLM</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>findings_list[:<span class="dv">10</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
 <pre><code>[{'phrase': 'MCAS symptoms', 'category': 'Suspected'},
  {'phrase': 'flushing', 'category': 'Abnormal'},
  {'phrase': 'rashes', 'category': 'Abnormal'},
@@ -607,21 +611,19 @@ pip install sentence_transformers</code></pre>
  {'phrase': 'evacuating stool', 'category': 'Abnormal'}]</code></pre>
 </div>
 </div>
-<div id="b8119735" class="cell" data-execution_count="54">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># restrict to abnormal findings</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>findings <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> findings_list <span class="cf">if</span> <span class="bu">isinstance</span>(f, <span class="bu">dict</span>) <span class="kw">and</span> f.get(<span class="st">'category'</span>) <span class="op">==</span> <span class="st">'Abnormal'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="b8119735" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># restrict to abnormal findings</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>findings <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> findings_list <span class="cf">if</span> <span class="bu">isinstance</span>(f, <span class="bu">dict</span>) <span class="kw">and</span> f.get(<span class="st">'category'</span>) <span class="op">==</span> <span class="st">'Abnormal'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="8a0b919d" class="cell" data-execution_count="55">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>required_cols <span class="op">=</span> [<span class="st">'phrase'</span>, <span class="st">'category'</span>, <span class="st">'unique_metadata'</span>, <span class="st">'original_sentence'</span>, <span class="st">'patient_id'</span>]</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Continue processing</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> process_findings(findings, clinical_note, emd_model, index, docs)</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure all required columns are present</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> required_cols:</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> df.columns:</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> np.nan</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="55">
+<div id="8a0b919d" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>required_cols <span class="op">=</span> [<span class="st">'phrase'</span>, <span class="st">'category'</span>, <span class="st">'unique_metadata'</span>, <span class="st">'original_sentence'</span>, <span class="st">'patient_id'</span>]</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> process_findings(findings, clinical_note, emd_model, index, docs)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> required_cols:</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> df.columns:</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> np.nan</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
 <div>
 
 
@@ -683,133 +685,251 @@ pip install sentence_transformers</code></pre>
 </div>
 </div>
 </div>
-<div id="98e08ce2" class="cell" data-execution_count="56">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, row <span class="kw">in</span> df.iterrows():</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    phrase <span class="op">=</span> row[<span class="st">'phrase'</span>].strip()</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    normalized <span class="op">=</span> phrase.lower().replace(<span class="st">'-'</span>, <span class="st">' '</span>).strip()</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    category <span class="op">=</span> row[<span class="st">'category'</span>]</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    original <span class="op">=</span> row[<span class="st">'original_sentence'</span>]</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    metadata_list <span class="op">=</span> row[<span class="st">'unique_metadata'</span>] <span class="kw">or</span> []</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    candidates <span class="op">=</span> []</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    seen <span class="op">=</span> <span class="bu">set</span>()</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> m <span class="kw">in</span> metadata_list:</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        term <span class="op">=</span> m.get(<span class="st">'phrase'</span>) <span class="kw">or</span> m.get(<span class="st">'info'</span>) <span class="co"># term is a potential label such as 'exanthem'</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>        hp <span class="op">=</span> m.get(<span class="st">'hp_id'</span>)</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> term <span class="kw">and</span> hp <span class="kw">and</span> hp <span class="kw">not</span> <span class="kw">in</span> seen:</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>            candidates.append({<span class="st">'term'</span>: term, <span class="st">'id'</span>: hp})</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>            seen.add(hp)</span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    candidate_ids <span class="op">=</span> {c[<span class="st">'id'</span>] <span class="cf">for</span> c <span class="kw">in</span> candidates}</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    payload <span class="op">=</span> json.dumps({</span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">'phrase'</span>: normalized,</span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">'category'</span>: category,</span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">'original_sentence'</span>: original,</span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">'candidates'</span>: candidates</span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> idx <span class="op">&lt;</span> <span class="dv">1</span>:</span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Example payload"</span>)</span>
-<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>        pp(payload) </span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print("**************************\n\n")</span></span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    messages <span class="op">=</span> [</span>
-<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>        SystemMessage(content<span class="op">=</span>system_message_II),</span>
-<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>        HumanMessage(content<span class="op">=</span>payload),</span>
-<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> llm_client.invoke(messages) <span class="co"># A response such as {"hpo_id": "HP:0031284"}</span></span>
-<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>    content_str <span class="op">=</span> response.content</span>
-<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> json.loads(content_str)</span>
-<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>    hpo_id <span class="op">=</span> data[<span class="st">"hpo_id"</span>]</span>
-<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get the corresponding label</span></span>
-<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>    term: hpotk.Term <span class="op">=</span> hpo.get_term(hpo_id)</span>
-<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> term:</span>
-<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>        term_label <span class="op">=</span> term.name</span>
-<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>        term_label <span class="op">=</span> <span class="st">"n/a"</span></span>
-<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"********"</span>)</span>
-<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"phrase='</span><span class="sc">{</span>phrase<span class="sc">}</span><span class="ss"> =&gt; llm response=</span><span class="sc">{</span>hpo_id<span class="sc">}</span><span class="ss">'-'</span><span class="sc">{</span>term_label<span class="sc">}</span><span class="ss">'"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="98e08ce2" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, row <span class="kw">in</span> df.iterrows():</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    phrase <span class="op">=</span> row[<span class="st">'phrase'</span>].strip()</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    normalized <span class="op">=</span> phrase.lower().replace(<span class="st">'-'</span>, <span class="st">' '</span>).strip()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    category <span class="op">=</span> row[<span class="st">'category'</span>]</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    original <span class="op">=</span> row[<span class="st">'original_sentence'</span>]</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    metadata_list <span class="op">=</span> row[<span class="st">'unique_metadata'</span>] <span class="kw">or</span> []</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    candidates <span class="op">=</span> []</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    seen <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> m <span class="kw">in</span> metadata_list:</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>        term <span class="op">=</span> m.get(<span class="st">'phrase'</span>) <span class="kw">or</span> m.get(<span class="st">'info'</span>) <span class="co"># term is a potential label such as 'exanthem'</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>        hp <span class="op">=</span> m.get(<span class="st">'hp_id'</span>)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> term <span class="kw">and</span> hp <span class="kw">and</span> hp <span class="kw">not</span> <span class="kw">in</span> seen:</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>            candidates.append({<span class="st">'term'</span>: term, <span class="st">'id'</span>: hp})</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>            seen.add(hp)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    candidate_ids <span class="op">=</span> {c[<span class="st">'id'</span>] <span class="cf">for</span> c <span class="kw">in</span> candidates}</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    payload <span class="op">=</span> json.dumps({</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">'phrase'</span>: normalized,</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">'category'</span>: category,</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">'original_sentence'</span>: original,</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">'candidates'</span>: candidates</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    messages <span class="op">=</span> [</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>        SystemMessage(content<span class="op">=</span>system_message_II),</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>        HumanMessage(content<span class="op">=</span>payload),</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> idx <span class="op">&lt;</span> <span class="dv">1</span>: <span class="co"># print out the system/user messages once</span></span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"Example prompt"</span>)</span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> msg <span class="kw">in</span> messages:</span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>                msg.pretty_print()</span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"**************************</span><span class="ch">\n\n</span><span class="st">"</span>)</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> llm_client.invoke(messages) <span class="co"># A response such as {"hpo_id": "HP:0031284"}</span></span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>    content_str <span class="op">=</span> response.content</span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> json.loads(content_str)</span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>    hpo_id <span class="op">=</span> data[<span class="st">"hpo_id"</span>]</span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get the corresponding label</span></span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>    term: hpotk.Term <span class="op">=</span> hpo.get_term(hpo_id)</span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> term:</span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a>        term_label <span class="op">=</span> term.name</span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a>        term_label <span class="op">=</span> <span class="st">"n/a"</span></span>
+<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"********"</span>)</span>
+<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"phrase='</span><span class="sc">{</span>phrase<span class="sc">}</span><span class="ss"> =&gt; llm response=</span><span class="sc">{</span>hpo_id<span class="sc">}</span><span class="ss">'-'</span><span class="sc">{</span>term_label<span class="sc">}</span><span class="ss">'"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Example payload
-('{"phrase": "flushing", "category": "Abnormal", "original_sentence": "A '
- '43-year-old Caucasian female experienced MCAS symptoms at age 18: specific '
- 'foods and odours caused flushing, rashes, itching, wheezing, dizziness and '
- 'nausea", "candidates": [{"term": "flushing", "id": "HP:0031284"}, {"term": '
- '"facial flushing after alcohol intake", "id": "HP:0001033"}, {"term": '
- '"seizure flurries", "id": "HP:0033349"}, {"term": "focal autonomic seizure '
- 'with pallor/flushing", "id": "HP:0032762"}, {"term": "exanthem", "id": '
- '"HP:4000054"}, {"term": "blushing", "id": "HP:0001041"}, {"term": "focal '
- 'aware autonomic seizure with pallor/flushing", "id": "HP:0032761"}, {"term": '
- '"hemoptysis", "id": "HP:0002105"}, {"term": "fasciculation", "id": '
- '"HP:0002380"}, {"term": "severe influenza", "id": "HP:0034249"}, {"term": '
- '"atrial flutter", "id": "HP:0004749"}, {"term": "facial puffiness", "id": '
- '"HP:0000282"}, {"term": "quotidian fever", "id": "HP:0033087"}, {"term": '
- '"flaking skin", "id": "HP:0040189"}, {"term": "sweating and flushing in the '
- 'preauricular area in response to mastication", "id": "HP:6000637"}]}')
+<div class="ansi-escaped-output">
+<pre>Example prompt
+
+================================<span class="ansi-bold"> System Message </span>================================
+
+
+
+You are an expert clinical phenotype mapper.  
+
+Given one abnormal phenotype phrase and a list of candidate HPO terms, select exactly one best matching HPO term—and only from those candidates.  Do not invent, hallucinate, or suggest any term not in the provided list.  
+
+
+
+When you receive input, it will be a JSON object:
+
+{
+
+  "phrase": "​…​",
+
+  "category": "​…​",
+
+  "original_sentence": "​…​",
+
+  "candidates": [ {"term": "​…​", "id": "HP:…​"}, … ]
+
+}
+
+
+
+Decision steps:
+
+1. Leverage context: Use the original_sentence to capture nuance.  
+
+2. Match specificity: Pick the candidate whose term description most precisely matches the phenotype.  
+
+3. If two are equally good, choose the one with the highest semantic similarity score.  
+
+4. If none fits well (similarity &lt; 80 or no clear match), return null.  
+
+
+
+Output requirement:
+
+Return exactly one JSON object, nothing else:
+
+
+
+    {"hpo_id": "HP:0001234"}
+
+
+
+or
+
+
+
+    {"hpo_id": null"}
+
+
+
+—no commentary, no extra keys, no surrounding text.
+
+================================<span class="ansi-bold"> Human Message </span>=================================
+
+
+
+{"phrase": "flushing", "category": "Abnormal", "original_sentence": "A 43-year-old Caucasian female experienced MCAS symptoms at age 18: specific foods and odours caused flushing, rashes, itching, wheezing, dizziness and nausea", "candidates": [{"term": "flushing", "id": "HP:0031284"}, {"term": "facial flushing after alcohol intake", "id": "HP:0001033"}, {"term": "seizure flurries", "id": "HP:0033349"}, {"term": "focal autonomic seizure with pallor/flushing", "id": "HP:0032762"}, {"term": "exanthem", "id": "HP:4000054"}, {"term": "blushing", "id": "HP:0001041"}, {"term": "focal aware autonomic seizure with pallor/flushing", "id": "HP:0032761"}, {"term": "hemoptysis", "id": "HP:0002105"}, {"term": "fasciculation", "id": "HP:0002380"}, {"term": "severe influenza", "id": "HP:0034249"}, {"term": "atrial flutter", "id": "HP:0004749"}, {"term": "facial puffiness", "id": "HP:0000282"}, {"term": "quotidian fever", "id": "HP:0033087"}, {"term": "flaking skin", "id": "HP:0040189"}, {"term": "sweating and flushing in the preauricular area in response to mastication", "id": "HP:6000637"}]}
+
+**************************
+
+
+
+
+
 ********
+
 phrase='flushing =&gt; llm response=HP:0031284'-'Flushing'
+
 ********
+
 phrase='rashes =&gt; llm response=HP:0000988'-'Skin rash'
+
 ********
+
 phrase='itching =&gt; llm response=HP:0000989'-'Pruritus'
+
 ********
+
 phrase='wheezing =&gt; llm response=HP:0030828'-'Wheezing'
+
 ********
+
 phrase='dizziness =&gt; llm response=HP:0002321'-'Vertigo'
+
 ********
+
 phrase='nausea =&gt; llm response=HP:0002018'-'Nausea'
+
 ********
+
 phrase='postprandial bloating/pain =&gt; llm response=HP:0033843'-'Postprandial fullness'
+
 ********
+
 phrase='constipation =&gt; llm response=HP:0002019'-'Constipation'
+
 ********
+
 phrase='evacuating stool =&gt; llm response=HP:0040183'-'Encopresis'
+
 ********
+
 phrase='flatus with rotten egg odour =&gt; llm response=HP:0032142'-'Fetor hepaticus'
+
 ********
+
 phrase='Restless legs syndrome (RLS) =&gt; llm response=HP:0012452'-'Restless legs'
+
 ********
+
 phrase='orthostatic lightheadedness =&gt; llm response=HP:0012670'-'Orthostatic syncope'
+
 ********
+
 phrase='tachycardia =&gt; llm response=HP:0001649'-'Tachycardia'
+
 ********
+
 phrase='body pain =&gt; llm response=HP:0033047'-'Body ache'
+
 ********
+
 phrase='generalised weakness =&gt; llm response=HP:0003324'-'Generalized muscle weakness'
+
 ********
+
 phrase='painful dependent leg oedema =&gt; llm response=HP:0010741'-'Pedal edema'
+
 ********
+
 phrase='fatigue =&gt; llm response=HP:0012378'-'Fatigue'
+
 ********
+
 phrase='Faecal evacuation resulted in syncope =&gt; llm response=HP:0012668'-'Vasovagal syncope'
+
 ********
+
 phrase='early satiety =&gt; llm response=HP:0033842'-'Early satiety'
+
 ********
+
 phrase='Pressure-induced hives =&gt; llm response=HP:0410134'-'Physical urticaria'
+
 ********
+
 phrase='angioedema =&gt; llm response=HP:0100665'-'Angioedema'
+
 ********
+
 phrase='paraesthesia =&gt; llm response=HP:0003401'-'Paresthesia'
+
 ********
+
 phrase='nocturnal urination (seven times nightly) =&gt; llm response=HP:0000017'-'Nocturia'
+
 ********
+
 phrase='pulse of 80 beats/min increased to 160 after standing 10 min =&gt; llm response=HP:0001649'-'Tachycardia'
+
 ********
+
 phrase='Facial rash =&gt; llm response=HP:0000988'-'Skin rash'
+
 ********
+
 phrase='oedema =&gt; llm response=HP:0010741'-'Pedal edema'
+
 ********
+
 phrase='cold, blue hands =&gt; llm response=HP:0001063'-'Acrocyanosis'
+
 ********
+
 phrase='Terry’s fingernails =&gt; llm response=HP:0001812'-'Hyperconvex fingernails'
+
 ********
-phrase='dermatographism =&gt; llm response=HP:0011971'-'Dermatographic urticaria'</code></pre>
+
+phrase='dermatographism =&gt; llm response=HP:0011971'-'Dermatographic urticaria'
+</pre>
+</div>
 </div>
 </div>
 </section>
 <section id="compare-without-rag" class="level1">
 <h1>Compare without RAG</h1>
-<div id="2ffd8209" class="cell" data-execution_count="57">
+<div id="2ffd8209" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>system_message_no_RAG <span class="op">=</span> <span class="st">"You are a highly specialized clinical information extraction system. Your task is to identify *all* phenotypic mentions in a clinical note and extract the corresponding Human Phenotype Ontology (HPO). Categorize them into exactly one of: Abnormal, Normal, Family History, Other, or Suspected.</span><span class="ch">\n\n</span><span class="st">**Instructions:**</span><span class="ch">\n</span><span class="st">1. **Scan Every Sentence**: Extract every phrase that describes a phenotype—signs, symptoms, abnormal findings, test results, anatomical observations—or any diagnostic conjecture or history statement.</span><span class="ch">\n</span><span class="st">2. **Assign One Category**:</span><span class="ch">\n</span><span class="st">   • **Abnormal**: Any *observed* finding deviating from healthy (disease signs, lab abnormalities, pathological conditions). *These will be sent on for HPO mapping.*</span><span class="ch">\n</span><span class="st">   • **Normal**: Explicit statements of normalcy.</span><span class="ch">\n</span><span class="st">   • **Family History**: Phenotypes in relatives.</span><span class="ch">\n</span><span class="st">   • **Other**: Personal medical history, risk factors, demographics, or any non‐finding statement (e.g., “history of HIV,” “smoker,” “height 5′10″”).</span><span class="ch">\n</span><span class="st">   • **Suspected**: Any mention of a possible or rule‐out diagnosis (e.g., “possible sciatica,” “rule out PE”).</span><span class="ch">\n</span><span class="st">3. **Preserve Specificity**: Extract the phrasing exactly as written.</span><span class="ch">\n</span><span class="st">4. **Output JSON Only**: Return `{ </span><span class="ch">\"</span><span class="st">phenotypes</span><span class="ch">\"</span><span class="st">: [ { </span><span class="ch">\"</span><span class="st">phrase</span><span class="ch">\"</span><span class="st">: ..., </span><span class="ch">\"</span><span class="st">category</span><span class="ch">\"</span><span class="st">: ... , </span><span class="ch">\"</span><span class="st">HPO id</span><span class="ch">\"</span><span class="st">: ..., </span><span class="ch">\"</span><span class="st">HPO label</span><span class="ch">\"</span><span class="st">: ...,}, … ] }`.</span><span class="ch">\n\n</span><span class="st">**Post‐processing:** Immediately drop anything not labeled Abnormal before HPO mapping."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a723a801" class="cell" data-execution_count="58">
+<div id="a723a801" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    SystemMessage(content<span class="op">=</span>system_message_no_RAG),</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    HumanMessage(content<span class="op">=</span>clinical_note),</span>
