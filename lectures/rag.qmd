@@ -869,6 +869,95 @@ Most KBs are built upon detailed knowledge schemas which prove challenging to po
 
 ![](./img/spires-food.png){width=50% fig-align="center"}
 
+
+## SPIRES: Models and Schemas
+
+:::: {.columns}
+::: {.column width=50%}
+- A schema provides a structure for data
+- The recipe schema in the previous slide could be used in a recipe database
+    - Each record instantiates the recipe class, 
+    - Additional linked records instantiating contained classes
+        - individual ingredients 
+        - steps
+        - etc.
+:::
+::: {.column width=50%}
+
+![](./img/spires-spaghetti.png){width=100% fig-align="center"}
+:::
+::::
+
+## SPIRES: Goals
+
+:::{.mybox}
+Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES)
+:::
+
+- an automated approach for population of custom schemas and ontology models. 
+- The objective of SPIRES is to generate an instance (i.e. an object) from a text, where that instance has a collection of attribute-value associations. 
+- Each value is either a primitive (e.g. string, number, or identifier) or another inlined instance
+- SPIRES can fill out schemas with linked data while bypassing a need for training examples
+- SPIRES also makes use of a flexible grounding approach that can leverage over a thousand ontologies in the OntoPortal Alliance
+- This grounding method offers far more consistent mapping to unique identifiers than hallucination-prone LLM querying alone.
+
+## SPIRES: Schemas
+
+:::{.mybox}
+**schema**
+
+- a collection of classes or templates, each of which can be instantiated by instances. 
+:::
+
+- **Class**: a collection of attribute constraints, which control the attribute-value pairs that can be associated with each instance. 
+- **Range of an attribute**: specifies the allowed value or values. 
+    - (i) a primitive type such as a string or number
+    - (ii) a class
+    - (iii) an enumeration of permissible value tokens (e.g. an enumeration of days of the week may include ‘Monday’, ‘Tuesday’, and so on). 
+- **cardinality**: Specification of the minimum and maximum number of values each instance can take. 
+- In addition, each schema element can have arbitrary metadata associated with it.
+
+## SPIRES algorithm
+
+:::: {.columns}
+::: {.column width=50%}
+The SPIRES extraction procedure takes as input:
+
+- (i) a **schema** $S$
+- (ii) an **entry point class** $C$
+- (iii) a **text** $T$. 
+
+It returns a structured instance $i$ conforming to $S$, making use of an LLM to implement prompt completion,
+:::
+
+::: {.column width=50%}
+![](./img/spires-algorithm.png)
+
+:::
+::::
+
+## SPIRES software
+
+- SPIRES allows users to write a YAML template with the target schema 
+- SPIRES translates this template into a prompt such as the following
+
+::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 0.7em; "}
+Split the following piece of text into fields in the following format:
+
+food_item: <the food item>
+
+amount: <the quantity of the ingredient>
+
+Text:
+
+garlic powder (2 tablespoons)
+
+===
+:::
+
+- This function makes SPIRES a very powerful piece of software but it would go beyond the scope of the lecture to explain the templating system
+- Therefore, for "didactic purposes", We will simplify the procedure here by specifying the schema and the corresponding ontologies directly in Python code
+
 ## Sources
 
 
