@@ -539,6 +539,13 @@
     "text": "Understanding the vector DB search (2)\n\ndef _collect_metadata_best(\n    phrase: str,\n    query_vec: np.ndarray,\n    index: faiss.Index,\n    docs: List[Dict[str, Any]],\n    top_k: int = 500,\n    similarity_threshold: float = 0.35,\n    min_unique: int = 15,\n    max_unique: int = 20\n) -&gt; List[Dict[str, Any]]:\n    clean_tokens = set(re.findall(r'\\w+', phrase.lower()))\n    dists, idxs = index.search(query_vec, top_k)\n    sims, indices = dists[0], idxs[0]\n\n    seen_hp = set()\n    results = []\n\n    for sim, idx in sorted(zip(sims, indices), key=lambda x: x[0], reverse=True):\n        if len(results) &gt;= max_unique:\n            break\n        doc = docs[idx]\n        hp = doc.get('hp_id')\n        if not hp or hp in seen_hp:\n            continue\n\n        info = doc.get('info', '') or ''\n        token_overlap = bool(clean_tokens & set(re.findall(r'\\w+', info.lower())))\n\n        #see next slide\n\n\nline 12: Runs the actual FAISS similarity search: for query_vec (the phrase’s embedding), find the top_k (default 500) nearest neighbors in the index. index.search returns 2D arrays because FAISS supports batched queries (searching many query vectors at once)\nline 13: so dists[0] (for the first, and in this case, only query) unwraps the single row of results.\nsims is an array of 500 similarity scores (cosine similarities)\nindices is the corresponding array of 500 row-indices into docs."
   },
   {
+    "objectID": "lectures/rag.html#vector-db-search",
+    "href": "lectures/rag.html#vector-db-search",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Vector db search",
+    "text": "Vector db search\n\n\nThe vector DB search indenties the \\(k\\) most similar entries in the database (in this example, \\(k=2\\))\nThese entries are returned for use in the LLM prompt (client code can also maintain a database of metadata related to each vector in order to have more information for crafting the prompt)"
+  },
+  {
     "objectID": "lectures/rag.html#understanding-the-vector-db-search-3",
     "href": "lectures/rag.html#understanding-the-vector-db-search-3",
     "title": "Approaches to biomedical knowledge",
@@ -1465,28 +1472,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.96%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.66%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.86%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.92%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.32%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.28%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.24%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 33.48%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
