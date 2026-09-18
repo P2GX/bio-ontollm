@@ -64,3 +64,4 @@ both topics as well as several sessions in which we show how ontologies and LLMs
 
 * [HPO vectorization (for RAG-HPO)](notebooks/hpo_vectorization.ipynb){target="_blank"}
 * [RAG-HPO](notebooks/rag-hpo.ipynb){target="_blank"}
+* [t-SPIRES](notebooks/toy-spires.ipynb){target="_blank"}

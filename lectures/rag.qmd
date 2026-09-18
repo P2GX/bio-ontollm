@@ -832,11 +832,9 @@ HP:0031284'-'Flushing'
 
 # SPIRES
 
-![](./img/spires.png){width=40% fig-align="center"}
+![](./img/spires.png){width=30% fig-align="center"}
 
-
-::: {.tiny-credit}
-
+::: {.small-text}
 Caufield JH, et al. (2024) [Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. *Bioinformatics* **40**:btae104](https://pubmed.ncbi.nlm.nih.gov/38383067/)
 :::
 
@@ -845,7 +843,7 @@ Caufield JH, et al. (2024) [Structured Prompt Interrogation and Recursive Extrac
 - Knowledge Bases and ontologies (KBs) encode domain knowledge in a structure that is amenable to precise querying and reasoning.
 - However, the vast majority of human knowledge is communicated via natural language
 - Large Language Models (LLMs) have shown great promise in interpreting biomedical texts, but often fail to identify ontology term identifiers and relations that are need to extract computable knowledge for KBs
-- SPIRES aims to we use LLMs to build KBs using NLP at the time of KB construction
+- SPIRES aims to use LLMs to build KBs using NLP at the time of KB construction
 - This can assist manual knowledge curation and acquisition while validating facts prior to insertion into KBs such as HPO and many others.
 
 ## SPIRES: Main steps
@@ -941,12 +939,12 @@ It returns a structured instance $i$ conforming to $S$, making use of an LLM to 
 - SPIRES allows users to write a YAML template with the target schema 
 - SPIRES translates this template into a prompt such as the following
 
-::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 0.7em; "}
+::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.1em; "}
 Split the following piece of text into fields in the following format:
 
-food_item: <the food item>
+food_item: `<the food item>`
 
-amount: <the quantity of the ingredient>
+amount: `<the quantity of the ingredient>` 
 
 Text:
 
@@ -955,8 +953,122 @@ garlic powder (2 tablespoons)
 ===
 :::
 
-- This function makes SPIRES a very powerful piece of software but it would go beyond the scope of the lecture to explain the templating system
-- Therefore, for "didactic purposes", We will simplify the procedure here by specifying the schema and the corresponding ontologies directly in Python code
+
+## SPIRES: Structured LLM responses
+
+
+- THe above prompt ideally (and usually) will lead to an answer like this:
+
+::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.1em; "}
+
+**food_item**: garlic powder
+
+**amount**: 2 tablespoons
+::: 
+
+- it is now relatively easy to parse out the response to get structured data
+
+
+## SPIRES: grounding
+
+::: {.mybox}
+**Grounding entities** with ontology terms means associating the correct ontology identifier to a term label returned by an LLM or other text mining tool
+
+-- LLMs have difficulties with returning the correct ontology identifiers (although this is improving with recent models)
+:::
+
+**Example**
+
+- If we request the GO term for [integrase activity](https://www.ebi.ac.uk/QuickGO/term/GO:0008907) we expect the response to include GO:0008907, i.e., the ID of this term
+- The id is prerequisite for further computational analysis
+    - SPIRES returned the correct identifiers for 98 when using GPT-3.5-turbo and 97 with GPT-4-turbo.
+    - Without SPIRES, GPT-3.5-turbo returned just 3 correct identifiers. 
+- That is, without grounding, LLMs tend to *hallucinate* and return no or the wrong ontology id. 
+    - This would lead to wrong results in downstream analysis (unless these ids are corrected!)
+    
+## Original SPIRES vs t-SPIRES
+
+- The original SPIRES has a very rich functionality that makes it easy to extract information as a structured knowledge graph with correct ontology terms using LLMs
+- The full approach goes way beyond the scope of this course
+- We will therefore preset **Toy SPIRES (t-SPIRES)**, a simplified version of SPIRES that:
+    - Creates a prompt that causes LLMs to return results according to a schema
+    - Uses a schema that relates Medical Action Ontology (MAxO) terms to Human Phenotype Ontology (HPO) terms with one of two relations 
+    - Performs grounding on the JSON returned by the LLM to ensure the MAxO and HPO identifiers are correct.
+- We are using different and simplified versions of the code and ideas presented in SPIRE, and recommend reading the original paper and using the original code for any serious work!
+
+
+
+
+
+## Results (treats)
+
+* We provided 10 examples of MAxO terms that represent treatments of specific phenotypic abnormalities (HPO terms)
+* The labels of the HPO terms are largely correct, but the LLM did not provide a correct MAxO label (or synonym)
+* In a full application, we would use an HPO-RAG approach to identify the proper MAxO label and ground the term
+* SPIRES performs an analogous step but does not use RAG to retrieve the most likely labels
+
+::: {.small-text}
+| MAxO (proposed)) | Actual MAxO label | Relation | HPO Term |
+| :--- | :--- | :--- | :--- |
+| Continuous positive airway pressure therapy | n/a ❌| treats | Obstructive sleep apnea |
+| Levodopa administration | dopamine replacement agent therapy (MAXO:0001537)❌| treats | bradykinesia |
+| cochlear implantation |cochlear device implantation (MAXO:0009025) ❌| treats | sensorineural hearing loss |
+| Anticonvulsant therapy | anticonvulsant agent therapy (MAXO:0000167)❌| treats | generalized tonic-clonic seizures |
+| Gastrostomy tube placement | gastrostomy (MAXO:0001346)❌| treats | Failure to thrive |
+| Enzyme replacement therapy | enzyme replacement or supplementation therapy (MAXO:0000933)❌| treats | hepatosplenomegaly |
+| Physical therapy | physical therapy (MAXO:0000011) ✔️| treats | Muscle weakness |
+| Physical therapy | physical therapy (MAXO:0000011)✔️| treats | Motor function |
+| Orthopedic bracing | orthotic device usage (MAXO:0000482)❌| treats | scoliosis |
+| Insulin therapy | insulin treatment (MAXO:0000259)❌| treats | hyperglycemia |
+:::
+
+* The LLM provide correct answers, but the texts only corresponding with the actual MAxO labels for 2 out of 10 texts
+* Only two of ten LLM responses were exact matches to MAxO term labels or synonyms (✔️). With two exceptions the other proposed labels were close and very probably could be assigned correctly using RAG 
+* This shows the need for effective grounding approaches!
+
+## Results (diagnoses)
+
+::: {.small-text}
+| MAxO Term | [Your Custom Column] | Relation | HPO Term |
+| :--- | :--- | :--- | :--- |
+| electroencephalography | electroencephalography (MAXO:0000932) ✔️ | diagnoses | epileptiform activity |
+| Brain magnetic resonance imaging |MRI of the brain (MAXO:0000427) ✔️ | diagnoses | Cerebellar atrophy |
+| echocardiography | echocardiography (MAXO:0010203) ✔️ | diagnoses | ventricular septal defect |
+| Slit-lamp examination |slit-lamp examination (MAXO:0000973) ✔️| diagnoses | Corneal clouding |
+| pure tone audiometry | n/a ❌| diagnoses | sensorineural hearing loss |
+| nerve conduction study | nerve conduction study (MAXO:0035059)✔️| diagnoses | peripheral neuropathy |
+| Skeletal survey | n/a ❌| diagnoses | Platyspondyly |
+| Polysomnography | polysomnography (MAXO:0000915) ✔️| diagnoses | obstructive sleep apnea |
+| Muscle biopsy |biopsy of muscle tissue (MAXO:0000387)✔️ | diagnoses | ragged-red fibers |
+| Abdominal ultrasonography | abdominal ultrasonography (MAXO:0010200)✔️| diagnoses | Hepatomegaly |
+:::
+
+* The LLM provide correct answers for 8 out of 10 texts related to treatment
+* The assignment of the relation type was correct in 100% of cases (20/20)
+
+
+## Biomedical knowledge graphs
+
+
+:::: {.columns}
+::: { .column width=50%}
+
+- SPIRES can be used to extract data reflecting instances of sophisticated schema
+- [HOMEWORK]{.hw-badge} You will be asked to extend the example present in class to a larger schema
+
+:::
+::: { .column width=50%}
+![](./img/biomedical-kg-example.jpg){ width=80% fig-align="center"}
+:::
+::::
+
+## Summary
+
+
+![](./img/biomedical-kg-example.jpg){width=60% fig-align="center"}
+
+* In SUM, RAG-HPO and SPIRES are tools to assign ontology codes and provide structure to biomedical data as parsed from the biomedical literature
+* This process accelerates biocuration, makes data more easily amenable to use in software that expects ontology-encoded input data, and contributes to making data FAIR.
 
 ## Sources
 
