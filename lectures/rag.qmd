@@ -616,6 +616,14 @@ def _collect_metadata_best(
 * `sims` is an array of 500 similarity scores (cosine similarities)
 * `indices` is the corresponding array of 500 row-indices into docs.
 
+## Vector db search
+
+![](./img/phenotype_vector_query_2d_2.png){width=60% fig-align="center"}
+
+* The vector DB search indenties the $k$ most similar entries in the database (in this example, $k=2$)
+* These entries are returned for use in the LLM prompt (client code can also maintain a database of metadata related to each vector in order to have more information for crafting the prompt)
+
+
 
 
 ## Understanding the vector DB search (3)
