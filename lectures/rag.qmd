@@ -29,10 +29,180 @@ format:
 This lecture will present approaches to adapt retrieval augmented generation (RAG) and related aproaches to use LLMs to extract ontology terms and knowledge graphs from biomedical texts.
 :::
 
+- [Prompt engineering](#prompt)
 - [Retrieval augmented generation (RAG)](#rag)
 - [RAG example](#moby)
 - [RAG-HPO](#rag-hpo)
 - [SPIRES](#spires)
+
+
+## Prompt engineering {#prompt}
+
+::: {.mybox}
+**Prompt**
+
+- A prompt is a sequence of text, tokens, or instructions provided to a large language model to steer its output toward a desired task or behavior. 
+- From a computational standpoint, a prompt acts as the initial context window input that conditions the model's probabilistic token generation.
+:::
+
+- The quality of a prompt determines the performance of an LLM in answering a question
+- Prompt engineering is the iterative discipline of designing, structuring, and refining textual inputs to optimize an LLM's performance and reliability for a specific task. 
+- Good prompt engineering steers the model's probabilistic generation.
+- Prompt engineering is largely an **empirical** discipline
+
+## System vs user
+
+- **Gemini API**:
+    - **System Prompt**: (referred to as **System Instructions** by Google 
+        - passed via the `system_instruction` parameter).   
+    
+    - **User Prompt**: (referred to as the `Contents` or `User Prompt/Message` within the generation request.
+- **OpenAI API**:
+    - **System Prompt**: Historically called the `system role`
+        - OpenAI updated its API terminology to the `developer role` to better delineate application-level logic from internal safety guardrails. 
+    
+    - **User Prompt**: Referred to as the `user role` within the messages array.
+
+## How System and User Prompts Are Encoded
+
+- they process sequences of integer token IDs derived from a tokenizer (typically Byte-Pair Encoding or BPE) combined with structural delimiters defined by model-specific chat templates.
+- For instance (See [lecture 12](./reinforcement.qmd#chat_templates) for details):
+
+```text
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+Hello!<|im_end|>
+<|im_start|>assistant
+Hi! How can I help you today?<|im_end|>
+<|im_start|>user
+What's the weather?<|im_start|>assistant
+```
+- From the model's perspective, there is no fundamental data structure difference between the system prompt and the user prompt. It receives a single, flat sequence of floating-point embedding vectors.
+- The template interleaves raw user text, system text, and architectural marker tokens
+- During training, models are explicitly exposed to conversational distributions where instructions placed inside "system" or "developer" header blocks dictate overarching behavioral constraints.
+- The LLM learns to respond appropriately during instructional fine tuning and reinforcement learning with human feedback training
+- Gemini and openAI currently do not allow the system prompt to be set using the web interface, but it is possible using the APIs^[Hugging face chat allows users to specify system and user prompts for some models]
+
+## Prompt engineering
+
+- The main topic of today's lecture, RAG, depends on prompt engineering in a new way
+- We will briefly summarize the main precepts of prompt engineering in the following slides
+
+# Prompt engineering: Cloze prompts
+- There are two main kinds of prompts, cloze prompts and prefix prompts.
+- The objective of **Cloze prompts** is to fill in the blank.
+
+::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.6em; "}
+The capital of Nepal is [BLANK].
+:::
+
+
+::: {style="background-color: #F5E6D3; margin-top: 5mm; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.6em; "}
+The capital of Nepal is **Kathmandu**.
+:::
+
+- Most prompts we use currently are **prefix prompt** with the goal being that the model produce the continuation of the string input.
+
+## Prompt engineering: The obvious things
+
+- Be explicit
+- Provide relevant context 
+- Specify the desired output (format, e.g., JSON, audience, e.g. PhD level, granularity: e.g., summary)
+- Give constraints and boundaries (e.g., “Use only the supplied text,” “If information is missing, say so,” or “Don't invent citations.”    )
+
+## Zero-Shot Prompting
+
+- Zero shot prompting provides no examples and relies entirely on the pre-existing knowledge in the LLM
+
+
+::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.6em; "}
+Classify this review: "The product was OK"
+:::
+
+
+::: {style="background-color: #F5E6D3; margin-top: 5mm; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.6em; "}
+Classification:  **Neutral**.
+:::
+
+## One/Few-Shot Prompting
+
+- Zero shot prompting provides no examples and relies entirely on the pre-existing knowledge in the LLM
+
+
+::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.6em; "}
+* Review: This restaurant was amazingly good: → positive
+* Review: This restaurant had decent food: → neutral
+* Review: This restaurant served disgusting food: → negative
+
+Classify this review: I did not die after eating at this restaurant
+:::
+
+
+::: {style="background-color: #F5E6D3; margin-top: 5mm; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.6em; "}
+Review: I did not die after eating at this restaurant -> **neutral**.
+:::
+
+::: {.small-text style="padding: 20px;"}
+With zero-shot prompting, I got this response instead: "Classification: Neutral / Backhanded Compliment (or sarcastic positive)"
+:::
+
+
+## Chain-of-thought (CoT) prompting
+
+::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.0em; "}
+Q: Roger has 5 tennis balls. He buys 2 more cans of tennis balls. Each can has three of them. How many tennis balls does he have now?
+
+A: The answer is 11
+
+Q: The cafeteria had 23 apples. If it used 20 to make lunch and bought 6 more, how many apples do they have?
+:::
+
+::: {style="background-color: #F5E6D3; margin-top: 5mm; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.0em; "}
+Q: Roger has 5 tennis balls. He buys 2 more cans of tennis balls. Each can has three of them. How many tennis balls does he have now?
+
+A: Roger started with 5 tennis balls. 2 cans of 3 balls makes 6 additional tennis balls. 5+6=11. The answer is 11
+
+Q: The cafeteria had 23 apples. If it used 20 to make lunch and bought 6 more, how many apples do they have?
+:::
+
+- Chain of thought prompts encourage the LLMs to autocomplete in a way that will simulate step by step reasoning^[Recent LLMs can answer questions like this correctly even without CoT prompting, but it can be useful for more difficult questions!]
+
+## Tree of thoughts
+
+::: {style="background-color: #f2f2f2; padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto; font-size: 1.0em; "}
+Solve the following problem using a tree-of-thoughts approach.
+
+1. Generate 3 substantially different candidate approaches.
+2. For each approach, identify its assumptions and likely weaknesses.
+3. Expand the two most promising approaches by generating their next steps.
+4. Evaluate the resulting candidates against the problem constraints.
+5. If a branch leads to a contradiction or dead end, discard it.
+6. Continue until one approach produces a verified solution.
+7. Give the final answer and a concise justification.
+
+Problem:
+[PROBLEM]
+:::
+
+* The actual ToT used a small controller that repeatedly called an LLM API
+
+::: {.small-text}
+-   Yao S et al (2023) [Tree of Thoughts: Deliberate Problem Solving with Large Language Models. arXiv 2305.10601](https://arxiv.org/abs/2305.10601)
+:::
+
+## Conclusion: Prompt engineering
+
+:::{.mybox}
+Prompt enginnering is an empirical science
+
+- i.e., trial and error experimentation is important to get the best results!
+:::
+
+- test prompts against representative inputs
+- examine failures, modify it, and test again
+- try different styles of prompting to see what works the best for a certain goal
+
 
 
 ## Retrieval augmented generation (RAG) {#rag}

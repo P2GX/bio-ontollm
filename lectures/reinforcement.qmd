@@ -220,7 +220,7 @@ Image source: Ouyang L, et al. (2022) [Training language models to follow instru
 :::
 
 
-## Chat Templates
+## Chat Templates {#chat_templates}
 
 Each major LLM has a template structure that organizes the main components of the chat so the model can recognize them.
 
