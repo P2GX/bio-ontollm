@@ -361,7 +361,77 @@
     "href": "lectures/rag.html#overview",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview",
-    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture will present approaches to adapt retrieval augmented generation (RAG) and related aproaches to use LLMs to extract ontology terms and knowledge graphs from biomedical texts.\n\n\n\n\nRetrieval augmented generation (RAG)\nRAG example\nRAG-HPO\nSPIRES"
+    "text": "Overview\n\n\n\n\n\n\nGame plan\n\n\nThis lecture will present approaches to adapt retrieval augmented generation (RAG) and related aproaches to use LLMs to extract ontology terms and knowledge graphs from biomedical texts.\n\n\n\n\nPrompt engineering\nRetrieval augmented generation (RAG)\nRAG example\nRAG-HPO\nSPIRES"
+  },
+  {
+    "objectID": "lectures/rag.html#prompt",
+    "href": "lectures/rag.html#prompt",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Prompt engineering",
+    "text": "Prompt engineering\n\nPrompt\n\nA prompt is a sequence of text, tokens, or instructions provided to a large language model to steer its output toward a desired task or behavior.\nFrom a computational standpoint, a prompt acts as the initial context window input that conditions the model’s probabilistic token generation.\n\n\n\nThe quality of a prompt determines the performance of an LLM in answering a question\nPrompt engineering is the iterative discipline of designing, structuring, and refining textual inputs to optimize an LLM’s performance and reliability for a specific task.\nGood prompt engineering steers the model’s probabilistic generation.\nPrompt engineering is largely an empirical discipline"
+  },
+  {
+    "objectID": "lectures/rag.html#system-vs-user",
+    "href": "lectures/rag.html#system-vs-user",
+    "title": "Approaches to biomedical knowledge",
+    "section": "System vs user",
+    "text": "System vs user\n\nGemini API:\n\nSystem Prompt: (referred to as System Instructions by Google\n\npassed via the system_instruction parameter).\n\nUser Prompt: (referred to as the Contents or User Prompt/Message within the generation request.\n\nOpenAI API:\n\nSystem Prompt: Historically called the system role\n\nOpenAI updated its API terminology to the developer role to better delineate application-level logic from internal safety guardrails.\n\nUser Prompt: Referred to as the user role within the messages array."
+  },
+  {
+    "objectID": "lectures/rag.html#how-system-and-user-prompts-are-encoded",
+    "href": "lectures/rag.html#how-system-and-user-prompts-are-encoded",
+    "title": "Approaches to biomedical knowledge",
+    "section": "How System and User Prompts Are Encoded",
+    "text": "How System and User Prompts Are Encoded\n\nthey process sequences of integer token IDs derived from a tokenizer (typically Byte-Pair Encoding or BPE) combined with structural delimiters defined by model-specific chat templates.\nFor instance (See lecture 12 for details):\n\n&lt;|im_start|&gt;system\nYou are a helpful assistant.&lt;|im_end|&gt;\n&lt;|im_start|&gt;user\nHello!&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant\nHi! How can I help you today?&lt;|im_end|&gt;\n&lt;|im_start|&gt;user\nWhat's the weather?&lt;|im_start|&gt;assistant\n\nFrom the model’s perspective, there is no fundamental data structure difference between the system prompt and the user prompt. It receives a single, flat sequence of floating-point embedding vectors.\nThe template interleaves raw user text, system text, and architectural marker tokens\nDuring training, models are explicitly exposed to conversational distributions where instructions placed inside “system” or “developer” header blocks dictate overarching behavioral constraints.\nThe LLM learns to respond appropriately during instructional fine tuning and reinforcement learning with human feedback training\nGemini and openAI currently do not allow the system prompt to be set using the web interface, but it is possible using the APIs1\n\nHugging face chat allows users to specify system and user prompts for some models"
+  },
+  {
+    "objectID": "lectures/rag.html#prompt-engineering",
+    "href": "lectures/rag.html#prompt-engineering",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Prompt engineering",
+    "text": "Prompt engineering\n\nThe main topic of today’s lecture, RAG, depends on prompt engineering in a new way\nWe will briefly summarize the main precepts of prompt engineering in the following slides"
+  },
+  {
+    "objectID": "lectures/rag.html#prompt-engineering-the-obvious-things",
+    "href": "lectures/rag.html#prompt-engineering-the-obvious-things",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Prompt engineering: The obvious things",
+    "text": "Prompt engineering: The obvious things\n\nBe explicit\nProvide relevant context\nSpecify the desired output (format, e.g., JSON, audience, e.g. PhD level, granularity: e.g., summary)\nGive constraints and boundaries (e.g., “Use only the supplied text,” “If information is missing, say so,” or “Don’t invent citations.” )"
+  },
+  {
+    "objectID": "lectures/rag.html#zero-shot-prompting",
+    "href": "lectures/rag.html#zero-shot-prompting",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Zero-Shot Prompting",
+    "text": "Zero-Shot Prompting\n\nZero shot prompting provides no examples and relies entirely on the pre-existing knowledge in the LLM\n\n\nClassify this review: “The product was OK”\n\n\nClassification: Neutral."
+  },
+  {
+    "objectID": "lectures/rag.html#onefew-shot-prompting",
+    "href": "lectures/rag.html#onefew-shot-prompting",
+    "title": "Approaches to biomedical knowledge",
+    "section": "One/Few-Shot Prompting",
+    "text": "One/Few-Shot Prompting\n\nZero shot prompting provides no examples and relies entirely on the pre-existing knowledge in the LLM\n\n\n\nReview: This restaurant was amazingly good: → positive\nReview: This restaurant had decent food: → neutral\nReview: This restaurant served disgusting food: → negative\n\nClassify this review: I did not die after eating at this restaurant\n\n\nReview: I did not die after eating at this restaurant -&gt; neutral.\n\n\nWith zero-shot prompting, I got this response instead: “Classification: Neutral / Backhanded Compliment (or sarcastic positive)”"
+  },
+  {
+    "objectID": "lectures/rag.html#chain-of-thought-cot-prompting",
+    "href": "lectures/rag.html#chain-of-thought-cot-prompting",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Chain-of-thought (CoT) prompting",
+    "text": "Chain-of-thought (CoT) prompting\n\nQ: Roger has 5 tennis balls. He buys 2 more cans of tennis balls. Each can has three of them. How many tennis balls does he have now?\nA: The answer is 11\nQ: The cafeteria had 23 apples. If it used 20 to make lunch and bought 6 more, how many apples do they have?\n\n\nQ: Roger has 5 tennis balls. He buys 2 more cans of tennis balls. Each can has three of them. How many tennis balls does he have now?\nA: Roger started with 5 tennis balls. 2 cans of 3 balls makes 6 additional tennis balls. 5+6=11. The answer is 11\nQ: The cafeteria had 23 apples. If it used 20 to make lunch and bought 6 more, how many apples do they have?\n\n\nChain of thought prompts encourage the LLMs to autocomplete in a way that will simulate step by step reasoning1\n\nRecent LLMs can answer questions like this correctly even without CoT prompting, but it can be useful for more difficult questions!"
+  },
+  {
+    "objectID": "lectures/rag.html#tree-of-thoughts",
+    "href": "lectures/rag.html#tree-of-thoughts",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Tree of thoughts",
+    "text": "Tree of thoughts\n\nSolve the following problem using a tree-of-thoughts approach.\n\nGenerate 3 substantially different candidate approaches.\nFor each approach, identify its assumptions and likely weaknesses.\nExpand the two most promising approaches by generating their next steps.\nEvaluate the resulting candidates against the problem constraints.\nIf a branch leads to a contradiction or dead end, discard it.\nContinue until one approach produces a verified solution.\nGive the final answer and a concise justification.\n\nProblem: [PROBLEM]\n\n\nThe actual ToT used a small controller that repeatedly called an LLM API\n\n\n\nYao S et al (2023) Tree of Thoughts: Deliberate Problem Solving with Large Language Models. arXiv 2305.10601"
+  },
+  {
+    "objectID": "lectures/rag.html#conclusion-prompt-engineering",
+    "href": "lectures/rag.html#conclusion-prompt-engineering",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Conclusion: Prompt engineering",
+    "text": "Conclusion: Prompt engineering\n\nPrompt enginnering is an empirical science\n\ni.e., trial and error experimentation is important to get the best results!\n\n\n\ntest prompts against representative inputs\nexamine failures, modify it, and test again\ntry different styles of prompting to see what works the best for a certain goal"
   },
   {
     "objectID": "lectures/rag.html#rag",
@@ -1472,28 +1542,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.66%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.64%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.92%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.96%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.28%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 2.76%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 33.48%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.04%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -5489,8 +5559,8 @@
     "text": "labelling methods\n\n\n\nOpen AI’s labelling interface for InstructGPT\nFor each output, labelers give a Likert score for overall quality on a 1-7 scale, and also provide various metadata labels.\nAfter evaluating each output individually, labelers rank all the outputs for a given prompt.\nThe team generated\n\n\\(\\sim\\) 13,000 training prompts for SFT/IFT\n\\(\\sim\\) 33,000 training prompts for the reward model training\n\\(\\sim\\) 31,000 training prompts for reinforcement learning (PPO)\n\n\n\n\n\n\n\n\n\n\nImage source: Ouyang L, et al. (2022) Training language models to follow instructions with human feedback. arXiv 2203.02155"
   },
   {
-    "objectID": "lectures/reinforcement.html#chat-templates",
-    "href": "lectures/reinforcement.html#chat-templates",
+    "objectID": "lectures/reinforcement.html#chat_templates",
+    "href": "lectures/reinforcement.html#chat_templates",
     "title": "Approaches to biomedical knowledge",
     "section": "Chat Templates",
     "text": "Chat Templates\nEach major LLM has a template structure that organizes the main components of the chat so the model can recognize them.\n\nUnambiguous structure\nAllow multiturn conversations\nEnables use of APIs\n\n\n\nchat templates are required to format data for training so the models recognize the components of the message (system, user, assistent, in some cases tools)"
