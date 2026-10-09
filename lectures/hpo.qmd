@@ -133,7 +133,7 @@ In 1995, Resnik introduced a method for evaluating the semantic similarity betwe
 * **Hierarchy:** Every `pebble` is a `stone`, and every `stone` is a `natural object`.
 * **The Root:** Every concept is a descendent of `entity`.
     * $p(\text{entity}) = 1$
-    * Information Content: $\log 1 = 0$
+    * $IC(\text{entity}) = -\log(1) = 0$
 :::
 
 ::::
