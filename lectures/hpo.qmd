@@ -150,7 +150,7 @@ Recall that:
 $x$ `instance_of` $A$  AND $A$ `is_a` $B$ $\implies$ $x$ `instance_of` $B$.
 :::
 
-* **Monotonicity**: $p$ is a monotonically increasing function as we move up the hierarchy. 
+* **Monotonicity**: $p$ is a monotonically non-decreasing function as we move up the hierarchy. 
     * If $c_i$ `is_a` $c_j$, then $p(c_i) \leq p(c_j)$.
 * **Root Probability**: If the ontology has a unique root node $r$, then $p(r)=1$.
 
