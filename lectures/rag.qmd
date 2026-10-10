@@ -203,7 +203,11 @@ Prompt enginnering is an empirical science
 - examine failures, modify it, and test again
 - try different styles of prompting to see what works the best for a certain goal
 
+::: {.mybox}
+Here is a good example of the influence that prompt engineering can have on results:
 
+- Hu Y, et al. (2024) [Improving large language models for clinical named entity recognition via prompt engineering. *J Am Med Inform Assoc* **31**:1812-1820](https://pubmed.ncbi.nlm.nih.gov/38281112/) 
+:::
 
 ## Retrieval augmented generation (RAG) {#rag}
 
@@ -1254,4 +1258,6 @@ garlic powder (2 tablespoons)
 - Background: Huang, Y. et al. (2026) [A Survey on Retrieval-Augmented Text Generation for Large Language Models. *ACM Comput. Surv* **12**:1-38](https://dl.acm.org/doi/10.1145/3805774)
 - SPIRES: Caufield JH, et al. (2024) [Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. *Bioinformatics* **40**:btae104](https://pubmed.ncbi.nlm.nih.gov/38383067/)
 - RAG-HPO: Garcia BT, et al. (2025) [Improving automated deep phenotyping through large language models using retrieval-augmented generation. *Genome Med* **17**:91](https://pubmed.ncbi.nlm.nih.gov/40826123/)
+- Bhandari P (2024) [A Survey on Prompting Techniques in LLMs arXiv 2312.03740](https://arxiv.org/abs/2312.03740)
+- Yao S et al (2023) [Tree of Thoughts: Deliberate Problem Solving with Large Language Models. arXiv 2305.10601](https://arxiv.org/abs/2305.10601)
 

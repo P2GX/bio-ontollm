@@ -7,7 +7,7 @@ format:
   revealjs:
     theme: [default] 
     css: ../style/styles.css              
-    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html)</span>"
     slide-number: true
     show-slide-number: all
     incremental: false 
@@ -44,7 +44,6 @@ In this part of the course we will review ontologies and algorithms and we will 
 
 ::::
 
----
 
 ## Bio-Ontologies
 
@@ -57,7 +56,6 @@ In this part of the course we will review ontologies and algorithms and we will 
 * Model-based Gene Set Analysis (lecture #3)
 * Human Phenotype Ontology (HPO), semantic similarity, and Phenomizer (lecture #4)
 
----
 
 
 ## What is an Ontology?
@@ -65,26 +63,26 @@ In this part of the course we will review ontologies and algorithms and we will 
 :::: {layout="[30, 5, 30, 5, 30]"}
 
 ### Philosophy
-![](img/thinker.jpg){width="2.8cm"}
+![](img/thinker.jpg){width="5.5cm"}
 
 # $\rightarrow$
 <br>
 
 ### Artificial Intelligence
-![](img/artificialintelligence.jpg){width="3.5cm"}
+![](img/artificialintelligence.jpg){width="8cm"}
 
 # $\rightarrow$
 <br>
 
 ### Biomedical Research
-![](img/young_frankenstein.jpg){width="4cm"}
+![](img/young_frankenstein.jpg){width="10cm"}
 
 ::::
 
 
 ## What is an Ontology?
 
-::: {style="text-align: right;"}
+
 
 ::: {style="display: inline-block;
 background-color: #f8f9fa;
@@ -96,22 +94,22 @@ text-align: left;"}
 
 *"An ontology is a specification of a conceptualization."*
 
+::: {style="text-align: right;"}
 **Tom Gruber, 1993**
-
 :::
 
 :::
+
+
 
 Ontologies are on the right of a scale of increasing semantic complexity:
 
-| **Catalog** | → | **Thesaurus** | → | **Instances** | → | **Restrictions** | → | **Ontology** |
-|:-----------:|:-:|:-------------:|:-:|:-------------:|:-:|:----------------:|:-:|:------------:|
-| Glossary | | Subclassing | | Properties | | Logical Constraints | | Formal Relations |
+![](./img/ontologydef.svg){width=90%  fig-align="center"}
 
-::: {.callout-tip}
-## Evolution of Complexity
-As we move from left to right, we move from simple **lists of terms** (Catalog/Glossary) to **hierarchical relationships** (Thesaurus/Subclassing) and finally to **formal logic** (Restrictions/Constraints).
-:::
+
+
+* As we move from left to right, we move from simple **lists of terms** (Catalog/Glossary) to **hierarchical relationships** (Thesaurus/Subclassing) and finally to **formal logic** (Restrictions/Constraints).
+
 
 ## OBO: Open Bio-Ontologies
 
@@ -146,6 +144,7 @@ Gene Ontology and OBO foundry members have developed a simple ontology language 
 * Most current software also supports JSON, but we will stick with OBO for a moment to introduce the basics!
 * Begins with a header:
 
+::: {style="font-size: 1.4em;"}
 ```text
 format-version: 1.2
 date: 29:07:2010 12:36
@@ -154,12 +153,16 @@ subsetdef: goslim_candida "Candida GO slim"
 subsetdef: goslim_generic "Generic GO slim"
 default-namespace: gene_ontology
 ```
+:::
 
-# OBO Stanzas
+
+## OBO Stanzas
+
 ::: {.callout-note appearance="simple"}
 OBO stanzas can refer to universal types [Term], type definitions [Typedef], or instances [Instances].
 :::
 
+::: {style="font-size: 1.4em;"}
 ```text
 [Term]
 id: GO:0000031
@@ -168,37 +171,46 @@ namespace: molecular_function
 def: "Catalysis of the transfer of a mannosylphosphate group from one compound to another." [GOC:jl]
 is_a: GO:0016740 ! transferase activity
 ```
+:::
 
-# OBO Stanzas (Identifiers)
+
+## OBO Stanzas (Identifiers)
 The stanza begins with the id, which is a unique identifier comparable to an accession number.
 
-```{.xml code-line-numbers="1"}
+
+::: {style="font-size: 1.4em;"}
+```{.text code-line-numbers="1"}
 id: GO:0000031
 name: mannosylphosphate transferase activity
 namespace: molecular_function
 def: "Catalysis of the transfer of a mannosylphosphate group from one compound to another." [GOC:jl]
 is_a: GO:0016740 ! transferase activity
 ```
+:::
 
 Each term also has a name (concise human-readable description):
 
-```{.xml code-line-numbers="2"}
+::: {style="font-size: 1.4em;"}
+```{.text code-line-numbers="2"}
 id: GO:0000031
 name: mannosylphosphate transferase activity
 namespace: molecular_function
 def: "Catalysis of the transfer of a mannosylphosphate group from one compound to another." [GOC:jl]
 is_a: GO:0016740 ! transferase activity
 ```
+:::
 
 All other tag:value items are optional.
 
-# OBO Stanzas (Semantic Links)
+## OBO Stanzas (Semantic Links)
+
 ::: {.callout-note appearance="simple"}
-The is_a keyword indicates subclass links.
+The `is_a` keyword indicates subclass links.
 :::
 
 Example: mannosylphosphate transferase activity is a subclass of GO:0016740.
 
+::: {style="font-size: 1.4em;"}
 ```{.xml code-line-numbers="5"}
 id: GO:0000031
 name: mannosylphosphate transferase activity
@@ -206,10 +218,11 @@ namespace: molecular_function
 def: "Catalysis of the transfer of a mannosylphosphate group from one compound to another." [GOC:jl]
 is_a: GO:0016740 ! transferase activity
 ```
+:::
 
 Note: Text following an ! is a comment.
 
-# OBO subclass and other relations
+## OBO subclass and other relations
 Terms may have any number of is_a relations.
 
 For all other relations, the keyword relationship (or specific relation type) is used.
@@ -218,6 +231,7 @@ For all other relations, the keyword relationship (or specific relation type) is
 The relation type name must be defined in a [Typedef] stanza.
 :::
 
+::: {style="font-size: 1.4em;"}
 ```{.xml code-line-numbers="5"}
 [Typedef]
 id: part_of
@@ -225,10 +239,11 @@ name: part_of
 xref: OBO_REL:part_of
 is_transitive: true
 ```
+:::
 
 * __transitive__: If A part_of B and B part_of C, then A part_of C.
 
-# RDF / RDFS
+## RDF / RDFS
 OWL and the Semantic Web
 
 ::: {.callout-note appearance="simple"}
@@ -239,29 +254,33 @@ OWL was developed by the W3C to enable richer integration and interoperability o
 * Designed to connect websites at the level of data rather than presentation (HTML).
 * Enables computational inference.
 
-# Resource Description Framework (RDF)
+## Resource Description Framework (RDF)
+
 OWL is built upon RDF and RDFS.
 
 * RDF expresses propositions using formal vocabularies.
 * Basic building block: The Triple (Subject, Predicate, Object).
 
+::: {style="font-size: 1.4em;"}
 ```turtle
 # Example of an RDF Triple
 http://www.example.org/ :hasCreator "John Smith" .
 ```
+:::
 
 <br>
 
-::: {.callout-note appearance="minimal" icon=false style="background-color: #f4f6f9; border-left: 4px solid #3a6073; padding: 15px;"}
+::: {.callout-note appearance="minimal" icon=false style="background-color: #f4f6f9; border-left: 4px solid #3a6073; padding: 15px;font-size: 1.4em;"}
 - subject: `http://www.example.org/`
 - predicate: `hasCreator`
 - object: `John Smith`
 :::
 
 
-# RDF: Serialization (XML)
+## RDF: Serialization (XML)
 RDF is an abstract model, but often serialized as RDF/XML.
 
+::: {style="font-size: 1.4em;"}
 ```xml
 <rdf:RDF xmlns="http://purl.uniprot.org/core/" 
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -274,6 +293,7 @@ RDF is an abstract model, but often serialized as RDF/XML.
   </rdf:Description>
 </rdf:RDF>
 ```
+:::
 
 ## RDF
 
@@ -438,12 +458,15 @@ RDF provides several syntactic constructs for expressing more complex statements
 
 * Suppose we want to represent something that does not have a URI.
 * This can be done using an RDF construct called a *blank node* (*bnode* for short).
-* Let us say we want to express the statement *Someone called Douglas wrote a book entitled "Hitchhiker's Guide to the Galaxy."* Clearly, it is impossible to provide a URI for the concept *Someone called Douglas*.
+* Let us say we want to express the statement *Someone called Douglas wrote a book entitled "Hitchhiker's Guide to the Galaxy."
+* Clearly, it is impossible to provide a URI for the concept *Someone called Douglas*.
 * Instead, we use a bnode to express the statement about this "someone."
 
+::: {style="font-size: 1.4em;"}
 ```text
 [ :firstname "Douglas"]
 ``` 
+:::
 
 
 ## RDF: bnodes (Continued)
@@ -455,10 +478,12 @@ The statement in the previous slide means $X$, such that there exists some $X$ (
 * It is convention to leave a space after the opening square bracket as if to indicate the presence of the "blank" subject of these triples.
 * We can now use this statement as an `rdf:subject`.
 
+::: {style="font-size: 1.4em;"}
 ```text
-[ :firstname "Douglas"] dc:wrote 
-         [ dc:title "Hitchhiker's Guide to the Galaxy"] .
+[ :firstname "Douglas"] dc:wrote [ dc:title "Hitchhiker's Guide to the Galaxy"] .
 ```
+:::
+
 
 ## RDF: reification
 
@@ -481,6 +506,7 @@ Essentially, RDF "reifies" (makes) a triple into a "thing" about which other RDF
 
 Assuming that the appropriate qname prefixes have been defined, we can express our statement about Wikipedia's claim as follows:
 
+::: {style="font-size: 1.4em;"}
 ```text
 @prefix rdf: [http://www.w3.org/1999/02/22-rdf-syntax-ns#](http://www.w3.org/1999/02/22-rdf-syntax-ns#) .
 
@@ -491,6 +517,7 @@ _:x rdf:object :"Hitchhiker's Guide to the Galaxy" .
 
 web:wikipedia q:says _:x
 ```
+:::
 
 
 ## RDFS
@@ -501,6 +528,7 @@ A schema is a formal definition of the syntax of a language, and a schema langua
 
 * RDF Schema (RDFS) is intended as a framework for interpreting the meaning of data expressed in RDF. 
 * RDFS provides additional specifications and keywords that allow many kinds of *inference* to be performed.
+
 
 ## RDFS: *is a* ain't always *is a*
 
@@ -523,10 +551,11 @@ Imagine we have defined an ontology and have provided definitions at `http://www
 
 * It is already possible in RDF to express the statement *Mickey is a mouse*:
 
+::: {style="font-size: 1.4em;"}
 ```text
 x:Mickey rdf:type x:Mouse .
 ```
-
+:::
 
 ## RDFS: is a (Subclasses)
 
@@ -537,6 +566,8 @@ However, there is no mechanism built into RDF with which we could express the st
 * The RDFS keywords `rdfs:Class` and `rdfs:subClassOf` can be used for this purpose.
 * We first declare that `x:Mouse` and `x:Rodent` are RDFS classes, and then state that `x:Mouse` is a subclass of `x:Rodent`.
 
+
+::: {style="font-size: 1.4em;"}
 ```text
 @prefix x: http://www.my-example.org .
 
@@ -544,20 +575,29 @@ x:Mouse rdf:type rdfs:Class .
 x:Rodent rdf:type rdfs:Class .
 x:Mouse rdfs:subClassOf x:Rodent .
 ```
+:::
 
 ## RDFS: is a (Inference Rule 1)
 
 One of the RDFS inference rules states that if there are asserted triples of the form:
 
+
+::: {style="font-size: 1.4em;"}
 ```text
 X rdfs:subClassOf Y .
 b rdf:type X .
 ```
+:::
+
+
 then the following triple can be inferred:
 
+
+::: {style="font-size: 1.4em;"}
 ```text
 b rdf:type Y .
 ```
+:::
 
 * Thus, if we know that Mickey is an instance of \textit{mouse}
 we can infer that Mickey is an instance of the class \textit{rodent}!
@@ -570,21 +610,31 @@ Another inference rule states that the subclass relation is **transitive**.
 
 That is, if there are asserted triples about classes $X$, $Y$, and $Z$:
 
+
+::: {style="font-size: 1.4em;"}
 ```text
 X rdfs:subClassOf Y .
 Y rdfs:subClassOf Z .
 ```
+:::
+
 then the following triple can be inferred:
 
+
+::: {style="font-size: 1.4em;"}
 ```text
 X rdfs:subClassOf Z .
 ```
+:::
+
 * Thus, we can infer that `mouse` is a subclass of the class `rodent`! 
 
 ## RDFS: is a (Transitivity Example)
 
 * if we assert the following triples:
 
+
+::: {style="font-size: 1.4em;"}
 ```text
 x:Mouse rdf:type rdfs:Class .
 x:Rodent rdf:type rdfs:Class .
@@ -593,18 +643,23 @@ x:Mammal rdf:type rdfs:Class .
 x:Mouse rdfs:subClassOf x:Rodent .
 x:Rodent rdfs:subClassOf x:Mammal .
 ```
-
+:::
 
 then we can infer that mice are mammals:
+
+::: {style="font-size: 1.4em;"}
 ```text
 x:Mouse rdfs:subClassOf x:Mammal .
 ```
+:::
 
 
 ## RDFS: Properties and Inference
 
 Similar inference rules apply to properties. For instance, we can define a simple hierarchy of biochemical regulation with the following RDF statements:
 
+
+::: {style="font-size: 1.4em;"}
 ```text
 @prefix r: http://www.regulation.org .
 
@@ -615,36 +670,47 @@ r:negatively_regulates rdf:type rdfs:Property .
 r:positively_regulates rdfs:subPropertyOf r:regulates .
 r:negatively_regulates rdfs:subPropertyOf r:regulates .
 ```
-
+:::
 
 If proteins A and B have been defined in a namespace pro, we can state that A positively regulates B by asserting the following triple:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 pro:A  r:positively_regulates pro:B .
 ```
+:::
 
 ## RDFS: Properties and Inference
 
 There is an inference rule for RDFS properties stating that if the following triples are asserted:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 P rdfs:subPropertyOf Q .
 X P Y .
 ```
+:::
 
 Then the following triple can be inferred:
 
 
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 X Q Y .
 ```
+:::
 
 Example:
 Using our regulation hierarchy, we can infer that Protein A regulates Protein B:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 pro:A  r:regulates pro:B .
 ```
+:::
 
 ::: {.callout-tip}
 Similarly to the situation with classes, the subproperty relation is transitive.
@@ -661,16 +727,22 @@ RDFS provides a syntax for specifying the range and domain of properties. Recall
 
 If the following two triples are asserted:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 P rdfs:domain D .
 X P Y .
 ```
+:::
 
-hen the following triple is inferred:
+then the following triple is inferred:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 X rdf:type D .
 ```
+:::
 
 ## RDFS: Property Ranges
 
@@ -678,16 +750,22 @@ Similarly, the RDFS statement `P rdfs:range R` for an `rdf:Property P` and an `r
 
 If the following two triples are asserted:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 P rdfs:range R .
 X P Y .
 ```
+:::
 
 Then the following triple can be inferred:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 Y rdf:type R .
 ```
+:::
 
 ## RDFS: Property Domains and Ranges (Example)
 
@@ -695,6 +773,8 @@ Y rdf:type R .
 The following highly simplified example was adapted from the National Cancer Institute (NCI) thesaurus.
 :::
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 :drug_affects_protein rdf:type rdfs:Property .
 :Drug rdf:type rdfs:Class .
@@ -703,19 +783,27 @@ The following highly simplified example was adapted from the National Cancer Ins
 :drug_affects_protein rdfs:domain :Drug .
 :drug_affects_protein rdfs:range :Protein .
 ```
+:::
+
 
 If we now additionally assert the following triple:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 :Nilotinib  :drug_affects_protein :BCR-ABL .
 ```
+:::
 
 Then we can infer the following two triples:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 :Nilotinib rdf:type :Drug .
 :BCR-ABL rdf:type :Protein .
 ```
+:::
 
 ::: {.smaller}
 In fact, Nilotinib is a selective Bcr-Abl tyrosine kinase inhibitor that is used in the treatment of chronic myeloid leukemia.
@@ -737,43 +825,52 @@ Yet other forms of inference in RDFS resemble to a certain extent conclusions ab
 
 If the following triples are asserted:
 
+
+:::{style="font-size: 1.4em;"}
 ```{.turtle}
 Z rdfs:subClassOf X .
 Z rdfs:subClassOf Y .
 b rdf:type Z .
 ```
+:::
 
 Then these two triples can be inferred:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 b rdf:type X .
 b rdf:type Y .
 ```
-
+:::
 
 ## RDFS: Intersections and Unions (Continued)
 
 For instance, if we state that:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 :Pig rdfs:subClassOf :Mammal .
 :Pig rdfs:subClassOf :FarmAnimal .
 ```
+:::
 
 Then we can conclude that a particular pig is both a mammal and a farm animal. The class :Pig can be considered to occupy the intersection between those two classes.On the other hand, asserting that:
 
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 :Cow rdfs:subClassOf :Mammal .
 :Cow rdfs:subClassOf :FarmAnimal .
 ```
+:::
 
 Does not imply that a cow is a pig!
 
 ::: {.callout-warning title="Limits of RDFS"}
-
 RDFS constructs are not designed to express an exact mathematical equality between sets, such as $A = B \cap C$. It only expresses "is a" relationships, not "is only and exactly" relationships.
-
 :::
+
 
 ## RDFS: Intersections and Unions (Union)
 
@@ -783,32 +880,48 @@ It is also possible to express something similar to set union in RDFS.
 
 If we assert the following triples:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 X rdfs:subClassOf Z .
 Y rdfs:subClassOf Z .
 ``` 
+:::
+
 
 Then, if either of the two following statements are asserted
 
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 b rdf:type X .
 b rdf:type Y .
 ``` 
+:::
 
 ...then,  it can be inferred that:
 
+
+
+::: {style="font-size: 1.4em;"}
 ```{.turtle}
 b rdf:type Z .
 ```
+:::
+
 
 # RDFS: Intersections and Unions
 
 * For instance, if we assert the triples
-  
+
+
+::: {style="font-size: 1.4em;"}  
 ```{.turtle}
 :HairBearingAnimal rdfs:subClassOf :Mammal .
 :AnimalWithMammaryGlands rdfs:subClassOf :Mammal .
 ``` 
+:::
+
 
 * then we can infer that any animal with hair is a mammal, and we can
   also infer that any animal with mammary glands is a mammal.
@@ -862,6 +975,8 @@ Perhaps the easiest to understand is the enumeration type, which essentially jus
 
 For instance, the following class definition expressed using **RDF/XML** syntax creates a class containing exactly the four Beatles:
 
+
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <owl:Class>
   <owl:oneOf rdf:parseType="Collection">
@@ -872,7 +987,7 @@ For instance, the following class definition expressed using **RDF/XML** syntax 
   </owl:oneOf>
 </owl:Class>
 ```
-
+:::
 
 ![](./img/beatles.png){fig-align="center" width="25%"}
 
@@ -886,6 +1001,7 @@ For instance, the following class definition expressed using **RDF/XML** syntax 
 An *A-Microtubule* can be defined as "A complete cylindrical microtubule that is part of a microtubule doublet in cilia."
 :::
 
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <owl:Class rdf:about="#A-Microtubule">
   <rdfs:label>A-Microtubule</rdfs:label>
@@ -906,6 +1022,8 @@ An *A-Microtubule* can be defined as "A complete cylindrical microtubule that is
   </rdfs:subClassOf>
 </owl:Class>
 ```
+:::
+
 
 ## Classes in OWL: Property Restriction (Logic)
 
@@ -924,6 +1042,7 @@ OWL distinguishes two kinds of property restrictions: **Value Constraints** and
 **Cardinality Constraints**. A value restriction $V$ on some property 
 $P$ has the following general form:
 
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <rdfs:subClassOf>
   <owl:Restriction>
@@ -932,6 +1051,8 @@ $P$ has the following general form:
   </owl:Restriction>
 </rdfs:subClassOf>
 ```
+:::
+
 <br>
 
 ::: {.callout-important appearance="simple"}
@@ -944,7 +1065,6 @@ $P$ has the following general form:
 
 [^1]: According to this logic it is true that "All Martians are green" (because there are no Martians!)
 
-
 ## Classes in OWL: Negation
 
 ::: {.callout-note appearance="simple"}
@@ -954,6 +1074,7 @@ Classes can be defined by stating what they are **not**.
 * For instance, the Ontology for Biomedical Investigations (OBI) describes a class of cells that **do not express** the CD8 receptor using the `owl:complementOf` keyword.
 * This is achieved by defining the intersection of the class "Cell" and the **complement** of the class of things that "have part CD8 receptor."
 
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <owl:intersectionOf rdf:parseType="Collection">
   <owl:Class rdf:about="CL:cell"/>
@@ -972,6 +1093,8 @@ Classes can be defined by stating what they are **not**.
   </owl:Class>
 </owl:intersectionOf>
 ```
+:::
+
 
 ## Classes in OWL: Negation (The Pitfalls)
 
@@ -994,6 +1117,7 @@ OWL provides a union operator that is analogous to the set union operator ($A \c
 
 * For instance, we can define the class **Human** as the union of the classes **Man** and **Woman**:
 
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <owl:Class rdf:ID="Human">
   <owl:unionOf rdf:parseType="Collection">
@@ -1002,17 +1126,20 @@ OWL provides a union operator that is analogous to the set union operator ($A \c
   </owl:unionOf>
 </owl:Class>
 ```
+:::
 
 ## Classes in OWL: Union (The Subclass Trap)
 
 Contrast the `owl:unionOf` construct to the following **incorrect** attempt to define *Human* as a subclass of *Man* and *Woman*:
 
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <owl:Class rdf:ID="Human">
   <rdfs:subClassOf rdf:resource="#Man" />
   <rdfs:subClassOf rdf:resource="#Woman" />
 </owl:Class>
 ```
+:::
 
 Why this fails:
 
@@ -1034,24 +1161,30 @@ In OWL, `rdf:type` is the property that connects an individual to a class of whi
 
 If we have a class of cities:
 
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <owl:Class rdf:ID="City"/>
 ```
+:::
+
 
 We can declare individual cities to be members of this class. The following two syntactical forms have identical meanings:
 
-- Option 1: Direct Class Tag
+- **Option 1**: Direct Class Tag
 
 This uses the class name as the XML element tag.
 
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <City rdf:ID="Berlin"/>
 ```
+:::
 
-- Option 2: Explicit Typing
+- **Option 2**: Explicit Typing
 
 This uses owl:Thing (the root class of everything) and explicitly states the type.
 
+::: {style="font-size: 1.4em;"}
 ```{.xml}
 <owl:Thing rdf:ID="Berlin"/>
 
@@ -1059,6 +1192,7 @@ This uses owl:Thing (the root class of everything) and explicitly states the typ
   <rdf:type rdf:resource="#City"/>
 </owl:Thing>
 ```
+:::
 
 ## What is the logic here?
 

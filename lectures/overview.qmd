@@ -9,7 +9,7 @@ format:
   revealjs:
     theme: [default] 
     css: ../style/styles.css            
-    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html)</span>"
     slide-number: true
     show-slide-number: all
     incremental: false 
@@ -42,6 +42,12 @@ This course is part of the [Master Curriculum](https://link-to-fu.de) in Bioinfo
 :::
 
 ## Topics
+
+::: {.callout-note appearance="simple"}
+This course enables students to master two essential frameworks for managing human 
+knowledge in bioinformatics: **Ontologies** and **Language Models**. We will provide an in-depth introduction to 
+both topics as well as several sessions in which we show how ontologies and LLMs can be used together.
+:::
 
 The course explores two paradigms for representing human knowledge computationally:
 
@@ -92,21 +98,25 @@ There is an increasing amount of evidence that
 reliance on artificial-intelligence tools degrades the abilities of software engineers
 :::
 
-## Non-skilling
+### Non-skilling
 
-::: {.callout-note appearance="simple"}
-Will LLMs replace computer scientists, software developers, and bioinformaticians?
+
+- Studies are showing that trainees who rely on AI during the early formative years of clinical education may fail to develop the foundational reasoning skills that they will need in work environments
+
+::: {.tiny-credit}
+see for instance: Ke Y, et al. (2026) [AI-induced never-skilling in medical education. *Nat Med* **32**:1997-2006](https://pubmed.ncbi.nlm.nih.gov/42174254/)
 :::
 
-- Currently, the best answer appears to be: ["Some of them, but it will make others more productive"]{style="color: green; font-weight: bold;"}. 
-- This course enables students to master two essential frameworks for managing human knowledge in bioinformatics: **Ontologies** and **Language Models**.
-- We will go into detail and implement simplified versions of some of the algorithms in Python.
-- Prerequisites: Some knowledge of probability, calculus, and algorithms (We will explain everything as we go along).
+### Will AI/LLMs replace computer scientists, software developers, and bioinformaticians?
 
 
-### Advice
+- Currently, the best answer appears to be: ["AI will replace some of them, but it will make others more productive"]{style="color: green; font-weight: bold;"}. 
+
+
+
+## Advice on the appropriate use of AI
 - Do not use LLMs to do homework assignments!
-- It is probably OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.
+- It is OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.
 - Vibe coding is not to be recommended but LLMs can be quite helpful with targeted questions (e.g., what CSS class makes a rounded box that looks like an orange parakeet?) or to get advice on how to optimize code (e.g., using iterators instead of traditional forloops in Languages such as Rust and Java).
 
 

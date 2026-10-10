@@ -32,7 +32,7 @@ quarto add leovan/quarto-pseudocode
 ```
 
 
-I have had some trouble setting up the preview within VS Code, but a workaround was to start quarto in some shell
+## Preview
 
 ```bash
 quarto preview token.qmd
