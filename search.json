@@ -431,7 +431,7 @@
     "href": "lectures/rag.html#conclusion-prompt-engineering",
     "title": "Approaches to biomedical knowledge",
     "section": "Conclusion: Prompt engineering",
-    "text": "Conclusion: Prompt engineering\n\nPrompt enginnering is an empirical science\n\ni.e., trial and error experimentation is important to get the best results!\n\n\n\ntest prompts against representative inputs\nexamine failures, modify it, and test again\ntry different styles of prompting to see what works the best for a certain goal"
+    "text": "Conclusion: Prompt engineering\n\nPrompt enginnering is an empirical science\n\ni.e., trial and error experimentation is important to get the best results!\n\n\n\ntest prompts against representative inputs\nexamine failures, modify it, and test again\ntry different styles of prompting to see what works the best for a certain goal\n\n\nHere is a good example of the influence that prompt engineering can have on results:\n\nHu Y, et al. (2024) Improving large language models for clinical named entity recognition via prompt engineering. J Am Med Inform Assoc 31:1812-1820"
   },
   {
     "objectID": "lectures/rag.html#rag",
@@ -767,7 +767,7 @@
     "href": "lectures/rag.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\n\nBackground: Huang, Y. et al. (2026) A Survey on Retrieval-Augmented Text Generation for Large Language Models. ACM Comput. Surv 12:1-38\nSPIRES: Caufield JH, et al. (2024) Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. Bioinformatics 40:btae104\nRAG-HPO: Garcia BT, et al. (2025) Improving automated deep phenotyping through large language models using retrieval-augmented generation. Genome Med 17:91"
+    "text": "Sources\n\nBackground: Huang, Y. et al. (2026) A Survey on Retrieval-Augmented Text Generation for Large Language Models. ACM Comput. Surv 12:1-38\nSPIRES: Caufield JH, et al. (2024) Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. Bioinformatics 40:btae104\nRAG-HPO: Garcia BT, et al. (2025) Improving automated deep phenotyping through large language models using retrieval-augmented generation. Genome Med 17:91\nBhandari P (2024) A Survey on Prompting Techniques in LLMs arXiv 2312.03740\nYao S et al (2023) Tree of Thoughts: Deliberate Problem Solving with Large Language Models. arXiv 2305.10601"
   },
   {
     "objectID": "lectures/ontology1.html#bio-ontologies",
@@ -810,7 +810,7 @@
     "href": "lectures/ontology1.html#what-is-an-ontology-1",
     "title": "Approaches to biomedical knowledge",
     "section": "What is an Ontology?",
-    "text": "What is an Ontology?\n\n\n“An ontology is a specification of a conceptualization.”\nTom Gruber, 1993\n\n\nOntologies are on the right of a scale of increasing semantic complexity:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCatalog\n→\nThesaurus\n→\nInstances\n→\nRestrictions\n→\nOntology\n\n\n\n\nGlossary\n\nSubclassing\n\nProperties\n\nLogical Constraints\n\nFormal Relations\n\n\n\n\n\n\n\n\n\nEvolution of Complexity\n\n\nAs we move from left to right, we move from simple lists of terms (Catalog/Glossary) to hierarchical relationships (Thesaurus/Subclassing) and finally to formal logic (Restrictions/Constraints).",
+    "text": "What is an Ontology?\n\n“An ontology is a specification of a conceptualization.”\n\nTom Gruber, 1993\n\n\nOntologies are on the right of a scale of increasing semantic complexity:\n\n\nAs we move from left to right, we move from simple lists of terms (Catalog/Glossary) to hierarchical relationships (Thesaurus/Subclassing) and finally to formal logic (Restrictions/Constraints).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -834,7 +834,91 @@
     "href": "lectures/ontology1.html#obo-format",
     "title": "Approaches to biomedical knowledge",
     "section": "OBO Format",
-    "text": "OBO Format\n\n\n\n\n\n\nGene Ontology and OBO foundry members have developed a simple ontology language called OBO.\n\n\n\n\nModels a subset of the semantics available in OWL 2.\nHuman-readable flat file format.\nMost current software also supports JSON, but we will stick with OBO for a moment to introduce the basics!\nBegins with a header:\n\nformat-version: 1.2\ndate: 29:07:2010 12:36\nauto-generated-by: OBO-Edit 2.0\nsubsetdef: goslim_candida \"Candida GO slim\"\nsubsetdef: goslim_generic \"Generic GO slim\"\ndefault-namespace: gene_ontology",
+    "text": "OBO Format\n\n\n\n\n\n\nGene Ontology and OBO foundry members have developed a simple ontology language called OBO.\n\n\n\n\nModels a subset of the semantics available in OWL 2.\nHuman-readable flat file format.\nMost current software also supports JSON, but we will stick with OBO for a moment to introduce the basics!\nBegins with a header:\n\n\nformat-version: 1.2\ndate: 29:07:2010 12:36\nauto-generated-by: OBO-Edit 2.0\nsubsetdef: goslim_candida \"Candida GO slim\"\nsubsetdef: goslim_generic \"Generic GO slim\"\ndefault-namespace: gene_ontology",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#obo-stanzas",
+    "href": "lectures/ontology1.html#obo-stanzas",
+    "title": "Approaches to biomedical knowledge",
+    "section": "OBO Stanzas",
+    "text": "OBO Stanzas\n\n\n\n\n\n\nOBO stanzas can refer to universal types [Term], type definitions [Typedef], or instances [Instances].\n\n\n\n\n[Term]\nid: GO:0000031\nname: mannosylphosphate transferase activity\nnamespace: molecular_function\ndef: \"Catalysis of the transfer of a mannosylphosphate group from one compound to another.\" [GOC:jl]\nis_a: GO:0016740 ! transferase activity",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#obo-stanzas-identifiers",
+    "href": "lectures/ontology1.html#obo-stanzas-identifiers",
+    "title": "Approaches to biomedical knowledge",
+    "section": "OBO Stanzas (Identifiers)",
+    "text": "OBO Stanzas (Identifiers)\nThe stanza begins with the id, which is a unique identifier comparable to an accession number.\n\nid: GO:0000031\nname: mannosylphosphate transferase activity\nnamespace: molecular_function\ndef: \"Catalysis of the transfer of a mannosylphosphate group from one compound to another.\" [GOC:jl]\nis_a: GO:0016740 ! transferase activity\n\nEach term also has a name (concise human-readable description):\n\nid: GO:0000031\nname: mannosylphosphate transferase activity\nnamespace: molecular_function\ndef: \"Catalysis of the transfer of a mannosylphosphate group from one compound to another.\" [GOC:jl]\nis_a: GO:0016740 ! transferase activity\n\nAll other tag:value items are optional.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#obo-stanzas-semantic-links",
+    "href": "lectures/ontology1.html#obo-stanzas-semantic-links",
+    "title": "Approaches to biomedical knowledge",
+    "section": "OBO Stanzas (Semantic Links)",
+    "text": "OBO Stanzas (Semantic Links)\n\n\n\n\n\n\nThe is_a keyword indicates subclass links.\n\n\n\nExample: mannosylphosphate transferase activity is a subclass of GO:0016740.\n\nid: GO:0000031\nname: mannosylphosphate transferase activity\nnamespace: molecular_function\ndef: \"Catalysis of the transfer of a mannosylphosphate group from one compound to another.\" [GOC:jl]\nis_a: GO:0016740 ! transferase activity\n\nNote: Text following an ! is a comment.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#obo-subclass-and-other-relations",
+    "href": "lectures/ontology1.html#obo-subclass-and-other-relations",
+    "title": "Approaches to biomedical knowledge",
+    "section": "OBO subclass and other relations",
+    "text": "OBO subclass and other relations\nTerms may have any number of is_a relations.\nFor all other relations, the keyword relationship (or specific relation type) is used.\n\n\n\n\n\n\nThe relation type name must be defined in a [Typedef] stanza.\n\n\n\n\n[Typedef]\nid: part_of\nname: part_of\nxref: OBO_REL:part_of\nis_transitive: true\n\n\ntransitive: If A part_of B and B part_of C, then A part_of C.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#rdf-rdfs",
+    "href": "lectures/ontology1.html#rdf-rdfs",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RDF / RDFS",
+    "text": "RDF / RDFS\nOWL and the Semantic Web\n\n\n\n\n\n\nOWL was developed by the W3C to enable richer integration and interoperability of data on the Web.\n\n\n\n\nPart of the Semantic Web effort.\nDesigned to connect websites at the level of data rather than presentation (HTML).\nEnables computational inference.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#resource-description-framework-rdf",
+    "href": "lectures/ontology1.html#resource-description-framework-rdf",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Resource Description Framework (RDF)",
+    "text": "Resource Description Framework (RDF)\nOWL is built upon RDF and RDFS.\n\nRDF expresses propositions using formal vocabularies.\nBasic building block: The Triple (Subject, Predicate, Object).\n\n\n# Example of an RDF Triple\nhttp://www.example.org/ :hasCreator \"John Smith\" .\n\n\n\n\n\n\n\nsubject: http://www.example.org/\npredicate: hasCreator\nobject: John Smith",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#rdf-serialization-xml",
+    "href": "lectures/ontology1.html#rdf-serialization-xml",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RDF: Serialization (XML)",
+    "text": "RDF: Serialization (XML)\nRDF is an abstract model, but often serialized as RDF/XML.\n\n&lt;rdf:RDF xmlns=\"http://purl.uniprot.org/core/\" \n         xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"&gt;\n\n  &lt;rdf:Description rdf:about=\"http://purl.uniprot.org/enzyme/1.14.11.2\"&gt;\n    &lt;rdf:type rdf:resource=\"http://purl.uniprot.org/core/Enzyme\"/&gt;\n    &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2) = ...&lt;/activity&gt;\n    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n  &lt;/rdf:Description&gt;\n&lt;/rdf:RDF&gt;",
     "crumbs": [
       "Home",
       "Lectures",
@@ -954,7 +1038,7 @@
     "href": "lectures/ontology1.html#rdf-bnodes",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF: bnodes",
-    "text": "RDF: bnodes\n\n\n\n\n\n\nRDF provides several syntactic constructs for expressing more complex statements that go beyond what can be expressed by the simple subject/predicate/object form of the triples presented up to now.\n\n\n\n\nSuppose we want to represent something that does not have a URI.\nThis can be done using an RDF construct called a blank node (bnode for short).\nLet us say we want to express the statement Someone called Douglas wrote a book entitled “Hitchhiker’s Guide to the Galaxy.” Clearly, it is impossible to provide a URI for the concept Someone called Douglas.\nInstead, we use a bnode to express the statement about this “someone.”\n\n[ :firstname \"Douglas\"]",
+    "text": "RDF: bnodes\n\n\n\n\n\n\nRDF provides several syntactic constructs for expressing more complex statements that go beyond what can be expressed by the simple subject/predicate/object form of the triples presented up to now.\n\n\n\n\nSuppose we want to represent something that does not have a URI.\nThis can be done using an RDF construct called a blank node (bnode for short).\nLet us say we want to express the statement *Someone called Douglas wrote a book entitled “Hitchhiker’s Guide to the Galaxy.”\nClearly, it is impossible to provide a URI for the concept Someone called Douglas.\nInstead, we use a bnode to express the statement about this “someone.”\n\n\n[ :firstname \"Douglas\"]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -966,7 +1050,7 @@
     "href": "lectures/ontology1.html#rdf-bnodes-continued",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF: bnodes (Continued)",
-    "text": "RDF: bnodes (Continued)\n\n\n\n\n\n\nThe statement in the previous slide means \\(X\\), such that there exists some \\(X\\) (i.e., somebody) such that \\(X\\) has a first name Douglas.\n\n\n\n\nIt is convention to leave a space after the opening square bracket as if to indicate the presence of the “blank” subject of these triples.\nWe can now use this statement as an rdf:subject.\n\n[ :firstname \"Douglas\"] dc:wrote \n         [ dc:title \"Hitchhiker's Guide to the Galaxy\"] .",
+    "text": "RDF: bnodes (Continued)\n\n\n\n\n\n\nThe statement in the previous slide means \\(X\\), such that there exists some \\(X\\) (i.e., somebody) such that \\(X\\) has a first name Douglas.\n\n\n\n\nIt is convention to leave a space after the opening square bracket as if to indicate the presence of the “blank” subject of these triples.\nWe can now use this statement as an rdf:subject.\n\n\n[ :firstname \"Douglas\"] dc:wrote [ dc:title \"Hitchhiker's Guide to the Galaxy\"] .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -990,7 +1074,7 @@
     "href": "lectures/ontology1.html#rdf-reification-example",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF: reification (Example)",
-    "text": "RDF: reification (Example)\nAssuming that the appropriate qname prefixes have been defined, we can express our statement about Wikipedia’s claim as follows:\n@prefix rdf: [http://www.w3.org/1999/02/22-rdf-syntax-ns#](http://www.w3.org/1999/02/22-rdf-syntax-ns#) .\n\n_:x rdf:type rdf:Statement .\n_:x rdf:subject :\"Douglas Adams\" .\n_:x rdf:predicate :wrote .\n_:x rdf:object :\"Hitchhiker's Guide to the Galaxy\" .\n\nweb:wikipedia q:says _:x",
+    "text": "RDF: reification (Example)\nAssuming that the appropriate qname prefixes have been defined, we can express our statement about Wikipedia’s claim as follows:\n\n@prefix rdf: [http://www.w3.org/1999/02/22-rdf-syntax-ns#](http://www.w3.org/1999/02/22-rdf-syntax-ns#) .\n\n_:x rdf:type rdf:Statement .\n_:x rdf:subject :\"Douglas Adams\" .\n_:x rdf:predicate :wrote .\n_:x rdf:object :\"Hitchhiker's Guide to the Galaxy\" .\n\nweb:wikipedia q:says _:x",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1026,7 +1110,7 @@
     "href": "lectures/ontology1.html#rdfs-is-a",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a",
-    "text": "RDFS: is a\n\n\n\n\n\n\nImagine we have defined an ontology and have provided definitions at http://www.my-example.org, which we assign to the qname prefix x.\n\n\n\n\nIt is already possible in RDF to express the statement Mickey is a mouse:\n\nx:Mickey rdf:type x:Mouse .",
+    "text": "RDFS: is a\n\n\n\n\n\n\nImagine we have defined an ontology and have provided definitions at http://www.my-example.org, which we assign to the qname prefix x.\n\n\n\n\nIt is already possible in RDF to express the statement Mickey is a mouse:\n\n\nx:Mickey rdf:type x:Mouse .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1038,7 +1122,7 @@
     "href": "lectures/ontology1.html#rdfs-is-a-subclasses",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a (Subclasses)",
-    "text": "RDFS: is a (Subclasses)\n\n\n\n\n\n\nHowever, there is no mechanism built into RDF with which we could express the statement that mouse is a subclass of rodent.\n\n\n\n\nThe RDFS keywords rdfs:Class and rdfs:subClassOf can be used for this purpose.\nWe first declare that x:Mouse and x:Rodent are RDFS classes, and then state that x:Mouse is a subclass of x:Rodent.\n\n@prefix x: http://www.my-example.org .\n\nx:Mouse rdf:type rdfs:Class .\nx:Rodent rdf:type rdfs:Class .\nx:Mouse rdfs:subClassOf x:Rodent .",
+    "text": "RDFS: is a (Subclasses)\n\n\n\n\n\n\nHowever, there is no mechanism built into RDF with which we could express the statement that mouse is a subclass of rodent.\n\n\n\n\nThe RDFS keywords rdfs:Class and rdfs:subClassOf can be used for this purpose.\nWe first declare that x:Mouse and x:Rodent are RDFS classes, and then state that x:Mouse is a subclass of x:Rodent.\n\n\n@prefix x: http://www.my-example.org .\n\nx:Mouse rdf:type rdfs:Class .\nx:Rodent rdf:type rdfs:Class .\nx:Mouse rdfs:subClassOf x:Rodent .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1050,7 +1134,7 @@
     "href": "lectures/ontology1.html#rdfs-is-a-inference-rule-1",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a (Inference Rule 1)",
-    "text": "RDFS: is a (Inference Rule 1)\nOne of the RDFS inference rules states that if there are asserted triples of the form:\nX rdfs:subClassOf Y .\nb rdf:type X .\nthen the following triple can be inferred:\nb rdf:type Y .\n\nThus, if we know that Mickey is an instance of we can infer that Mickey is an instance of the class !",
+    "text": "RDFS: is a (Inference Rule 1)\nOne of the RDFS inference rules states that if there are asserted triples of the form:\n\nX rdfs:subClassOf Y .\nb rdf:type X .\n\nthen the following triple can be inferred:\n\nb rdf:type Y .\n\n\nThus, if we know that Mickey is an instance of we can infer that Mickey is an instance of the class !",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1062,7 +1146,7 @@
     "href": "lectures/ontology1.html#rdfs-is-a-inference-rule-2",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a (Inference Rule 2)",
-    "text": "RDFS: is a (Inference Rule 2)\nAnother inference rule states that the subclass relation is transitive.\nThat is, if there are asserted triples about classes \\(X\\), \\(Y\\), and \\(Z\\):\nX rdfs:subClassOf Y .\nY rdfs:subClassOf Z .\nthen the following triple can be inferred:\nX rdfs:subClassOf Z .\n\nThus, we can infer that mouse is a subclass of the class rodent!",
+    "text": "RDFS: is a (Inference Rule 2)\nAnother inference rule states that the subclass relation is transitive.\nThat is, if there are asserted triples about classes \\(X\\), \\(Y\\), and \\(Z\\):\n\nX rdfs:subClassOf Y .\nY rdfs:subClassOf Z .\n\nthen the following triple can be inferred:\n\nX rdfs:subClassOf Z .\n\n\nThus, we can infer that mouse is a subclass of the class rodent!",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1074,7 +1158,7 @@
     "href": "lectures/ontology1.html#rdfs-is-a-transitivity-example",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: is a (Transitivity Example)",
-    "text": "RDFS: is a (Transitivity Example)\n\nif we assert the following triples:\n\nx:Mouse rdf:type rdfs:Class .\nx:Rodent rdf:type rdfs:Class .\nx:Mammal rdf:type rdfs:Class .\n\nx:Mouse rdfs:subClassOf x:Rodent .\nx:Rodent rdfs:subClassOf x:Mammal .\nthen we can infer that mice are mammals:\nx:Mouse rdfs:subClassOf x:Mammal .",
+    "text": "RDFS: is a (Transitivity Example)\n\nif we assert the following triples:\n\n\nx:Mouse rdf:type rdfs:Class .\nx:Rodent rdf:type rdfs:Class .\nx:Mammal rdf:type rdfs:Class .\n\nx:Mouse rdfs:subClassOf x:Rodent .\nx:Rodent rdfs:subClassOf x:Mammal .\n\nthen we can infer that mice are mammals:\n\nx:Mouse rdfs:subClassOf x:Mammal .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1086,7 +1170,7 @@
     "href": "lectures/ontology1.html#rdfs-properties-and-inference",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Properties and Inference",
-    "text": "RDFS: Properties and Inference\nSimilar inference rules apply to properties. For instance, we can define a simple hierarchy of biochemical regulation with the following RDF statements:\n@prefix r: http://www.regulation.org .\n\nr:regulates rdf:type rdfs:Property .\nr:positively_regulates rdf:type rdfs:Property .\nr:negatively_regulates rdf:type rdfs:Property .\n\nr:positively_regulates rdfs:subPropertyOf r:regulates .\nr:negatively_regulates rdfs:subPropertyOf r:regulates .\nIf proteins A and B have been defined in a namespace pro, we can state that A positively regulates B by asserting the following triple:\npro:A  r:positively_regulates pro:B .",
+    "text": "RDFS: Properties and Inference\nSimilar inference rules apply to properties. For instance, we can define a simple hierarchy of biochemical regulation with the following RDF statements:\n\n@prefix r: http://www.regulation.org .\n\nr:regulates rdf:type rdfs:Property .\nr:positively_regulates rdf:type rdfs:Property .\nr:negatively_regulates rdf:type rdfs:Property .\n\nr:positively_regulates rdfs:subPropertyOf r:regulates .\nr:negatively_regulates rdfs:subPropertyOf r:regulates .\n\nIf proteins A and B have been defined in a namespace pro, we can state that A positively regulates B by asserting the following triple:\n\npro:A  r:positively_regulates pro:B .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1098,7 +1182,7 @@
     "href": "lectures/ontology1.html#rdfs-properties-and-inference-1",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Properties and Inference",
-    "text": "RDFS: Properties and Inference\nThere is an inference rule for RDFS properties stating that if the following triples are asserted:\nP rdfs:subPropertyOf Q .\nX P Y .\nThen the following triple can be inferred:\nX Q Y .\nExample: Using our regulation hierarchy, we can infer that Protein A regulates Protein B:\npro:A  r:regulates pro:B .\n\n\n\n\n\n\nTip\n\n\nSimilarly to the situation with classes, the subproperty relation is transitive.",
+    "text": "RDFS: Properties and Inference\nThere is an inference rule for RDFS properties stating that if the following triples are asserted:\n\nP rdfs:subPropertyOf Q .\nX P Y .\n\nThen the following triple can be inferred:\n\nX Q Y .\n\nExample: Using our regulation hierarchy, we can infer that Protein A regulates Protein B:\n\npro:A  r:regulates pro:B .\n\n\n\n\n\n\n\nTip\n\n\nSimilarly to the situation with classes, the subproperty relation is transitive.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1110,7 +1194,7 @@
     "href": "lectures/ontology1.html#rdfs-property-domains",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Property Domains",
-    "text": "RDFS: Property Domains\n\n\n\n\n\n\nRDFS provides a syntax for specifying the range and domain of properties. Recall that the domain of a function is the set of values for which a function is defined. The range is the set of all values the function takes for the values in the domain.\n\n\n\n\nRDFS’ use of domain and range enables inference.\nThe statement P rdfs:domain D means that the subject of any triple using predicate P must be an instance of class D.\n\nIf the following two triples are asserted:\nP rdfs:domain D .\nX P Y .\nhen the following triple is inferred:\nX rdf:type D .",
+    "text": "RDFS: Property Domains\n\n\n\n\n\n\nRDFS provides a syntax for specifying the range and domain of properties. Recall that the domain of a function is the set of values for which a function is defined. The range is the set of all values the function takes for the values in the domain.\n\n\n\n\nRDFS’ use of domain and range enables inference.\nThe statement P rdfs:domain D means that the subject of any triple using predicate P must be an instance of class D.\n\nIf the following two triples are asserted:\n\nP rdfs:domain D .\nX P Y .\n\nthen the following triple is inferred:\n\nX rdf:type D .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1122,7 +1206,7 @@
     "href": "lectures/ontology1.html#rdfs-property-ranges",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Property Ranges",
-    "text": "RDFS: Property Ranges\nSimilarly, the RDFS statement P rdfs:range R for an rdf:Property P and an rdf:Class R means that the resource denoted by the object of a triple whose predicate is P is an instance of the class R.\nIf the following two triples are asserted:\nP rdfs:range R .\nX P Y .\nThen the following triple can be inferred:\nY rdf:type R .",
+    "text": "RDFS: Property Ranges\nSimilarly, the RDFS statement P rdfs:range R for an rdf:Property P and an rdf:Class R means that the resource denoted by the object of a triple whose predicate is P is an instance of the class R.\nIf the following two triples are asserted:\n\nP rdfs:range R .\nX P Y .\n\nThen the following triple can be inferred:\n\nY rdf:type R .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1134,7 +1218,7 @@
     "href": "lectures/ontology1.html#rdfs-property-domains-and-ranges-example",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Property Domains and Ranges (Example)",
-    "text": "RDFS: Property Domains and Ranges (Example)\n\n\n\n\n\n\nThe following highly simplified example was adapted from the National Cancer Institute (NCI) thesaurus.\n\n\n\n:drug_affects_protein rdf:type rdfs:Property .\n:Drug rdf:type rdfs:Class .\n:Protein rdf:type rdfs:Class .\n\n:drug_affects_protein rdfs:domain :Drug .\n:drug_affects_protein rdfs:range :Protein .\nIf we now additionally assert the following triple:\n:Nilotinib  :drug_affects_protein :BCR-ABL .\nThen we can infer the following two triples:\n:Nilotinib rdf:type :Drug .\n:BCR-ABL rdf:type :Protein .\n\nIn fact, Nilotinib is a selective Bcr-Abl tyrosine kinase inhibitor that is used in the treatment of chronic myeloid leukemia.",
+    "text": "RDFS: Property Domains and Ranges (Example)\n\n\n\n\n\n\nThe following highly simplified example was adapted from the National Cancer Institute (NCI) thesaurus.\n\n\n\n\n:drug_affects_protein rdf:type rdfs:Property .\n:Drug rdf:type rdfs:Class .\n:Protein rdf:type rdfs:Class .\n\n:drug_affects_protein rdfs:domain :Drug .\n:drug_affects_protein rdfs:range :Protein .\n\nIf we now additionally assert the following triple:\n\n:Nilotinib  :drug_affects_protein :BCR-ABL .\n\nThen we can infer the following two triples:\n\n:Nilotinib rdf:type :Drug .\n:BCR-ABL rdf:type :Protein .\n\n\nIn fact, Nilotinib is a selective Bcr-Abl tyrosine kinase inhibitor that is used in the treatment of chronic myeloid leukemia.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1158,7 +1242,7 @@
     "href": "lectures/ontology1.html#rdfs-intersections-and-unions",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Intersections and Unions",
-    "text": "RDFS: Intersections and Unions\n\n\n\n\n\n\nYet other forms of inference in RDFS resemble to a certain extent conclusions about set intersections and set unions.\n\n\n\n\nIf \\(Z\\) is a subclass of both class \\(X\\) and class \\(Y\\), and \\(b\\) is defined as an instance of \\(Z\\), then \\(b\\) can be inferred to be an instance of both \\(X\\) and \\(Y\\).\n\nIf the following triples are asserted:\nZ rdfs:subClassOf X .\nZ rdfs:subClassOf Y .\nb rdf:type Z .\nThen these two triples can be inferred:\nb rdf:type X .\nb rdf:type Y .",
+    "text": "RDFS: Intersections and Unions\n\n\n\n\n\n\nYet other forms of inference in RDFS resemble to a certain extent conclusions about set intersections and set unions.\n\n\n\n\nIf \\(Z\\) is a subclass of both class \\(X\\) and class \\(Y\\), and \\(b\\) is defined as an instance of \\(Z\\), then \\(b\\) can be inferred to be an instance of both \\(X\\) and \\(Y\\).\n\nIf the following triples are asserted:\n\nZ rdfs:subClassOf X .\nZ rdfs:subClassOf Y .\nb rdf:type Z .\n\nThen these two triples can be inferred:\n\nb rdf:type X .\nb rdf:type Y .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1170,7 +1254,7 @@
     "href": "lectures/ontology1.html#rdfs-intersections-and-unions-continued",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Intersections and Unions (Continued)",
-    "text": "RDFS: Intersections and Unions (Continued)\nFor instance, if we state that:\n:Pig rdfs:subClassOf :Mammal .\n:Pig rdfs:subClassOf :FarmAnimal .\nThen we can conclude that a particular pig is both a mammal and a farm animal. The class :Pig can be considered to occupy the intersection between those two classes.On the other hand, asserting that:\n:Cow rdfs:subClassOf :Mammal .\n:Cow rdfs:subClassOf :FarmAnimal .\nDoes not imply that a cow is a pig!\n\n\n\n\n\n\n\nLimits of RDFS\n\n\nRDFS constructs are not designed to express an exact mathematical equality between sets, such as \\(A = B \\cap C\\). It only expresses “is a” relationships, not “is only and exactly” relationships.",
+    "text": "RDFS: Intersections and Unions (Continued)\nFor instance, if we state that:\n\n:Pig rdfs:subClassOf :Mammal .\n:Pig rdfs:subClassOf :FarmAnimal .\n\nThen we can conclude that a particular pig is both a mammal and a farm animal. The class :Pig can be considered to occupy the intersection between those two classes.On the other hand, asserting that:\n\n:Cow rdfs:subClassOf :Mammal .\n:Cow rdfs:subClassOf :FarmAnimal .\n\nDoes not imply that a cow is a pig!\n\n\n\n\n\n\n\nLimits of RDFS\n\n\nRDFS constructs are not designed to express an exact mathematical equality between sets, such as \\(A = B \\cap C\\). It only expresses “is a” relationships, not “is only and exactly” relationships.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1182,7 +1266,7 @@
     "href": "lectures/ontology1.html#rdfs-intersections-and-unions-union",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Intersections and Unions (Union)",
-    "text": "RDFS: Intersections and Unions (Union)\n\n\n\n\n\n\nIt is also possible to express something similar to set union in RDFS.\n\n\n\nIf we assert the following triples:\nX rdfs:subClassOf Z .\nY rdfs:subClassOf Z .\nThen, if either of the two following statements are asserted\nb rdf:type X .\nb rdf:type Y .\n…then, it can be inferred that:\nb rdf:type Z .",
+    "text": "RDFS: Intersections and Unions (Union)\n\n\n\n\n\n\nIt is also possible to express something similar to set union in RDFS.\n\n\n\nIf we assert the following triples:\n\nX rdfs:subClassOf Z .\nY rdfs:subClassOf Z .\n\nThen, if either of the two following statements are asserted\n\nb rdf:type X .\nb rdf:type Y .\n\n…then, it can be inferred that:\n\nb rdf:type Z .",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1230,7 +1314,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-enumeration",
     "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Enumeration",
-    "text": "Classes in OWL: Enumeration\n\n\n\n\n\n\nPerhaps the easiest to understand is the enumeration type, which essentially just provides a list of all individuals that belong to the class.\n\n\n\nFor instance, the following class definition expressed using RDF/XML syntax creates a class containing exactly the four Beatles:\n&lt;owl:Class&gt;\n  &lt;owl:oneOf rdf:parseType=\"Collection\"&gt;\n    &lt;owl:Thing rdf:about=\"#John\"/&gt;\n    &lt;owl:Thing rdf:about=\"#Paul\"/&gt;\n    &lt;owl:Thing rdf:about=\"#George\"/&gt;\n    &lt;owl:Thing rdf:about=\"#Ringo\"/&gt;\n  &lt;/owl:oneOf&gt;\n&lt;/owl:Class&gt;",
+    "text": "Classes in OWL: Enumeration\n\n\n\n\n\n\nPerhaps the easiest to understand is the enumeration type, which essentially just provides a list of all individuals that belong to the class.\n\n\n\nFor instance, the following class definition expressed using RDF/XML syntax creates a class containing exactly the four Beatles:\n\n&lt;owl:Class&gt;\n  &lt;owl:oneOf rdf:parseType=\"Collection\"&gt;\n    &lt;owl:Thing rdf:about=\"#John\"/&gt;\n    &lt;owl:Thing rdf:about=\"#Paul\"/&gt;\n    &lt;owl:Thing rdf:about=\"#George\"/&gt;\n    &lt;owl:Thing rdf:about=\"#Ringo\"/&gt;\n  &lt;/owl:oneOf&gt;\n&lt;/owl:Class&gt;",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1242,7 +1326,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-property-restriction",
     "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Property Restriction",
-    "text": "Classes in OWL: Property Restriction\n\n\n\n\n\n\nAn A-Microtubule can be defined as “A complete cylindrical microtubule that is part of a microtubule doublet in cilia.”\n\n\n\n&lt;owl:Class rdf:about=\"#A-Microtubule\"&gt;\n  &lt;rdfs:label&gt;A-Microtubule&lt;/rdfs:label&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Cilium Microtubule\"/&gt;\n  \n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#is Physical Part of\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cytoskeleton\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n\n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#is Physical Part of\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cilium\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n&lt;/owl:Class&gt;",
+    "text": "Classes in OWL: Property Restriction\n\n\n\n\n\n\nAn A-Microtubule can be defined as “A complete cylindrical microtubule that is part of a microtubule doublet in cilia.”\n\n\n\n\n&lt;owl:Class rdf:about=\"#A-Microtubule\"&gt;\n  &lt;rdfs:label&gt;A-Microtubule&lt;/rdfs:label&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Cilium Microtubule\"/&gt;\n  \n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#is Physical Part of\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cytoskeleton\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n\n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#is Physical Part of\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cilium\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n&lt;/owl:Class&gt;",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1266,7 +1350,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-property-restriction-value-constraints",
     "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Property Restriction (Value Constraints)",
-    "text": "Classes in OWL: Property Restriction (Value Constraints)\nOWL distinguishes two kinds of property restrictions: Value Constraints and Cardinality Constraints. A value restriction \\(V\\) on some property \\(P\\) has the following general form:\n&lt;rdfs:subClassOf&gt;\n  &lt;owl:Restriction&gt;\n    &lt;owl:onProperty rdf:resource=\"P\" /&gt;\n    &lt;owl:allValuesFrom rdf:resource=\"#V\"/&gt;\n  &lt;/owl:Restriction&gt;\n&lt;/rdfs:subClassOf&gt;\n\n\n\n\n\n\n\nowl:allValuesFrom states that for each instance of the class being described, every value for \\(P\\) must fulfill the constraint.\n\n\n\n\nConfusing Caveat: owl:allValuesFrom does not necessarily mean that an instance of the class must have the property \\(P\\). It merely states that if an instance does have \\(P\\), then the value must be from class \\(V\\).\nThe Universal Quantifier: This is analogous to the logic of \\(\\forall\\) in predicate calculus.\nFormal Logic: Recall that the formula \\((\\forall x) P(x)\\) essentially means “for all \\(x\\), if \\(x\\) exists in this context, then it must satisfy \\(P\\).”1\n\nAccording to this logic it is true that “All Martians are green” (because there are no Martians!)",
+    "text": "Classes in OWL: Property Restriction (Value Constraints)\nOWL distinguishes two kinds of property restrictions: Value Constraints and Cardinality Constraints. A value restriction \\(V\\) on some property \\(P\\) has the following general form:\n\n&lt;rdfs:subClassOf&gt;\n  &lt;owl:Restriction&gt;\n    &lt;owl:onProperty rdf:resource=\"P\" /&gt;\n    &lt;owl:allValuesFrom rdf:resource=\"#V\"/&gt;\n  &lt;/owl:Restriction&gt;\n&lt;/rdfs:subClassOf&gt;\n\n\n\n\n\n\n\n\nowl:allValuesFrom states that for each instance of the class being described, every value for \\(P\\) must fulfill the constraint.\n\n\n\n\nConfusing Caveat: owl:allValuesFrom does not necessarily mean that an instance of the class must have the property \\(P\\). It merely states that if an instance does have \\(P\\), then the value must be from class \\(V\\).\nThe Universal Quantifier: This is analogous to the logic of \\(\\forall\\) in predicate calculus.\nFormal Logic: Recall that the formula \\((\\forall x) P(x)\\) essentially means “for all \\(x\\), if \\(x\\) exists in this context, then it must satisfy \\(P\\).”1\n\nAccording to this logic it is true that “All Martians are green” (because there are no Martians!)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1278,7 +1362,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-negation",
     "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Negation",
-    "text": "Classes in OWL: Negation\n\n\n\n\n\n\nClasses can be defined by stating what they are not.\n\n\n\n\nFor instance, the Ontology for Biomedical Investigations (OBI) describes a class of cells that do not express the CD8 receptor using the owl:complementOf keyword.\nThis is achieved by defining the intersection of the class “Cell” and the complement of the class of things that “have part CD8 receptor.”\n\n&lt;owl:intersectionOf rdf:parseType=\"Collection\"&gt;\n  &lt;owl:Class rdf:about=\"CL:cell\"/&gt;\n  \n  &lt;owl:Class&gt;\n    &lt;owl:complementOf&gt;\n      &lt;owl:Restriction&gt;\n        &lt;owl:onProperty&gt;\n          &lt;owl:TransitiveProperty rdf:about=\"#has_part\"/&gt;\n        &lt;/owl:onProperty&gt;\n        &lt;owl:someValuesFrom&gt;\n          &lt;owl:Class rdf:about=\"#CD8 receptor\"/&gt;\n        &lt;/owl:someValuesFrom&gt;\n      &lt;/owl:Restriction&gt;\n    &lt;/owl:complementOf&gt;\n  &lt;/owl:Class&gt;\n&lt;/owl:intersectionOf&gt;",
+    "text": "Classes in OWL: Negation\n\n\n\n\n\n\nClasses can be defined by stating what they are not.\n\n\n\n\nFor instance, the Ontology for Biomedical Investigations (OBI) describes a class of cells that do not express the CD8 receptor using the owl:complementOf keyword.\nThis is achieved by defining the intersection of the class “Cell” and the complement of the class of things that “have part CD8 receptor.”\n\n\n&lt;owl:intersectionOf rdf:parseType=\"Collection\"&gt;\n  &lt;owl:Class rdf:about=\"CL:cell\"/&gt;\n  \n  &lt;owl:Class&gt;\n    &lt;owl:complementOf&gt;\n      &lt;owl:Restriction&gt;\n        &lt;owl:onProperty&gt;\n          &lt;owl:TransitiveProperty rdf:about=\"#has_part\"/&gt;\n        &lt;/owl:onProperty&gt;\n        &lt;owl:someValuesFrom&gt;\n          &lt;owl:Class rdf:about=\"#CD8 receptor\"/&gt;\n        &lt;/owl:someValuesFrom&gt;\n      &lt;/owl:Restriction&gt;\n    &lt;/owl:complementOf&gt;\n  &lt;/owl:Class&gt;\n&lt;/owl:intersectionOf&gt;",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1302,7 +1386,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-union",
     "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Union",
-    "text": "Classes in OWL: Union\n\n\n\n\n\n\nOWL provides a union operator that is analogous to the set union operator (\\(A \\cup B\\)).\n\n\n\n\nFor instance, we can define the class Human as the union of the classes Man and Woman:\n\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;owl:unionOf rdf:parseType=\"Collection\"&gt;\n    &lt;owl:Class rdf:about=\"#Man\" /&gt;\n    &lt;owl:Class rdf:about=\"#Woman\" /&gt;\n  &lt;/owl:unionOf&gt;\n&lt;/owl:Class&gt;",
+    "text": "Classes in OWL: Union\n\n\n\n\n\n\nOWL provides a union operator that is analogous to the set union operator (\\(A \\cup B\\)).\n\n\n\n\nFor instance, we can define the class Human as the union of the classes Man and Woman:\n\n\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;owl:unionOf rdf:parseType=\"Collection\"&gt;\n    &lt;owl:Class rdf:about=\"#Man\" /&gt;\n    &lt;owl:Class rdf:about=\"#Woman\" /&gt;\n  &lt;/owl:unionOf&gt;\n&lt;/owl:Class&gt;",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1314,7 +1398,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-union-the-subclass-trap",
     "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Union (The Subclass Trap)",
-    "text": "Classes in OWL: Union (The Subclass Trap)\nContrast the owl:unionOf construct to the following incorrect attempt to define Human as a subclass of Man and Woman:\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Man\" /&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Woman\" /&gt;\n&lt;/owl:Class&gt;\nWhy this fails:\n\nThe “And” vs. “Or” Logic: By using rdfs:subClassOf twice, you are stating that every Human must be a Man AND simultaneously a Woman.\nUnsatisfiability: If Man and Woman are defined as disjoint (meaning they cannot overlap), this class becomes unsatisfiable.\nThe Empty Set: An unsatisfiable class is one that cannot contain any possible individuals.\n\nIn formal logic, this is equivalent to the empty set (\\(\\emptyset\\)).\n\n\n\n\n\n\nImportant\n\n\nThe formula \\(A = \\{ C \\cap \\neg C \\}\\) is unsatisfiable because it implies a direct contradiction.",
+    "text": "Classes in OWL: Union (The Subclass Trap)\nContrast the owl:unionOf construct to the following incorrect attempt to define Human as a subclass of Man and Woman:\n\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Man\" /&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Woman\" /&gt;\n&lt;/owl:Class&gt;\n\nWhy this fails:\n\nThe “And” vs. “Or” Logic: By using rdfs:subClassOf twice, you are stating that every Human must be a Man AND simultaneously a Woman.\nUnsatisfiability: If Man and Woman are defined as disjoint (meaning they cannot overlap), this class becomes unsatisfiable.\nThe Empty Set: An unsatisfiable class is one that cannot contain any possible individuals.\n\nIn formal logic, this is equivalent to the empty set (\\(\\emptyset\\)).\n\n\n\n\n\n\nImportant\n\n\nThe formula \\(A = \\{ C \\cap \\neg C \\}\\) is unsatisfiable because it implies a direct contradiction.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1326,7 +1410,7 @@
     "href": "lectures/ontology1.html#individuals-in-owl",
     "title": "Approaches to biomedical knowledge",
     "section": "Individuals in OWL",
-    "text": "Individuals in OWL\nIn OWL, rdf:type is the property that connects an individual to a class of which it is a member.\nIf we have a class of cities:\n&lt;owl:Class rdf:ID=\"City\"/&gt;\nWe can declare individual cities to be members of this class. The following two syntactical forms have identical meanings:\n\nOption 1: Direct Class Tag\n\nThis uses the class name as the XML element tag.\n&lt;City rdf:ID=\"Berlin\"/&gt;\n\nOption 2: Explicit Typing\n\nThis uses owl:Thing (the root class of everything) and explicitly states the type.\n&lt;owl:Thing rdf:ID=\"Berlin\"/&gt;\n\n&lt;owl:Thing rdf:about=\"#Berlin\"&gt;\n  &lt;rdf:type rdf:resource=\"#City\"/&gt;\n&lt;/owl:Thing&gt;",
+    "text": "Individuals in OWL\nIn OWL, rdf:type is the property that connects an individual to a class of which it is a member.\nIf we have a class of cities:\n\n&lt;owl:Class rdf:ID=\"City\"/&gt;\n\nWe can declare individual cities to be members of this class. The following two syntactical forms have identical meanings:\n\nOption 1: Direct Class Tag\n\nThis uses the class name as the XML element tag.\n\n&lt;City rdf:ID=\"Berlin\"/&gt;\n\n\nOption 2: Explicit Typing\n\nThis uses owl:Thing (the root class of everything) and explicitly states the type.\n\n&lt;owl:Thing rdf:ID=\"Berlin\"/&gt;\n\n&lt;owl:Thing rdf:about=\"#Berlin\"&gt;\n  &lt;rdf:type rdf:resource=\"#City\"/&gt;\n&lt;/owl:Thing&gt;",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1542,28 +1626,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.42%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.34%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.28%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.58%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.32%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.18%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.96%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.88%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -3208,7 +3292,7 @@
     "href": "index.html",
     "title": "Approaches to biomedical knowledge",
     "section": "",
-    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\n\nLecture Schedule\n\nWhat to expect from this course\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Tokens\nLecture 9: Transformers\nLecture 10: Transformers (continued)\nLecture 11: BERT and Sentence BERT\nLecture 12: Reinforcement learning and LLMs\nLecture 13: RAG, RAG-HPO, SPIRES\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework.\n\n\n\nExamples\n\n\nThis course does not intend to teach practical coding skills, but in some cases it can be instructional to study Python implementations of the algorithms presented in the lectures.\nThe following notebooks present simplified versions of algorithms and approaches and are not intended to be full implementations.\n\n\n\nHPO vectorization (for RAG-HPO)\nRAG-HPO\nt-SPIRES"
+    "text": "This course is held as a part of the Master Curriculum in Bioinformatics of the Free University Berlin.\n\nWhat to expect from this course\n\n\nLecture Schedule\n\nLecture 1: Ontologies: OBO, RDF, RDFS, and OWL\nLecture 2: Gene Ontology (GO) and Overrepresentation Analysis\nLecture 3: Bayesian algorithms for GO: Model-based gene-set analysis\nLecture 4: Human Phenotype Ontology: Semantic similarity algorithms\nLecture 5: From Logistic Regression to Neural Foundations\nLecture 6: Neural networks\nLecture 7: RNNs and LSTMs\nLecture 8: Embeddings and Tokens\nLecture 9: Transformers\nLecture 10: Transformers (continued)\nLecture 11: BERT and Sentence BERT\nLecture 12: Reinforcement learning and LLMs\nLecture 13: RAG, RAG-HPO, SPIRES\nLecture 14: Applications of LLMs in Medicine: Problems and opportunities\n\n\n\nHomework\n\nEach lecture will be accompanied by a practical session to go over background material and review the homework.\n\n\n\nExamples\n\n\nThis course does not intend to teach practical coding skills, but in some cases it can be instructional to study Python implementations of the algorithms presented in the lectures.\nThe following notebooks present simplified versions of algorithms and approaches and are not intended to be full implementations.\n\n\n\nHPO vectorization (for RAG-HPO)\nRAG-HPO\nt-SPIRES"
   },
   {
     "objectID": "lectures/applications.html#overview",
@@ -5424,7 +5508,7 @@
     "href": "lectures/overview.html#topics",
     "title": "Approaches to biomedical knowledge",
     "section": "Topics",
-    "text": "Topics\nThe course explores two paradigms for representing human knowledge computationally:\n\n\n🕸️ Ontologies\nStructured Knowledge\n\nFormal Semantics (OWL/RDF)\nLogical Consistency\nInteroperability (OBO)\nAlgorithms for GO and HPO\n\n\n🧠 LLMs\nProbabilistic Knowledge\n\nPattern Recognition\nNatural Language Interface\nReasoning via Inference",
+    "text": "Topics\n\n\n\n\n\n\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models. We will provide an in-depth introduction to both topics as well as several sessions in which we show how ontologies and LLMs can be used together.\n\n\n\nThe course explores two paradigms for representing human knowledge computationally:\n\n\n🕸️ Ontologies\nStructured Knowledge\n\nFormal Semantics (OWL/RDF)\nLogical Consistency\nInteroperability (OBO)\nAlgorithms for GO and HPO\n\n\n🧠 LLMs\nProbabilistic Knowledge\n\nPattern Recognition\nNatural Language Interface\nReasoning via Inference",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5448,7 +5532,7 @@
     "href": "lectures/overview.html#is-ai-ruining-our-skills",
     "title": "Approaches to biomedical knowledge",
     "section": "Is AI ruining our skills?",
-    "text": "Is AI ruining our skills?\n\n\n\n\n\n\nThere is an increasing amount of evidence that reliance on artificial-intelligence tools degrades the abilities of software engineers",
+    "text": "Is AI ruining our skills?\n\n\n\n\n\n\nThere is an increasing amount of evidence that reliance on artificial-intelligence tools degrades the abilities of software engineers\n\n\n\nNon-skilling\n\nStudies are showing that trainees who rely on AI during the early formative years of clinical education may fail to develop the foundational reasoning skills that they will need in work environments\n\n\nsee for instance: Ke Y, et al. (2026) AI-induced never-skilling in medical education. Nat Med 32:1997-2006\n\nWill AI/LLMs replace computer scientists, software developers, and bioinformaticians?\n\nCurrently, the best answer appears to be: “AI will replace some of them, but it will make others more productive”.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5456,11 +5540,11 @@
     ]
   },
   {
-    "objectID": "lectures/overview.html#non-skilling",
-    "href": "lectures/overview.html#non-skilling",
+    "objectID": "lectures/overview.html#advice-on-the-appropriate-use-of-ai",
+    "href": "lectures/overview.html#advice-on-the-appropriate-use-of-ai",
     "title": "Approaches to biomedical knowledge",
-    "section": "Non-skilling",
-    "text": "Non-skilling\n\n\n\n\n\n\nWill LLMs replace computer scientists, software developers, and bioinformaticians?\n\n\n\n\nCurrently, the best answer appears to be: “Some of them, but it will make others more productive”.\nThis course enables students to master two essential frameworks for managing human knowledge in bioinformatics: Ontologies and Language Models.\nWe will go into detail and implement simplified versions of some of the algorithms in Python.\nPrerequisites: Some knowledge of probability, calculus, and algorithms (We will explain everything as we go along).\n\nAdvice\n\nDo not use LLMs to do homework assignments!\nIt is probably OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.\nVibe coding is not to be recommended but LLMs can be quite helpful with targeted questions (e.g., what CSS class makes a rounded box that looks like an orange parakeet?) or to get advice on how to optimize code (e.g., using iterators instead of traditional forloops in Languages such as Rust and Java).\n\n\nFurther Reading:\n\nPearson, H. (2025). Are the Internet and AI affecting our memory? What the science says. Nature.\nLenharo, M. (2026). Is AI ruining our skills? Early results are in — and they’re not good. Nature.",
+    "section": "Advice on the appropriate use of AI",
+    "text": "Advice on the appropriate use of AI\n\nDo not use LLMs to do homework assignments!\nIt is OK to ask specific questions with well crafted prompts, but be sure to study the answer and ideally the original source rather than merely copy and pasting.\nVibe coding is not to be recommended but LLMs can be quite helpful with targeted questions (e.g., what CSS class makes a rounded box that looks like an orange parakeet?) or to get advice on how to optimize code (e.g., using iterators instead of traditional forloops in Languages such as Rust and Java).\n\n\nFurther Reading:\n\nPearson, H. (2025). Are the Internet and AI affecting our memory? What the science says. Nature.\nLenharo, M. (2026). Is AI ruining our skills? Early results are in — and they’re not good. Nature.",
     "crumbs": [
       "Home",
       "Lectures",

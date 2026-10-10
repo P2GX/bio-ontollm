@@ -1521,6 +1521,12 @@ Peter N Robinson
 <li>examine failures, modify it, and test again</li>
 <li>try different styles of prompting to see what works the best for a certain goal</li>
 </ul>
+<div class="mybox">
+<p>Here is a good example of the influence that prompt engineering can have on results:</p>
+<ul>
+<li>Hu Y, et al. (2024) <a href="https://pubmed.ncbi.nlm.nih.gov/38281112/">Improving large language models for clinical named entity recognition via prompt engineering. <em>J Am Med Inform Assoc</em> <strong>31</strong>:1812-1820</a></li>
+</ul>
+</div>
 </section>
 <section id="rag" class="slide level2">
 <h2>Retrieval augmented generation (RAG)</h2>
@@ -1628,7 +1634,7 @@ Peter N Robinson
 <li>We encourage students to explore LangChain in the homework.</li>
 <li><code>Document</code>: LangChain’s standard container for a piece of text plus its associated metadata</li>
 </ul>
-<div id="a2fe1482" class="cell" data-execution_count="1">
+<div id="3d6088a4" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a aria-label="1"></a><span class="im">from</span> langchain_core.documents <span class="im">import</span> Document</span>
 <span id="cb3-2"><a aria-label="2"></a></span>
 <span id="cb3-3"><a aria-label="3"></a>chapter_docs <span class="op">=</span> [</span>
@@ -1649,7 +1655,7 @@ Peter N Robinson
 <li>Chroma stores the triple — the original text, its vector, and its metadata (the chapter tag) — all together in <code>moby_dick_chapters</code>.</li>
 <li><code>vector_store</code> (line 12) now contains a searchable index of all chapters</li>
 </ul>
-<div id="8cf7e713" class="cell" data-execution_count="2">
+<div id="91684a20" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a aria-label="1"></a><span class="im">from</span> langchain_chroma <span class="im">import</span> Chroma</span>
 <span id="cb4-2"><a aria-label="2"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> OllamaEmbeddings</span>
 <span id="cb4-3"><a aria-label="3"></a></span>
@@ -1669,7 +1675,7 @@ Peter N Robinson
 <div class="mybox">
 <p>Let’s first try the query without RAG</p>
 </div>
-<div id="a461f57a" class="cell" data-execution_count="3">
+<div id="7214bdb3" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a aria-label="1"></a>llm <span class="op">=</span> ChatOllama(model<span class="op">=</span><span class="st">&quot;gemma3:12b&quot;</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb5-2"><a aria-label="2"></a>chowder_question <span class="op">=</span> <span class="st">&quot;What is a good place to eat chowder in early nineteenth century Nantucket?&quot;</span></span>
 <span id="cb5-3"><a aria-label="3"></a>no_rag_response <span class="op">=</span> llm.invoke(chowder_question)</span>
@@ -1697,7 +1703,7 @@ Peter N Robinson
 </section>
 <section id="langchain-rag" class="slide level2">
 <h2>LangChain: RAG</h2>
-<div id="a81faf6b" class="cell" data-execution_count="4">
+<div id="5c51fa9e" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-label="1"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> ChatOllama</span>
 <span id="cb6-2"><a aria-label="2"></a><span class="im">from</span> langchain_core.prompts <span class="im">import</span> PromptTemplate</span>
 <span id="cb6-3"><a aria-label="3"></a></span>
@@ -1725,7 +1731,7 @@ Peter N Robinson
 </section>
 <section id="langchain-querying-the-vector-db" class="slide level2">
 <h2>LangChain: Querying the Vector DB</h2>
-<div id="10630ecc" class="cell" data-execution_count="5">
+<div id="752adbd5" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a aria-label="1"></a>results <span class="op">=</span> vector_store.similarity_search(</span>
 <span id="cb7-2"><a aria-label="2"></a>    <span class="st">&#39;Inns where one can eat clam chowder&#39;</span>,</span>
 <span id="cb7-3"><a aria-label="3"></a>    k<span class="op">=</span><span class="dv">2</span></span>
@@ -1748,7 +1754,7 @@ Peter N Robinson
 </section>
 <section id="langchain-rag---create-the-chain-of-commands" class="slide level2">
 <h2>LangChain: RAG - create the chain of commands</h2>
-<div id="b75af7b7" class="cell" data-execution_count="6">
+<div id="751df59f" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a aria-label="1"></a><span class="im">from</span> langchain_core.output_parsers <span class="im">import</span> StrOutputParser</span>
 <span id="cb8-2"><a aria-label="2"></a><span class="im">from</span> langchain_core.runnables <span class="im">import</span> RunnablePassthrough</span>
 <span id="cb8-3"><a aria-label="3"></a></span>
@@ -1779,7 +1785,7 @@ Peter N Robinson
 <ul>
 <li>The following code invokes the chain of commands from the previous slide using our chowder question.</li>
 </ul>
-<div id="ca698aa6" class="cell" data-execution_count="7">
+<div id="d61239d7" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a aria-label="1"></a>rag_chain.invoke(</span>
 <span id="cb9-2"><a aria-label="2"></a>  chowder_question</span>
 <span id="cb9-3"><a aria-label="3"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1888,7 +1894,7 @@ Peter N Robinson
 <section id="rag-hpo-set-up" class="slide level2">
 <h2>RAG-HPO: Set up</h2>
 <div style="font-size: 1.5em;">
-<div id="19452a97" class="cell" data-execution_count="8">
+<div id="d854fee6" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a aria-label="1"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> ChatOllama</span>
 <span id="cb11-2"><a aria-label="2"></a>llm_client <span class="op">=</span> ChatOllama(model<span class="op">=</span><span class="st">&quot;gemma3:12b&quot;</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb11-3"><a aria-label="3"></a>emd_model <span class="op">=</span> get_embedding_model()</span>
@@ -1905,7 +1911,7 @@ Peter N Robinson
 <section id="rag-hpo-build-the-prompt" class="slide level2">
 <h2>RAG-HPO: Build the prompt</h2>
 <div style="font-size: 1.5em;">
-<div id="b954c468" class="cell" data-execution_count="9">
+<div id="619cbf69" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a aria-label="1"></a><span class="im">from</span> langchain_core.messages <span class="im">import</span> SystemMessage, HumanMessage</span>
 <span id="cb12-2"><a aria-label="2"></a></span>
 <span id="cb12-3"><a aria-label="3"></a>messages <span class="op">=</span> [</span>
@@ -1991,7 +1997,7 @@ Peter N Robinson
 <li>For each of the <code>phrase</code> entries from the list in the previous slide, RAG-HPO then asks for the best <span class="math inline">\(k\)</span> matches from the vector database</li>
 </ul>
 <div style="font-size: 1.5em;">
-<div id="7c3c8b12" class="cell" data-execution_count="10">
+<div id="e001feb3" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a aria-label="1"></a>query_vec <span class="op">=</span> embed_query(phrase, embeddings_model, metric<span class="op">=</span>metric)</span>
 <span id="cb14-2"><a aria-label="2"></a>dists, idxs <span class="op">=</span> index.search(query_vec, top_k)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -2012,7 +2018,7 @@ Peter N Robinson
 <aside><ol class="aside-footnotes"><li id="fn8"><p>RAG-HPO sets <code>top_k</code> to 15 by default</p></li><li id="fn9"><p>The actual list items have more information, we have omitted some details here for clarity</p></li></ol></aside></section>
 <section id="understanding-the-vector-db-search" class="slide level2">
 <h2>Understanding the vector DB search</h2>
-<div id="77a20c4b" class="cell" data-execution_count="11">
+<div id="85f80a03" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" data-code-line-numbers="11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb15-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb15-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2049,7 +2055,7 @@ Peter N Robinson
 </section>
 <section id="understanding-the-vector-db-search-2" class="slide level2">
 <h2>Understanding the vector DB search (2)</h2>
-<div id="a1eee025" class="cell" data-execution_count="12">
+<div id="8614d296" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" data-code-line-numbers="12-13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb16-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb16-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2097,7 +2103,7 @@ Peter N Robinson
 </section>
 <section id="understanding-the-vector-db-search-3" class="slide level2">
 <h2>Understanding the vector DB search (3)</h2>
-<div id="9e073479" class="cell" data-execution_count="13">
+<div id="0fe3ab4b" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" data-code-line-numbers="18,21,26-27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb17-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb17-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2137,7 +2143,7 @@ Peter N Robinson
 </section>
 <section id="understanding-the-vector-db-search-4" class="slide level2">
 <h2>Understanding the vector DB search (4)</h2>
-<div id="81452c7d" class="cell" data-execution_count="14">
+<div id="31fee4c4" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" data-code-line-numbers="12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb18-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb18-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2171,7 +2177,7 @@ Peter N Robinson
 </section>
 <section id="understanding-the-vector-db-search-5" class="slide level2">
 <h2>Understanding the vector DB search (5)</h2>
-<div id="e9e2904a" class="cell" data-execution_count="15">
+<div id="9276b78f" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" data-code-line-numbers="21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb19-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb19-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2726,6 +2732,8 @@ Given one abnormal phenotype phrase and a list of candidate HPO terms, select ex
 <li>Background: Huang, Y. et al. (2026) <a href="https://dl.acm.org/doi/10.1145/3805774">A Survey on Retrieval-Augmented Text Generation for Large Language Models. <em>ACM Comput. Surv</em> <strong>12</strong>:1-38</a></li>
 <li>SPIRES: Caufield JH, et al. (2024) <a href="https://pubmed.ncbi.nlm.nih.gov/38383067/">Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. <em>Bioinformatics</em> <strong>40</strong>:btae104</a></li>
 <li>RAG-HPO: Garcia BT, et al. (2025) <a href="https://pubmed.ncbi.nlm.nih.gov/40826123/">Improving automated deep phenotyping through large language models using retrieval-augmented generation. <em>Genome Med</em> <strong>17</strong>:91</a></li>
+<li>Bhandari P (2024) <a href="https://arxiv.org/abs/2312.03740">A Survey on Prompting Techniques in LLMs arXiv 2312.03740</a></li>
+<li>Yao S et al (2023) <a href="https://arxiv.org/abs/2305.10601">Tree of Thoughts: Deliberate Problem Solving with Large Language Models. arXiv 2305.10601</a></li>
 </ul>
 
 
