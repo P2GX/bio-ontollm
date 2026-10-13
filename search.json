@@ -770,8 +770,20 @@
     "text": "Sources\n\nBackground: Huang, Y. et al. (2026) A Survey on Retrieval-Augmented Text Generation for Large Language Models. ACM Comput. Surv 12:1-38\nSPIRES: Caufield JH, et al. (2024) Structured Prompt Interrogation and Recursive Extraction of Semantics (SPIRES): a method for populating knowledge bases using zero-shot learning. Bioinformatics 40:btae104\nRAG-HPO: Garcia BT, et al. (2025) Improving automated deep phenotyping through large language models using retrieval-augmented generation. Genome Med 17:91\nBhandari P (2024) A Survey on Prompting Techniques in LLMs arXiv 2312.03740\nYao S et al (2023) Tree of Thoughts: Deliberate Problem Solving with Large Language Models. arXiv 2305.10601"
   },
   {
-    "objectID": "lectures/ontology1.html#bio-ontologies",
-    "href": "lectures/ontology1.html#bio-ontologies",
+    "objectID": "lectures/ontology1.html#contents",
+    "href": "lectures/ontology1.html#contents",
+    "title": "Approaches to biomedical knowledge",
+    "section": "contents",
+    "text": "contents\n\nBio-Ontologies\nOBO: Open Bio-Ontologies\nRDF\nRDFS\nThe Web Ontology Language (OWL)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#bioontology",
+    "href": "lectures/ontology1.html#bioontology",
     "title": "Approaches to biomedical knowledge",
     "section": "Bio-Ontologies",
     "text": "Bio-Ontologies\n\n\n\n\n\n\nIn this part of the course we will review ontologies and algorithms and we will present the Human Phenotype Ontology (HPO), which has been developed by our group since 2007.\n\n\n\n\n\n\n\nYou will not need a book for this course\nBut if you would like to learn more:\n\n\nIntroduction to Bio-Ontologies &gt; (Chapman & Hall/CRC Mathematical & Computational Biology)\nPeter N. Robinson and Sebastian Bauer\n2011",
@@ -782,11 +794,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology1.html#bio-ontologies-1",
-    "href": "lectures/ontology1.html#bio-ontologies-1",
+    "objectID": "lectures/ontology1.html#bio-ontologies",
+    "href": "lectures/ontology1.html#bio-ontologies",
     "title": "Approaches to biomedical knowledge",
     "section": "Bio-Ontologies",
-    "text": "Bio-Ontologies\n\n\n\n\n\n\nGameplan:\n\n\n\n\nIntroduction to ontologies: OBO, RDF, RDFS, and OWL (today)\nGene Ontology and Overrepresentation Analysis (lecture #2)\nModel-based Gene Set Analysis (lecture #3)\nHuman Phenotype Ontology (HPO), semantic similarity, and Phenomizer (lecture #4)",
+    "text": "Bio-Ontologies\n\n\n\n\n\n\nGame plan\n\n\n\n\nIntroduction to ontologies: OBO, RDF, RDFS, and OWL (today)\nGene Ontology and Overrepresentation Analysis (lecture #2)\nModel-based Gene Set Analysis (lecture #3)\nHuman Phenotype Ontology (HPO), semantic similarity, and Phenomizer (lecture #4)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -818,8 +830,8 @@
     ]
   },
   {
-    "objectID": "lectures/ontology1.html#obo-open-bio-ontologies",
-    "href": "lectures/ontology1.html#obo-open-bio-ontologies",
+    "objectID": "lectures/ontology1.html#obo",
+    "href": "lectures/ontology1.html#obo",
     "title": "Approaches to biomedical knowledge",
     "section": "OBO: Open Bio-Ontologies",
     "text": "OBO: Open Bio-Ontologies\n\n\n\nOpen Bio-Ontology (OBO)\nThe OBO Foundry is a collective of ontology developers committed to collaboration and adherence to shared principles.\nDevelop a family of interoperable ontologies that are both logically well-formed and scientifically accurate.\nOpen use, collaborative development, non-overlapping content, and common syntax based on models like the Gene Ontology (GO).\n\n\n\n\nhttp://www.obofoundry.org/",
@@ -890,11 +902,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology1.html#rdf-rdfs",
-    "href": "lectures/ontology1.html#rdf-rdfs",
+    "objectID": "lectures/ontology1.html#rdf",
+    "href": "lectures/ontology1.html#rdf",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF / RDFS",
-    "text": "RDF / RDFS\nOWL and the Semantic Web\n\n\n\n\n\n\nOWL was developed by the W3C to enable richer integration and interoperability of data on the Web.\n\n\n\n\nPart of the Semantic Web effort.\nDesigned to connect websites at the level of data rather than presentation (HTML).\nEnables computational inference.",
+    "text": "RDF / RDFS\nOWL and the Semantic Web\n\n\n\n\n\n\nOWL was developed by the W3C to enable richer integration and interoperability of data on the Web.\n\n\n\n\nPart of the Semantic Web effort.\nDesigned to connect websites at the level of data rather than presentation (HTML).\nEnables computational inference.\n\n\n\nimage: W3C Semantic Web Activity",
     "crumbs": [
       "Home",
       "Lectures",
@@ -926,8 +938,20 @@
     ]
   },
   {
-    "objectID": "lectures/ontology1.html#rdf",
-    "href": "lectures/ontology1.html#rdf",
+    "objectID": "lectures/ontology1.html#rdf-namespaces",
+    "href": "lectures/ontology1.html#rdf-namespaces",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RDF: Namespaces",
+    "text": "RDF: Namespaces\nA namespace indicates which vocabulary a name belongs to.\n\nxmlns=\"…\" declares the default namespace: it applies to every element name without a prefix\nxmlns:rdf=\"…\" declares the prefix rdf: it applies to names written rdf:…\nA full URI is formed by concatenating namespace + local name\n\n\n\n\n\n\n\n\n\nWritten in the file\nNamespace\nFull URI\n\n\n\n\nname\ndefault\nhttp://purl.uniprot.org/core/name\n\n\nactivity\ndefault\nhttp://purl.uniprot.org/core/activity\n\n\ncofactor\ndefault\nhttp://purl.uniprot.org/core/cofactor\n\n\nrdf:type\nrdf\nhttp://www.w3.org/1999/02/22-rdf-syntax-ns#type\n\n\n\n\n\n\n\n\n\nNote\n\n\nA namespace URI is just an identifier; it is simply prepended to the local name. It does not have to point to a web page, and the concatenation is plain string appending, which is why namespaces end in / or #.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#rdf-1",
+    "href": "lectures/ontology1.html#rdf-1",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF",
     "text": "RDF\n\n\n\n\n\n\nRDF is designed to make computer-processable statements in the context of the Semantic Web.\n\n\n\n\nRequires a system of machine-processable identifiers for identifying resources that are unique across the entire Web.\nRequires a computer language for representing and processing these statements.\nThe existing Web architecture provides URLs (Uniform Resource Locators) as one form of identifier.\n\nExample: For http://www.example.org, the location is www.example.org and the protocol is http.",
@@ -942,7 +966,7 @@
     "href": "lectures/ontology1.html#rdf-urls-uris-and-urns",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF: URLs, URIs, and URNs",
-    "text": "RDF: URLs, URIs, and URNs\n\n\n\n\n\n\nURLs are one of two specific classes of Uniform Resource Identifier (URI).\n\n\n\n\nThe other class is the Uniform Resource Name (URN).\nA URN represents a name for a resource that is unique and global throughout the Web.\nExample: urn:isbn:0691141339 (ISBN for a specific book).\nKey Difference: While this URI is unique, it cannot be used to retrieve the book from the Web directly.",
+    "text": "RDF: URLs, URIs, and URNs\n\n\n\n\n\n\nURLs are one of two specific classes of Uniform Resource Identifier (URI).\n\n\n\n\nThe other class is the Uniform Resource Name (URN).\nA URN represents a name for a resource that is unique and global throughout the Web.\nExample: urn:isbn:0691141339 (ISBN for a specific book).\nn.b.: While this URI is unique, it cannot be used to retrieve the book from the Web directly.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -954,7 +978,7 @@
     "href": "lectures/ontology1.html#rdf-serialization",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF: Serialization",
-    "text": "RDF: Serialization\n\n\n\n\n\n\nRDF is an abstract data model. The process of representing it as a computer file is called serialization.\n\n\n\n\nMany RDF files are written in RDF/XML.\nThe following example is modified from an RDF file created by the Uniprot consortium.\nprocollagen-proline 4-dioxygenase\nEnzyme Commission EC 1.14.11.2",
+    "text": "RDF: Serialization\n\n\n\n\n\n\nRDF is an abstract data model. The process of representing it as a computer file is called serialization.\n\n\n\n\nRDF files are frequently written in RDF/XML.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -966,7 +990,7 @@
     "href": "lectures/ontology1.html#rdf-serialization-1",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF: Serialization",
-    "text": "RDF: Serialization\n1. &lt;?xml version='1.0' encoding='UTF-8'?&gt;\n2. &lt;rdf:RDF xmlns=\"http://purl.uniprot.org/core/\" \n3.          xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" \n4. &gt;\n5. \n6.   &lt;rdf:Description \n7.        rdf:about=\"http://purl.uniprot.org/enzyme/1.14.11.2\"&gt;\n8.     &lt;rdf:type rdf:resource=\"http://purl.uniprot.org/core/Enzyme\"/&gt;\n9.     &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n10.    &lt;name&gt;Procollagen-proline 4-dioxygenase&lt;/name&gt;\n11.    &lt;name&gt;Prolyl 4-hydroxylase&lt;/name&gt;\n12.    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2)\n13.              = trans-4-hydroxy-L-proline-[procollagen] + \n14.                succinate + CO(2).\n15.    &lt;/activity&gt;\n16.    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n17.    &lt;cofactor&gt;L-ascorbic acid&lt;/cofactor&gt;\n18.   &lt;/rdf:Description&gt;\n19. &lt;/rdf:RDF&gt;\n\nLine 1: The XML declaration,\nLine 2: Opens an element, which indicates that the XML content from line 2 up to the closing tag at line 19 represents RDF.\nLine 2: The default name space for this file is http://purl.uniprot.org/core/\nLine 3: The namespace declaration (xmlns) states that the prefix is equivalent to the namespace URI , and allows the prefix to be used in place of the complete URL in the remainder of the RDF file.\nLines 6-18: Contain the specific information of the RDF file.",
+    "text": "RDF: Serialization\n\nThe following example is modified from an RDF file created by the Uniprot consortium.\n\n1. &lt;?xml version='1.0' encoding='UTF-8'?&gt;\n2. &lt;rdf:RDF xmlns=\"http://purl.uniprot.org/core/\" \n3.          xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" \n4. &gt;\n5. \n6.   &lt;rdf:Description \n7.        rdf:about=\"http://purl.uniprot.org/enzyme/1.14.11.2\"&gt;\n8.     &lt;rdf:type rdf:resource=\"http://purl.uniprot.org/core/Enzyme\"/&gt;\n9.     &lt;name&gt;Procollagen-proline dioxygenase&lt;/name&gt;\n10.    &lt;name&gt;Procollagen-proline 4-dioxygenase&lt;/name&gt;\n11.    &lt;name&gt;Prolyl 4-hydroxylase&lt;/name&gt;\n12.    &lt;activity&gt;L-proline-[procollagen] + 2-oxoglutarate + O(2)\n13.              = trans-4-hydroxy-L-proline-[procollagen] + \n14.                succinate + CO(2).\n15.    &lt;/activity&gt;\n16.    &lt;cofactor&gt;Iron&lt;/cofactor&gt;\n17.    &lt;cofactor&gt;L-ascorbic acid&lt;/cofactor&gt;\n18.   &lt;/rdf:Description&gt;\n19. &lt;/rdf:RDF&gt;\n\n\nLine 1: The XML declaration,\nLine 2: Opens an element, which indicates that the XML content from line 2 up to the closing tag at line 19 represents RDF.\nLine 2: The default name space for this file is http://purl.uniprot.org/core/\nLine 3: The namespace declaration (xmlns) states that the prefix is equivalent to the namespace URI , and allows the prefix to be used in place of the complete URL in the remainder of the RDF file.\nLines 6-18: Contain the specific information of the RDF file.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1034,6 +1058,18 @@
     ]
   },
   {
+    "objectID": "lectures/ontology1.html#rdf-where-are-literals-strings-allowed",
+    "href": "lectures/ontology1.html#rdf-where-are-literals-strings-allowed",
+    "title": "Approaches to biomedical knowledge",
+    "section": "RDF: Where are literals (strings) allowed?",
+    "text": "RDF: Where are literals (strings) allowed?\n\nSuppose we want to represent something that does not have a URI.\n\n\n\n\n\n\n\n\nComponent\nAllowed Types\n\n\n\n\nSubject\nIRI (Internationalized Resource Identifier) or Blank Node\n\n\nPredicate\nIRI only\n\n\nObject\nIRI, Blank Node, or Literal (such as a string, integer, or date)\n\n\n\n\n\nRDF is designed to model a graph of interconnected resources identified by global identifiers (IRIs).\nBecause a literal string has no global identity or web address, it cannot be the starting point (subject) of a relationship.\nLiterals are strictly endpoints (objects) meant to represent values like names, numbers, or text descriptions.\n\n\nIRI (RFC 3987) is a newer standard designed to expand upon URIs by allowing Unicode characters rather than just US-ASCII.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
     "objectID": "lectures/ontology1.html#rdf-bnodes",
     "href": "lectures/ontology1.html#rdf-bnodes",
     "title": "Approaches to biomedical knowledge",
@@ -1074,7 +1110,7 @@
     "href": "lectures/ontology1.html#rdf-reification-example",
     "title": "Approaches to biomedical knowledge",
     "section": "RDF: reification (Example)",
-    "text": "RDF: reification (Example)\nAssuming that the appropriate qname prefixes have been defined, we can express our statement about Wikipedia’s claim as follows:\n\n@prefix rdf: [http://www.w3.org/1999/02/22-rdf-syntax-ns#](http://www.w3.org/1999/02/22-rdf-syntax-ns#) .\n\n_:x rdf:type rdf:Statement .\n_:x rdf:subject :\"Douglas Adams\" .\n_:x rdf:predicate :wrote .\n_:x rdf:object :\"Hitchhiker's Guide to the Galaxy\" .\n\nweb:wikipedia q:says _:x",
+    "text": "RDF: reification (Example)\nAssuming that the appropriate qname prefixes have been defined, we can express our statement about Wikipedia’s claim as follows:\n\n@prefix rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# .\n\n_:x rdf:type rdf:Statement .\n_:x rdf:subject :\"Douglas Adams\" .\n_:x rdf:predicate :wrote .\n_:x rdf:object :\"Hitchhiker's Guide to the Galaxy\" .\n\nweb:wikipedia q:says _:x",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1086,7 +1122,7 @@
     "href": "lectures/ontology1.html#rdfs",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS",
-    "text": "RDFS\n\n\n\n\n\n\nA schema is a formal definition of the syntax of a language, and a schema language is a language for expressing that definition. In SQL, the schema is the structure of the database that defines the objects in the database.\n\n\n\n\nRDF Schema (RDFS) is intended as a framework for interpreting the meaning of data expressed in RDF.\nRDFS provides additional specifications and keywords that allow many kinds of inference to be performed.",
+    "text": "RDFS\n\n\n\n\n\n\nA schema is a formal definition of the syntax of a language, and a schema language is a language for expressing that definition. In SQL, the schema is the structure of the database that defines the objects in the database.\n\n\n\n\nRDF Schema (RDFS) is intended as a framework for interpreting the meaning of data expressed in RDF.\nRDFS provides additional specifications and keywords that allow many kinds of inference to be performed.\n\nRDFS is essentially just a pre-defined set of RDF resources.\n\n\n\n\n\n\n\nCategory\nTerms\n\n\n\n\nTerms for classes\nrdfs:Classrdfs:subClassOf\n\n\nTerms for properties\nrdfs:domainrdfs:rangerdfs:subPropertyOf\n\n\nSpecial classes\nrdfs:Resourcerdfs:Literalrdfs:Datatype\n\n\nTerms for collections\nrdfs:memberrdfs:Containerrdfs:ContainerMembershipProperty\n\n\nSpecial properties\nrdfs:comment, rdfs:seeAlsordfs:isDefinedBy,rdfs:label",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1182,7 +1218,7 @@
     "href": "lectures/ontology1.html#rdfs-properties-and-inference-1",
     "title": "Approaches to biomedical knowledge",
     "section": "RDFS: Properties and Inference",
-    "text": "RDFS: Properties and Inference\nThere is an inference rule for RDFS properties stating that if the following triples are asserted:\n\nP rdfs:subPropertyOf Q .\nX P Y .\n\nThen the following triple can be inferred:\n\nX Q Y .\n\nExample: Using our regulation hierarchy, we can infer that Protein A regulates Protein B:\n\npro:A  r:regulates pro:B .\n\n\n\n\n\n\n\nTip\n\n\nSimilarly to the situation with classes, the subproperty relation is transitive.",
+    "text": "RDFS: Properties and Inference\nThere is an inference rule for RDFS properties stating that if the following triples are asserted:\n\nP rdfs:subPropertyOf Q .\nX P Y .\n\nThen the following triple can be inferred:\n\nX Q Y .\n\nExample: Using our regulation hierarchy, from the fact that Protein A positively regulates protein B, we can infer that Protein A regulates Protein B:\n\npro:A  r:regulates pro:B .\n\n\n\n\n\n\n\nTip\n\n\nSimilarly to the situation with classes, the subproperty relation is transitive.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1274,8 +1310,8 @@
     ]
   },
   {
-    "objectID": "lectures/ontology1.html#the-web-ontology-language-owl",
-    "href": "lectures/ontology1.html#the-web-ontology-language-owl",
+    "objectID": "lectures/ontology1.html#owl",
+    "href": "lectures/ontology1.html#owl",
     "title": "Approaches to biomedical knowledge",
     "section": "The Web Ontology Language (OWL)",
     "text": "The Web Ontology Language (OWL)\nThe acronym OWL stands for Web Ontology Language. While the most natural acronym would have been “WOL,” OWL was chosen because it is easier to pronounce.1\nIn essence, OWL is an ontology language that builds upon RDF and RDFS but provides more powerful inference rules and built-in constructs.\n\nOWL can be understood as an extension of RDFS that allows more powerful inference to be performed.\nTo a first approximation, we can say that OWL extends the inference capabilities already present in RDFS by the addition of new constructs and new rules.\n\n\n\n\n\n\nThe claim that the choice of the acronym OWL had something to do with the character Owl from Winnie the Pooh, who spelled his name WOL, is apocryphal.",
@@ -1326,7 +1362,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-property-restriction",
     "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Property Restriction",
-    "text": "Classes in OWL: Property Restriction\n\n\n\n\n\n\nAn A-Microtubule can be defined as “A complete cylindrical microtubule that is part of a microtubule doublet in cilia.”\n\n\n\n\n&lt;owl:Class rdf:about=\"#A-Microtubule\"&gt;\n  &lt;rdfs:label&gt;A-Microtubule&lt;/rdfs:label&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Cilium Microtubule\"/&gt;\n  \n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#is Physical Part of\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cytoskeleton\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n\n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#is Physical Part of\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cilium\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n&lt;/owl:Class&gt;",
+    "text": "Classes in OWL: Property Restriction\n\n\n\n\n\n\nAn A-Microtubule can be defined as “A complete cylindrical microtubule that is part of a microtubule doublet in cilia.”\n\n\n\n\n&lt;owl:Class rdf:about=\"#A-Microtubule\"&gt;\n  &lt;rdfs:label&gt;A-Microtubule&lt;/rdfs:label&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Cilium Microtubule\"/&gt;\n  \n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#isPhysicalPartOf\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cytoskeleton\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n\n  &lt;rdfs:subClassOf&gt;\n    &lt;owl:Restriction&gt;\n      &lt;owl:onProperty rdf:resource=\"#isPhysicalPartOf\"/&gt;\n      &lt;owl:someValuesFrom rdf:resource=\"#Cilium\"/&gt;\n    &lt;/owl:Restriction&gt;\n  &lt;/rdfs:subClassOf&gt;\n&lt;/owl:Class&gt;\n\n\n\nIn rdf:about=\"#A-Microtubule\", the hashmark (#) acts as a fragment identifier (anchor) in a URI/IRI.\n#A-Microtubule is a local name\na specific resource defined within the current document or namespace rather than a completely external file or web page.\nThe full unique IRI is obtained by combining the base URI (not shown here, but could be http://example.org/ontology#) and the local name\nThe full IRI is then http://example.org/ontology#A-Microtubule",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1386,7 +1422,7 @@
     "href": "lectures/ontology1.html#classes-in-owl-union",
     "title": "Approaches to biomedical knowledge",
     "section": "Classes in OWL: Union",
-    "text": "Classes in OWL: Union\n\n\n\n\n\n\nOWL provides a union operator that is analogous to the set union operator (\\(A \\cup B\\)).\n\n\n\n\nFor instance, we can define the class Human as the union of the classes Man and Woman:\n\n\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;owl:unionOf rdf:parseType=\"Collection\"&gt;\n    &lt;owl:Class rdf:about=\"#Man\" /&gt;\n    &lt;owl:Class rdf:about=\"#Woman\" /&gt;\n  &lt;/owl:unionOf&gt;\n&lt;/owl:Class&gt;",
+    "text": "Classes in OWL: Union\n\n\n\n\n\n\nOWL provides a union operator that is analogous to the set union operator: \\(A \\cup B\\).\n\n\n\n\nFor instance, we can define the class Human as the union of the classes Man and Woman:\n\n\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;owl:unionOf rdf:parseType=\"Collection\"&gt;\n    &lt;owl:Class rdf:about=\"#Man\" /&gt;\n    &lt;owl:Class rdf:about=\"#Woman\" /&gt;\n  &lt;/owl:unionOf&gt;\n&lt;/owl:Class&gt;",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1394,11 +1430,11 @@
     ]
   },
   {
-    "objectID": "lectures/ontology1.html#classes-in-owl-union-the-subclass-trap",
-    "href": "lectures/ontology1.html#classes-in-owl-union-the-subclass-trap",
+    "objectID": "lectures/ontology1.html#classes-in-owl-union-the-wrong-way-to-define-it",
+    "href": "lectures/ontology1.html#classes-in-owl-union-the-wrong-way-to-define-it",
     "title": "Approaches to biomedical knowledge",
-    "section": "Classes in OWL: Union (The Subclass Trap)",
-    "text": "Classes in OWL: Union (The Subclass Trap)\nContrast the owl:unionOf construct to the following incorrect attempt to define Human as a subclass of Man and Woman:\n\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Man\" /&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Woman\" /&gt;\n&lt;/owl:Class&gt;\n\nWhy this fails:\n\nThe “And” vs. “Or” Logic: By using rdfs:subClassOf twice, you are stating that every Human must be a Man AND simultaneously a Woman.\nUnsatisfiability: If Man and Woman are defined as disjoint (meaning they cannot overlap), this class becomes unsatisfiable.\nThe Empty Set: An unsatisfiable class is one that cannot contain any possible individuals.\n\nIn formal logic, this is equivalent to the empty set (\\(\\emptyset\\)).\n\n\n\n\n\n\nImportant\n\n\nThe formula \\(A = \\{ C \\cap \\neg C \\}\\) is unsatisfiable because it implies a direct contradiction.",
+    "section": "Classes in OWL: Union (the wrong way to define it)",
+    "text": "Classes in OWL: Union (the wrong way to define it)\nContrast the owl:unionOf construct to the following incorrect attempt to define Human as a subclass of Man and Woman:\n\n&lt;owl:Class rdf:ID=\"Human\"&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Man\" /&gt;\n  &lt;rdfs:subClassOf rdf:resource=\"#Woman\" /&gt;\n&lt;/owl:Class&gt;\n\nWhy this fails:\n\nThe “And” vs. “Or” Logic: By using rdfs:subClassOf twice, you are stating that every Human must be a Man AND simultaneously a Woman.\nUnsatisfiability: If Man and Woman are defined as disjoint (meaning they cannot overlap), this class becomes unsatisfiable.\nThe Empty Set: An unsatisfiable class is one that cannot contain any possible individuals.\n\nIn formal logic, this is equivalent to the empty set (\\(\\emptyset\\)).\n\n\n\n\n\n\nImportant\n\n\nThe formula \\(A = \\{ C \\cap \\neg C \\}\\) is unsatisfiable because it implies a direct contradiction.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1410,7 +1446,7 @@
     "href": "lectures/ontology1.html#individuals-in-owl",
     "title": "Approaches to biomedical knowledge",
     "section": "Individuals in OWL",
-    "text": "Individuals in OWL\nIn OWL, rdf:type is the property that connects an individual to a class of which it is a member.\nIf we have a class of cities:\n\n&lt;owl:Class rdf:ID=\"City\"/&gt;\n\nWe can declare individual cities to be members of this class. The following two syntactical forms have identical meanings:\n\nOption 1: Direct Class Tag\n\nThis uses the class name as the XML element tag.\n\n&lt;City rdf:ID=\"Berlin\"/&gt;\n\n\nOption 2: Explicit Typing\n\nThis uses owl:Thing (the root class of everything) and explicitly states the type.\n\n&lt;owl:Thing rdf:ID=\"Berlin\"/&gt;\n\n&lt;owl:Thing rdf:about=\"#Berlin\"&gt;\n  &lt;rdf:type rdf:resource=\"#City\"/&gt;\n&lt;/owl:Thing&gt;",
+    "text": "Individuals in OWL\nIn OWL, rdf:type is the property that connects an individual to a class of which it is a member.\nIf we have a class of cities:\n\n&lt;owl:Class rdf:ID=\"City\"/&gt;\n\nWe can declare individual cities to be members of this class. The following two syntactical forms have identical meanings:\n\nOption 1: Direct Class Tag\n\nThis uses the class name as the XML element tag.\n\n&lt;City rdf:ID=\"Berlin\"/&gt;\n\n\nOption 2: Explicit Typing\n\nThis uses owl:Thing (the root class of everything) and explicitly states the type.\n\n&lt;owl:Thing rdf:about=\"#Berlin\"&gt;\n  &lt;rdf:type rdf:resource=\"#City\"/&gt;\n&lt;/owl:Thing&gt;",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1447,6 +1483,18 @@
     "title": "Approaches to biomedical knowledge",
     "section": "Homework",
     "text": "Homework\nHOMEWORK You will create an Indian food ontology and infer whether certain dishes are vegetarian or non-veg.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/ontology1.html#further-reading",
+    "href": "lectures/ontology1.html#further-reading",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Further Reading",
+    "text": "Further Reading\n\nFoundations of Semantic Web Technologies (Excellent book)\nIntroduction to Bio-Ontologies\nW3C W3C Web Ontology Language documentation\nOWL2 technical documentation",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1626,28 +1674,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.34%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.82%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.58%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.40%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.18%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.58%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.88%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.84%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
