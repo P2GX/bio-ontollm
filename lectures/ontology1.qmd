@@ -19,7 +19,15 @@ format:
     controls: true
 ---
 
-## Bio-Ontologies
+## contents
+
+* [Bio-Ontologies](#bioontology)
+* [OBO: Open Bio-Ontologies](#obo)
+* [RDF](#rdf)
+* [RDFS](#rdfs)
+* [The Web Ontology Language (OWL)](#owl)
+
+## Bio-Ontologies {#bioontology}
 
 ::: {.callout-note appearance="simple"}
 In this part of the course we will review ontologies and algorithms and we will present the Human Phenotype Ontology (HPO), which has been developed by our group since 2007.
@@ -48,7 +56,7 @@ In this part of the course we will review ontologies and algorithms and we will 
 ## Bio-Ontologies
 
 ::: {.callout-note appearance="simple"}
-**Gameplan:**
+**Game plan**
 :::
 
 * Introduction to ontologies: OBO, RDF, RDFS, and OWL (today)
@@ -111,7 +119,7 @@ Ontologies are on the right of a scale of increasing semantic complexity:
 * As we move from left to right, we move from simple **lists of terms** (Catalog/Glossary) to **hierarchical relationships** (Thesaurus/Subclassing) and finally to **formal logic** (Restrictions/Constraints).
 
 
-## OBO: Open Bio-Ontologies
+## OBO: Open Bio-Ontologies  {#obo}
 
 
 :::: {.columns}
@@ -243,7 +251,7 @@ is_transitive: true
 
 * __transitive__: If A part_of B and B part_of C, then A part_of C.
 
-## RDF / RDFS
+## RDF / RDFS {#rdf}
 OWL and the Semantic Web
 
 ::: {.callout-note appearance="simple"}
@@ -253,6 +261,14 @@ OWL was developed by the W3C to enable richer integration and interoperability o
 * Part of the Semantic Web effort.
 * Designed to connect websites at the level of data rather than presentation (HTML).
 * Enables computational inference.
+
+
+![](./img/current-vs-sw.png){fig-align="center"}
+
+::: {.tiny-credit}
+image: [W3C Semantic Web Activity](https://www.w3.org/2001/12/semweb-fin/w3csw)
+:::
+
 
 ## Resource Description Framework (RDF)
 
@@ -295,6 +311,25 @@ RDF is an abstract model, but often serialized as RDF/XML.
 ```
 :::
 
+## RDF: Namespaces
+
+A **namespace** indicates which vocabulary a name belongs to.
+
+- `xmlns="…"` declares the **default namespace**: it applies to every element name *without* a prefix
+- `xmlns:rdf="…"` declares the **prefix** `rdf`: it applies to names written `rdf:…`
+- A full URI is formed by concatenating **namespace + local name**
+
+| Written in the file | Namespace | Full URI |
+|---|---|---|
+| `name` | default | `http://purl.uniprot.org/core/name` |
+| `activity` | default | `http://purl.uniprot.org/core/activity` |
+| `cofactor` | default | `http://purl.uniprot.org/core/cofactor` |
+| `rdf:type` | `rdf` | `http://www.w3.org/1999/02/22-rdf-syntax-ns#type` |
+
+::: {.callout-note}
+A namespace URI is just an **identifier**; it is simply prepended to the local name. It does not have to point to a web page, and the concatenation is plain string appending, which is why namespaces end in `/` or `#`.
+:::
+
 ## RDF
 
 ::: {.callout-note appearance="simple"}
@@ -317,9 +352,9 @@ URLs are one of two specific classes of **Uniform Resource Identifier (URI)**.
 * The other class is the **Uniform Resource Name (URN)**.
 * A URN represents a name for a resource that is unique and global throughout the Web.
 * **Example:** `urn:isbn:0691141339` (ISBN for a specific book).
-* **Key Difference:** While this URI is unique, it cannot be used to retrieve the book from the Web directly.
+* **n.b.:** While this URI is unique, it cannot be used to retrieve the book from the Web directly.
 
----
+
 
 ## RDF: Serialization
 
@@ -327,17 +362,11 @@ URLs are one of two specific classes of **Uniform Resource Identifier (URI)**.
 RDF is an abstract data model. The process of representing it as a computer file is called **serialization**.
 :::
 
-* Many RDF files are written in **RDF/XML**.
+* RDF files are frequently written in **RDF/XML**.
+
+## RDF: Serialization
+
 * The following example is modified from an RDF file created by the Uniprot consortium.
-
-- procollagen-proline 4-dioxygenase
-- Enzyme Commission 	[EC 1.14.11.2](https://www.genome.jp/dbget-bin/www_bget?ec:1.14.11.2)
-
-
-
----
-
-## RDF: Serialization 
 
 ```xml
 1. <?xml version='1.0' encoding='UTF-8'?>
@@ -361,6 +390,7 @@ RDF is an abstract data model. The process of representing it as a computer file
 19. </rdf:RDF>
 ``` 
 
+::: {.small-text}
 * Line 1: The XML declaration,
 * Line 2:  Opens an \texttt{rdf:RDF}
   element, which indicates that the XML content from line 2 up to the
@@ -372,7 +402,7 @@ RDF is an abstract data model. The process of representing it as a computer file
   prefix \texttt{rdf} to be used in place of the complete URL in the remainder of
   the RDF file. 
 * Lines 6-18: Contain the specific information of the RDF file.
-
+:::
 
 ## RDF: rdf:about
 
@@ -450,6 +480,28 @@ This entire collection of RDF statements correspond to a labeled directed graph.
 
 ![**Graphical Representation of the entire RDF graph**.](./img/rdf-graph.png){#fig-rdf-triple width="90%" fig-align="center"}
 
+
+
+## RDF: Where are literals (strings) allowed?
+
+* Suppose we want to represent something that does not have a URI. 
+
+| Component | Allowed Types |
+|---|---|
+| Subject | IRI (Internationalized Resource Identifier) or Blank Node |
+|Predicate|IRI only|
+|Object| IRI, Blank Node, or Literal (such as a string, integer, or date)|
+
+<hr>
+
+* RDF is designed to model a graph of interconnected resources identified by global identifiers (IRIs). 
+* Because a literal string has no global identity or web address, it cannot be the starting point (subject) of a relationship. 
+* Literals are strictly endpoints (objects) meant to represent values like names, numbers, or text descriptions.
+
+::: {.small-text}
+IRI (RFC 3987) is a newer standard designed to expand upon URIs by allowing Unicode characters rather than just US-ASCII.
+:::
+
 ## RDF: bnodes
 
 ::: {.callout-note appearance="simple"}
@@ -467,7 +519,6 @@ RDF provides several syntactic constructs for expressing more complex statements
 [ :firstname "Douglas"]
 ``` 
 :::
-
 
 ## RDF: bnodes (Continued)
 
@@ -508,7 +559,7 @@ Assuming that the appropriate qname prefixes have been defined, we can express o
 
 ::: {style="font-size: 1.4em;"}
 ```text
-@prefix rdf: [http://www.w3.org/1999/02/22-rdf-syntax-ns#](http://www.w3.org/1999/02/22-rdf-syntax-ns#) .
+@prefix rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# .
 
 _:x rdf:type rdf:Statement .
 _:x rdf:subject :"Douglas Adams" .
@@ -520,7 +571,7 @@ web:wikipedia q:says _:x
 :::
 
 
-## RDFS
+## RDFS {#rdfs}
 
 ::: {.callout-note appearance="simple"}
 A schema is a formal definition of the syntax of a language, and a schema language is a language for expressing that definition. In SQL, the schema is the structure of the database that defines the objects in the database.
@@ -528,6 +579,16 @@ A schema is a formal definition of the syntax of a language, and a schema langua
 
 * RDF Schema (RDFS) is intended as a framework for interpreting the meaning of data expressed in RDF. 
 * RDFS provides additional specifications and keywords that allow many kinds of *inference* to be performed.
+
+RDFS is essentially just a pre-defined set of RDF resources. 
+
+| Category | Terms |
+| :--- | :--- |
+| **Terms for classes** | `rdfs:Class`<br>`rdfs:subClassOf` |
+| **Terms for properties** | `rdfs:domain`<br>`rdfs:range`<br>`rdfs:subPropertyOf` |
+| **Special classes** | `rdfs:Resource`<br>`rdfs:Literal`<br>`rdfs:Datatype` |
+| **Terms for collections** | `rdfs:member`<br>`rdfs:Container`<br>`rdfs:ContainerMembershipProperty` |
+| **Special properties** | `rdfs:comment`, `rdfs:seeAlso`<br>`rdfs:isDefinedBy`,`rdfs:label` |
 
 
 ## RDFS: *is a* ain't always *is a*
@@ -703,7 +764,7 @@ X Q Y .
 :::
 
 Example:
-Using our regulation hierarchy, we can infer that Protein A regulates Protein B:
+Using our regulation hierarchy, from the fact that Protein A _positively regulates_ protein B, we can infer that Protein A regulates Protein B:
 
 
 ::: {style="font-size: 1.4em;"}
@@ -923,11 +984,10 @@ b rdf:type Z .
 :::
 
 
-* then we can infer that any animal with hair is a mammal, and we can
-  also infer that any animal with mammary glands is a mammal.
+* then we can infer that any animal with hair and mammary glands is a mammal.
 
 
-## The Web Ontology Language (OWL)
+## The Web Ontology Language (OWL) {#owl}
 
 
 
@@ -1009,19 +1069,27 @@ An *A-Microtubule* can be defined as "A complete cylindrical microtubule that is
   
   <rdfs:subClassOf>
     <owl:Restriction>
-      <owl:onProperty rdf:resource="#is Physical Part of"/>
+      <owl:onProperty rdf:resource="#isPhysicalPartOf"/>
       <owl:someValuesFrom rdf:resource="#Cytoskeleton"/>
     </owl:Restriction>
   </rdfs:subClassOf>
 
   <rdfs:subClassOf>
     <owl:Restriction>
-      <owl:onProperty rdf:resource="#is Physical Part of"/>
+      <owl:onProperty rdf:resource="#isPhysicalPartOf"/>
       <owl:someValuesFrom rdf:resource="#Cilium"/>
     </owl:Restriction>
   </rdfs:subClassOf>
 </owl:Class>
 ```
+:::
+
+::: {.small-text}
+* In `rdf:about="#A-Microtubule"`, the hashmark (`#`) acts as a fragment identifier (anchor) in a URI/IRI.
+* `#A-Microtubule` is a local name
+* a specific resource defined within the current document or namespace rather than a completely external file or web page.
+* The full unique IRI is obtained by combining the base URI (not shown here, but could be `http://example.org/ontology#`) and the local name
+* The full IRI is then `http://example.org/ontology#A-Microtubule`
 :::
 
 
@@ -1112,7 +1180,7 @@ Unexpected results can be obtained from the naive use of `owl:complementOf`.
 ## Classes in OWL: Union
 
 ::: {.callout-note appearance="simple"}
-OWL provides a union operator that is analogous to the set union operator ($A \cup B$).
+OWL provides a union operator that is analogous to the set union operator: $A \cup B$.
 :::
 
 * For instance, we can define the class **Human** as the union of the classes **Man** and **Woman**:
@@ -1128,7 +1196,7 @@ OWL provides a union operator that is analogous to the set union operator ($A \c
 ```
 :::
 
-## Classes in OWL: Union (The Subclass Trap)
+## Classes in OWL: Union (the wrong way to define it)
 
 Contrast the `owl:unionOf` construct to the following **incorrect** attempt to define *Human* as a subclass of *Man* and *Woman*:
 
@@ -1186,8 +1254,6 @@ This uses owl:Thing (the root class of everything) and explicitly states the typ
 
 ::: {style="font-size: 1.4em;"}
 ```{.xml}
-<owl:Thing rdf:ID="Berlin"/>
-
 <owl:Thing rdf:about="#Berlin">
   <rdf:type rdf:resource="#City"/>
 </owl:Thing>
@@ -1214,3 +1280,11 @@ This uses owl:Thing (the root class of everything) and explicitly states the typ
 [HOMEWORK]{.hw-badge} You will create an Indian food ontology and infer whether certain dishes are vegetarian or non-veg.
 
 ![](./img/indian-food.png){fig-align="center" width="80%"}
+
+
+## Further Reading
+
+* [Foundations of Semantic Web Technologies](https://www.semantic-web-book.org) (Excellent book)
+* [Introduction to Bio-Ontologies](https://www.routledge.com/Introduction-to-Bio-Ontologies/Robinson-Bauer/p/book/9780367659271)
+* [W3C W3C Web Ontology Language documentation](https://www.w3.org/OWL/)
+* [OWL2 technical documentation](https://www.w3.org/TR/2012/REC-owl2-overview-20121211/)
