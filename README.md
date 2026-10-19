@@ -22,7 +22,7 @@ You will need to create a virtual environment and use to install some packages n
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
-pip install numpy matplotlib pandas jupyter ipykernel
+pip install numpy matplotlib pandas jupyter ipykernel networkx scipy
 ```
 
 ## Add quarto libraries

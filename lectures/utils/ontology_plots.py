@@ -536,7 +536,7 @@ def hyperg_vs_binom(figsize=(8, 7)):
         ax, 0.6, 0.6, n_white=6, n_black=5, cols=4, ball_r=0.2,
         removed_ball="black", removed_pos=(2.55, 2.25),
     )
-    ax.text(1.5, 0.25, r"$P(B) = \frac{5}{12}$", ha="center", va="center", fontsize=15)
+    ax.text(1.5, 0.25, r"$P(B) = \frac{5}{11}$", ha="center", va="center", fontsize=15)
 
     plt.tight_layout()
     plt.show()
