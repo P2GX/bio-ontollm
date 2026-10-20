@@ -377,6 +377,9 @@ plt.show()
 :::
 ::::
 
+## GO Overrepresentation analysis
+
+![](img/GORA_flow_diagram.png){fig-align="center" width="100%"}
 
 ## Counting
 
