@@ -738,6 +738,16 @@ text-align: left;
 }
 .big-code pre code {
 font-size: 1.4em;
+}
+.boxed {
+border: 2px solid #2a6fdb;
+border-radius: 8px;
+padding: 0.4em 1em;
+background-color: #f3f7fe;
+}
+.emph {
+color: #cc5500; 
+font-weight: bold;
 }</style>
   <style type="text/css">.reveal
 div.sourceCode
@@ -1292,7 +1302,7 @@ H_1 : \mathbb{P} &amp; \neq \mathbb{P}_0 \\
 <p>The ECDF is the fraction of <span class="math inline">\(n\)</span> <strong>ordered</strong> observations at or below <span class="math inline">\(x\)</span>:</p>
 <p><span class="math display">\[F_n(x) = \frac{1}{n} \sum_{i=1}^{n} \mathbf{1}\{x_i \le x\}\]</span></p>
 <p>It is a step function that jumps by <span class="math inline">\(1/n\)</span> at each data point and rises from 0 to 1.</p>
-<div id="02a82327" class="cell" data-fig-height="3.2" data-execution_count="2">
+<div id="9245720f" class="cell" data-fig-height="3.2" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -1312,7 +1322,7 @@ H_1 : \mathbb{P} &amp; \neq \mathbb{P}_0 \\
 <li>Large <span class="math inline">\(D_n\)</span>: the sample is far from <span class="math inline">\(F\)</span>, so we reject.</li>
 <li>The largest gap can occur <strong>anywhere</strong> along the distribution.</li>
 </ul>
-<div id="c27d96c8" class="cell" data-fig-height="3.2" data-execution_count="3">
+<div id="e08c9fe2" class="cell" data-fig-height="3.2" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -1330,7 +1340,7 @@ H_1 : \mathbb{P} &amp; \neq \mathbb{P}_0 \\
 <li><strong>Just before the jump</strong> (ECDF is below <span class="math inline">\(F\)</span>): <span class="math inline">\(D_n^- = \max_i \left(F(x_{(i)}) - \tfrac{i-1}{n}\right)\)</span></li>
 </ul>
 <p><span class="math display">\[D_n = \max(D_n^+,\, D_n^-)\]</span></p>
-<div id="820d64ee" class="cell" data-fig-height="3.4" data-execution_count="4">
+<div id="a4e73003" class="cell" data-fig-height="3.4" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -1343,7 +1353,7 @@ H_1 : \mathbb{P} &amp; \neq \mathbb{P}_0 \\
 <section id="what-would-d_n-look-like-if-h_0-were-true" class="slide level2">
 <h2>What would <span class="math inline">\(D_n\)</span> look like if <span class="math inline">\(H_0\)</span> were true?</h2>
 <p>Simulate 10,000 samples of size <span class="math inline">\(n = 30\)</span> from <span class="math inline">\(N(0,1)\)</span> and compute <span class="math inline">\(D_n\)</span> for each:</p>
-<div id="0b4d85dd" class="cell" data-execution_count="5">
+<div id="af86c90e" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -1357,7 +1367,7 @@ H_1 : \mathbb{P} &amp; \neq \mathbb{P}_0 \\
 <section id="how-d_n-scales-with-n" class="slide level2">
 <h2>How <span class="math inline">\(D_n\)</span> scales with <span class="math inline">\(n\)</span></h2>
 <p>Under <span class="math inline">\(H_0\)</span>, <span class="math inline">\(D_n\)</span> shrinks like <span class="math inline">\(1/\sqrt{n}\)</span>.<sup>1</sup> The scaled quantity <span class="math inline">\(\sqrt{n}\, D_n\)</span> has (approximately) the <strong>same distribution for every <span class="math inline">\(n\)</span></strong>. This is the Kolmogorov distribution.</p>
-<div id="284d0926" class="cell" data-execution_count="6">
+<div id="44c070c5" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>n=  30  95th pct of D_n = 0.241   95th pct of sqrt(n)*D_n = 1.322
 n= 120  95th pct of D_n = 0.122   95th pct of sqrt(n)*D_n = 1.338</code></pre>
@@ -1372,7 +1382,7 @@ n= 120  95th pct of D_n = 0.122   95th pct of sqrt(n)*D_n = 1.338</code></pre>
 <section id="under-an-alternative" class="slide level2">
 <h2>Under an alternative</h2>
 <p>Sample from <span class="math inline">\(N(0.5, 1)\)</span> and test against <span class="math inline">\(N(0,1)\)</span>:</p>
-<div id="7b31266a" class="cell" data-execution_count="7">
+<div id="0fcbd7dd" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-stdout">
 <pre><code>KstestResult(statistic=np.float64(0.4050996543021373), pvalue=np.float64(5.826477046905052e-05), statistic_location=np.float64(0.35427336756472355), statistic_sign=np.int8(-1))</code></pre>
 </div>
@@ -1393,7 +1403,7 @@ n= 120  95th pct of D_n = 0.122   95th pct of sqrt(n)*D_n = 1.338</code></pre>
 <h2>The two-sample test</h2>
 <p>Compare two samples directly with no hypothesized <span class="math inline">\(F\)</span>:</p>
 <p><span class="math display">\[D_{n,m} = \sup_x \left| F_{1,n}(x) - F_{2,m}(x) \right|\]</span></p>
-<div id="7650010c" class="cell" data-execution_count="8">
+<div id="a222886c" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-stdout">
 <pre><code>KstestResult(statistic=np.float64(0.145), pvalue=np.float64(0.6860480075289528), statistic_location=np.float64(-0.06437262729863982), statistic_sign=np.int8(1))</code></pre>
 </div>

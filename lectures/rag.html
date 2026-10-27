@@ -805,6 +805,16 @@ text-align: left;
 }
 .big-code pre code {
 font-size: 1.4em;
+}
+.boxed {
+border: 2px solid #2a6fdb;
+border-radius: 8px;
+padding: 0.4em 1em;
+background-color: #f3f7fe;
+}
+.emph {
+color: #cc5500; 
+font-weight: bold;
 }</style>
   <style type="text/css">.reveal
 div.sourceCode
@@ -1634,7 +1644,7 @@ Peter N Robinson
 <li>We encourage students to explore LangChain in the homework.</li>
 <li><code>Document</code>: LangChain’s standard container for a piece of text plus its associated metadata</li>
 </ul>
-<div id="0fe7ae0d" class="cell" data-execution_count="1">
+<div id="20380995" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a aria-label="1"></a><span class="im">from</span> langchain_core.documents <span class="im">import</span> Document</span>
 <span id="cb3-2"><a aria-label="2"></a></span>
 <span id="cb3-3"><a aria-label="3"></a>chapter_docs <span class="op">=</span> [</span>
@@ -1655,7 +1665,7 @@ Peter N Robinson
 <li>Chroma stores the triple — the original text, its vector, and its metadata (the chapter tag) — all together in <code>moby_dick_chapters</code>.</li>
 <li><code>vector_store</code> (line 12) now contains a searchable index of all chapters</li>
 </ul>
-<div id="7449f48b" class="cell" data-execution_count="2">
+<div id="a5a8be6c" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a aria-label="1"></a><span class="im">from</span> langchain_chroma <span class="im">import</span> Chroma</span>
 <span id="cb4-2"><a aria-label="2"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> OllamaEmbeddings</span>
 <span id="cb4-3"><a aria-label="3"></a></span>
@@ -1675,7 +1685,7 @@ Peter N Robinson
 <div class="mybox">
 <p>Let’s first try the query without RAG</p>
 </div>
-<div id="cc6d126c" class="cell" data-execution_count="3">
+<div id="8e5d7f49" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a aria-label="1"></a>llm <span class="op">=</span> ChatOllama(model<span class="op">=</span><span class="st">&quot;gemma3:12b&quot;</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb5-2"><a aria-label="2"></a>chowder_question <span class="op">=</span> <span class="st">&quot;What is a good place to eat chowder in early nineteenth century Nantucket?&quot;</span></span>
 <span id="cb5-3"><a aria-label="3"></a>no_rag_response <span class="op">=</span> llm.invoke(chowder_question)</span>
@@ -1703,7 +1713,7 @@ Peter N Robinson
 </section>
 <section id="langchain-rag" class="slide level2">
 <h2>LangChain: RAG</h2>
-<div id="3203a857" class="cell" data-execution_count="4">
+<div id="de9d3835" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-label="1"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> ChatOllama</span>
 <span id="cb6-2"><a aria-label="2"></a><span class="im">from</span> langchain_core.prompts <span class="im">import</span> PromptTemplate</span>
 <span id="cb6-3"><a aria-label="3"></a></span>
@@ -1731,7 +1741,7 @@ Peter N Robinson
 </section>
 <section id="langchain-querying-the-vector-db" class="slide level2">
 <h2>LangChain: Querying the Vector DB</h2>
-<div id="1ccba697" class="cell" data-execution_count="5">
+<div id="ef7044bc" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a aria-label="1"></a>results <span class="op">=</span> vector_store.similarity_search(</span>
 <span id="cb7-2"><a aria-label="2"></a>    <span class="st">&#39;Inns where one can eat clam chowder&#39;</span>,</span>
 <span id="cb7-3"><a aria-label="3"></a>    k<span class="op">=</span><span class="dv">2</span></span>
@@ -1754,7 +1764,7 @@ Peter N Robinson
 </section>
 <section id="langchain-rag---create-the-chain-of-commands" class="slide level2">
 <h2>LangChain: RAG - create the chain of commands</h2>
-<div id="9b5a5f34" class="cell" data-execution_count="6">
+<div id="7abf7b8f" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a aria-label="1"></a><span class="im">from</span> langchain_core.output_parsers <span class="im">import</span> StrOutputParser</span>
 <span id="cb8-2"><a aria-label="2"></a><span class="im">from</span> langchain_core.runnables <span class="im">import</span> RunnablePassthrough</span>
 <span id="cb8-3"><a aria-label="3"></a></span>
@@ -1785,7 +1795,7 @@ Peter N Robinson
 <ul>
 <li>The following code invokes the chain of commands from the previous slide using our chowder question.</li>
 </ul>
-<div id="46d8f767" class="cell" data-execution_count="7">
+<div id="ce9a6772" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a aria-label="1"></a>rag_chain.invoke(</span>
 <span id="cb9-2"><a aria-label="2"></a>  chowder_question</span>
 <span id="cb9-3"><a aria-label="3"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1894,7 +1904,7 @@ Peter N Robinson
 <section id="rag-hpo-set-up" class="slide level2">
 <h2>RAG-HPO: Set up</h2>
 <div style="font-size: 1.5em;">
-<div id="9fc9e4b2" class="cell" data-execution_count="8">
+<div id="0d5c5031" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a aria-label="1"></a><span class="im">from</span> langchain_ollama <span class="im">import</span> ChatOllama</span>
 <span id="cb11-2"><a aria-label="2"></a>llm_client <span class="op">=</span> ChatOllama(model<span class="op">=</span><span class="st">&quot;gemma3:12b&quot;</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb11-3"><a aria-label="3"></a>emd_model <span class="op">=</span> get_embedding_model()</span>
@@ -1911,7 +1921,7 @@ Peter N Robinson
 <section id="rag-hpo-build-the-prompt" class="slide level2">
 <h2>RAG-HPO: Build the prompt</h2>
 <div style="font-size: 1.5em;">
-<div id="bd2c7f36" class="cell" data-execution_count="9">
+<div id="af11a882" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a aria-label="1"></a><span class="im">from</span> langchain_core.messages <span class="im">import</span> SystemMessage, HumanMessage</span>
 <span id="cb12-2"><a aria-label="2"></a></span>
 <span id="cb12-3"><a aria-label="3"></a>messages <span class="op">=</span> [</span>
@@ -1997,7 +2007,7 @@ Peter N Robinson
 <li>For each of the <code>phrase</code> entries from the list in the previous slide, RAG-HPO then asks for the best <span class="math inline">\(k\)</span> matches from the vector database</li>
 </ul>
 <div style="font-size: 1.5em;">
-<div id="d9eed168" class="cell" data-execution_count="10">
+<div id="ddced2fe" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a aria-label="1"></a>query_vec <span class="op">=</span> embed_query(phrase, embeddings_model, metric<span class="op">=</span>metric)</span>
 <span id="cb14-2"><a aria-label="2"></a>dists, idxs <span class="op">=</span> index.search(query_vec, top_k)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -2018,7 +2028,7 @@ Peter N Robinson
 <aside><ol class="aside-footnotes"><li id="fn8"><p>RAG-HPO sets <code>top_k</code> to 15 by default</p></li><li id="fn9"><p>The actual list items have more information, we have omitted some details here for clarity</p></li></ol></aside></section>
 <section id="understanding-the-vector-db-search" class="slide level2">
 <h2>Understanding the vector DB search</h2>
-<div id="cdf2ba7a" class="cell" data-execution_count="11">
+<div id="7d6fc8d9" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" data-code-line-numbers="11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb15-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb15-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2055,7 +2065,7 @@ Peter N Robinson
 </section>
 <section id="understanding-the-vector-db-search-2" class="slide level2">
 <h2>Understanding the vector DB search (2)</h2>
-<div id="62010e3b" class="cell" data-execution_count="12">
+<div id="9c9565ff" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" data-code-line-numbers="12-13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb16-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb16-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2103,7 +2113,7 @@ Peter N Robinson
 </section>
 <section id="understanding-the-vector-db-search-3" class="slide level2">
 <h2>Understanding the vector DB search (3)</h2>
-<div id="f43094c0" class="cell" data-execution_count="13">
+<div id="eee4eebd" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" data-code-line-numbers="18,21,26-27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb17-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb17-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2143,7 +2153,7 @@ Peter N Robinson
 </section>
 <section id="understanding-the-vector-db-search-4" class="slide level2">
 <h2>Understanding the vector DB search (4)</h2>
-<div id="7140c035" class="cell" data-execution_count="14">
+<div id="4fc054e8" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" data-code-line-numbers="12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb18-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb18-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>
@@ -2177,7 +2187,7 @@ Peter N Robinson
 </section>
 <section id="understanding-the-vector-db-search-5" class="slide level2">
 <h2>Understanding the vector DB search (5)</h2>
-<div id="f45e7186" class="cell" data-execution_count="15">
+<div id="fa2e8a74" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" data-code-line-numbers="21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a aria-label="1"></a><span class="kw">def</span> _collect_metadata_best(</span>
 <span id="cb19-2"><a aria-label="2"></a>    phrase: <span class="bu">str</span>,</span>
 <span id="cb19-3"><a aria-label="3"></a>    query_vec: np.ndarray,</span>

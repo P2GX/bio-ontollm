@@ -4613,7 +4613,7 @@
     "href": "lectures/mgsa.html#problems-with-the-term-for-term-approach",
     "title": "Approaches to biomedical knowledge",
     "section": "Problems with the term-for-term approach",
-    "text": "Problems with the term-for-term approach\n\n\nNote how there seems to be a dependency between parent and child terms.\nThe distribution of significant terms is not uniform across all 44,797 GO terms."
+    "text": "Problems with the term-for-term approach\n\n\nThere seems to be a dependency between parent and child terms.\nThe distribution of significant terms is not uniform across all 44,797 GO terms."
   },
   {
     "objectID": "lectures/mgsa.html#model-based-gene-set-analysis-mgsa",
@@ -4648,7 +4648,7 @@
     "href": "lectures/mgsa.html#markov-chain-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Markov Chain",
-    "text": "Markov Chain\n\nKey question:\n\nWill the chain achieve steady state if it runs for a long enough time?\n\n\n\\[\n\\begin{array}{c|cccc}\n  & w_0 & w_1 &  w_2& \\ldots & \\\\\n\\hline\np(\\mathrm{sunny})& 1 & 0.3 & 0.44 & \\ldots & \\pi_1 \\\\\np(\\mathrm{cloudy})& 0 & 0.7 & 0.56 & \\ldots & \\pi_2 \\\\\n\\end{array}\n\\]\n\nIn this example, we start the chain at time zero as a sunny day – so \\(p(\\mathrm{sunny})= 1\\) and \\(p(\\mathrm{cloudy})= 0\\)\nWe can calculate the probabilities at each iteration using the transition probabilities for each state\nThe question is whether these probabilities converge to steady state probabilities \\(\\pi_1\\) and \\(\\pi_2\\)?"
+    "text": "Markov Chain\n\nKey question:\n\nWill the chain achieve steady state if it runs for a long enough time?\n\n\n\\[\n\\begin{array}{c|cccc}\n  & w_0 & w_1 &  w_2& \\ldots & \\\\\n\\hline\np(\\mathrm{sunny})& 1 & 0.3 & 0.44 & \\ldots & \\pi_1 \\\\\np(\\mathrm{cloudy})& 0 & 0.7 & 0.56 & \\ldots & \\pi_2 \\\\\n\\end{array}\n\\]\n\nIn this example, we start the chain at time zero as a sunny day – so \\(p(\\mathrm{sunny})= 1\\) and \\(p(\\mathrm{cloudy})= 0\\)\nWe can calculate the probabilities at each iteration using the transition probabilities for each state\nDo these probabilities converge to steady state probabilities \\(\\pi_1\\) and \\(\\pi_2\\)?"
   },
   {
     "objectID": "lectures/mgsa.html#markov-chain-2",
@@ -4676,7 +4676,7 @@
     "href": "lectures/mgsa.html#mcmc-1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\n\nFor instance, there are roughly 35,000 GO terms. If we want to model the distrivution of terms, each one of which can be on or off, then roughly speaking there are the following number of combinations1 \\[\n2^{35000} \\approx 1.12\\times 10^{10536}\n\\]\nThis is an insanely large number, more than the number of atoms in the universe (ca.\\(10^{80}\\))\nA useful analogy: Imagine the tasks of drawing random water samples from a lake and finding the average plankton concentration.\n\nWe can use a boat and sample the plankton concentration \\(g(x)\\) at any location \\(x\\)\nWe need to draw 1 cm3 water samples at random from the lake, in such a way that each sample is equally likely to come from any point within the lake\nWe do not know if the lake is largely of the same depth or if there are several narrow, deep underwater canyons\nThus it is very difficult to sample uniformly from the lake\n\n\n\nDavid J. C. MacKay (2003) Information Theory, Inference and Learning Algorithms. Cambridge University Press\n\nThe true number is less because some combinations are not valid because of the true path rule"
+    "text": "MCMC\n\nFor instance, there are roughly 35,000 GO terms. If we want to model the distribution of terms, each one of which can be on or off, then roughly speaking there are the following number of combinations1 \\[\n2^{35000} \\approx 1.12\\times 10^{10536}\n\\]\nThis is an insanely large number, more than the number of atoms in the universe (ca.\\(10^{80}\\))\nA useful analogy: Imagine the tasks of drawing random water samples from a lake and finding the average plankton concentration.\n\nWe can use a boat and sample the plankton concentration \\(g(x)\\) at any location \\(x\\)\nWe need to draw one-cm\\(^3\\) water samples at random from the lake, in such a way that each sample is equally likely to come from any point within the lake\nWe do not know if the lake is largely of the same depth or if there are several narrow, deep underwater canyons\nThus it is very difficult to sample uniformly from the lake\n\n\n\nDavid J. C. MacKay (2003) Information Theory, Inference and Learning Algorithms. Cambridge University Press\n\nThe true number is less because some combinations are not valid because of the true path rule"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-2",
@@ -4697,28 +4697,28 @@
     "href": "lectures/mgsa.html#verifying-detailed-balance-condition-for-the-weather",
     "title": "Approaches to biomedical knowledge",
     "section": "Verifying detailed balance condition for the weather",
-    "text": "Verifying detailed balance condition for the weather\n\nDetailed balance requires, for every pair of states \\(x,y\\): \\[\np(x)\\,T(y\\mid x) = p(y)\\,T(x\\mid y)\n\\]\nAssume we are in the stationary distribution sunny: \\(S =\\frac{5}{12}\\) and cloudy: \\(C =\\frac{7}{12}\\) \\[\n\\underbrace{p(S)\\,T(C\\mid S)}_{\\frac{5}{12}\\times 0.7 \\,=\\, \\frac{7}{24}} \\;=\\; \\underbrace{p(C)\\,T(S\\mid C)}_{\\frac{7}{12}\\times 0.5 \\,=\\, \\frac{7}{24}} \\quad\\checkmark\n\\]\nThus, \\(p\\) is a stationary distribution — we can also check directly: \\[\n\\sum_x p(x)\\,T(S\\mid x) = \\underbrace{\\tfrac{5}{12}\\times 0.3}_{\\text{stay Sunny}} + \\underbrace{\\tfrac{7}{12}\\times 0.5}_{\\text{Cloudy}\\to\\text{Sunny}} = \\tfrac{15}{120} +  \\tfrac{35}{120}= \\tfrac{5}{12} = p(S) \\quad\\checkmark\n\\]\nSo: if the chain is currently 5/12 Sunny, 7/12 Rainy, thus, \\(p\\) is unchanged by a step of the chain — i.e., \\(p\\) to be a stationary distribution"
+    "text": "Verifying detailed balance condition for the weather\n\nDetailed balance requires, for every pair of states \\(x,y\\): \\[\np(x)\\,T(y\\mid x) = p(y)\\,T(x\\mid y)\n\\]\n\n\n\nAssume we are in the stationary distribution: sunny: \\(S =\\frac{5}{12}\\) and cloudy: \\(C =\\frac{7}{12}\\)\n\n\n\\[\n\\underbrace{p(S)\\,T(C\\mid S)}_{\\frac{5}{12}\\times 0.7 \\,=\\, \\frac{7}{24}} \\;=\\; \\underbrace{p(C)\\,T(S\\mid C)}_{\\frac{7}{12}\\times 0.5 \\,=\\, \\frac{7}{24}} \\quad\\checkmark\n\\] - Thus, \\(p\\) is a stationary distribution — we can also check directly: \\[\n\\sum_x p(x)\\,T(S\\mid x) = \\underbrace{\\tfrac{5}{12}\\times 0.3}_{\\text{Sunny}\\to\\text{Sunny}} + \\underbrace{\\tfrac{7}{12}\\times 0.5}_{\\text{Cloudy}\\to\\text{Sunny}} = \\tfrac{15}{120} +  \\tfrac{35}{120}= \\tfrac{5}{12} = p(S) \\quad\\checkmark\n\\] - So: if the chain is currently 5/12 Sunny, 7/12 Rainy, thus, \\(p\\) is unchanged by a step of the chain — i.e., \\(p\\) to be a stationary distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mh",
     "href": "lectures/mgsa.html#mh",
     "title": "Approaches to biomedical knowledge",
     "section": "Metropolis-Hastings",
-    "text": "Metropolis-Hastings\n\nThe Metropolis-Hastings (MH) algorithm is a general method for constructing a transition kernel \\(T\\) that samples from an arbitrary target distribution \\(p\\), using a proposal and an acceptance step\n\\(q(y\\mid x)\\) is the proposal — a candidate generator that proposes which state might come next\n$ a(x,y)$ is the acceptance - what is the probability we accepted the proposed next term?\nThe transition kernel combines proposal and acceptance: \\[\nT(y\\mid x) = q(y\\mid x)\\cdot a(x,y) \\qquad (y \\neq x)\n\\]\nRejected proposals mean the chain stays put — this adds a self-transition term: \\[\nT(x\\mid x) = q(x\\mid x) + \\sum_{y\\neq x} q(y\\mid x)\\big(1-a(x,y)\\big)\n\\]"
+    "text": "Metropolis-Hastings\n\nThe Metropolis-Hastings (MH) algorithm constructs a transition kernel \\(T\\) that samples from an arbitrary target distribution \\(p\\), using a proposal and an acceptance step\n\\(p(x)\\) is the target: the distribution we want to sample from\n\\(q(y\\mid x)\\) is the proposal — a candidate generator that proposes which state might come next\n\\(a(x,y)\\) is the acceptance - what is the probability we accepted the proposed next term?\nThe transition kernel combines proposal and acceptance: \\[\nT(y\\mid x) = q(y\\mid x)\\cdot a(x,y) \\qquad (y \\neq x)\n\\]\nRejected proposals mean the chain stays put — this adds a self-transition term: \\[\nT(x\\mid x) = q(x\\mid x) + \\sum_{y\\neq x} q(y\\mid x)\\big(1-a(x,y)\\big)\n\\]\n\n\n\n\\(q(x\\mid x)\\): the proposal is to stay at \\(x\\), which is always accepted.\n\\(q(y\\mid x)\\,(1-a(x,y))\\): the chain proposes a move to \\(y\\), but the move is rejected (probability \\(1-a(x,y)\\)), so it stays at \\(x\\).\nWe sum over every possible rejected move \\(y \\neq x\\)."
   },
   {
-    "objectID": "lectures/mgsa.html#metropolis-hastings",
-    "href": "lectures/mgsa.html#metropolis-hastings",
+    "objectID": "lectures/mgsa.html#metropolis-hastings-the-acceptance-probability",
+    "href": "lectures/mgsa.html#metropolis-hastings-the-acceptance-probability",
     "title": "Approaches to biomedical knowledge",
-    "section": "Metropolis-Hastings",
-    "text": "Metropolis-Hastings\n\n\\(a(x,y)\\) is defined as: \\[\na(x,y) = \\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right)\n\\]\nIt’s \\(T\\) — not \\(q\\) — that needs to satisfy the detailed balance condition\n\\(a\\) is designed so that \\(T = q\\cdot a\\) satisfies detailed balance for any valid proposal \\(q\\)"
+    "section": "Metropolis-Hastings: the acceptance probability",
+    "text": "Metropolis-Hastings: the acceptance probability\n\nReminder: \\(p\\) = target, \\(q\\) = proposal, \\(a\\) = acceptance probability, \\(T = q\\cdot a\\) = transition kernel.\n\n\nIn general terms, the acceptance probability is defined as \\(a(x,y) = P(\\text{accept} \\mid \\text{current} = x,\\ \\text{proposed} = y)\\)\nFor Metroplis-Hastings, \\(a(x,y)\\) is defined as: \\[\na(x,y) = \\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right)\n\\]\n\\(T = q\\cdot a\\) needs to satisfy the detailed balance condition with respect to \\(p\\): \\[\np(x)\\,T(y\\mid x) = p(y)\\,T(x\\mid y)\n\\]\n\\(a\\) is designed so that \\(T = q\\cdot a\\) satisfies detailed balance for any valid proposal \\(q\\)"
   },
   {
     "objectID": "lectures/mgsa.html#mh-proof-continued",
     "href": "lectures/mgsa.html#mh-proof-continued",
     "title": "Approaches to biomedical knowledge",
     "section": "MH — Proof (continued)",
-    "text": "MH — Proof (continued)\n\nLet us first examine the case where the proposal distribution is symmetric, i.e., \\(q(y\\mid x)=q(x\\mid y)\\).\nThis class of algorithms are known as Metropolis algorithms and are a special case of MH algorithms\nLet \\(x, y\\) be two states with \\(p(y) &lt; p(x)\\). Then we get \\[\n\\begin{align}\na(x,y) &= \\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right) \\\\\n&= \\min\\!\\left(1,\\ \\frac{p(y)}{p(x)}\\right) \\\\\n&=  \\frac{p(y)}{p(x)} \\quad \\bullet \\text{ because } p(y) &lt; p(x)\\\\\n\\end{align}\n\\]\nThe Metroplis algorithm (and the MH algorithm) draw a uniformly distributed random number \\(r\\in [0,1]\\) and choose to transition to state \\(y\\) if \\(r&lt;a(x,y)\\)\nThus in this case, it will not always choose to do so because \\(\\tfrac{p(y)}{p(x)} &lt; 1\\),"
+    "text": "MH — Proof (continued)\n\nLet us first examine the case where the proposal distribution is symmetric, i.e., \\(q(y\\mid x)=q(x\\mid y)\\).\nThis class of algorithms are known as Metropolis algorithms and are a special case of MH algorithms\nLet \\(x, y\\) be two states with \\(p(y) &lt; p(x)\\). Then we get \\[\n\\begin{align}\na(x,y) &= \\min\\!\\left(1,\\ \\frac{p(y)\\,q(x\\mid y)}{p(x)\\,q(y\\mid x)}\\right) \\\\\n&= \\min\\!\\left(1,\\ \\frac{p(y)}{p(x)}\\right) \\\\\n&=  \\frac{p(y)}{p(x)} \\quad \\bullet \\text{ because } p(y) &lt; p(x)\\\\\n\\end{align}\n\\]\nThe Metropolis algorithm (and the MH algorithm) draw a uniformly distributed random number \\(r\\in [0,1]\\) and choose to transition to state \\(y\\) if \\(r&lt;a(x,y)\\)\nThus in this case, it will not always choose to do so because \\(\\tfrac{p(y)}{p(x)} &lt; 1\\),"
   },
   {
     "objectID": "lectures/mgsa.html#mh-proof-continued-1",
@@ -4760,35 +4760,35 @@
     "href": "lectures/mgsa.html#hastings-ratio",
     "title": "Approaches to biomedical knowledge",
     "section": "Hastings ratio",
-    "text": "Hastings ratio\n\nWe accept moves according to the Hastings ratio, \\(h=\\min\\left(1, \\frac{p(x)q(y\\mid x)}{p(y)q(x\\mid y)}\\right)\\)\nSince we are using an uniform transition kernel, \\(q(y\\mid x) = q(x\\mid y)\\) and thus \\(h=\\min\\left(1, \\frac{p(x)}{p(y)}\\right)\\)\nIn implementations, we generally transform to log space to avoid numerical problems\nRecalling that our target disttribution is a normal distribution, we obtain\n\n\\[\n\\begin{align}\n\\log h &= \\log \\frac{p(a)}{p(b)}\\\\\n&= \\log \\frac{\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}}{\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(y-\\mu)^2}{2\\sigma^2}}}\\\\\n&= \\log \\frac{e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}}{e^{-\\frac{(y-\\mu)^2}{2\\sigma^2}}}\\\\\n&= \\frac{1}{2\\sigma^2}\\left[ (x-\\mu)^2 - (y-\\mu)^2\\right]\n\\end{align}\n\\]\n\nWe sample a random number \\(r\\) uniformly from the interval \\([0,1]\\). If \\(h &lt; r\\), then we accept the proposal and advance the chain from \\(x\\) to \\(y\\). If not, we remain at \\(x\\)."
+    "text": "Hastings ratio\n\nWe accept moves according to the Hastings ratio, \\(h=\\min\\left(1, \\frac{p(x)q(y\\mid x)}{p(y)q(x\\mid y)}\\right)\\)\nSince we are using an uniform transition kernel, \\(q(y\\mid x) = q(x\\mid y)\\) and thus \\(h=\\min\\left(1, \\frac{p(x)}{p(y)}\\right)\\)\nIn implementations, we generally transform to log space to avoid numerical problems\nRecalling that our target distribution is a normal distribution, we obtain\n\n\\[\n\\begin{align}\n\\log h &= \\log \\frac{p(a)}{p(b)}\\\\\n&= \\log \\frac{\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}}{\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(y-\\mu)^2}{2\\sigma^2}}}\\\\\n&= \\log \\frac{e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}}{e^{-\\frac{(y-\\mu)^2}{2\\sigma^2}}}\\\\\n&= \\frac{1}{2\\sigma^2}\\left[ (x-\\mu)^2 - (y-\\mu)^2\\right]\n\\end{align}\n\\]\n\nWe sample a random number \\(r\\) uniformly from the interval \\([0,1]\\). If \\(h &lt; r\\), then we accept the proposal and advance the chain from \\(x\\) to \\(y\\). If not, we remain at \\(x\\)."
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.94%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.24%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.46%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.66%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.42%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.60%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.78%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.20%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -4875,32 +4875,32 @@
     "text": "MGSA\n\\[\nP(O|T) = \\alpha^{n_{10|T}} (1 - \\alpha)^{n_{00|T}}\n(1-\\beta)^{n_{11|T}} \\beta^{n_{01|T}}.\n\\tag{4}\\]\n\nHence, Equation 4 calculates the product over \\(i=0,1\\) of the probability of the observed states of the genes given the hidden states of the terms.\nFor instance, for \\(i=1\\), we need only consider hidden nodes whose parents include active terms, because otherwise their probability is zero according to Equation 3.\nUsing Equation 2 with \\(p=\\beta\\), we obtain that \\(P(H_1|T) P(O_1|H_1)=1\\times P(O_1|H_1) =\n(1-\\beta)^{n_{11|T}}\n\\beta^{n_{01|T}}\\).\nSimilar considerations for \\(i=0\\) lead to the final expression for Equation 4."
   },
   {
-    "objectID": "lectures/mgsa.html#map-maximum-a-postgeriori",
-    "href": "lectures/mgsa.html#map-maximum-a-postgeriori",
-    "title": "Approaches to biomedical knowledge",
-    "section": "MAP: Maximum a postgeriori",
-    "text": "MAP: Maximum a postgeriori\n\n\n\n\n\n\nIn Bayesian statistics, maximum a posteriori (MAP) estimation is often used to generate an estimate of the maximum value of a probability distribution.\n\n\n\nThat is, if \\(x\\) is used to refer to the data (\\(x\\) can be an arbitrary expression), and \\(\\theta\\) is used to refer to the parameters of a model, then Bayes’ law states that:\n\\[\nP(\\theta | x) = \\dfrac{P(x|\\theta )P(\\theta )}{P(x)}\n\\label{eq:bayes-law-for-map}\n\\]"
-  },
-  {
     "objectID": "lectures/mgsa.html#map-maximum-a-posteriori",
     "href": "lectures/mgsa.html#map-maximum-a-posteriori",
     "title": "Approaches to biomedical knowledge",
     "section": "MAP: Maximum a posteriori",
-    "text": "MAP: Maximum a posteriori\n\nThe term \\(P(\\theta | x)\\) is referred to as the posterior probability, and specifies the probability of the parameters \\(\\theta\\) given the observed data \\(x\\).\nThe denominator on the right-hand side can be regarded as a normalizing constant that does not depend on \\(\\theta\\), and so it can be disregarded for the maximization of \\(\\theta\\).\nThe MAP estimate of \\(\\theta\\) is defined as:\n\n\\[\n\\argmax_{\\theta} P(\\theta | x) = \\argmax_{\\theta} P(x|\\theta )(P(\\theta )\n\\label{eq:map}\n\\]"
+    "text": "MAP: Maximum a posteriori\n\n\n\n\n\n\nIn Bayesian statistics, maximum a posteriori (MAP) estimation is often used to generate an estimate of the maximum value of a probability distribution.\n\n\n\nThat is, if \\(x\\) is used to refer to the data (\\(x\\) can be an arbitrary expression), and \\(\\theta\\) is used to refer to the parameters of a model, then Bayes’ law states that:\n\\[\nP(\\theta | x) = \\dfrac{P(x|\\theta )P(\\theta )}{P(x)}\n\\label{eq:bayes-law-for-map}\n\\]"
   },
   {
     "objectID": "lectures/mgsa.html#map-maximum-a-posteriori-1",
     "href": "lectures/mgsa.html#map-maximum-a-posteriori-1",
     "title": "Approaches to biomedical knowledge",
     "section": "MAP: Maximum a posteriori",
-    "text": "MAP: Maximum a posteriori\n\nIn the case of MGSA, the parameters comprised by \\(\\theta\\) would include the set of active terms as well as values for \\(\\alpha,\\beta\\), and \\(p\\).\nAlthough MAP estimation procedures are often relatively simple to implement, they tend to have the disadvantage that they ``get stuck’’ in local maxima without being able to offer a guarantee of finding the global maximum."
+    "text": "MAP: Maximum a posteriori\n\nThe term \\(P(\\theta | x)\\) is referred to as the posterior probability, and specifies the probability of the parameters \\(\\theta\\) given the observed data \\(x\\).\nThe denominator on the right-hand side can be regarded as a normalizing constant that does not depend on \\(\\theta\\), and so it can be disregarded for the maximization of \\(\\theta\\).\nThe MAP estimate of \\(\\theta\\) is defined as:\n\n\\[\n\\argmax_{\\theta} P(\\theta | x) = \\argmax_{\\theta} P(x|\\theta )(P(\\theta )\n\\label{eq:map}\n\\]"
+  },
+  {
+    "objectID": "lectures/mgsa.html#map-maximum-a-posteriori-2",
+    "href": "lectures/mgsa.html#map-maximum-a-posteriori-2",
+    "title": "Approaches to biomedical knowledge",
+    "section": "MAP: Maximum a posteriori",
+    "text": "MAP: Maximum a posteriori\n\nIn the case of MGSA, the parameters comprised by \\(\\theta\\) would include the set of active terms as well as values for \\(\\alpha,\\beta\\), and \\(p\\).\nAlthough MAP estimation procedures are often relatively simple to implement, they tend to have the disadvantage that they get stuck in local maxima without being able to offer a guarantee of finding the global maximum."
   },
   {
     "objectID": "lectures/mgsa.html#map-shortcomings",
     "href": "lectures/mgsa.html#map-shortcomings",
     "title": "Approaches to biomedical knowledge",
     "section": "MAP: Shortcomings?",
-    "text": "MAP: Shortcomings?\n\nIn complicated networks such as that of MGSA, it is that is substantially better than all alternative solutions.\nRather, the posterior probability is usually spread over a number of alternative network configurations. This implies that the posterior probability is not adequately represented by a single configuration \\(\\theta^{MAP}\\)\nIt is more appropriate to sample networks from the posterior probability, leading to a collection of networks with high posterior probability, each of which offers a good explanation of the data.\n\n\n\n\n\n\n\nThese considerations motivate the use of the MCMC algorithm to sample from the posterior distribution."
+    "text": "MAP: Shortcomings?\n\nIn complicated networks such as that of MGSA, it is rare to have a single solution that is substantially better than all alternative solutions.\nRather, the posterior probability is usually spread over a number of alternative network configurations. This implies that the posterior probability is not adequately represented by a single configuration \\(\\theta^{MAP}\\)\nIt is more appropriate to sample networks from the posterior probability, leading to a collection of networks with high posterior probability, each of which offers a good explanation of the data.\n\n\n\n\n\n\n\nThese considerations motivate the use of the MCMC algorithm to sample from the posterior distribution."
   },
   {
     "objectID": "lectures/mgsa.html#map-shortcomings-1",

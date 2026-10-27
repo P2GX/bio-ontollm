@@ -804,6 +804,16 @@ text-align: left;
 }
 .big-code pre code {
 font-size: 1.4em;
+}
+.boxed {
+border: 2px solid #2a6fdb;
+border-radius: 8px;
+padding: 0.4em 1em;
+background-color: #f3f7fe;
+}
+.emph {
+color: #cc5500; 
+font-weight: bold;
 }</style>
   <style type="text/css">.reveal
 div.sourceCode
@@ -2048,7 +2058,7 @@ display:block!important;
 <p>For background on RNA-seq analysis, see - Conesa A, et al. (2016) <a href="https://pubmed.ncbi.nlm.nih.gov/26813401/">A survey of best practices for RNA-seq data analysis. <em>Genome Biol</em> <strong>17</strong>:13</a></p>
 </div>
 </div><div class="column" style="width:30%;">
-<div id="59c3ffbb" class="cell" data-execution_count="1">
+<div id="e83482a0" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2102,7 +2112,7 @@ display:block!important;
 <h2>The Binomial Coefficient (review)</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="0c34d14e" class="cell" data-execution_count="2">
+<div id="4aa03433" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2175,7 +2185,7 @@ P(X=k) = \underbrace{{N\choose k}}_{\# \text{ways of choosing } k \text{ success
 <li>the probability of <span class="math inline">\(k=1,\ldots,10\)</span> “heads” in ten coin tosses using a fair coin (<span class="math inline">\(p=0.5\)</span>).</li>
 <li>Probability of <span class="math inline">\(k=1,\ldots,10\)</span> “heads” in ten coin tosses using a biased coin (<span class="math inline">\(p=0.1\)</span>).</li>
 </ol>
-<div id="ef3e50bc" class="cell" data-execution_count="3">
+<div id="52ec6149" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2244,7 +2254,7 @@ p^k\left(1-p\right)^{n-k} \\
 <li>It is also common to represent the region of probability graphically</li>
 <li>In this example, we have <span class="math inline">\(n = 250\)</span>, <span class="math inline">\(p = 0.06\)</span>, and <span class="math inline">\(k = 30\)</span></li>
 </ul>
-<div id="1cd29887" class="cell" data-execution_count="4">
+<div id="2cec592e" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2267,7 +2277,7 @@ p^k\left(1-p\right)^{n-k} \\
 <h2><span class="math inline">\(n\)</span>, <span class="math inline">\(k\)</span>, and <span class="math inline">\(p\)</span></h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div id="89ac3d6a" class="cell" data-execution_count="5">
+<div id="0f4de1d2" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2304,7 +2314,7 @@ p^k\left(1-p\right)^{n-k} \\
 <h2>Binomial vs hypergeometric distribution</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="23fd9f17" class="cell" data-execution_count="6">
+<div id="3a3e3452" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2583,7 +2593,7 @@ P_{miss}(S,i) = \sum_{\substack{j \le i \\ g_j \notin S}}\dfrac{1}{N-N_R}
 </section>
 <section id="gsea-running-sum-1" class="slide level2">
 <h2>GSEA: Running Sum</h2>
-<div id="deef8c7d" class="cell" data-execution_count="7">
+<div id="c67d424f" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
