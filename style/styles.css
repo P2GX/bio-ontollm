@@ -299,3 +299,15 @@ table.small-table td.greycell {
 .big-code pre code {
   font-size: 1.4em;
 }
+
+.boxed {
+  border: 2px solid #2a6fdb;
+  border-radius: 8px;
+  padding: 0.4em 1em;
+  background-color: #f3f7fe;
+}
+
+.emph {
+  color: #cc5500;      /* dark orange */
+  font-weight: bold;
+}
