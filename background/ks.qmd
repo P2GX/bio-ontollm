@@ -1,0 +1,245 @@
+---
+title: "Approaches to biomedical knowledge" 
+subtitle: "The Kolmogorov–Smirnov Test"
+author: "Peter Robinson"
+institute: "Free University Berlin"
+format:
+  revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
+    slide-number: true
+    show-slide-number: all
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.1
+    embed-resources: true
+    transition: fade
+    background-transition: convex
+    controls: true
+---
+
+## The Kolmogorov–Smirnov (KS) test 
+
+::: {.callout-warning}
+These slides are intended to provide extra background to understand the GSEA algorithm presented in lecture #2 and do not intend to provide a full account of the KS test.
+:::
+
+Suppose that we have an i.i.d. sample $X_1,\ldots , X_n$ with some unknown distribution $\mathbb{P}$ and we
+would like to test the hypothesis that $\mathbb{P}$ is equal to a particular distribution $\mathbb{P}_0$, i.e. decide
+between the following hypotheses:
+
+$$
+\begin{aligned}
+H_0 : \mathbb{P} &= \mathbb{P}_0 \\
+H_1 : \mathbb{P} & \neq \mathbb{P}_0 \\
+\end{aligned}
+$$
+
+
+
+
+The KS test is a non-parametric^[i.e., it does not assume any specific distribution form] method for comparing probability distributions and checking if two samples differ significantly. 
+
+
+
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm, kstest, ks_2samp
+
+plt.rcParams.update({"figure.figsize": (7, 3.6), "axes.spines.top": False,
+                     "axes.spines.right": False, "font.size": 12})
+rng = np.random.default_rng(42)
+
+def max_gap(x, cdf):
+    """Return D_n and where it occurs: (D, index j in sorted sample, x_j, ECDF value, CDF value)."""
+    xs_ = np.sort(x); n_ = len(xs_); F = cdf(xs_)
+    i = np.arange(1, n_ + 1)
+    d_plus, d_minus = i / n_ - F, F - (i - 1) / n_
+    j = int(np.argmax(np.maximum(d_plus, d_minus)))
+    if d_plus[j] >= d_minus[j]:
+        ecdf_val = i[j] / n_            # gap measured just after the jump at x_j
+    else:
+        ecdf_val = (i[j] - 1) / n_      # gap measured just before the jump at x_j
+    return max(d_plus[j], d_minus[j]), j, xs_[j], ecdf_val, F[j]
+```
+
+## The question
+
+::: {.incremental}
+- We have a sample $x_1, \dots, x_n$.
+- **One-sample question:** could it have come from a specified distribution $F$ (for example $N(0,1)$)?
+- **Two-sample question:** could two samples come from the *same* distribution?
+- Chi-square tests require binning the data. The KS test works on the raw values, with no binning.
+- Both questions are answered by comparing **cumulative distribution functions**.
+:::
+
+
+
+## The empirical CDF (ECDF)
+
+The ECDF is the fraction of $n$ **ordered** observations at or below $x$:
+
+$$F_n(x) = \frac{1}{n} \sum_{i=1}^{n} \mathbf{1}\{x_i \le x\}$$
+
+It is a step function that jumps by $1/n$ at each data point and rises from 0 to 1.
+
+```{python}
+#| fig-height: 3.2
+n = 30
+# Pick a sample whose largest gap lies in the interior of the data (not at either end),
+# so the following slides illustrate the general case.
+for seed in range(1, 1000):
+    x = np.random.default_rng(seed).normal(0, 1, n)
+    D, j, *_ = max_gap(x, norm.cdf)
+    if 8 <= j <= 21 and D >= 0.12:
+        break
+xs = np.linspace(-3.5, 3.5, 500)
+
+plt.step(np.sort(x), np.arange(1, n + 1) / n, where="post", label="ECDF $F_n$")
+plt.plot(xs, norm.cdf(xs), label="$N(0,1)$ CDF $F$")
+plt.legend(); plt.xlabel("x"); plt.show()
+```
+
+## The test statistic
+
+$$D_n = \sup_x \left| F_n(x) - F(x) \right|$$
+
+$D_n$ is the **largest vertical gap** between the ECDF and the hypothesized CDF.
+
+- $D_n$ is always between 0 and 1.
+- Small $D_n$: the sample looks like $F$.
+- Large $D_n$: the sample is far from $F$, so we reject.
+- The largest gap can occur **anywhere** along the distribution. 
+
+```{python}
+#| echo: false
+#| fig-height: 3.2
+D, j, xj, ecdf_val, F_val = max_gap(x, norm.cdf)
+
+plt.step(np.sort(x), np.arange(1, n + 1) / n, where="post", label="ECDF")
+plt.plot(xs, norm.cdf(xs), label="$F$")
+plt.vlines(xj, min(ecdf_val, F_val), max(ecdf_val, F_val), color="crimson", lw=3,
+           label=f"$D_n$ = {D:.3f}")
+plt.plot([xj], [ecdf_val], "o", color="crimson")
+plt.legend(); plt.xlabel("x"); plt.show()
+```
+
+## Computing $D_n$ by hand
+
+The ECDF is a step function and $F$ is continuous, so the largest gap occurs at a data point, either just **before** or just **after** a jump. We must check **both**:
+
+- **Just after the jump** (ECDF is above $F$): $D_n^+ = \max_i \left(\tfrac{i}{n} - F(x_{(i)})\right)$
+- **Just before the jump** (ECDF is below $F$): $D_n^- = \max_i \left(F(x_{(i)}) - \tfrac{i-1}{n}\right)$
+
+$$D_n = \max(D_n^+,\, D_n^-)$$
+
+```{python}
+#| fig-height: 3.4
+xs3 = np.array([-1.0, 0.2, 1.1]); n3 = len(xs3)
+F3 = norm.cdf(xs3)
+i3 = np.arange(1, n3 + 1)
+
+plt.step(np.r_[-3.5, xs3, 3.5], np.r_[0, i3 / n3, 1.0], where="post", label="ECDF")
+plt.plot(xs, norm.cdf(xs), label="$F$")
+for k in range(n3):
+    plt.vlines(xs3[k] - 0.03, (i3[k] - 1) / n3, F3[k], color="darkorange", lw=3,
+               label="just before jump" if k == 0 else None)
+    plt.vlines(xs3[k] + 0.03, F3[k], i3[k] / n3, color="seagreen", lw=3,
+               label="just after jump" if k == 0 else None)
+plt.legend(); plt.xlabel("x"); plt.show()
+```
+
+
+
+## What would $D_n$ look like if $H_0$ were true?
+
+Simulate 10,000 samples of size $n = 30$ from $N(0,1)$ and compute $D_n$ for each:
+
+```{python}
+def null_D(n, B=10_000):
+    x = np.sort(rng.normal(size=(B, n)), axis=1)
+    F = norm.cdf(x)
+    i = np.arange(1, n + 1)
+    return np.maximum((i / n - F).max(axis=1), (F - (i - 1) / n).max(axis=1))
+
+D30 = null_D(30)
+q95 = np.quantile(D30, 0.95)
+plt.hist(D30, bins=40, color="steelblue")
+plt.axvline(q95, color="crimson", label=f"95th percentile = {q95:.3f}")
+plt.xlabel("$D_n$ under $H_0$"); plt.legend(); plt.show()
+```
+
+The p-value is the fraction of this null distribution at least as large as the observed $D_n$.
+
+## How $D_n$ scales with $n$
+
+Under $H_0$, $D_n$ shrinks like $1/\sqrt{n}$.^[(the ECDF at any point is an average of $n$ indicators, so its spread is of order $1/\sqrt{n}$)] The scaled quantity $\sqrt{n}\, D_n$ has (approximately) the **same distribution for every $n$**. This is the Kolmogorov distribution.
+
+```{python}
+for n_ in (30, 120):
+    D = null_D(n_)
+    print(f"n={n_:4d}  95th pct of D_n = {np.quantile(D, .95):.3f}   "
+          f"95th pct of sqrt(n)*D_n = {np.sqrt(n_) * np.quantile(D, .95):.3f}")
+```
+
+At $\alpha = 0.05$, the asymptotic critical value is
+
+$$D_{n,\,0.05} \approx \frac{1.36}{\sqrt{n}}$$
+
+* In practice, software computes the p-value  (`scipy.stats.kstest` or R’s `ks.test`).
+
+
+## Under an alternative
+
+Sample from $N(0.5, 1)$ and test against $N(0,1)$:
+
+```{python}
+y = rng.normal(0.5, 1, 30)
+res = kstest(y, "norm")
+print(res)
+
+plt.step(np.sort(y), np.arange(1, 31) / 30, where="post", label="ECDF of sample")
+plt.plot(xs, norm.cdf(xs), label="$N(0,1)$ CDF")
+plt.legend(); plt.show()
+```
+
+::: {.incremental}
+- The ECDF lies **below** the null CDF, because the sample is shifted right.
+- For a pure location shift, the gap is largest near the middle of the distribution, where the CDF is steepest.
+:::
+
+## The two-sample test
+
+Compare two samples directly with no hypothesized $F$:
+
+$$D_{n,m} = \sup_x \left| F_{1,n}(x) - F_{2,m}(x) \right|$$
+
+```{python}
+a = rng.normal(0, 1, 40)
+b = rng.normal(0.5, 1.3, 50)
+print(ks_2samp(a, b))
+
+for s, lab in ((a, "sample A"), (b, "sample B")):
+    plt.step(np.sort(s), np.arange(1, len(s) + 1) / len(s), where="post", label=lab)
+plt.legend(); plt.show()
+```
+
+The rejection threshold uses the effective sample size $nm/(n+m)$, in place of $n$.
+
+
+
+## Summary
+
+
+- The KS test compares an **ECDF** with a **CDF**, or two ECDFs with each other.
+- $D_n$ is the **largest vertical gap**.
+- Under $H_0$, $\sqrt{n}\, D_n$ has a fixed distribution, so we can assign a p-value.
+- Use `scipy.stats.kstest` or `ks_2samp` (R: `ks.test`).
+- Remember the pitfalls: continuous data, estimated parameters, and tail sensitivity.
+
+**References:** 
+* [NIST Engineering Statistics Handbook §1.3.5.16](https://itl.nist.gov/div898/handbook/eda/section3/eda35g.htm)
+ MIT OCW 18.443, Lecture 14.

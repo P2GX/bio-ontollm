@@ -5,6 +5,7 @@ project:
     - "index.qmd"
     - "lectures/*.qmd"
     - "notebooks/*.ipynb"
+    - "background/*.qmd"
     - "!sandbox/*"
 
 website:
