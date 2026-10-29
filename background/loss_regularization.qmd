@@ -1,0 +1,287 @@
+---
+title: "Regularizing Loss Functions" 
+author: "Leonardo Chimirri"
+institute: "Berlin Institute of Health"
+format:
+  revealjs:
+    theme: [default] 
+    css: ../style/styles.css            
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
+    slide-number: true
+    show-slide-number: all
+    incremental: false 
+    html-math-method: mathjax
+    margin: 0.1
+    embed-resources: true
+    transition: fade
+    background-transition: convex
+    controls: true
+---
+
+## Backround on losses 
+
+5. Parabola with $L(w_1,w_2)=(w_1-2)^2+100\cdot(w_2-2)^2$: what is its minimum, plot it, show how slow it converges. Get all the way to condition number intuition
+6. Add ridge, show the minimum changes, show how the plot changes
+4. Bayesian approach: from "3.4 Why Optimize a Particular Loss Function?"
+7. What is dropout and show how with very strong restrictions it's equivalent to ridge
+  
+
+
+::: {.callout-warning}
+These slides are intended to provide extra background to better understand the meaning of parameter fitting and regularization.
+:::
+
+## How Regularization Helps Optimization
+Why regularize? Two points of view, Statistical Learning Theory (SLT) concerned with bias-variance tradeoff, model complexity, and so on, and on the other hand optimization. SLT does not tell us why a quadratic should be better, it just tells us any $||w||^\alpha$ is ok, so why is $\alpha=2$ so popular? Looking at optimization will show us! 
+
+In the lecture you saw cross entropy loss, typical for sigmoid activation, but why? What about a naive squared error?
+$$
+\begin{equation}
+    \mathcal{L}(\vec{w}) = \frac{1}{2}\sum_{i=1}^N || y_i-\sigma(\vec{w}\cdot\vec{x}_i) ||^2\,.
+\end{equation}
+$$
+
+This can be used, but has some issues (this example comes from [here](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)). Different losses have a different speeds of learning. The learning rate is largely determined by the gradient of the loss $\nabla\mathcal{L}$. Slow learning appears when these derivatives become small. For sigmoid (activation) with quadratic vs. cross entropy loss (seen in class) we have
+
+$$
+\begin{aligned}
+    \nabla\mathcal{L}_{squared} &\propto \sigma'(x) \cdot \sigma(x)\,,\quad \sigma'(x)\underbrace{\to 0}_{\lim_{x\to 1}}\\
+    \nabla\mathcal{L}_{ent} &\propto \sigma(x)-y\,,
+\end{aligned}
+$$
+
+
+## Convergence Speed
+One way to (maybe) gain inuition about the cross entropy: we can actually obtain it for sigmoid activation by imposing a learning rate proportional to the error between data point and prediction, we can think of activation and loss **pairs**.
+
+<br>
+
+Anyway, in general, around an isolated minimum of $L$ we can write the function as a pure quadratic, or a sum of squares to keep things simple: 
+
+$$
+\begin{align}
+    \mathcal{L}(x,y) &= (x-2)^2 + c\cdot (y-2)^2\,,\\[5pt]
+    \nabla\mathcal{L} &= 
+        \begin{pmatrix}
+            2(x-2)\\
+            2c(y-2)
+        \end{pmatrix}
+        =\begin{pmatrix}
+            0\\
+            0
+        \end{pmatrix}
+        \,\rightarrow
+        (x_{min},y_{min})=(2,2)\,,\\[5pt]
+    Hf&=
+        \begin{pmatrix}
+            2 & 0\\
+            0 & 2c
+        \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = c \qquad \longleftarrow \text{condition number}
+\end{align}
+$$
+
+A large condition number means an ill posed optimization problem which will converge slowly. This is an intuitive description, the mathematical formalization of these ideas is more complicated.
+
+## Let's plot this:
+
+```{python}
+#| echo: false
+
+import numpy as np
+import plotly.graph_objects as go
+
+# Fixed grid and coefficient values
+grid = np.linspace(0, 4, 40)
+X, Y = np.meshgrid(grid, grid)
+c_values = list(range(1, 11))
+
+def loss_surface(c, lam=0):
+    return (X-2)**2 + c*(Y-2)**2 + (lam / 2) * (X**2 + Y**2)
+
+def make_surface_slider(lam=0):
+    fig = go.Figure(
+        data=[go.Surface(
+            x=X, y=Y, z=loss_surface(c_values[0], lam)
+        )]
+    )
+
+    frames = [
+        go.Frame(
+            name=str(c),
+            data=[go.Surface(z=loss_surface(c, lam))],
+            layout=go.Layout(title_text=f"c = {c}, lambda = {lam}")
+        )
+        for c in c_values
+    ]
+    fig.frames = frames
+
+    fig.update_layout(
+        title=f"c = 1, lambda = {lam}",
+        scene=dict(
+            xaxis=dict(title="x", range=[0, 4], autorange=False),
+            yaxis=dict(title="y", range=[0, 4], autorange=False),
+            zaxis=dict(title="Loss", range=[0, 15], autorange=False),
+            aspectmode="manual",
+        aspectratio=dict(x=1, y=1, z=0.8),
+        ),
+        sliders=[dict(
+            active=0,
+            currentvalue={"prefix": "c = "},
+            steps=[
+                dict(
+                    label=str(c),
+                    method="animate",
+                    args=[
+                        [str(c)],
+                        {
+                            "mode": "immediate",
+                            "frame": {"duration": 0, "redraw": True},
+                            "transition": {"duration": 0}
+                        }
+                    ]
+                )
+                for c in c_values
+            ]
+        ),
+        ],
+        margin=dict(l=0, r=0, t=50, b=0)
+    )
+    return fig
+make_surface_slider(lam=0).show()
+```
+
+
+## Example
+
+Gradient descent with learning rate $\eta$ updates both coordinates simultaneously:
+
+$$
+\begin{aligned}
+\begin{pmatrix}
+x_{t+1}\\
+y_{t+1}
+\end{pmatrix}
+=
+\begin{pmatrix}
+x_t\\
+y_t
+\end{pmatrix}
+-\eta
+\begin{pmatrix}
+2(x_t-2)\\
+2c(y_t-2)
+\end{pmatrix}
+=
+\begin{pmatrix}
+(1-2\eta)x_t+4\eta\\
+(1-2c\eta)y_t+4c\eta
+\end{pmatrix}
+\longrightarrow 
+\begin{pmatrix}
+    x_{t+1}-2\\
+    y_{t+1}-2
+\end{pmatrix} =
+\begin{pmatrix}
+  (1-2\eta)(x_t-2)\\
+  (1-2c\eta)(y_t-2)
+\end{pmatrix}
+\,.
+\end{aligned}
+$$
+
+Let $c=10$, $\eta=0.08$, and start at $(x_0,y_0)=(0,0)$. The minimum is at $(2,2)$. The update equations become
+
+$$
+\boxed{
+\begin{aligned}
+x_{t+1}&=0.84x_t+0.32,\\
+y_{t+1}&=-0.6y_t+3.2.
+\end{aligned}
+}
+$$
+
+$$
+\nabla\mathcal{L}(0,0)=
+\begin{pmatrix}
+-4\\
+-40
+\end{pmatrix}
+\quad \longrightarrow \quad
+\begin{pmatrix}
+    x_1\\
+    y_1
+\end{pmatrix}
+=
+\begin{pmatrix}
+    0\\
+    0
+\end{pmatrix}
+-0.08
+\begin{pmatrix}
+    -4\\
+    -40
+\end{pmatrix}
+=
+\begin{pmatrix}
+    0.32\\
+    3.2\\
+\end{pmatrix}.
+$$
+
+At the new point, the gradient is
+$$
+\nabla\mathcal{L} =
+\begin{pmatrix}
+-3.36\\
+24
+\end{pmatrix}
+\quad \longrightarrow \quad
+\begin{pmatrix}x_2\\y_2
+\end{pmatrix}
+=
+\begin{pmatrix}0.32\\3.2
+\end{pmatrix}
+-0.08
+\begin{pmatrix}-3.36\\24
+\end{pmatrix}
+=
+\begin{pmatrix}0.5888\\1.28
+\end{pmatrix}.
+$$
+
+The $x$-coordinate moves steadily towards $2$, while the $y$-coordinate overshoots the minimum and switches sides. Both converge because the absolute values of their updates are less than 1.
+
+## Adding a Ridge in the Hessian
+
+
+## Bayesian
+The maximum likelihood principle should seem intuitively reasonable, but is it really necessary? We can motivate the maximum likelihood principle in a compelling way using Bayesian statistics.
+Instead we can try to obtain a point estimate, which
+in the Bayesian context is called a ‘Maximum A Posteriori Estimation’, sometimes abreviated ‘MAP’
+The most likely single value (or point estimate) of the parameter θ will be the one that maximizes
+pbelief (θ|X), which means that it must maximize
+hus from this Bayesian perspective,
+we can derive the maximum likelihood principle if we assume that pprior(θ) is actually a uniform
+distribution over θ.
+If the prior is not uniform, then we instead find a different principle, which pushes us towards
+values of θ that are favored by the prior. As we will see, this provides a motivation for regularizing
+our models. For instance if our prior is a Gaussian centered at θ = 0, then it effectively punishes us
+for ‘learning’ values of θ that are large numbers.
+
+
+## In words
+We are explicitly saying: I want parameters that fit the data, but if two parameter settings fit similarly well, I prefer the one with smaller weights.
+
+In general, this changes the minimum. And that's not an unwanted side effect; it is the point.
+
+The original minimum is the parameter setting that best fits the training objective alone. The regularized minimum is the parameter setting that balances training fit against the penalty.
+
+The regularized solution may fit the training data less well but perform better on unseen data. This is the familiar bias–variance trade-off
+
+The regularized encodes additional assumptions about models we prefer
+
+
+**References:** 
+* [Machine Learning for the Sciences](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)
+* Ridge Regression in data science
+

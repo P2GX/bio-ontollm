@@ -69,3 +69,4 @@ This course is held as a part of the [Master Curriculum](https://www.mi.fu-berli
 :::
 
 * [KS Test](background/ks.qmd)
+* [Regularization](background/loss_regularization.qmd)
