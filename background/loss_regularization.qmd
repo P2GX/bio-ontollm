@@ -1,7 +1,8 @@
 ---
-title: "Regularizing Loss Functions" 
+title: "Tutorial: Regularizing Loss Functions" 
+subtitle: "Convergence Speed of Optimization"
 author: "Leonardo Chimirri"
-institute: "Berlin Institute of Health"
+institute: "Berlin Institute of Health at Charité"
 format:
   revealjs:
     theme: [default] 
@@ -18,20 +19,12 @@ format:
     controls: true
 ---
 
-## Backround on losses 
-
-5. Parabola with $L(w_1,w_2)=(w_1-2)^2+100\cdot(w_2-2)^2$: what is its minimum, plot it, show how slow it converges. Get all the way to condition number intuition
-6. Add ridge, show the minimum changes, show how the plot changes
-4. Bayesian approach: from "3.4 Why Optimize a Particular Loss Function?"
-7. What is dropout and show how with very strong restrictions it's equivalent to ridge
-  
-
-
-::: {.callout-warning}
-These slides are intended to provide extra background to better understand the meaning of parameter fitting and regularization.
-:::
 
 ## How Regularization Helps Optimization
+<!-- ::: {.callout-note}
+These slides are intended to provide some extra background to better understand the interplay of parameter fitting, regularization and optimization.
+::: -->
+
 Why regularize? Two points of view, Statistical Learning Theory (SLT) concerned with bias-variance tradeoff, model complexity, and so on, and on the other hand optimization. SLT does not tell us why a quadratic should be better, it just tells us any $||w||^\alpha$ is ok, so why is $\alpha=2$ so popular? Looking at optimization will show us! 
 
 In the lecture you saw cross entropy loss, typical for sigmoid activation, but why? What about a naive squared error?
@@ -52,11 +45,11 @@ $$
 
 
 ## Convergence Speed
-One way to (maybe) gain inuition about the cross entropy: we can actually obtain it for sigmoid activation by imposing a learning rate proportional to the error between data point and prediction, we can think of activation and loss **pairs**.
+One way to (maybe) gain inuition about the cross entropy: we can actually obtain it for sigmoid activation by imposing a learning rate proportional to the error between data point and prediction, we can think of activation and loss **pairs** that fit well together.
 
 <br>
 
-Anyway, in general, around an isolated minimum of $L$ we can write the function as a pure quadratic, or a sum of squares to keep things simple: 
+Let us look more closely at an example of convergence. In general, around an isolated minimum of $L$ we can write the function as a pure quadratic, or a sum of squares to keep things simple: 
 
 $$
 \begin{align}
@@ -72,7 +65,7 @@ $$
         \end{pmatrix}
         \,\rightarrow
         (x_{min},y_{min})=(2,2)\,,\\[5pt]
-    Hf&=
+    H\mathcal{L}&=
         \begin{pmatrix}
             2 & 0\\
             0 & 2c
@@ -91,25 +84,48 @@ import numpy as np
 import plotly.graph_objects as go
 
 # Fixed grid and coefficient values
-grid = np.linspace(0, 4, 40)
+grid = np.linspace(-1, 5, 40)
 X, Y = np.meshgrid(grid, grid)
 c_values = list(range(1, 11))
 
 def loss_surface(c, lam=0):
     return (X-2)**2 + c*(Y-2)**2 + (lam / 2) * (X**2 + Y**2)
 
-def make_surface_slider(lam=0):
-    fig = go.Figure(
-        data=[go.Surface(
-            x=X, y=Y, z=loss_surface(c_values[0], lam)
-        )]
+def loss_minimum(c, lam=0):
+    x_min = 4 / (lam + 2)
+    y_min = 4 * c / (2 * c + lam)
+    z_min = (x_min-2)**2 + c*(y_min-2)**2 + (lam / 2) * (x_min**2 + y_min**2)
+    return x_min, y_min, z_min
+
+def minimum_marker(c, lam=0):
+    x_min, y_min, z_min = loss_minimum(c, lam)
+    return go.Scatter3d(
+        x=[x_min], y=[y_min], z=[z_min],
+        mode="markers",
+        marker=dict(size=7, color="red", line=dict(width=1.5, color="black")),
+        name="minimum"
     )
 
+
+def make_surface_slider(lam=0):
+    fig = go.Figure(
+        data=[
+            go.Surface(
+                x=X, y=Y, z=loss_surface(c_values[0], lam),
+                colorscale=[[0, "lightgray"], [1, "lightgray"]],
+                showscale=False, opacity=0.5
+            ),
+            minimum_marker(c_values[0], lam)
+        ]
+    )
     frames = [
         go.Frame(
             name=str(c),
-            data=[go.Surface(z=loss_surface(c, lam))],
-            layout=go.Layout(title_text=f"c = {c}, lambda = {lam}")
+            data=[
+                go.Surface(z=loss_surface(c, lam)),
+                minimum_marker(c_values[0], lam)
+            ],
+            layout=go.Layout(title_text=f"c = {c}, mu = {lam}")
         )
         for c in c_values
     ]
@@ -118,9 +134,9 @@ def make_surface_slider(lam=0):
     fig.update_layout(
         title=f"c = 1, lambda = {lam}",
         scene=dict(
-            xaxis=dict(title="x", range=[0, 4], autorange=False),
-            yaxis=dict(title="y", range=[0, 4], autorange=False),
-            zaxis=dict(title="Loss", range=[0, 15], autorange=False),
+            xaxis=dict(title="x", range=[-1, 5], autorange=False),
+            yaxis=dict(title="y", range=[-1, 5], autorange=False),
+            zaxis=dict(title="Loss", range=[0, 25], autorange=False),
             aspectmode="manual",
         aspectratio=dict(x=1, y=1, z=0.8),
         ),
@@ -189,6 +205,14 @@ y_t
 \end{aligned}
 $$
 
+In order for this to converge we must have
+
+$$
+|1-2c\eta|<1
+\quad\Longleftrightarrow\quad
+0<\eta<\frac{1}{c}.
+$$
+
 Let $c=10$, $\eta=0.08$, and start at $(x_0,y_0)=(0,0)$. The minimum is at $(2,2)$. The update equations become
 
 $$
@@ -200,6 +224,8 @@ y_{t+1}&=-0.6y_t+3.2.
 }
 $$
 
+# Example
+Taking a few steps
 $$
 \nabla\mathcal{L}(0,0)=
 \begin{pmatrix}
@@ -228,6 +254,7 @@ $$
 \end{pmatrix}.
 $$
 
+
 At the new point, the gradient is
 $$
 \nabla\mathcal{L} =
@@ -249,12 +276,57 @@ $$
 \end{pmatrix}.
 $$
 
-The $x$-coordinate moves steadily towards $2$, while the $y$-coordinate overshoots the minimum and switches sides. Both converge because the absolute values of their updates are less than 1.
-
-## Adding a Ridge in the Hessian
+- The $x$-coordinate moves steadily towards $2$, while the $y$-coordinate overshoots the minimum and switches sides. Both converge because the absolute values of their updates are less than 1. 
 
 
-## Bayesian
+## Adding a Ridge (in the Hessian)
+
+$$
+\begin{align}
+\mathcal{L}_R(x,y) &= (x-2)^2 + c\cdot (y-2)^2 + \frac{\mu}{2}(x^2+y^2)\,,\\[5pt]
+\nabla\mathcal{L}_R &= \nabla\mathcal{L} + \mu  
+        \begin{pmatrix}
+            x\\
+            y
+        \end{pmatrix}
+    =\begin{pmatrix}
+        x(\mu+2)-4\\
+        y(\mu+2c)-4c
+    \end{pmatrix}
+    =\begin{pmatrix}
+        0\\
+        0
+    \end{pmatrix}
+    \,\rightarrow
+    (x_{min},y_{min})=(\frac{4}{\mu+2},\frac{4c}{\mu+2c})\,,\\[5pt]
+H\mathcal{L}_R &= H\mathcal{L} + \mu\mathcal{I}
+    =
+    \begin{pmatrix}
+        2+\mu & 0\\
+        0 & 2c+\mu
+    \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = \frac{2c+\mu}{2+\mu} \,.
+\end{align}
+$$
+
+::: {.incremental}
+- The minimum's location changes
+- The original minimum is the parameter setting that best fits the training objective alone. The regularized minimum is the parameter setting that balances training fit against the penalty.
+- We want parameters that fit the data, but if two parameter settings fit similarly well, we prefer the one with smaller weights.
+- The regularized solution may fit the training data less well (larger variance) but perform better on unseen data (smaller bias).
+- **Takewaway:** The regularization encodes additional assumptions about models we prefer.
+:::
+
+## Plot with Regularization
+```{python}
+#| echo: false
+make_surface_slider(lam=2).show()
+```
+
+
+## Bayesian Approach
+
+From Kaplan's "3.4 Why Optimize a Particular Loss Function?"
+
 The maximum likelihood principle should seem intuitively reasonable, but is it really necessary? We can motivate the maximum likelihood principle in a compelling way using Bayesian statistics.
 Instead we can try to obtain a point estimate, which
 in the Bayesian context is called a ‘Maximum A Posteriori Estimation’, sometimes abreviated ‘MAP’
@@ -268,17 +340,6 @@ values of θ that are favored by the prior. As we will see, this provides a moti
 our models. For instance if our prior is a Gaussian centered at θ = 0, then it effectively punishes us
 for ‘learning’ values of θ that are large numbers.
 
-
-## In words
-We are explicitly saying: I want parameters that fit the data, but if two parameter settings fit similarly well, I prefer the one with smaller weights.
-
-In general, this changes the minimum. And that's not an unwanted side effect; it is the point.
-
-The original minimum is the parameter setting that best fits the training objective alone. The regularized minimum is the parameter setting that balances training fit against the penalty.
-
-The regularized solution may fit the training data less well but perform better on unseen data. This is the familiar bias–variance trade-off
-
-The regularized encodes additional assumptions about models we prefer
 
 
 **References:** 
