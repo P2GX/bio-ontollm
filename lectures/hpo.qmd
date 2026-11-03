@@ -1086,6 +1086,53 @@ We curated **453 Mendelian non-coding mutations** and annotated **26 genomic att
 * A random-forest score trained on a **very imbalanced** problem: 382 disease mutations against about 14 million benign variants
 * ROC curves look excellent for every method (AUC 0.95–0.99), but **precision–recall** shows the real difference: ReMM 0.64 versus at most 0.17 for the others^[Smedley D et al. (2016) *Am J Hum Genet* **99**:595–606. PMID 27569544]
 
+## ReMM: Extreme class imbalance and SMOTE {.smaller}
+
+:::: {.columns}
+
+::: {.column width="46%"}
+* **Problem:** 14,122,456 putatively benign sites versus **406** non-coding Mendelian mutations (≈ 1 : 35,000). A classifier can be "99.99% accurate" by always saying benign
+* **SMOTE** (synthetic minority over-sampling technique): create new positives by **interpolating** between a positive and one of its $k = 5$ nearest positive neighbours in the space of the 26 genomic attributes
+
+```{=html}
+<svg viewBox="0 0 300 170" width="75%" style="display:block;margin:0 auto;border:1px solid #ccc;background:#fff">
+  <circle cx="25"  cy="22" r="5" fill="#bbb"/>
+  <circle cx="235" cy="30" r="5" fill="#bbb"/>
+  <circle cx="160" cy="140" r="5" fill="#bbb"/>
+  <line x1="50" y1="125" x2="205" y2="55" stroke="#999" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <circle cx="50"  cy="125" r="7" fill="#1a3c6e"/>
+  <circle cx="205" cy="55"  r="7" fill="#1a3c6e"/>
+  <circle cx="112" cy="97"  r="7" fill="#fff" stroke="#c0392b" stroke-width="2.5"/>
+  <text x="36"  y="148" font-size="14" font-style="italic">x</text>
+  <text x="196" y="42"  font-size="14" font-style="italic">x<tspan font-size="10" dy="3">nn</tspan></text>
+  <text x="92"  y="82"  font-size="14" font-style="italic" fill="#c0392b">x<tspan font-size="10" dy="3">new</tspan></text>
+</svg>
+```
+
+$$x_{\text{new}} = x + u\,(x_{\text{nn}} - x), \qquad u \sim \mathrm{Uniform}(0,1)$$
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="50%"}
+**How we used it in ReMM** (per partition, repeated 100 times):
+
+1. Split the benign sites randomly into **100 partitions**
+2. Add **all 406 positives** to every partition
+3. SMOTE ($k = 5$): add **812 synthetic** positives (2× the positive class), giving **1,218** positives
+4. Under-sample the benign sites to **3,654** (3× the enlarged positive class)
+5. Train a **random forest** (10 trees)
+
+Final **ReMM score** = average probability of the 100 forests ("hyper-ensemble"), between 0 and 1
+:::
+
+::::
+
+::: {.tiny-credit}
+Chawla NV et al. (2002) *J Artif Intell Res* **16**:321–357. Smedley D et al. (2016) *Am J Hum Genet* **99**:595–606 (PMID 27569544)
+:::
+
 
 ## Genomiser: combining phenotype and variant evidence
 
