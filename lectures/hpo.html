@@ -5979,6 +5979,44 @@ P(h_i\mid \neg D_j) = \frac{1}{N-1}\sum_{k\neq j} P(h_i\mid D_k) \approx \frac{1
 <li>ROC curves look excellent for every method (AUC 0.95–0.99), but <strong>precision–recall</strong> shows the real difference: ReMM 0.64 versus at most 0.17 for the others<sup>1</sup></li>
 </ul>
 <aside><ol class="aside-footnotes"><li id="fn10"><p>Smedley D et al. (2016) <em>Am J Hum Genet</em> <strong>99</strong>:595–606. PMID 27569544</p></li></ol></aside></section>
+<section id="remm-extreme-class-imbalance-and-smote" class="slide level2 smaller">
+<h2>ReMM: Extreme class imbalance and SMOTE</h2>
+<div class="columns">
+<div class="column" style="width:46%;">
+<ul>
+<li><strong>Problem:</strong> 14,122,456 putatively benign sites versus <strong>406</strong> non-coding Mendelian mutations (≈ 1 : 35,000). A classifier can be “99.99% accurate” by always saying benign</li>
+<li><strong>SMOTE</strong> (synthetic minority over-sampling technique): create new positives by <strong>interpolating</strong> between a positive and one of its <span class="math inline">\(k = 5\)</span> nearest positive neighbours in the space of the 26 genomic attributes</li>
+</ul>
+<svg viewbox="0 0 300 170" width="75%" style="display:block;margin:0 auto;border:1px solid #ccc;background:#fff">
+  <circle cx="25" cy="22" r="5" fill="#bbb"></circle>
+  <circle cx="235" cy="30" r="5" fill="#bbb"></circle>
+  <circle cx="160" cy="140" r="5" fill="#bbb"></circle>
+  <line x1="50" y1="125" x2="205" y2="55" stroke="#999" stroke-width="1.5" stroke-dasharray="5,4"></line>
+  <circle cx="50" cy="125" r="7" fill="#1a3c6e"></circle>
+  <circle cx="205" cy="55" r="7" fill="#1a3c6e"></circle>
+  <circle cx="112" cy="97" r="7" fill="#fff" stroke="#c0392b" stroke-width="2.5"></circle>
+  <text x="36" y="148" font-size="14" font-style="italic">x</text>
+  <text x="196" y="42" font-size="14" font-style="italic">x<tspan font-size="10" dy="3">nn</tspan></text>
+  <text x="92" y="82" font-size="14" font-style="italic" fill="#c0392b">x<tspan font-size="10" dy="3">new</tspan></text>
+</svg>
+<p><span class="math display">\[x_{\text{new}} = x + u\,(x_{\text{nn}} - x), \qquad u \sim \mathrm{Uniform}(0,1)\]</span></p>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:50%;">
+<p><strong>How we used it in ReMM</strong> (per partition, repeated 100 times):</p>
+<ol type="1">
+<li>Split the benign sites randomly into <strong>100 partitions</strong></li>
+<li>Add <strong>all 406 positives</strong> to every partition</li>
+<li>SMOTE (<span class="math inline">\(k = 5\)</span>): add <strong>812 synthetic</strong> positives (2× the positive class), giving <strong>1,218</strong> positives</li>
+<li>Under-sample the benign sites to <strong>3,654</strong> (3× the enlarged positive class)</li>
+<li>Train a <strong>random forest</strong> (10 trees)</li>
+</ol>
+<p>Final <strong>ReMM score</strong> = average probability of the 100 forests (“hyper-ensemble”), between 0 and 1</p>
+</div></div>
+<div class="tiny-credit">
+<p>Chawla NV et al. (2002) <em>J Artif Intell Res</em> <strong>16</strong>:321–357. Smedley D et al. (2016) <em>Am J Hum Genet</em> <strong>99</strong>:595–606 (PMID 27569544)</p>
+</div>
+</section>
 <section id="genomiser-combining-phenotype-and-variant-evidence" class="slide level2">
 <h2>Genomiser: combining phenotype and variant evidence</h2>
 
