@@ -227,53 +227,51 @@ $$
 # Example
 Taking a few steps
 $$
-\nabla\mathcal{L}(0,0)=
-\begin{pmatrix}
--4\\
--40
-\end{pmatrix}
-\quad \longrightarrow \quad
-\begin{pmatrix}
-    x_1\\
-    y_1
-\end{pmatrix}
-=
-\begin{pmatrix}
-    0\\
-    0
-\end{pmatrix}
--0.08
-\begin{pmatrix}
-    -4\\
-    -40
-\end{pmatrix}
-=
-\begin{pmatrix}
-    0.32\\
-    3.2\\
-\end{pmatrix}.
-$$
-
-
-At the new point, the gradient is
-$$
-\nabla\mathcal{L} =
-\begin{pmatrix}
--3.36\\
-24
-\end{pmatrix}
-\quad \longrightarrow \quad
-\begin{pmatrix}x_2\\y_2
-\end{pmatrix}
-=
-\begin{pmatrix}0.32\\3.2
-\end{pmatrix}
--0.08
-\begin{pmatrix}-3.36\\24
-\end{pmatrix}
-=
-\begin{pmatrix}0.5888\\1.28
-\end{pmatrix}.
+\begin{align}
+    \nabla\mathcal{L}(x_0,y_0)=
+    \begin{pmatrix}
+        -4\\
+        -40
+    \end{pmatrix}
+    \quad &\longrightarrow \quad
+    \begin{pmatrix}
+        x_1\\
+        y_1
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        0\\
+        0
+    \end{pmatrix}
+    -0.08
+    \begin{pmatrix}
+        -4\\
+        -40
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        0.32\\
+        3.2\\
+    \end{pmatrix} 
+    \\[8pt]
+    \nabla\mathcal{L}(x_1,y_1) =
+    \begin{pmatrix}
+    -3.36\\
+    24
+    \end{pmatrix}
+    \quad &\longrightarrow \quad
+    \begin{pmatrix}x_2\\y_2
+    \end{pmatrix}
+    =
+    \begin{pmatrix}0.32\\3.2
+    \end{pmatrix}
+    -0.08
+    \begin{pmatrix}-3.36\\24
+    \end{pmatrix}
+    =
+    \begin{pmatrix}0.5888\\1.28
+    \end{pmatrix}
+\end{align}
 $$
 
 - The $x$-coordinate moves steadily towards $2$, while the $y$-coordinate overshoots the minimum and switches sides. Both converge because the absolute values of their updates are less than 1. 
@@ -322,8 +320,17 @@ $$
 make_surface_slider(lam=2).show()
 ```
 
+## Takeaways
 
-## Bayesian Approach
+::: {.incremental}
+- Regularization changes the optimization problem, but that's ok.
+- It encodes additional assumptioms/properties about the model we want.
+- It is oftentimes necessary from a numerical optimizaiton point of view: if one direction in parameter space is way steeper than another one, there is no chance to get to the minimum in a reasonable number of steps! This is equivalent to trying to invert an ill conditioned/singular matrix and related to Tikhonov regularization.  
+- The regularized solution may fit the training data less well (larger variance) but perform better on unseen data (smaller bias).
+- The formalization within Statistical Learning Theory of the bias variance tradeoff is not trivial and modern "overparametrized" models also challenge parts of this (add ref to phys rew paper). It can instruct us (not shown here) to prefer small parameters, i.e. add a term like $||w||$ to some power, but the reason for which ridge regularization (L2-regularization) is oftentimes preferred can be understood in terms of numerical optimization on geometric surfaces.
+:::
+
+<!-- ## Bayesian Approach
 
 From Kaplan's "3.4 Why Optimize a Particular Loss Function?"
 
@@ -338,11 +345,12 @@ distribution over θ.
 If the prior is not uniform, then we instead find a different principle, which pushes us towards
 values of θ that are favored by the prior. As we will see, this provides a motivation for regularizing
 our models. For instance if our prior is a Gaussian centered at θ = 0, then it effectively punishes us
-for ‘learning’ values of θ that are large numbers.
+for ‘learning’ values of θ that are large numbers. -->
 
 
 
-**References:** 
-* [Machine Learning for the Sciences](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)
-* Ridge Regression in data science
+## References: 
+- [Machine Learning for the Sciences](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)
+- [Ridge Regression: an Essential Concept in Data Science](https://arxiv.org/abs/2006.00371)
+- See Patrick references in lecture 6.
 
