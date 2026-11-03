@@ -3,12 +3,12 @@ title: "Approaches to biomedical knowledge"
 subtitle: "Session #4: Human Phenotype Ontology and algorithms"
 author: "Peter N Robinson"
 institute: "Free University Berlin"
-date: 2026-04-26
+date: 2026-11-03
 jupyter: python3
 format: 
   revealjs:
-    theme: [default] 
-    css: ../style/styles.css            
+    theme: [default]
+    css: ../style/styles.css
     footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
     slide-number: true
     show-slide-number: all
@@ -25,541 +25,75 @@ format:
 
 This lecture reviews information content, semantic similarity, Human Phenotype Ontology, and their use in differential diagnostics of Mendelian diseases.
 
-:::: {.columns}
+* [Representing clinical data](#biomedical)
+* [Information content](#ic)
+* [Semantic similarity](#semsim)
+* [Human Phenotype Ontology](#hpo)
+* [Phenomizer](#phenomizer)
+* [LIRICAL](#lirical)
+* [Genomiser](#genomiser)
 
-::: {.column width="48%" }
-### [Part 1: Information content](#part-1)
-* Information content
-* Entropy
-:::
 
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" }
-### [Part 2: Semantic similarity](#part-2)
-* Definition of ontologies (review)
-* Ontologies and biomedical research
-:::
-
-::::
+## Why is diagnosis so hard? {#diagnosis}
 
 :::: {.columns}
 
-::: {.column width="48%" }
-### [Part 3: Human Phenotype Ontology](#part-3)
-* Phenotype and phenotypic feature
-* HPO
+::: {.column width="55%"}
+* More than 10,000 rare diseases. Individually rare, together roughly **3.5–6 %** of the population^[Nguengang Wakap S et al. (2020) *Eur J Hum Genet* **28**:165–73]
+* No clinician sees more than a handful of patients with any one of them
+* Traditional first-tier testing diagnoses few patients: chromosomal microarray about **10 %**, exome sequencing about **36 %**, genome sequencing about **41 %** in children with suspected genetic disease^[Clark MM et al. (2018) *npj Genom Med* **3**:16. PMID 30002876]
+* More recent pooled estimates for genome sequencing are about **30–35 %**^[Pandey R et al. (2025) *Genet Med*. PMID 40022598]
+* Still, **most patients remain undiagnosed**
 :::
 
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" }
-### [Part 4: Phenomizer & LIRICAL](#part-4)
-* Phenomizer algorithm
-* LIRICAL algorithm
+::: {.column width="45%"}
+| Sequenced | Variants per person |
+|:--|--:|
+| Genome | $\approx$ 4–5 million |
+| Exome | $\approx$ 80,000 |
+| Rare, protein-altering, predicted pathogenic by bioinformatics tools | $\approx$ tens |
+| Rare, non-coding, predicted relevant  $\approx$ hundreds |
+| **Disease-causing** | **1–2** |
 :::
 
 ::::
 
----
+::: {.callout-important appearance="simple"}
+Sequencing typically yields tens to hundreds of **candidates**. HPO-based analysis prioritizes these candidates according to  **phenotypic** 
+similarity.
+:::
 
-## {#part-1}
+## Bioinformatics and Clinical Data:  {#blast}
+
+* Most bioinformatics algorithms calculate similarity using some or other approach
 
 :::: {.columns}
 
-::: {.column width="48%" }
-### [Part 1: Information content](#part-1)
-* Information content
-* Entropy
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed }
-### [Part 2: Semantic similarity](#part-2)
-* Definition of ontologies (review)
-* Ontologies and biomedical research
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed }
-### [Part 3: Human Phenotype Ontology](#part-3)
-* Phenotype and phenotypic feature
-* HPO
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed }
-### [Part 4: Phenomizer & LIRICAL](#part-4)
-* Phenomizer algorithm
-* LIRICAL algorithm
-:::
-
-::::
-
----
-
-## Semantic Similarity: The Resnik Method {#ic}
-
-In 1995, Resnik introduced a method for evaluating the semantic similarity between two concepts in an ontology with `is_a` relations.^[Resnik P (1995) Using Information Content to Evaluate Semantic Similarity in a Taxonomy. arXiv cmp-lg/9511007]
-
-* **Core Idea:** Associate probabilities with the concepts of an ontology.
-* **Definitions:**
-    * Let $\mathcal{C}=\left\{c_1,c_2,\ldots,c_n\right\}$ be the set of concepts in the ontology (permits multiple inheritance).
-    * Define a function $p:\mathcal{C}\longrightarrow \left[ 0,1\right]$.
-    * $p(c_i)$ is the probability of encountering an instance of class $c_i \in \mathcal{C}$.
-
----
-
-## Ontology Probabilities & Information Content
-
-:::: {.columns}
-
-::: {.column width="40%"}
-![](./img/wordnet.png){fig-align="center"}
-:::
-
-::: {.column width="60%"}
-### Example: WordNet Excerpt
-
-* **Hierarchy:** Every `pebble` is a `stone`, and every `stone` is a `natural object`.
-* **The Root:** Every concept is a descendent of `entity`.
-    * $p(\text{entity}) = 1$
-    * Information Content: $\log 1 = 0$
-:::
-
-::::
-
-::: {.callout-note appearance="simple"}
-Knowing a random term is a descendent of **entity** provides no added information. Conversely, the probability of a specific term like **pebble** is much lower, meaning its **Information Content** is correspondingly higher.
-:::
-
-## Information Content (IC)
-
-::: {.callout-important}
-## Logic of Inheritance
-Recall that:  
-$x$ `instance_of` $A$  AND $A$ `is_a` $B$ $\implies$ $x$ `instance_of` $B$.
-:::
-
-* **Monotonicity**: $p$ is a monotonically increasing function as we move up the hierarchy. 
-    * If $c_i$ `is_a` $c_j$, then $p(c_i) \leq p(c_j)$.
-* **Root Probability**: If the ontology has a unique root node $r$, then $p(r)=1$.
-
-### Resnik's Definition
-The **Information Content (IC)** of a concept is the negative log of its probability:
+::: {.column width="58%"}
+* **Margaret O. Dayhoff** (1925–1983) assembled the first collection of protein sequences, the *Atlas of Protein Sequence and Structure*, and is often called a founder of bioinformatics
+* **PAM matrices**: she counted *accepted point mutations* in closely related proteins to measure how likely one residue is to replace another^[Dayhoff MO, Schwartz RM, Orcutt BC (1978) A model of evolutionary change in proteins. *Atlas of Protein Sequence and Structure* **5**(Suppl 3):345–352]
+* The substitution score is a **log-odds ratio**: observed versus chance
 
 $$
-\text{IC}(t) = -\log p(t)
-$${#eq-IC-def}
+s(a,b) = \log \frac{q_{ab}}{p_a\,p_b}
+$$
 
----
-
-## Information Content (IC) {#ic-part-2}
-
-The base $b$ of the logarithm $log_b$ determines the unit of the IC:
-
-| base | IC unit   |
-|------|-----------|
-| 2    | *bit*     |
-| 3    | *trit*    |
-| $e$  | *nat*     |
-| 10   | *hartley* |
-
-
-The unit selection has no impact on the output as long as the same unit is used consistently.
-
-::: {.callout-note}
-When writing $log$ without base, we mean the natural logarithm.
+:::{.tiny-credit}
+* **BLAST** sums these scores along an alignment, searches a whole database, and reports an **E-value** for the chance of such a score^[Altschul SF et al. (1990) *J Mol Biol* **215**:403–10. PMID 2231712]
 :::
 
----
-
-## Intuition Behind IC
-
-As the probability of a concept increases, its information content decreases. This mirrors information theory:
-
-* **Common vs. Rare**: We gain less new information from an observation of a common event than from a rare one.
-* **The Root Term**: Since the root subsumes all concepts:
-    * $p(\text{root}) = 1$
-    * $\text{IC}(\text{root}) = -\log(1) = 0$
-    
-
-
-::: {.callout-tip}
-## Summary
-The more specific a term is (lower probability), the higher its Information Content. The more general it is (higher probability), the lower its Information Content.
 :::
 
-## Basic Properties of Information Content (IC)
+::: {.column width="42%"}
+![Margaret O. Dayhoff](./img/Margaret_Oakley_Dayhoff.jpg){width="30%" fig-align="center"}
 
-::: {.callout-note}
-## Mathematical Foundation
-Information Content relies heavily on the properties of logarithms. These identities are essential for calculating IC across different branches of an ontology.
-:::
-
-The following logarithmic identities are fundamental to the behavior of $IC(t) = -\log p(t)$:
-
-$$
-\begin{aligned}
-\log 1 &= 0 \\
-\log xy &= \log x + \log y \\
-\log x^r &= r \log x \\
-\log \frac{1}{x} &= - \log x \\
-\log_a x &= \frac{\log x}{\log a}
-\end{aligned}
-$$
-
-
-
-## Entropy
-
-* Let us assume we are
-analyzing a random variable $X$, which can take on one of a finite
-number of specific values
-$\left\{x_1,x_2,\ldots,x_n\right\}$ with a probability
-$\left\{p_1,p_2,\ldots,p_n\right\}$, where the probability of the
-outcome $x_i$ is $p_i$ with $0\leq p_i\leq 1$ and $\sum_{i=1}^n p_i=1$. 
-* We will use the
-notation $p(X=x)$ or simply $p(x)$ to denote the probability that the
-random variable $X$ takes on some specific value $x$, where $x\in
-\left\{x_1,x_2,\ldots,x_n\right\}$. 
-* We will refer to each of the
-specific values that $X$ can take on as *outcomes*.
-
-Shannon defined the information content of an outcome $x$ as
-
-$$
-h(x) = \log_2 \dfrac{1}{p(x)}
-$$ {#eq-appdx-IC}
-
-
-## Entropy (2)
- 
-Note that because of the properties of logarithms, 
-$\log_2 \frac{1}{p(x)} = -\log_2 p(x)$, which is the definition of
-information content. The
-*entropy* of the random variable $X$, written as $H(X)$, was defined by Shannon as
-the average information content of all of the possible outcomes of
-$X$.
-
-$$
-H(X) = \sum_{i=1}^n p(x_i)\log_2\dfrac{1}{p(x_i)}
-$$ {#eq-appdx-entropy}
-
-
-
-## Entropy (3)
-
-* The *unit* of entropy and information content depends on the logarithm base (*bit*, *nat*, ...). 
-
-* The entropy of a random variable $X$
-can be interpreted as the *uncertainty* of the random
-variable. For instance, if $X$ has only one outcome (i.e., $p(x')=1$
-for some $x'$), then the entropy of $X$ is zero.
-
-$$
-H(X) = p(x')\log_2\dfrac{1}{p(x')} = 1\times (-1)\times\log_2 1 = 0
-$$
-
-
-## Entropy (4)
-
-On the other hand the entropy of $X$ is maximized if there
-is maximal uncertainty about the outcome -- this is the case if no
-outcome is more likely than the others, or stated differently, if
-$X$ follows a uniform distribution.
-
-
-![](img/entropyCoinToss.svg){fig-align="center" width="10%"}
-
-- Entropy of a random variable $X=\left\{\mathtt{0, 1}\right\}$ representing  Bernoulli process such as a coin toss for different values of $p(X=1)$. 
-- Maximum entropy is achieved if $p(\mathtt{0}) = p(\mathtt{1}) = 0.5$, i.e., for a uniform distribution. 
-
-## Proof
-
-We want to show: among all probability distributions on $n$ outcomes, entropy
-
-$$
-H(p) = -\sum_{i=1}^n p_i \log p_i
-$$
-
-is maximized by the **uniform** distribution $p_i = 1/n$.
-
-
-* **Constraint:** $\sum_{i=1}^n p_i = 1$, with $p_i \geq 0$.
-* The method of Lagrange multipliers allows us to find maximums/minimums subject to a constraint
-
-
-## The Lagrangian
-
-Introduce a multiplier $\lambda$ for the normalization constraint:
-
-$$
-\mathcal{L}(p, \lambda) = -\sum_{i=1}^n p_i \log p_i \;-\; \lambda\left(\sum_{i=1}^n p_i - 1\right)
-$$
-
-
-- At a stationary point, the gradient with respect to every $p_i$ must vanish, i.e., $\tfrac{\partial \mathcal{L}(p, \lambda)}{\partial p_i}=0$
-- We have 
-
-
-$$
-\begin{align}
-\frac{\partial \mathcal{L}}{\partial p_i} &= -\log p_i - 1 - \lambda = 0 \quad \Longrightarrow \quad p_i = e^{-1-\lambda}
-\end{align}
-$$
-
-* the right-hand side doesn't depend on $i$, so every  $p_i$ must be equal; denoting the the common value $c$:
-$$
-\sum_{i=1}^n p_i = \sum_{i=1}^n c  = nc = 1 \quad \Longrightarrow \quad p_i = \frac{1}{n}\quad \text{for all } i
-$$
-
-
-
-## The Hessian Matrix
-
-$$
-\nabla^2 \mathcal{L} = \begin{bmatrix} -\dfrac{1}{p_1} & 0 & \cdots & 0 \\
-0 & -\dfrac{1}{p_2} & \cdots & 0 \\
-0 & 0 & \ddots & 0 \\
-0 & 0 & \cdots & -\dfrac{1}{p_n}
-\end{bmatrix}
-$$
-
-::: {.fragment}
-Since $p_i > 0$, every diagonal entry is **negative**, and off-diagonal entries vanish.
-:::
-
-::: {.fragment}
-$H(p)$ is therefore **strictly concave** — the unique critical point is a **global maximum**, not a saddle or minimum.
-:::
-
-
-$$
-H(p) \leq H\left(\tfrac{1}{n}, \dots, \tfrac{1}{n}\right) = \log n
-$$
-
-for every probability distribution $p$ on $n$ outcomes, with equality **iff** $p$ is uniform.
-
-
-**Interpretation:** maximal uncertainty about the outcome corresponds exactly to maximal entropy — any deviation from uniformity introduces predictability and strictly lowers $H$.
-
-
-
-## Entropy (5)
- The function $IC(x) = -\log p(x)$ is a natural one for measuring information
-content, for several reasons. 
-
-*  If there is no uncertainty, i.e., if
-$p(x=1)$, then $IC(x)= \log 1 = 0$. 
-* On the other hand, the information
-content can be arbitrarily large as the probability of an outcome goes
-to arbitrary small quantities: $\lim_{x\rightarrow 0}\log x = \infty$.
-* Say we have two random variables,
-$X$ and $Y$, that are independent from one another. It is reasonable
-to assume that the information content of the outcomes $x$ and $y$
-must be additive. This is a natural consequence of the logarithm,
-because
-
-
-$$
-IC(x,y) = -\log_2 (xy) = -\log_2 x - \log_2 y = IC(x) + IC(y)
-$$
-
-
- 
-
-## Shannon's Entropy: The Uniqueness Theorem
-
-Claude Shannon's definition of entropy is not arbitrary; it is the **only** function that satisfies three fundamental postulates.
-
-::: {.callout-note icon=false}
-## Theorem: Uniqueness of Entropy
-Let $P = \{p_1, p_2, \dots, p_n\}$ be the probabilities of outcomes $\{x_1, x_2, \dots, x_n\}$, where $p_i \geq 0$ and $\sum p_i = 1$. 
-
-A continuous function $H(P)$ satisfies the following:
-
-1.  **Maximality**: $H$ is maximized when $p_i = \frac{1}{n}$ for all $i$ (uncertainty is highest when all outcomes are equally likely).
-2.  **Additivity**: $H(AB) = H(A) + H_A(B)$. If $A$ and $B$ are independent, $H(AB) = H(A) + H(B)$.
-3.  **Expandability**: $H(p_1, \dots, p_n) = H(p_1, \dots, p_n, 0)$ (adding an impossible event does not change entropy).
-
-**Then $H$ must take the form:**
-$$H(p_1, p_2, \dots, p_n) = \lambda \sum_{i=1}^n - p_i \log p_i$$
-where $\lambda$ is a positive constant (usually $\lambda=1$).
-:::
-
-
-
-## Information Content in Gene Ontology (GO)
-
-In the setting of GO, the probability of a term $t$ is the probability that a **randomly chosen** gene product (usually: protein) is annotated to that term.
-
-* **The Root Term**: Assuming all genes are annotated to the root (the most general term):
-    * $p(\text{root}) = 1$
-    * $\text{IC}(\text{root}) = -\log_2(1) = 0$
-* **General vs. Specific**: 
-    * Terms used for many genes have **low** IC.
-    * Terms used for very few genes have **high** IC.
-
-::: {.callout-note}
-This reflects "surprise": discovering a gene is annotated to the root is expected, while discovering a rare, specific annotation provides significant information.
-:::
-
-
-## IC: Numerical Examples
-
-Assume we have a set of **256 annotated genes**:
-
-| Genes Annotated to Term | Probability $p(t)$ | IC calculation ($-\log_2 p(t)$) | IC Value (bits) |
-|:---|:---|:---|:---|
-| 256 (All) | $256/256 = 1$ | $-\log_2(1)$ | **0** |
-| 4 | $4/256$ | $-\log_2(4/256) = 8 - 2$ | **6** |
-| 2 | $2/256$ | $-\log_2(2/256) = 8 - 1$ | **7** |
-| 1 (Unique) | $1/256$ | $-\log_2(1/256)$ | **8** |
-
----
-
-## {#part-2}
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed }
-### [Part 1: Information content](#part-1)
-* Information content
-* Entropy
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" }
-### [Part 2: Semantic similarity](#part-2)
-* Definition of ontologies (review)
-* Ontologies and biomedical research
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed }
-### [Part 3: Human Phenotype Ontology](#part-3)
-* Phenotype and phenotypic feature
-* HPO
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed }
-### [Part 4: Phenomizer & LIRICAL](#part-4)
-* Phenomizer algorithm
-* LIRICAL algorithm
+![BLAST](./img/blast.jpg){width="45%" fig-align="center"}
 :::
 
 ::::
 
 
-## Semantic Similarity ($t_1 \leftrightarrow t_2$){#semsim}
-
-
-Resnik defined similarity between two terms based on the **Information Content of their Most Specific Ancestor (MSA)**.
-
-$$\text{IC}(t) = -\log p(t)$$
-
-::: {.columns}
-
-::: {.column width="50%"}
-![](./img/IC.png){fig-align="center" width="90%"}
-:::
-
-::: {.column width="50%"}
-### Resnik Similarity
-The similarity is the IC of the most specific ancestor $a$ in the set of common ancestors $\mathcal{A}(t_1, t_2)$:
-
-$$
-\mathrm{sim}(t_1, t_2) = \max_{a \in \mathcal{A}(t_1, t_2)} [-\log p(a)]
-$$ {#eq-mica}
-
-We refer to this as the **IC of the Most Specific Ancestor**: $\text{IC}(a')$, or **MICA**
-:::
-
-::::
-
-
-## Semantic similarity: An example
-
-![An ontology with annotated items](./img/carnivore.png){fig-align="center" width="90%"}
-
-
-
-## Semantic similarity
-
-![](./img/carnivore2.png){fig-align="center" width="90%"}
-
-
-`lion` and `cheetah` are similar
-
-## Semantic similarity
-
-![](./img/carnivore3.png){fig-align="center" width="90%"}
-
-
-`beagle` and `wildcat`  are not $\ldots$
-
-
----
-
-## {#part-3}
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 1: Information content](#part-1)
-* Information content
-* Entropy
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Semantic similarity](#part-2)
-* Definition of ontologies (review)
-* Ontologies and biomedical research
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" }
-### [Part 3: Human Phenotype Ontology](#part-3)
-* Phenotype and phenotypic feature
-* HPO
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: Phenomizer & LIRICAL](#part-4)
-* Phenomizer algorithm
-* LIRICAL algorithm
-:::
-
-::::
-
-## Bioinformatics for Medicine? 
+## Bioinformatics for Medicine? {#biomedical}
 
 * How exactly do we calculate the similarity between diseases, symptoms, patients, and more?
 
@@ -740,40 +274,8 @@ An ontology provides a **standardised "Term"** for each entity in its domain tha
 | **Xrefs** | MeSH:D058627, UMLS:C0221355, SNOMED CT:19410003, ICHPT:T0028, EoM:1d53660e657259f0, ... |
 | **Translations** | ![](./img/macrocephaly-translations.png){width="60%"} |
 
-## Ontologies as Computational Tools
 
-::: {.callout-note appearance="simple"}
-Ontologies are used for myriad applications in biomedical research and translational applications. The greatest common denominator is: **Compute over human knowledge!**
-:::
-
-:::: {.columns}
-
-::: {.column width="60%"}
-### Applications
-::: {.small}
-* Functional profiling in high-throughput experiments
-* Network biology
-* Model, reason and manage complex data systems (e.g., IBM Watson)
-* Natural Language Processing
-* *et cetera*
-:::
-:::
-
-::: {.column width="40%"}
-![](./img/BioOntologiesCover.png){fig-align="center" width="80%"}
-:::
-
-::::
-
-
-
-
-::: {style="font-size: 0.4em; line-height: 0.9; margin-top: 20px;"}
-Haendel, Chute, Robinson (2018) Classification, Ontology, and Precision Medicine.  
-*N Eng J Med* **379**:1452-1462
-:::
-
-## The Human Phenotype Ontology
+## The Human Phenotype Ontology {#hpo}
 
 :::: {.columns}
 
@@ -819,47 +321,258 @@ Gargano Nucleic Acids Res 2024
 :::
 
 
-
-## {#part-4}
-
+## Ontology Probabilities & Information Content {#ic}
 
 :::: {.columns}
 
-::: {.column width="48%" .dimmed}
-### [Part 1: Information content](#part-1)
-* Information content
-* Entropy
+::: {.column width="40%"}
+![](./img/wordnet.png){fig-align="center"}
 :::
 
-::: {.column width="4%"}
-:::
+::: {.column width="60%"}
+### Example: WordNet Excerpt
 
-::: {.column width="48%" .dimmed}
-### [Part 2: Semantic similarity](#part-2)
-* Definition of ontologies (review)
-* Ontologies and biomedical research
+* **Hierarchy:** Every `pebble` is a `stone`, and every `stone` is a `natural object`.
+* **The Root:** Every concept is a descendant of `entity`.
+
+    * $p(\text{entity}) = 1$
+    * $p(c)$ is the probability that a randomly chosen item is an instance of $c$ or of one of its descendants (Resnik 1995).
+    * Information Content: $-\log 1 = 0$
 :::
 
 ::::
 
+::: {.callout-note appearance="simple"}
+Knowing a random term is a descendant of **entity** provides no added information. Conversely, the probability of a specific term like **pebble** is much lower, meaning its **Information Content** is correspondingly higher.
+:::
+
+## Information content (IC)
+
+* Inheritance: $x$ `instance_of` $A$ and $A$ `is_a` $B$ $\implies$ $x$ `instance_of` $B$
+* **Monotonicity**: $p$ is a monotonically increasing function as we move up the hierarchy. 
+    * If $c_i$ `is_a` $c_j$, then $p(c_i) \leq p(c_j)$.
+* **Root Probability**: If the ontology has a unique root node $r$, then $p(r)=1$.
+
+$$
+\text{IC}(t) = -\log p(t)
+$${#eq-IC-def}
+
+| | $p$ | IC |
+|---|---|---|
+| general term (e.g. root) | high (1) | low (0) |
+| specific term | low | high |
+
+
+## The unit of IC
+
+The base $b$ of the logarithm sets the unit:
+
 :::: {.columns}
 
-::: {.column width="48%" .dimmed}
-### [Part 3: Human Phenotype Ontology](#part-3)
-* Phenotype and phenotypic feature
-* HPO
+::: {.column width="45%"}
+| base $b$ | unit |
+|:---:|:---|
+| 2 | *bit* |
+| $e$ | *nat* |
+| 10 | *hartley* |
+
+Unless stated otherwise, $\log$ is the natural log. Numerical examples use bits.
 :::
 
-::: {.column width="4%"}
-:::
+::: {.column width="55%"}
+**Identities**
 
-::: {.column width="48%" }
-### [Part 4: Phenomizer & LIRICAL](#part-4)
-* Phenomizer algorithm
-* LIRICAL algorithm
+$$
+\begin{aligned}
+\log xy &= \log x + \log y \\
+\log \tfrac{1}{x} &= -\log x \\
+\log_b x &= \frac{\log x}{\log b}
+\end{aligned}
+$$
 :::
 
 ::::
+
+::: {.callout-note appearance="simple"}
+Changing the base multiplies every IC by the **same constant**, so rankings never change.
+Example: $p=\tfrac{1}{256}$ is 8 bits $\approx$ 5.55 nats $\approx$ 2.41 hartleys.
+:::
+
+
+
+
+
+
+## Entropy: average information content
+
+A random variable $X$ takes values $x_1,\dots,x_n$ with probabilities $p_1,\dots,p_n$
+($\sum p_i = 1$). Shannon's **information content** (surprisal) of an outcome:
+
+$$
+\text{IC}(x) = \log_2\frac{1}{p(x)} = -\log_2 p(x)
+$$
+
+The **entropy** is the *expected* information content:
+
+$$
+H(X) = \sum_{i=1}^n p_i \,\log_2\frac{1}{p_i} = \mathbb{E}\big[\text{IC}(X)\big]
+$$
+
+* IC measures one outcome (the uncertainty about $X$ before we observe it.)
+* Entropy averages it. 
+* The idea of entropy will return in the lectures on neural networks (cross-entropy).
+
+
+
+## Entropy: two extremes
+
+* **No uncertainty**: one outcome has $p=1$ (the others have $p=0$, with $0\log 0 := 0$)
+$$
+H(X) = 1\cdot\log_2 1 = 0
+$$
+* **Maximal uncertainty**: all outcomes equally likely, $p_i = 1/n$
+$$
+H(X) = \log_2 n
+$$
+
+![](img/entropyCoinToss.svg){fig-align="center" width="45%"}
+
+Coin toss: $H$ peaks at 1 bit when $p(\mathtt{1})=0.5$.
+
+
+## Information Content in Gene Ontology (GO)
+
+In the setting of GO, the probability of a term $t$ is the probability that a **randomly chosen** gene product (usually: protein) is annotated to that term.
+
+* **The Root Term**: Assuming all genes are annotated to the root (the most general term):
+    * $p(\text{root}) = 1$
+    * $\text{IC}(\text{root}) = -\log_2(1) = 0$
+* A gene annotated to a term is also annotated to **all of its ancestors** (true-path rule), so
+  $$p(t) = \frac{\#\text{genes annotated to } t \text{ or its descendants}}{\#\text{all annotated genes}}$$
+* Terms used for many genes have **low** IC. Terms used for very few genes have **high** IC.
+
+::: {.callout-note}
+This reflects "surprise": discovering a gene is annotated to the root is expected, while discovering a rare, specific annotation provides significant information.
+:::
+
+
+## IC: Numerical Examples
+
+Assume we have a set of **256 annotated genes**:
+
+| Genes Annotated to Term | Probability $p(t)$ | IC calculation ($-\log_2 p(t)$) | IC Value (bits) |
+|:---|:---|:---|:---|
+| 256 (All) | $256/256 = 1$ | $-\log_2(1)$ | **0** |
+| 4 | $4/256$ | $-\log_2(4/256) = 8 - 2$ | **6** |
+| 2 | $2/256$ | $-\log_2(2/256) = 8 - 1$ | **7** |
+| 1 (Unique) | $1/256$ | $-\log_2(1/256)$ | **8** |
+
+
+
+## Resnik similarity {#semsim}
+
+* $\mathcal{A}(t_1,t_2)$ = the **common ancestors** of $t_1$ and $t_2$ (a term counts as its own ancestor)
+* The **most informative common ancestor** (MICA) is the one with the highest IC:
+
+$$
+a^{*} = \arg\max_{a\in \mathcal{A}(t_1,t_2)} \text{IC}(a)
+$$
+
+* Resnik similarity is the IC of the MICA:
+
+$$
+\mathrm{sim}(t_1, t_2) = \text{IC}(a^{*}) = \max_{a \in \mathcal{A}(t_1, t_2)} [-\log p(a)]
+$$ {#eq-mica}
+
+::: {.callout-note appearance="simple"}
+In a tree, the MICA is simply the lowest common ancestor. In a DAG (HPO allows several parents) there can be several incomparable common ancestors, and the max picks the most informative one.
+:::
+
+## Semantic similarity: An example
+
+![An ontology with annotated items. $n$ = number of items annotated to the node or its descendants. IC = $-\ln(n/1000)$, in nats.
+](./img/carnivore.png){fig-align="center" width="90%"}
+
+
+## Semantic similarity: MICA of lion and cheetah
+
+![MICA = big cat, so sim = IC(big cat) = 1.386.](./img/carnivore2.png){fig-align="center" width="90%"}
+
+
+
+## Semantic similarity: MICA of beagle and wildcat
+
+![MICA = carnivore, so sim = 0. `beagle` and `wildcat`  are not similar at all.](./img/carnivore3.png){fig-align="center" width="90%"}
+
+
+
+## From terms to sets {#termsets}
+
+Diseases are annotated with **sets** of terms, $I_1$ and $I_2$ (for HPO: the phenotypic features of the disease).
+Resnik compares two terms. To compare two sets, find the **best match** for each term:
+
+$$
+\mathrm{sim}(I_1 \rightarrow I_2) = \frac{1}{|I_1|} \sum_{t_1 \in I_1} \max_{t_2 \in I_2} \mathrm{sim}(t_1, t_2)
+$$
+
+* For every term in $I_1$, take its most similar term in $I_2$ (Resnik similarity)
+* Then average over $I_1$
+
+
+## Example: two diseases {.smaller}
+
+:::: {.columns}
+
+::: {.column width="35%"}
+```{mermaid}
+%%| fig-width: 4
+flowchart TD
+  A["A<br/>IC = 0"] --> B["B<br/>IC = 0.2"]
+  B --> C["C<br/>IC = 1.5"]
+  B --> D["D<br/>IC = 1.0"]
+  B --> E["E<br/>IC = 0.5"]
+  D --> F["F<br/>IC = 1.2"]
+  D --> G["G<br/>IC = 2.0"]
+  E --> G
+```
+
+Disease $d_1$: $I_1=\{C, F\}$  
+Disease $d_2$: $I_2=\{F, G\}$
+:::
+
+::: {.column width="65%"}
+| $t_1 \in I_1$ | $\mathrm{sim}(t_1, F)$ | $\mathrm{sim}(t_1, G)$ | best match |
+|:--|--:|--:|--:|
+| $C$ | $\text{IC}(B)=0.2$ | $\text{IC}(B)=0.2$ | **0.2** |
+| $F$ | $\text{IC}(F)=1.2$ | $\text{IC}(D)=1.0$ | **1.2** |
+
+$$
+\mathrm{sim}(d_1 \rightarrow d_2) = \tfrac{1}{2}\,[0.2 + 1.2] = 0.7
+$$
+
+* The other direction gives $\mathrm{sim}(d_2 \rightarrow d_1) = \tfrac{1}{2}\,[1.2 + 1.0] = 1.1$, so the measure is **asymmetric**
+* A symmetric score averages both directions: $\tfrac{1}{2}(0.7 + 1.1) = 0.9$
+:::
+
+::::
+
+
+## From similarity to diagnosis
+
+A patient query $Q$ is a set of HPO terms. A disease $d$ is also a set. The same best-match idea gives:
+
+$$
+\mathrm{sim}(Q \rightarrow d) = \frac{1}{|Q|} \sum_{s \in Q} \max_{t \in d} \mathrm{sim}(s, t)
+$$
+
+| Query term | Noonan | | Opitz | |
+|:--|:--|--:|:--|--:|
+| Downward slanting palpebral fissures | same term | 3.78 | Abnormality of the eyelid (MICA) | 2.45 |
+| Hypertelorism | same term | 3.05 | same term | 3.05 |
+| **average** | | **3.42** | | **2.75** |
+
+Rank all diseases by this score. This is the **Phenomizer**.
+
 
 ## Phenotypic Similarity Algorithms {#phenomizer}
 
@@ -1053,13 +766,15 @@ For demo purposes, let's create two simplified disease models
 | Upslanted palpebral fissure     | Downslanted palpebral fissure    |     2.59* | Phenotypic abnormality             |       0.00* |
 | Proportionate short stature     | Short stature                   |      1.91* | Short stature                      |       1.91* |
 | Headache                       | Phenotypic abnormality          |      0.00* | Abnormality of the nervous system |       0.51* |
-| **Sum**                        |                                  |  **8.60** |                                    |   **2.42** |
+| **Sum**                        |                                  |  **8.69** |                                    |   **2.42** |
 
+:::{.small-text }
 * Information content of *Upslanted palpebral fissure* is 3.46, that of *Downslanted palpebral fissure* is 3.01. To calculate the most informative common ancestor, we go to their common parent *Slanting of the palpebral fissure* 
 [HP:0200006](https://hpo.jax.org/browse/term/HP:0200006), which has an IC of 2.59
 * *Short stature* is the direct parent of *Proportionate short stature*, and so the MICA is the IC of *Short stature*
 * Noonan syndrome 1 receives a higher score than Neurodevelopmental disorder 1, and so NS1 would be ranked before NDD1
 * The same process is performed for all 8500 candidate diseases to generate the final ranking (**prioritization**)
+:::
 
 ## Example
 
@@ -1067,7 +782,7 @@ The table in the previous slide demonstrates how to calculate the phenomizer sco
 $$
 \mathrm{sim}(Q\rightarrow D) = \mathrm{avg} \sum_{s\in Q}\max_{t\in D}\mathrm{sim}(s,t)
 $$
-- $\mathrm{sim}(s,t)$ is calculated as the IC of the maximally informative common ancestor (MICA), see @eq-mica.
+- $\mathrm{sim}(s,t)$ is calculated as the IC of the most informative common ancestor (MICA), see @eq-mica.
 
 
 ::: {.mybox}
@@ -1134,64 +849,95 @@ $$
 P(D^{+}\mid x=\mathrm{abn}) = \frac{P(x=\mathrm{abn}\mid D^{+})\cdot P(D^{+})}{P(x=\mathrm{abn})}
 $$ {#eq-bayes-present}
 
-## Likelihood Ratio Test: Intuition
+## Likelihood ratio: derivation {.smaller}
 
-- Similarly, the probability of the absence of the disease (D–) given the test result is
+:::: {.columns}
+
+::: {.column width="48%"}
+For the **presence** and **absence** of disease given an abnormal test result:
+
+$$
+P(D^{+}\mid x) = \frac{P(x\mid D^{+})\,P(D^{+})}{P(x)}
+$$
+
 $$
 \begin{align}
-P(D^{-}\mid x=\mathrm{abn}) &= 1 - P(D^{+}\mid x=\mathrm{abn}) \\
-&= \frac{P(x=\mathrm{abn}\mid D^{-})\cdot P(D^{-})}{P(x=\mathrm{abn})} \\
+P(D^{-}\mid x) &= 1 - P(D^{+}\mid x) \\
+&= \frac{P(x\mid D^{-})\,P(D^{-})}{P(x)}
 \end{align}
 $$ {#eq-bayes-absent}
 
-- Dividing @eq-bayes-present by @eq-bayes-absent  and replacing P(D–) with 1 – P(D+) gives:
-$$
-\frac{P(D^{+}\mid x=\mathrm{abn}) }{1-P(D^{+}\mid x=\mathrm{abn}) } =
-\frac{P(x=\mathrm{abn}\mid D^{+})}{P(x=\mathrm{abn}\mid D^{-})}
-\times
-\frac{P(D^{+})}{1 - P(D^{+})}
-$$
-- This is
-$$
-\text{Post-test odds of }D^{+} =
-\frac{P(x=\mathrm{abn}\mid D^{+})}{P(x=\mathrm{abn}\mid D^{-})}
-\times
-\text{Pre-test odds of }D^{+}
-$$
-
-- This is the equation used in the Bayesian approach to interpret test results. 
-- The factor $\tfrac{P(x=\mathrm{abn}\mid D^{+})}{P(x=\mathrm{abn}\mid D^{-})}$ is termed the likelihood ratio (LR)
-- When the test result equals to $r$, we write $LR(r)$. 
-- Generally speaking, the likelihood ratio indicates **how many times more (or less) likely a certain condition for a test result is expected to be observed in diseased, compared with non-diseased, people**
-
-::: {.tiny-credit}
-Habibzadeh F, Habibzadeh P (2019) [The likelihood ratio and its graphical representation. Biochem Med (Zagreb)](https://pubmed.ncbi.nlm.nih.gov/31015780/)
+Here $x$ stands for $x=\mathrm{abn}$.
 :::
 
-## Review: odds vs. probabilities
+::: {.column width="52%"}
+**Divide** the first by the second. $P(x)$ cancels, and $P(D^{-}) = 1 - P(D^{+})$:
 
-Odds and probability both describe uncertainty, and are related by the following equation
+$$
+\underbrace{\frac{P(D^{+}\mid x)}{1-P(D^{+}\mid x)}}_{\text{post-test odds}} =
+\underbrace{\frac{P(x\mid D^{+})}{P(x\mid D^{-})}}_{\text{likelihood ratio}}
+\times
+\underbrace{\frac{P(D^{+})}{1 - P(D^{+})}}_{\text{pre-test odds}}
+$$
+:::
 
+::::
+
+## Likelihood ratio: interpretation
+
+::: {.mybox}
+$$
+\text{post-test odds} = \text{LR} \times \text{pre-test odds}
+$$
+:::
+
+* This is the equation used in the Bayesian approach to interpreting test results
+* The factor $\text{LR} = \dfrac{P(x\mid D^{+})}{P(x\mid D^{-})}$ is the **likelihood ratio**. For a test result $r$ we write $\text{LR}(r)$
+* **How many times more (or less) likely** a test result is in people **with** the disease than in people **without** it
+    * $\text{LR} > 1$: the result supports the disease
+    * $\text{LR} < 1$: the result argues against it
+    * $\text{LR} = 1$: the result is uninformative
+
+::: {.tiny-credit}
+Habibzadeh F, Habibzadeh P (2019) [The likelihood ratio and its graphical representation. *Biochem Med (Zagreb)*](https://pubmed.ncbi.nlm.nih.gov/31015780/)
+:::
+
+## Review: odds vs. probabilities {.smaller}
+
+Odds and probability both describe uncertainty:
+
+:::: {.columns}
+
+::: {.column width="50%"}
 $$
 \text{odds} = \frac{P(\text{event})}{P(\text{not event})} = \frac{p}{1-p}
 $$ {#eq-odds}
 
-- @eq-odds implies $p = \tfrac{\text{odds}}{1+\text{odds}}$
-- **Probability**
-    - Ranges from 0 to 1
-- **Odds**
-    - Ranges from 0 to $\infty$
+@eq-odds implies
 
+$$
+p = \frac{\text{odds}}{1+\text{odds}}
+$$
 
-| Probability | Odds        | Reads as    |
-|------------:|------------:|:------------|
-|         50% |        1.00 | 1 : 1       |
-|         90% |        9.00 | 9 : 1       |
-|          2% |      0.0204 | ~1 : 49     |
+* **Probability** ranges from 0 to 1
+* **Odds** range from 0 to $\infty$
+:::
 
-- $p = 2\%$ → odds $= \dfrac{0.02}{1-0.02} \approx 0.0204$
-- Small probabilities and their odds are nearly identical numerically; they diverge as $p \to 1$
+::: {.column width="50%"}
+| Probability | Odds | Reads as |
+|------------:|-----:|:---------|
+| 50 % | 1.00 | 1 : 1 |
+| 90 % | 9.00 | 9 : 1 |
+| 2 % | 0.0204 | $\approx$ 1 : 49 |
 
+For $p = 2\%$: odds $= \dfrac{0.02}{1-0.02} \approx 0.0204$
+
+::: {.callout-note appearance="simple"}
+For small $p$, probability and odds are nearly equal. They diverge as $p \to 1$.
+:::
+:::
+
+::::
 
 ## LIRICAL: motivation
 
@@ -1241,7 +987,7 @@ $$ {#eq-lrprod}
 - If the HPO annotations for $D$ include the HPO term $h_i$, then $P(h_i|\mathcal{D})$ is equal to the frequency of that term in the HPO annotations for the disease
 
 ```bash 
-OMIM:614669	Auriculocondylar syndrome 2		HP:0000347	PMID:16114046	PCS		22/31		PHPO:skoehler[2012-10-17];HPO:probinson[2023-01-30]
+OMIM:614669	Auriculocondylar syndrome 2		HP:0000347	PMID:16114046	PCS		22/31		PHPO:skoehler[2012-10-17]
 ```
 - The above line is one of 285603 lines in the `phenotype.hpoa` file 
 - It specifies the frequency of Micrognathia [HP:0000347](https://hpo.jax.org/browse/term/HP:0000347) in individuals with *Auriculocondylar syndrome 2*
@@ -1254,7 +1000,7 @@ OMIM:614669	Auriculocondylar syndrome 2		HP:0000347	PMID:16114046	PCS		22/31		PH
 - LIRICAL therefore makes the assumption that every individual in the population has some Mendelian disease. 
 - Then we can estimate $P(h_i|\neg \mathcal{D})$ as follows (with a total of $N$ Mendelian diseases)
 $$
-P(h_i\mid D_j) = \frac{1}{N-1}\sum_{k\neq j} P(h_i\mid D_k) \approx \frac{1}{N}\sum_{k} f_{i}^{D_k}
+P(h_i\mid \neg D_j) = \frac{1}{N-1}\sum_{k\neq j} P(h_i\mid D_k) \approx \frac{1}{N}\sum_{k} f_{i}^{D_k}
 $$
 
 - Here, $f_{i}^{D_k}$ is the frequency of HPO term $i$ in individuals with disease $k$
@@ -1263,18 +1009,24 @@ $$
 - The next slide gives an impression of the algorithms.^[These details will not be covered in the exams]
 - LIRICAL also introduces an approach to estimate likelihood ratios for genotypes that we will not cover here.
 
-## LIRICAL: Calculating the likelihood ratio
+## LIRICAL: Calculating the likelihood ratio $P(h\mid\mathcal{D})$ 
 
-![Calculating the likelihood ratios for phenotypes](./img/lirical-4way.png){ width="60%" fig-align="center"}
-
-::: {.tiny}
-HPO annotations and frequency data: used to calculate $\dfrac{P(x|\mathcal{D})}{P(x|\neg \mathcal{D})}$, with heuristics for non-exact matches.
-
-- Disease model annotated with four HPO terms (dark blue), annotated are "inherited" by ancestors (light blue)
-- Exact match to query term: $P(h_{16}|\mathcal{D})=f_{16}^{\mathcal{D}}$
-- Query matches descendent of annotated term: $P(h_{14}|\mathcal{D})=\frac{f_{7}^{\mathcal{D}}}{2}=0.5$
-- Query matches ancestor of annotated term: $P(h_{8}|\mathcal{D})=f_{16}^{\mathcal{D}}$
+:::: {.columns}
+::: {.column width="55%"}
+![](./img/lirical-4way.png){fig-align="center" width="100%"}
 :::
+::: {.column width="45%"}
+Disease model: four annotated terms (dark blue). Ancestors inherit the annotations (light blue).
+
+| Panel | Query | Match | $P(h\mid\mathcal{D})$ |
+|:-:|:-:|:--|:--|
+| B | HP:16 | exact | $f_{16}$ |
+| C | HP:14 | child of HP:7 | $f_{7}/2$ |
+| D | HP:8 | parent of HP:16 | $f_{16}$ |
+
+For C: HP:7 has two children, so each gets half of $f_7$.
+:::
+::::
 
 
 ## LIRICAL: Posterior probabilities improve interpretation of rankings
@@ -1296,14 +1048,91 @@ HPO annotations and frequency data: used to calculate $\dfrac{P(x|\mathcal{D})}{
 ::: {.tiny-credit}
 Robinson PN et al., Interpretable Clinical Genomics with a Likelihood Ratio Paradigm  
 *Am J Hum Genet* 2020;**107**:403-417  
-free for academic use
 :::
+
+
+## Beyond the exome: non-coding Mendelian mutations {#genomiser}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+* Protein-coding sequence is only about **1.5 %** of the genome
+* A typical genome has over **4 million** variants
+* Exome sequencing misses mutations in regulatory regions
+* **Goal:** find the causal variant in the *whole* genome, using the phenotype
+
+We curated **453 Mendelian non-coding mutations** and annotated **26 genomic attributes** across the whole genome.
+:::
+
+::: {.column width="50%"}
+| Category | Count |
+|:--|--:|
+| 5′ UTR | 153 |
+| Promoter | 142 |
+| RNA gene | 65 |
+| 3′ UTR | 43 |
+| Enhancer | 42 |
+| MicroRNA gene | 5 |
+| Imprinting control region | 3 |
+| **Total** | **453** |
+:::
+
+::::
+
+## ReMM: predicting regulatory Mendelian mutations
+
+![](./img/remm-training.png){fig-align="center" width="62%"}
+
+* A random-forest score trained on a **very imbalanced** problem: 382 disease mutations against about 14 million benign variants
+* ROC curves look excellent for every method (AUC 0.95–0.99), but **precision–recall** shows the real difference: ReMM 0.64 versus at most 0.17 for the others^[Smedley D et al. (2016) *Am J Hum Genet* **99**:595–606. PMID 27569544]
+
+
+## Genomiser: combining phenotype and variant evidence
+
+![](./img/genomiser-pipeline.png){fig-align="center" width="80%"}
+
+* Genes are scored by **phenotype similarity** (patient's HPO terms vs. human, mouse and zebrafish phenotypes)
+* Variants are filtered by regulatory region and allele rarity, then scored for pathogenicity (non-coding: **ReMM**, coding: PolyPhen etc.)
+* Phenotype and variant scores are **combined** into one rank: about 4.2 million variants down to a top candidate
+
+## Genomiser: an example {.smaller}
+
+![](./img/MUHH.png){fig-align="center" width="50%"}
+
+:::: {.columns}
+
+::: {.column width="52%"}
+We spiked `chr8:21988220 A>T` (`c.-320T>A` in the human hairless homolog, *HR*) into the genome of a healthy 1000 Genomes individual (NA20538).
+
+Genomiser received only a limited, noisy set of HPO terms for **Marie Unna hereditary hypotrichosis**.
+:::
+
+::: {.column width="48%"}
+| Evidence | Score |
+|:--|--:|
+| ReMM score of the variant | 0.990 |
+| Phenotype score of *HR* | 0.998 |
+| **Rank** | **1 of > 4 million variants** |
+:::
+
+::::
+
+::: {.tiny-credit}
+* [Wen Y, et al. (2009) Loss-of-function mutations of an inhibitory upstream ORF in the human hairless transcript cause Marie Unna hereditary hypotrichosis. _Nat Genet_ **41**:228-33](https://pubmed.ncbi.nlm.nih.gov/19122663/)
+:::
+
+## Genomiser: combining phenotype and variant evidence
+
+![](./img/genomiser-performance.png){fig-align="center" width="52%"}
+
+* With phenotypes, Genomiser ranks the causal variant **first in about 75 %** of simulated genomes. Without them, in about 23 %^[In the published paper, 77 % of simulated genomes. Smedley D et al. (2016) PMID 27569544]
 
 
 
 ## Sources
 
-- [Albert A (1982) On the use and computation of likelihood ratios in clinical chemistry. *Clin Chem*  **28**:1113-9](https://pubmed.ncbi.nlm.nih.gov/7074890/): Excellent introduction to the mathemastics of LRs
+- [Albert A (1982) On the use and computation of likelihood ratios in clinical chemistry. *Clin Chem*  **28**:1113-9](https://pubmed.ncbi.nlm.nih.gov/7074890/): Excellent introduction to the mathematics of LRs
 - [Khinchin - Mathematical Foundations of Information Theory-Dover Publications (1957)](https://www.amazon.de/Mathematical-Foundations-Information-Advanced-Mathematics/dp/0486604349) Another excellent introduction to the mathemastics of LRs
 - [Robinson PN et al. (2020) Interpretable Clinical Genomics with a Likelihood Ratio Paradigm. *Am J Hum Genet* **107**:403-417](https://pubmed.ncbi.nlm.nih.gov/32755546/)
 - [Köhler S, et al. (2009) Clinical diagnostics in human genetics with semantic similarity searches in ontologies. *Am J Hum Genet* **85**:457-64](https://pubmed.ncbi.nlm.nih.gov/19800049/)
+- [Smedley D, et al. (2016) A Whole-Genome Analysis Framework for Effective Identification of Pathogenic Regulatory Variants in Mendelian Disease. _Am J Hum Genet_ **99**:595-606](https://pubmed.ncbi.nlm.nih.gov/27569544/)

@@ -8,7 +8,7 @@ jupyter: python3
 format: 
   revealjs:
     theme: [default] 
-    css: ../style/styles.css            
+    css: ../style/styles.css
     footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
     slide-number: true
     show-slide-number: all
