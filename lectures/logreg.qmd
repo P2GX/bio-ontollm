@@ -32,47 +32,14 @@ training loop. Studying logistic regression therefore serves as
 a [good preparation for understanding neural networks]{style="color: green; font-weight: bold;"}. 
 :::
 
-:::: {.columns}
+* [logistic regression: Introduction](#intro)
+* [Part 2: Sigmoid function](#part-2)
+* [Part 3: Gradient descent](#part-3)
+* [Part 4: Python](#part-4)
+* [Part 5: Overfitting](#part-5)
 
-::: {.column width="48%"}
-### [Part 1: Introduction](#part-1)
-* Components of logistic regression
-* Sentiment analysis
-:::
 
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Sigmoid function](#part-2)
-* Definition
-* First derivative
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 3: Gradient descent](#part-3)
-* Learning
-* Momentum & Adam
-* Learning rates
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: Python](#part-4)
-* Full implementation 
-
-### [Part 5: Overfitting](#part-5)
-:::
-
-::::
-
-## Logistic Regression {#part-1}
+## Logistic Regression {#intro}
 
 Logistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.
 
@@ -116,7 +83,7 @@ $$ {#eq-logistic-fxn}
 
 :::{.small-text}
 $$
-p(x) = \frac{1}{1+e^{-\beta_0 + \beta_1x}} 
+p(x) = \frac{1}{1+e^{-(\beta_0 + \beta_1x)}} 
 $$ {#eq-logistic-fxn2}
 - In our example, $y_k=p(x_k)$ is the probability of passing given $x_k$ hours studied
 :::
@@ -139,10 +106,10 @@ plt.show()
 
 ## Log odds
 
-- In our example, $\beta_1$ is the log odds of passing for each additional hour studied
+- In our example, $\beta_1$ is the **change** in the log odds of passing for each additional hour studied
 
 $$
-\log\left(\frac{p}{1-p}\right) = \beta_o + \beta_1x
+\log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1x
 $$
 
 - In our example, $\beta_1 = 1.505$, so each additional hour of studying increased log odds of passing by 1.5
@@ -155,7 +122,7 @@ $$
 - We can also perform multiple logistic regression with a vector of variables
 
 $$
-p(\mathbf{x}) = \frac{1}{1+e^{-\beta_0 + \beta_1x + \beta_2x_2+\ldots}} 
+p(\mathbf{x}) = \frac{1}{1+e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2+\cdots+\beta_kx_k)}}
 $$ {#eq-logistic-fxn3}
 
 ## The five components of Logistic Regression
@@ -216,7 +183,7 @@ weights and a bias term to solve the classification task
 - Each data point is multiplied by weights and a bias is added
 - Here, $x_{i,j}$ refers to the $j^{th}$ component of the $i^{th}$ data point.
 $$
-z_i = \sum_{j=1}^n w_ix_{i,j} + b
+z_i = \sum_{j=1}^n w_jx_{i,j} + b
 $${#eq-lrweights}
 
 @eq-lrweights can be represented identically using dot product notation (where the bold font indicates a vector of weights ($\mathbf{w}$) and inputs ($\mathbf{x}$))
@@ -234,7 +201,7 @@ This is identical to the sums we will see at individual neurons in neural networ
 To create a probability, we transform z through the sigmoid function, $\sigma(z)$
 :::
 
-- The sigmoid $\sigma(z)$ takes a real-valued number $z\in [-\infty, \infty]$ and effectively [squashes]{style="color: green; font-weight: bold;"} 
+- The sigmoid $\sigma(z)$ takes a real-valued number $z\in (-\infty, \infty)$ and effectively [squashes]{style="color: green; font-weight: bold;"} 
 it to lie in the range $[0,1]$: $0<\sigma(z) < 1$.
 
 $$
@@ -388,11 +355,11 @@ $$
 $$
 \mathcal{L}(\sigma(z), y) = \begin{cases}
 -\log \sigma(z) & \text{if } y_i = 1 \\
--\log 1- \sigma(z) & \text{if } y_i = 0 \\
+-\log (1 - \sigma(z)) & \text{if } y_i = 0 \\
 \end{cases}
 $$
 
-- If $y_i=1$, then As $\log \sigma(z) \rightarrow 1$, the loss approaches zero
+- If $y_i=1$, then As $\sigma(z) \rightarrow 1$, the loss $\mathcal{L}(\sigma(z), y) \rightarrow 0$.
 
 ```{python}
 #| echo: false
@@ -1277,3 +1244,5 @@ $$J(\mathbf{w}) = \mathcal{L}_{\text{cross-entropy}}(\mathbf{w}) + \mathcal{L}_{
 
 
 - James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). [An introduction to statistical learning. Springer](https://link.springer.com/book/10.1007/978-3-031-38747-0)
+- Sperandei S (2014) [Understanding logistic regression analysis. _Biochem Med (Zagreb)_ **24**:12-8](https://pmc.ncbi.nlm.nih.gov/articles/PMC3936971/)
+- Bewick V, et al. (2005) [Statistics review 14: Logistic regression _Crit Care_ **9**:112-8](https://pubmed.ncbi.nlm.nih.gov/15693993/)
