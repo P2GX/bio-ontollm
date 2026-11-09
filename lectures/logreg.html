@@ -1510,41 +1510,15 @@ Peter N Robinson
 </div>
 </div>
 </div>
-<div class="columns">
-<div class="column" style="width:48%;">
-<h3 id="part-1-introduction"><a href="#/part-1">Part 1: Introduction</a></h3>
 <ul>
-<li>Components of logistic regression</li>
-<li>Sentiment analysis</li>
+<li><a href="#/intro">logistic regression: Introduction</a></li>
+<li><a href="#/part-2">Part 2: Sigmoid function</a></li>
+<li><a href="#/part-3">Part 3: Gradient descent</a></li>
+<li><a href="#/part-4">Part 4: Python</a></li>
+<li><a href="#/part-5">Part 5: Overfitting</a></li>
 </ul>
-</div><div class="column" style="width:4%;">
-
-</div><div class="column dimmed" style="width:48%;">
-<h3 id="part-2-sigmoid-function"><a href="#/part-2">Part 2: Sigmoid function</a></h3>
-<ul>
-<li>Definition</li>
-<li>First derivative</li>
-</ul>
-</div></div>
-<div class="columns">
-<div class="column dimmed" style="width:48%;">
-<h3 id="part-3-gradient-descent"><a href="#/part-3">Part 3: Gradient descent</a></h3>
-<ul>
-<li>Learning</li>
-<li>Momentum &amp; Adam</li>
-<li>Learning rates</li>
-</ul>
-</div><div class="column" style="width:4%;">
-
-</div><div class="column dimmed" style="width:48%;">
-<h3 id="part-4-python"><a href="#/part-4">Part 4: Python</a></h3>
-<ul>
-<li>Full implementation</li>
-</ul>
-<h3 id="part-5-overfitting"><a href="#/part-5">Part 5: Overfitting</a></h3>
-</div></div>
 </section>
-<section id="part-1" class="slide level2">
+<section id="intro" class="slide level2">
 <h2>Logistic Regression</h2>
 <p>Logistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.</p>
 <ul>
@@ -1665,15 +1639,15 @@ p(x) = \frac{1}{1+e^{-\tfrac{x-\mu}{s}}}
 <section id="logistic-regression-review-1" class="slide level2">
 <h2>Logistic regression: review</h2>
 <ul>
-<li>In <a href="#/eq-logistic-fxn" class="quarto-xref">Equation 1</a>, <span class="math inline">\(\mu\)</span> is the location parameter (midpoint of the curve, <span class="math inline">\(\tfrac{1}{2}\)</span>, and <span class="math inline">\(s\)</span> is the scale parameter.</li>
+<li>In <a href="#/eq-logistic-fxn" class="quarto-xref">Equation 1</a>, <span class="math inline">\(\mu\)</span> is the location parameter (midpoint of the curve, <span class="math inline">\(\tfrac{1}{2}\)</span>), and <span class="math inline">\(s\)</span> is the scale parameter.</li>
 <li>We generally rewrite this with <span class="math inline">\(\beta_0 = -\tfrac{\mu}{s}\)</span> and <span class="math inline">\(\beta_1=\tfrac{1}{s}\)</span>, yielding</li>
 </ul>
 <div class="small-text">
 <p><span id="eq-logistic-fxn2"><span class="math display">\[
-p(x) = \frac{1}{1+e^{-\beta_0 + \beta_1x}}
+p(x) = \frac{1}{1+e^{-(\beta_0 + \beta_1x)}}
 \tag{2}\]</span></span> - In our example, <span class="math inline">\(y_k=p(x_k)\)</span> is the probability of passing given <span class="math inline">\(x_k\)</span> hours studied</p>
 </div>
-<div id="c78c98bb" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="1">
+<div id="a1f3518f" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1686,10 +1660,10 @@ p(x) = \frac{1}{1+e^{-\beta_0 + \beta_1x}}
 <section id="log-odds" class="slide level2">
 <h2>Log odds</h2>
 <ul>
-<li>In our example, <span class="math inline">\(\beta_1\)</span> is the log odds of passing for each additional hour studied</li>
+<li>In our example, <span class="math inline">\(\beta_1\)</span> is the <strong>change</strong> in the log odds of passing for each additional hour studied</li>
 </ul>
 <p><span class="math display">\[
-\log\left(\frac{p}{1-p}\right) = \beta_o + \beta_1x
+\log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1x
 \]</span></p>
 <ul>
 <li><p>In our example, <span class="math inline">\(\beta_1 = 1.505\)</span>, so each additional hour of studying increased log odds of passing by 1.5</p></li>
@@ -1700,7 +1674,7 @@ e^{\beta_1} = e^{1.505}\approx 4.5
 <li><p>We can also perform multiple logistic regression with a vector of variables</p></li>
 </ul>
 <p><span id="eq-logistic-fxn3"><span class="math display">\[
-p(\mathbf{x}) = \frac{1}{1+e^{-\beta_0 + \beta_1x + \beta_2x_2+\ldots}}
+p(\mathbf{x}) = \frac{1}{1+e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2+\cdots+\beta_kx_k)}}
 \tag{3}\]</span></span></p>
 </section>
 <section id="the-five-components-of-logistic-regression" class="slide level2">
@@ -1807,7 +1781,7 @@ p(\mathbf{x}) = \frac{1}{1+e^{-\beta_0 + \beta_1x + \beta_2x_2+\ldots}}
 <p><strong>Weights</strong></p>
 </div>
 <div class="callout-content">
-<p>LogReg learns a vector of a vector of weights and a bias term to solve the classification task</p>
+<p>LogReg learns a vector of weights and a bias term to solve the classification task</p>
 </div>
 </div>
 </div>
@@ -1815,7 +1789,7 @@ p(\mathbf{x}) = \frac{1}{1+e^{-\beta_0 + \beta_1x + \beta_2x_2+\ldots}}
 <li><span style="color: green; font-weight: bold;">Linear combination of input features</span></li>
 <li>Each data point is multiplied by weights and a bias is added</li>
 <li>Here, <span class="math inline">\(x_{i,j}\)</span> refers to the <span class="math inline">\(j^{th}\)</span> component of the <span class="math inline">\(i^{th}\)</span> data point. <span id="eq-lrweights"><span class="math display">\[
-z_i = \sum_{j=1}^n w_ix_{i,j} + b
+z_i = \sum_{j=1}^n w_jx_{i,j} + b
 \tag{4}\]</span></span></li>
 </ul>
 <p><a href="#/eq-lrweights" class="quarto-xref">Equation 4</a> can be represented identically using dot product notation (where the bold font indicates a vector of weights (<span class="math inline">\(\mathbf{w}\)</span>) and inputs (<span class="math inline">\(\mathbf{x}\)</span>))</p>
@@ -1840,7 +1814,7 @@ z_i = \mathbf{w}\cdot \mathbf{x}_i + b
 </div>
 </div>
 <ul>
-<li>The sigmoid <span class="math inline">\(\sigma(z)\)</span> takes a real-valued number <span class="math inline">\(z\in [-\infty, \infty]\)</span> and effectively <span style="color: green; font-weight: bold;">squashes</span> it to lie in the range <span class="math inline">\([0,1]\)</span>: <span class="math inline">\(0&lt;\sigma(z) &lt; 1\)</span>.</li>
+<li>The sigmoid <span class="math inline">\(\sigma(z)\)</span> takes a real-valued number <span class="math inline">\(z\in (-\infty, \infty)\)</span> and effectively <span style="color: green; font-weight: bold;">squashes</span> it to lie in the range <span class="math inline">\([0,1]\)</span>: <span class="math inline">\(0&lt;\sigma(z) &lt; 1\)</span>.</li>
 </ul>
 <p><span class="math display">\[
 \sigma(z) = \frac{1}{1+e^{-z}} = \frac{1}{1+\exp(-z)}
@@ -1853,7 +1827,7 @@ z_i = \mathbf{w}\cdot \mathbf{x}_i + b
 <li>i.e., whenever <span class="math inline">\(z = \mathrm{w}\cdot \mathrm{x} + b\)</span> is over zero, the model predicts the positive class (<span class="math inline">\(\hat{y}=1\)</span>).</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div id="bf288136" class="cell" data-fig-height="1.5" data-fig-width="2" data-execution_count="2">
+<div id="2a2870a0" class="cell" data-fig-height="1.5" data-fig-width="2" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1867,26 +1841,26 @@ z_i = \mathbf{w}\cdot \mathbf{x}_i + b
 <section id="sigmoid-a-convenient-identity" class="slide level2">
 <h2>Sigmoid: A convenient identity</h2>
 <ul>
-<li><span class="math inline">\(1−\sigma(x) = \sigma(−x)\)</span></li>
+<li><span class="math inline">\(1-\sigma(x) = \sigma(-x)\)</span></li>
 </ul>
 <p><span class="math display">\[
 \begin{align*}
-1−\sigma(x) &amp;=&amp; 1- \frac{1}{1+e^{-x}}\\
-&amp;=&amp; \frac{1+e^{-x} - 1}{1+e^{-x}} \\
-&amp;=&amp; \frac{e^{-x}}{1+e^{-x}} \cdot \frac{e^{x}}{e^{x}}\\
-&amp;=&amp; \frac{1}{1+e^{x}} \\
-&amp;=&amp; \sigma(-x) \\
+1-\sigma(x) &amp;= 1- \frac{1}{1+e^{-x}}\\
+&amp;= \frac{1+e^{-x} - 1}{1+e^{-x}} \\
+&amp;= \frac{e^{-x}}{1+e^{-x}} \cdot \frac{e^{x}}{e^{x}}\\
+&amp;= \frac{1}{1+e^{x}} \\
+&amp;= \sigma(-x) \\
 \end{align*}
 \]</span></p>
 </section>
 <section id="sigmoid-a-convenient-identity-1" class="slide level2">
 <h2>Sigmoid: A convenient identity</h2>
-<p><span class="math inline">\(1−\sigma(x) = \sigma(−x)\)</span></p>
+<p><span class="math inline">\(1-\sigma(x) = \sigma(-x)\)</span></p>
 <table class="no-border">
 <tbody>
 <tr class="fragment">
 <td>
-<span class="math inline">\(1−\sigma(x)\)</span>
+<span class="math inline">\(1-\sigma(x)\)</span>
 </td>
 <td>
 <span class="math inline">\(= 1- \dfrac{1}{1+e^{-x}}\)</span>
@@ -2099,12 +2073,12 @@ The logit is the inverse of the sigmoid
 <li><p><span class="math inline">\(- y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\sigma(\mathbf{w}\cdot \mathbf{x} + b))\)</span> is equivalent to the following piecewise loss function <span class="math display">\[
 \mathcal{L}(\sigma(z), y) = \begin{cases}
 -\log \sigma(z) &amp; \text{if } y_i = 1 \\
--\log 1- \sigma(z) &amp; \text{if } y_i = 0 \\
+-\log (1 - \sigma(z)) &amp; \text{if } y_i = 0 \\
 \end{cases}
 \]</span></p></li>
-<li><p>If <span class="math inline">\(y_i=1\)</span>, then As <span class="math inline">\(\log \sigma(z) \rightarrow 1\)</span>, the loss approaches zero</p></li>
+<li><p>If <span class="math inline">\(y_i=1\)</span>, then As <span class="math inline">\(\sigma(z) \rightarrow 1\)</span>, the loss <span class="math inline">\(\mathcal{L}(\sigma(z), y) \rightarrow 0\)</span>.</p></li>
 </ul>
-<div id="87905e0f" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="3">
+<div id="6647c3ef" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2123,7 +2097,7 @@ The logit is the inverse of the sigmoid
 <h2>Loss function (sanity check)</h2>
 <p><span class="math display">\[
 \mathcal{L}_{CE}(\hat{y}, y)
-= - y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\mathbf{w}\cdot \mathbf{x} + b))
+= - y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\sigma(\mathbf{w}\cdot \mathbf{x} + b))
 \]</span></p>
 <ul>
 <li>Note that if we predict (correctly) for a true example that <span class="math inline">\(\hat{y}=1\)</span>, then the second term drops out and we have</li>
@@ -2185,10 +2159,10 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 </div>
 <ul>
 <li><p>Given a learning rate <span class="math inline">\(\eta\)</span> and the gradient of the weights and bias:</p></li>
-<li><p>Each iteration of the GD processes Updates the weights and bias <span class="math display">\[
+<li><p>Each iteration of the GD updates the weights and bias <span class="math display">\[
 \begin{eqnarray*}
 \mathbf{w} &amp;\leftarrow &amp;\mathbf{w} - \eta\Delta \mathbf{w} \\
-\mathbf{b} &amp;\leftarrow &amp;\mathbf{b} - \eta\Delta \mathbf{b}
+b &amp;\leftarrow &amp;\mathbf{b} - \eta\Delta b
 \end{eqnarray*}
 \]</span></p></li>
 <li><p>We will explain how the gradient is calculated and then return to the mechanics of the gradient descent algorithm.</p></li>
@@ -2223,7 +2197,7 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 </section>
 <section id="gradient-descent" class="slide level2">
 <h2>Gradient descent</h2>
-<div id="af6bc2a0" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="4">
+<div id="17adacaa" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2551,7 +2525,7 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 <section>
 <section id="gradient-descent-1" class="title-slide slide level1 center">
 <h1>Gradient descent</h1>
-<div id="e7d0bfcd" class="cell" data-execution_count="5">
+<div id="aab9090a" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2567,7 +2541,7 @@ J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})
 <li><p>Update the weights and biases <span class="math display">\[
 \begin{eqnarray*}
 \mathbf{w} &amp;\leftarrow &amp;\mathbf{w} - \eta\Delta \mathbf{w} \\
-\mathbf{b} &amp;\leftarrow &amp;\mathbf{b} - \eta\Delta \mathbf{b}
+b &amp;\leftarrow &amp;\mathbf{b} - \eta\Delta b
 \end{eqnarray*}
 \]</span></p></li>
 <li><p>Let’s do one simple example – finding the minimum of a function</p></li>
@@ -2593,7 +2567,7 @@ x \leftarrow x-\eta (14x +3 )
 <aside><ol class="aside-footnotes"><li id="fn1"><p><span class="math inline">\(\eta\)</span>=“eta”</p></li></ol></aside></section>
 <section id="gradient-descent-example" class="slide level2">
 <h2>Gradient descent example</h2>
-<div id="17198676" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="6">
+<div id="d378cd76" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-label="1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a aria-label="2"></a><span class="im">import</span> matplotlib.pylab <span class="im">as</span> plt</span>
 <span id="cb1-3"><a aria-label="3"></a></span>
@@ -2630,7 +2604,7 @@ x \leftarrow x-\eta (14x +3 )
 </section>
 <section id="gradient-descent-overshoot" class="slide level2">
 <h2>Gradient descent: Overshoot</h2>
-<div id="7b87f8b3" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="7">
+<div id="e2b40599" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2960,7 +2934,7 @@ Y = \beta_0 + \beta_1X_1 + \ldots + \beta_pX_p
 <li>If the true relationship between the response and the predictors is approximately linear, the least squares estimates will have low bias.</li>
 <li>If <span class="math inline">\(n \gg p\)</span> — that is, if <span class="math inline">\(n\)</span>, the number of observations, is much larger than <span class="math inline">\(p\)</span>, the number of variables—then the least squares estimates tend to also have low variance, and hence will perform well on test observations.</li>
 <li>if <span class="math inline">\(n\)</span> is not much larger than <span class="math inline">\(p\)</span>, then there can be a lot of variability in the least squares fit, resulting in overfitting and consequently poor predictions on future observations not used in model training.</li>
-<li>If <span class="math inline">\(p&gt;n\)</span>, here is no longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error on the training data, but typically very poor test set performance due to extremely high variance</li>
+<li>If <span class="math inline">\(p&gt;n\)</span>, there is no longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error on the training data, but typically very poor test set performance due to extremely high variance</li>
 </ul>
 <aside><ol class="aside-footnotes"><li id="fn3"><p>Material adapted from James, G., Witten, D., Hastie, T., &amp; Tibshirani, R. (2013). An introduction to statistical learning (1st ed.) [PDF]. Springer.</p></li></ol></aside></section></section>
 <section>
@@ -3039,13 +3013,15 @@ J(\mathbf{w}) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(a^{(i)}) + (1 - 
 <li><p>Thus logistic regression with L2 penalty has a unique solution</p></li>
 <li><p>We still need to decide which value to use for <span class="math inline">\(\lambda\)</span>, which is a <span style="color: green; font-weight: bold;">hyperparameter</span>.</p></li>
 <li><p>The optimal value of <span class="math inline">\(\lambda\)</span> can be estimated with <span class="math inline">\(k\)</span>-Fold Cross-Validation</p></li>
-<li><p><span class="hw-badge">HOMEWORK</span> You will receive code for “do-it-yourself” logistic regression in Python and be askeed to add L2 regularization.</p></li>
+<li><p><span class="hw-badge">HOMEWORK</span> You will receive code for “do-it-yourself” logistic regression in Python and be asked to add L2 regularization.</p></li>
 </ul>
 </section>
-<section id="sources-and-suggested-rewarding" class="slide level2">
-<h2>Sources and Suggested Rewarding</h2>
+<section id="sources-and-suggested-reading" class="slide level2">
+<h2>Sources and Suggested Reading</h2>
 <ul>
 <li>James, G., Witten, D., Hastie, T., &amp; Tibshirani, R. (2013). <a href="https://link.springer.com/book/10.1007/978-3-031-38747-0">An introduction to statistical learning. Springer</a></li>
+<li>Sperandei S (2014) <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3936971/">Understanding logistic regression analysis. <em>Biochem Med (Zagreb)</em> <strong>24</strong>:12-8</a></li>
+<li>Bewick V, et al. (2005) <a href="https://pubmed.ncbi.nlm.nih.gov/15693993/">Statistics review 14: Logistic regression <em>Crit Care</em> <strong>9</strong>:112-8</a></li>
 </ul>
 
 

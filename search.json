@@ -1730,28 +1730,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.54%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.16%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.60%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.14%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.48%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.36%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.22%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.46%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -1961,7 +1961,7 @@
     "href": "lectures/logreg.html#overview-logistic-regression",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview: Logistic regression",
-    "text": "Overview: Logistic regression\n\n\n\n\n\n\nGame plan\n\n\nLogistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks.\n\n\n\n\n\nPart 1: Introduction\n\nComponents of logistic regression\nSentiment analysis\n\n\n\n\nPart 2: Sigmoid function\n\nDefinition\nFirst derivative\n\n\n\n\nPart 3: Gradient descent\n\nLearning\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation\n\nPart 5: Overfitting",
+    "text": "Overview: Logistic regression\n\n\n\n\n\n\nGame plan\n\n\nLogistic regression shares some characteristics with neural networks including the weighted sum and activation function (for single neurons) and gradient-descent training loop. Studying logistic regression therefore serves as a good preparation for understanding neural networks.\n\n\n\n\nlogistic regression: Introduction\nPart 2: Sigmoid function\nPart 3: Gradient descent\nPart 4: Python\nPart 5: Overfitting",
     "crumbs": [
       "Home",
       "Lectures",
@@ -1969,8 +1969,8 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#part-1",
-    "href": "lectures/logreg.html#part-1",
+    "objectID": "lectures/logreg.html#intro",
+    "href": "lectures/logreg.html#intro",
     "title": "Approaches to biomedical knowledge",
     "section": "Logistic Regression",
     "text": "Logistic Regression\nLogistic Regression (LogReg) is one of the most common machine learning algorithms. It can be used to predict the probability of an event occurring based on a given labeled data set.\n\nEmail analysis (Is an email spam or not?)\nSentiment analysis (is a movie review positive or negative?)\nMedical diagnostics (is a given diagnosis present or absent?)\n\n\n\n\n\n\n\nWe will go over the algorithm in detail, because it is an excellent preparation for understanding neural networks.",
@@ -1997,7 +1997,7 @@
     "href": "lectures/logreg.html#logistic-regression-review-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Logistic regression: review",
-    "text": "Logistic regression: review\n\nIn Equation 1, \\(\\mu\\) is the location parameter (midpoint of the curve, \\(\\tfrac{1}{2}\\), and \\(s\\) is the scale parameter.\nWe generally rewrite this with \\(\\beta_0 = -\\tfrac{\\mu}{s}\\) and \\(\\beta_1=\\tfrac{1}{s}\\), yielding\n\n\n\\[\np(x) = \\frac{1}{1+e^{-\\beta_0 + \\beta_1x}}\n\\tag{2}\\] - In our example, \\(y_k=p(x_k)\\) is the probability of passing given \\(x_k\\) hours studied",
+    "text": "Logistic regression: review\n\nIn Equation 1, \\(\\mu\\) is the location parameter (midpoint of the curve, \\(\\tfrac{1}{2}\\)), and \\(s\\) is the scale parameter.\nWe generally rewrite this with \\(\\beta_0 = -\\tfrac{\\mu}{s}\\) and \\(\\beta_1=\\tfrac{1}{s}\\), yielding\n\n\n\\[\np(x) = \\frac{1}{1+e^{-(\\beta_0 + \\beta_1x)}}\n\\tag{2}\\] - In our example, \\(y_k=p(x_k)\\) is the probability of passing given \\(x_k\\) hours studied",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2009,7 +2009,7 @@
     "href": "lectures/logreg.html#log-odds",
     "title": "Approaches to biomedical knowledge",
     "section": "Log odds",
-    "text": "Log odds\n\nIn our example, \\(\\beta_1\\) is the log odds of passing for each additional hour studied\n\n\\[\n\\log\\left(\\frac{p}{1-p}\\right) = \\beta_o + \\beta_1x\n\\]\n\nIn our example, \\(\\beta_1 = 1.505\\), so each additional hour of studying increased log odds of passing by 1.5\nIt is more interpretable to use the odds ratio defined as \\[\ne^{\\beta_1} = e^{1.505}\\approx 4.5\n\\]\nFor each additional hour, we multiply the odds of passing by 4.5\nWe can also perform multiple logistic regression with a vector of variables\n\n\\[\np(\\mathbf{x}) = \\frac{1}{1+e^{-\\beta_0 + \\beta_1x + \\beta_2x_2+\\ldots}}\n\\tag{3}\\]",
+    "text": "Log odds\n\nIn our example, \\(\\beta_1\\) is the change in the log odds of passing for each additional hour studied\n\n\\[\n\\log\\left(\\frac{p}{1-p}\\right) = \\beta_0 + \\beta_1x\n\\]\n\nIn our example, \\(\\beta_1 = 1.505\\), so each additional hour of studying increased log odds of passing by 1.5\nIt is more interpretable to use the odds ratio defined as \\[\ne^{\\beta_1} = e^{1.505}\\approx 4.5\n\\]\nFor each additional hour, we multiply the odds of passing by 4.5\nWe can also perform multiple logistic regression with a vector of variables\n\n\\[\np(\\mathbf{x}) = \\frac{1}{1+e^{-(\\beta_0 + \\beta_1x_1 + \\beta_2x_2+\\cdots+\\beta_kx_k)}}\n\\tag{3}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2045,7 +2045,7 @@
     "href": "lectures/logreg.html#weights-and-bias",
     "title": "Approaches to biomedical knowledge",
     "section": "Weights and bias",
-    "text": "Weights and bias\n\n\n\n\n\n\nWeights\n\n\nLogReg learns a vector of a vector of weights and a bias term to solve the classification task\n\n\n\n\nLinear combination of input features\nEach data point is multiplied by weights and a bias is added\nHere, \\(x_{i,j}\\) refers to the \\(j^{th}\\) component of the \\(i^{th}\\) data point. \\[\nz_i = \\sum_{j=1}^n w_ix_{i,j} + b\n\\tag{4}\\]\n\nEquation 4 can be represented identically using dot product notation (where the bold font indicates a vector of weights (\\(\\mathbf{w}\\)) and inputs (\\(\\mathbf{x}\\)))\n\\[\nz_i = \\mathbf{w}\\cdot \\mathbf{x}_i + b\n\\]\nThis is identical to the sums we will see at individual neurons in neural networks",
+    "text": "Weights and bias\n\n\n\n\n\n\nWeights\n\n\nLogReg learns a vector of weights and a bias term to solve the classification task\n\n\n\n\nLinear combination of input features\nEach data point is multiplied by weights and a bias is added\nHere, \\(x_{i,j}\\) refers to the \\(j^{th}\\) component of the \\(i^{th}\\) data point. \\[\nz_i = \\sum_{j=1}^n w_jx_{i,j} + b\n\\tag{4}\\]\n\nEquation 4 can be represented identically using dot product notation (where the bold font indicates a vector of weights (\\(\\mathbf{w}\\)) and inputs (\\(\\mathbf{x}\\)))\n\\[\nz_i = \\mathbf{w}\\cdot \\mathbf{x}_i + b\n\\]\nThis is identical to the sums we will see at individual neurons in neural networks",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2057,7 +2057,7 @@
     "href": "lectures/logreg.html#part-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Sigmoid",
-    "text": "Sigmoid\n\n\n\n\n\n\nSigmoid function\n\n\nTo create a probability, we transform z through the sigmoid function, \\(\\sigma(z)\\)\n\n\n\n\nThe sigmoid \\(\\sigma(z)\\) takes a real-valued number \\(z\\in [-\\infty, \\infty]\\) and effectively squashes it to lie in the range \\([0,1]\\): \\(0&lt;\\sigma(z) &lt; 1\\).\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\n\n\n\nInterpretation: \\(P(y=1 | x, w, b)\\), i.e., a probability for classification\n\\(\\sigma(z) &gt; 0.5 \\Leftrightarrow z &gt; 0\\)\ni.e., whenever \\(z = \\mathrm{w}\\cdot \\mathrm{x} + b\\) is over zero, the model predicts the positive class (\\(\\hat{y}=1\\)).",
+    "text": "Sigmoid\n\n\n\n\n\n\nSigmoid function\n\n\nTo create a probability, we transform z through the sigmoid function, \\(\\sigma(z)\\)\n\n\n\n\nThe sigmoid \\(\\sigma(z)\\) takes a real-valued number \\(z\\in (-\\infty, \\infty)\\) and effectively squashes it to lie in the range \\([0,1]\\): \\(0&lt;\\sigma(z) &lt; 1\\).\n\n\\[\n\\sigma(z) = \\frac{1}{1+e^{-z}} = \\frac{1}{1+\\exp(-z)}\n\\]\n\n\n\nInterpretation: \\(P(y=1 | x, w, b)\\), i.e., a probability for classification\n\\(\\sigma(z) &gt; 0.5 \\Leftrightarrow z &gt; 0\\)\ni.e., whenever \\(z = \\mathrm{w}\\cdot \\mathrm{x} + b\\) is over zero, the model predicts the positive class (\\(\\hat{y}=1\\)).",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2069,7 +2069,7 @@
     "href": "lectures/logreg.html#sigmoid-a-convenient-identity",
     "title": "Approaches to biomedical knowledge",
     "section": "Sigmoid: A convenient identity",
-    "text": "Sigmoid: A convenient identity\n\n\\(1−\\sigma(x) = \\sigma(−x)\\)\n\n\\[\n\\begin{align*}\n1−\\sigma(x) &=& 1- \\frac{1}{1+e^{-x}}\\\\\n&=& \\frac{1+e^{-x} - 1}{1+e^{-x}} \\\\\n&=& \\frac{e^{-x}}{1+e^{-x}} \\cdot \\frac{e^{x}}{e^{x}}\\\\\n&=& \\frac{1}{1+e^{x}} \\\\\n&=& \\sigma(-x) \\\\\n\\end{align*}\n\\]",
+    "text": "Sigmoid: A convenient identity\n\n\\(1-\\sigma(x) = \\sigma(-x)\\)\n\n\\[\n\\begin{align*}\n1-\\sigma(x) &= 1- \\frac{1}{1+e^{-x}}\\\\\n&= \\frac{1+e^{-x} - 1}{1+e^{-x}} \\\\\n&= \\frac{e^{-x}}{1+e^{-x}} \\cdot \\frac{e^{x}}{e^{x}}\\\\\n&= \\frac{1}{1+e^{x}} \\\\\n&= \\sigma(-x) \\\\\n\\end{align*}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2081,7 +2081,7 @@
     "href": "lectures/logreg.html#sigmoid-a-convenient-identity-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Sigmoid: A convenient identity",
-    "text": "Sigmoid: A convenient identity\n\\(1−\\sigma(x) = \\sigma(−x)\\)\n\n\n\n\n\\(1−\\sigma(x)\\)\n\n\n\\(= 1- \\dfrac{1}{1+e^{-x}}\\)\n\n\n\\(\\bullet\\) definition of \\(\\sigma(x)\\)\n\n\n\n\n\n\n\\(= \\dfrac{1+e^{-x} - 1}{1+e^{-x}}\\)\n\n\n\\(\\bullet\\) common denominator\n\n\n\n\n\n\n\\(= \\dfrac{e^{-x}}{1+e^{-x}} \\cdot \\dfrac{e^{x}}{e^{x}}\\)\n\n\n\\(\\bullet\\) multiply by \\(1=\\frac{e^x}{e^x}\\)\n\n\n\n\n\n\n\\(= \\dfrac{1}{1+e^{x}}\\)\n\n\n\\(\\bullet\\) simplify\n\n\n\n\n\n\n\\(= \\sigma(-x)\\)\n\n\n\\(\\bullet\\) definition of \\(\\sigma(-x)\\)",
+    "text": "Sigmoid: A convenient identity\n\\(1-\\sigma(x) = \\sigma(-x)\\)\n\n\n\n\n\\(1-\\sigma(x)\\)\n\n\n\\(= 1- \\dfrac{1}{1+e^{-x}}\\)\n\n\n\\(\\bullet\\) definition of \\(\\sigma(x)\\)\n\n\n\n\n\n\n\\(= \\dfrac{1+e^{-x} - 1}{1+e^{-x}}\\)\n\n\n\\(\\bullet\\) common denominator\n\n\n\n\n\n\n\\(= \\dfrac{e^{-x}}{1+e^{-x}} \\cdot \\dfrac{e^{x}}{e^{x}}\\)\n\n\n\\(\\bullet\\) multiply by \\(1=\\frac{e^x}{e^x}\\)\n\n\n\n\n\n\n\\(= \\dfrac{1}{1+e^{x}}\\)\n\n\n\\(\\bullet\\) simplify\n\n\n\n\n\n\n\\(= \\sigma(-x)\\)\n\n\n\\(\\bullet\\) definition of \\(\\sigma(-x)\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2153,7 +2153,7 @@
     "href": "lectures/logreg.html#loss-function-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Loss function",
-    "text": "Loss function\n\n\\(- y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b))\\) is equivalent to the following piecewise loss function \\[\n\\mathcal{L}(\\sigma(z), y) = \\begin{cases}\n-\\log \\sigma(z) & \\text{if } y_i = 1 \\\\\n-\\log 1- \\sigma(z) & \\text{if } y_i = 0 \\\\\n\\end{cases}\n\\]\nIf \\(y_i=1\\), then As \\(\\log \\sigma(z) \\rightarrow 1\\), the loss approaches zero\n\n\n\n\n\n\n\n\n\n\n\n\nAlso, if \\(y_i=0\\), then the loss approaches zero as \\(\\sigma(z)\\rightarrow 0\\)",
+    "text": "Loss function\n\n\\(- y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b))\\) is equivalent to the following piecewise loss function \\[\n\\mathcal{L}(\\sigma(z), y) = \\begin{cases}\n-\\log \\sigma(z) & \\text{if } y_i = 1 \\\\\n-\\log (1 - \\sigma(z)) & \\text{if } y_i = 0 \\\\\n\\end{cases}\n\\]\nIf \\(y_i=1\\), then As \\(\\sigma(z) \\rightarrow 1\\), the loss \\(\\mathcal{L}(\\sigma(z), y) \\rightarrow 0\\).\n\n\n\n\n\n\n\n\n\n\n\n\nAlso, if \\(y_i=0\\), then the loss approaches zero as \\(\\sigma(z)\\rightarrow 0\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2165,7 +2165,7 @@
     "href": "lectures/logreg.html#loss-function-sanity-check",
     "title": "Approaches to biomedical knowledge",
     "section": "Loss function (sanity check)",
-    "text": "Loss function (sanity check)\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\mathbf{w}\\cdot \\mathbf{x} + b))\n\\]\n\nNote that if we predict (correctly) for a true example that \\(\\hat{y}=1\\), then the second term drops out and we have\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - 1\\log 1  = 0\n\\]\n\nSimilar things apply for a correct prediction of a negative example as \\(\\hat{y}=0\\)\nThe loss for one example ranges from 0 to infinity (\\(-\\log 0\\))",
+    "text": "Loss function (sanity check)\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - y\\log\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b) - (1-y)\\log(1-\\sigma(\\mathbf{w}\\cdot \\mathbf{x} + b))\n\\]\n\nNote that if we predict (correctly) for a true example that \\(\\hat{y}=1\\), then the second term drops out and we have\n\n\\[\n\\mathcal{L}_{CE}(\\hat{y}, y)\n= - 1\\log 1  = 0\n\\]\n\nSimilar things apply for a correct prediction of a negative example as \\(\\hat{y}=0\\)\nThe loss for one example ranges from 0 to infinity (\\(-\\log 0\\))",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2189,7 +2189,7 @@
     "href": "lectures/logreg.html#part-3",
     "title": "Approaches to biomedical knowledge",
     "section": "Gradient descent",
-    "text": "Gradient descent\n\n\n\n\n\n\nBasic idea of gradient descent\n\n\nThe gradient descent algorithm finds the gradient of the loss function at the current point and moves the parameters in the opposite direction.\n\n\n\n\nGiven a learning rate \\(\\eta\\) and the gradient of the weights and bias:\nEach iteration of the GD processes Updates the weights and bias \\[\n\\begin{eqnarray*}\n\\mathbf{w} &\\leftarrow &\\mathbf{w} - \\eta\\Delta \\mathbf{w} \\\\\n\\mathbf{b} &\\leftarrow &\\mathbf{b} - \\eta\\Delta \\mathbf{b}\n\\end{eqnarray*}\n\\]\nWe will explain how the gradient is calculated and then return to the mechanics of the gradient descent algorithm.",
+    "text": "Gradient descent\n\n\n\n\n\n\nBasic idea of gradient descent\n\n\nThe gradient descent algorithm finds the gradient of the loss function at the current point and moves the parameters in the opposite direction.\n\n\n\n\nGiven a learning rate \\(\\eta\\) and the gradient of the weights and bias:\nEach iteration of the GD updates the weights and bias \\[\n\\begin{eqnarray*}\n\\mathbf{w} &\\leftarrow &\\mathbf{w} - \\eta\\Delta \\mathbf{w} \\\\\nb &\\leftarrow &\\mathbf{b} - \\eta\\Delta b\n\\end{eqnarray*}\n\\]\nWe will explain how the gradient is calculated and then return to the mechanics of the gradient descent algorithm.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2357,7 +2357,7 @@
     "href": "lectures/logreg.html#basic-idea-of-gradient-descent",
     "title": "Approaches to biomedical knowledge",
     "section": "Basic idea of gradient descent",
-    "text": "Basic idea of gradient descent\n\nUpdate the weights and biases \\[\n\\begin{eqnarray*}\n\\mathbf{w} &\\leftarrow &\\mathbf{w} - \\eta\\Delta \\mathbf{w} \\\\\n\\mathbf{b} &\\leftarrow &\\mathbf{b} - \\eta\\Delta \\mathbf{b}\n\\end{eqnarray*}\n\\]\nLet’s do one simple example – finding the minimum of a function\n\n\\[\nf(x) = 7x^2 + 3x-9\n\\]\n\nIt is straightforward to find the minimum analytically by setting the derivative to zero\n\n\\[\n\\begin{eqnarray*}\n\\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &=& 0 \\\\\nx &=& - \\dfrac{3}{14}\n\\end{eqnarray*}\n\\]\n\nTo use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size \\(\\eta\\)1\n\n\\[\nx \\leftarrow x-\\eta (14x +3 )\n\\]\n\\(\\eta\\)=“eta”",
+    "text": "Basic idea of gradient descent\n\nUpdate the weights and biases \\[\n\\begin{eqnarray*}\n\\mathbf{w} &\\leftarrow &\\mathbf{w} - \\eta\\Delta \\mathbf{w} \\\\\nb &\\leftarrow &\\mathbf{b} - \\eta\\Delta b\n\\end{eqnarray*}\n\\]\nLet’s do one simple example – finding the minimum of a function\n\n\\[\nf(x) = 7x^2 + 3x-9\n\\]\n\nIt is straightforward to find the minimum analytically by setting the derivative to zero\n\n\\[\n\\begin{eqnarray*}\n\\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &=& 0 \\\\\nx &=& - \\dfrac{3}{14}\n\\end{eqnarray*}\n\\]\n\nTo use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size \\(\\eta\\)1\n\n\\[\nx \\leftarrow x-\\eta (14x +3 )\n\\]\n\\(\\eta\\)=“eta”",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2573,7 +2573,7 @@
     "href": "lectures/logreg.html#regularization",
     "title": "Approaches to biomedical knowledge",
     "section": "Regularization",
-    "text": "Regularization\n\na technique used to enhance the generalization ability of machine learning models by adding a penalty term to the loss function.\n\n\nWe will focus on L2 regularization here (but see also Lasso and Elastic Net)\nFor simplicity, let’s focus for now on linear regression with a standard linear model1:\n\n\\[\nY = \\beta_0 + \\beta_1X_1 + \\ldots + \\beta_pX_p\n\\]\n\nIf the true relationship between the response and the predictors is approximately linear, the least squares estimates will have low bias.\nIf \\(n \\gg p\\) — that is, if \\(n\\), the number of observations, is much larger than \\(p\\), the number of variables—then the least squares estimates tend to also have low variance, and hence will perform well on test observations.\nif \\(n\\) is not much larger than \\(p\\), then there can be a lot of variability in the least squares fit, resulting in overfitting and consequently poor predictions on future observations not used in model training.\nIf \\(p&gt;n\\), here is no longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error on the training data, but typically very poor test set performance due to extremely high variance\n\nMaterial adapted from James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (1st ed.) [PDF]. Springer.",
+    "text": "Regularization\n\na technique used to enhance the generalization ability of machine learning models by adding a penalty term to the loss function.\n\n\nWe will focus on L2 regularization here (but see also Lasso and Elastic Net)\nFor simplicity, let’s focus for now on linear regression with a standard linear model1:\n\n\\[\nY = \\beta_0 + \\beta_1X_1 + \\ldots + \\beta_pX_p\n\\]\n\nIf the true relationship between the response and the predictors is approximately linear, the least squares estimates will have low bias.\nIf \\(n \\gg p\\) — that is, if \\(n\\), the number of observations, is much larger than \\(p\\), the number of variables—then the least squares estimates tend to also have low variance, and hence will perform well on test observations.\nif \\(n\\) is not much larger than \\(p\\), then there can be a lot of variability in the least squares fit, resulting in overfitting and consequently poor predictions on future observations not used in model training.\nIf \\(p&gt;n\\), there is no longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error on the training data, but typically very poor test set performance due to extremely high variance\n\nMaterial adapted from James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (1st ed.) [PDF]. Springer.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2609,7 +2609,7 @@
     "href": "lectures/logreg.html#intuition-for-gradient-descent-updates",
     "title": "Approaches to biomedical knowledge",
     "section": "💡 Intuition for Gradient Descent Updates",
-    "text": "💡 Intuition for Gradient Descent Updates\nWhen we update our weights (\\(w_j \\leftarrow w_j - \\alpha \\frac{\\partial J}{\\partial w_j}\\)) using Equation 9, the L2 term (i.e., weight penalty) alters the step:\n\nThe Core Error \\((\\hat{y} - y)x_j\\): Same as above!\nThe Weight Penalty \\(\\frac{\\lambda}{m} w_j\\): The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.\n\n\n\nThe Sum of Convex Functions is Convex\nThe above total cost function \\(J(\\mathbf{w})\\) is composed of two distinct components \\[J(\\mathbf{w}) = \\mathcal{L}_{\\text{cross-entropy}}(\\mathbf{w}) + \\mathcal{L}_{\\text{L2}}(\\mathbf{w})\\]\nTHe Standard negative log-likelihood (cross-entropy loss) for logistic regression is convex.\nL2 Penalty (\\(\\frac{\\lambda}{2m}\\|\\mathbf{w}\\|_2^2\\)) is a quadratic function (“bowl shaped”), which is strictly convex.\nThus logistic regression with L2 penalty has a unique solution\nWe still need to decide which value to use for \\(\\lambda\\), which is a hyperparameter.\nThe optimal value of \\(\\lambda\\) can be estimated with \\(k\\)-Fold Cross-Validation\nHOMEWORK You will receive code for “do-it-yourself” logistic regression in Python and be askeed to add L2 regularization.",
+    "text": "💡 Intuition for Gradient Descent Updates\nWhen we update our weights (\\(w_j \\leftarrow w_j - \\alpha \\frac{\\partial J}{\\partial w_j}\\)) using Equation 9, the L2 term (i.e., weight penalty) alters the step:\n\nThe Core Error \\((\\hat{y} - y)x_j\\): Same as above!\nThe Weight Penalty \\(\\frac{\\lambda}{m} w_j\\): The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.\n\n\n\nThe Sum of Convex Functions is Convex\nThe above total cost function \\(J(\\mathbf{w})\\) is composed of two distinct components \\[J(\\mathbf{w}) = \\mathcal{L}_{\\text{cross-entropy}}(\\mathbf{w}) + \\mathcal{L}_{\\text{L2}}(\\mathbf{w})\\]\nTHe Standard negative log-likelihood (cross-entropy loss) for logistic regression is convex.\nL2 Penalty (\\(\\frac{\\lambda}{2m}\\|\\mathbf{w}\\|_2^2\\)) is a quadratic function (“bowl shaped”), which is strictly convex.\nThus logistic regression with L2 penalty has a unique solution\nWe still need to decide which value to use for \\(\\lambda\\), which is a hyperparameter.\nThe optimal value of \\(\\lambda\\) can be estimated with \\(k\\)-Fold Cross-Validation\nHOMEWORK You will receive code for “do-it-yourself” logistic regression in Python and be asked to add L2 regularization.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2617,11 +2617,11 @@
     ]
   },
   {
-    "objectID": "lectures/logreg.html#sources-and-suggested-rewarding",
-    "href": "lectures/logreg.html#sources-and-suggested-rewarding",
+    "objectID": "lectures/logreg.html#sources-and-suggested-reading",
+    "href": "lectures/logreg.html#sources-and-suggested-reading",
     "title": "Approaches to biomedical knowledge",
-    "section": "Sources and Suggested Rewarding",
-    "text": "Sources and Suggested Rewarding\n\nJames, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning. Springer",
+    "section": "Sources and Suggested Reading",
+    "text": "Sources and Suggested Reading\n\nJames, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning. Springer\nSperandei S (2014) Understanding logistic regression analysis. Biochem Med (Zagreb) 24:12-8\nBewick V, et al. (2005) Statistics review 14: Logistic regression Crit Care 9:112-8",
     "crumbs": [
       "Home",
       "Lectures",
