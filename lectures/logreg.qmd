@@ -78,7 +78,7 @@ $$ {#eq-logistic-fxn}
 
 ## Logistic regression: review
 
-- In @eq-logistic-fxn, $\mu$ is the location parameter (midpoint of the curve, $\tfrac{1}{2}$, and $s$ is the scale parameter.
+- In @eq-logistic-fxn, $\mu$ is the location parameter (midpoint of the curve, $\tfrac{1}{2}$), and $s$ is the scale parameter.
 - We generally rewrite this with $\beta_0 = -\tfrac{\mu}{s}$ and $\beta_1=\tfrac{1}{s}$, yielding
 
 :::{.small-text}
@@ -175,8 +175,7 @@ features can also be created (e.g., by counting positive and negative words for 
 ## Weights and bias
 
 ::: {.callout-note appearance="simple" title="Weights"}
-LogReg learns a vector of a vector of
-weights and a bias term to solve the classification task
+LogReg learns a vector of weights and a bias term to solve the classification task
 :::
 
 - [Linear combination of input features]{style="color: green; font-weight: bold;"}
@@ -237,25 +236,25 @@ plt.show()
 
 ## Sigmoid: A convenient identity
 
-- $1−\sigma(x) = \sigma(−x)$
+- $1-\sigma(x) = \sigma(-x)$
 
 $$
 \begin{align*}
-1−\sigma(x) &=& 1- \frac{1}{1+e^{-x}}\\
-&=& \frac{1+e^{-x} - 1}{1+e^{-x}} \\
-&=& \frac{e^{-x}}{1+e^{-x}} \cdot \frac{e^{x}}{e^{x}}\\
-&=& \frac{1}{1+e^{x}} \\
-&=& \sigma(-x) \\
+1-\sigma(x) &= 1- \frac{1}{1+e^{-x}}\\
+&= \frac{1+e^{-x} - 1}{1+e^{-x}} \\
+&= \frac{e^{-x}}{1+e^{-x}} \cdot \frac{e^{x}}{e^{x}}\\
+&= \frac{1}{1+e^{x}} \\
+&= \sigma(-x) \\
 \end{align*}
 $$
 
 ## Sigmoid: A convenient identity
 
-$1−\sigma(x) = \sigma(−x)$
+$1-\sigma(x) = \sigma(-x)$
 
 <table class="no-border">
 <tbody>
-<tr class="fragment"><td>$1−\sigma(x)$</td><td>$= 1- \dfrac{1}{1+e^{-x}}$</td><td>$\bullet$ definition of $\sigma(x)$</td></tr>
+<tr class="fragment"><td>$1-\sigma(x)$</td><td>$= 1- \dfrac{1}{1+e^{-x}}$</td><td>$\bullet$ definition of $\sigma(x)$</td></tr>
 <tr class="fragment"><td></td><td>$= \dfrac{1+e^{-x} - 1}{1+e^{-x}}$</td><td>$\bullet$ common denominator</td></tr>
 <tr class="fragment"><td></td><td>$= \dfrac{e^{-x}}{1+e^{-x}} \cdot \dfrac{e^{x}}{e^{x}}$</td><td>$\bullet$ multiply by $1=\frac{e^x}{e^x}$</td></tr>
 <tr class="fragment"><td></td><td>$= \dfrac{1}{1+e^{x}}$</td><td>$\bullet$ simplify</td></tr>
@@ -383,7 +382,7 @@ plt.show()
 
 $$
 \mathcal{L}_{CE}(\hat{y}, y)
-= - y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\mathbf{w}\cdot \mathbf{x} + b))
+= - y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\sigma(\mathbf{w}\cdot \mathbf{x} + b))
 $$
 
 - Note that if we predict (correctly) for a true example that $\hat{y}=1$, then the second term drops out and we have
@@ -425,11 +424,11 @@ of the loss function at the current point and moves the parameters in the opposi
 :::
 
 - Given a learning rate $\eta$ and the gradient of the weights and bias:
-- Each iteration of the GD processes Updates the weights and bias
+- Each iteration of the GD updates the weights and bias
 $$
 \begin{eqnarray*}
 \mathbf{w} &\leftarrow &\mathbf{w} - \eta\Delta \mathbf{w} \\
-\mathbf{b} &\leftarrow &\mathbf{b} - \eta\Delta \mathbf{b}
+b &\leftarrow &\mathbf{b} - \eta\Delta b
 \end{eqnarray*}
 $$
 
@@ -682,7 +681,7 @@ plt.show()
 $$
 \begin{eqnarray*}
 \mathbf{w} &\leftarrow &\mathbf{w} - \eta\Delta \mathbf{w} \\
-\mathbf{b} &\leftarrow &\mathbf{b} - \eta\Delta \mathbf{b}
+b &\leftarrow &\mathbf{b} - \eta\Delta b
 \end{eqnarray*}
 $$
 
@@ -1156,7 +1155,7 @@ perform well on test observations.
 than $p$, then there can be a lot of variability in the least squares fit,
 resulting in overfitting and consequently poor predictions on future
 observations not used in model training. 
-- If $p>n$, here is no
+- If $p>n$, there is no
 longer a unique least squares coefficient estimate: there are infinitely many solutions. Each of these least squares solutions gives zero error
 on the training data, but typically very poor test set performance
 due to extremely high variance
@@ -1236,11 +1235,11 @@ $$J(\mathbf{w}) = \mathcal{L}_{\text{cross-entropy}}(\mathbf{w}) + \mathcal{L}_{
 - We still need to decide which value to use for $\lambda$, which is a [hyperparameter]{style="color: green; font-weight: bold;"}.
 - The optimal value of $\lambda$ can be estimated with $k$-Fold Cross-Validation
 
--  [HOMEWORK]{.hw-badge} You will receive code for "do-it-yourself" logistic regression in Python and be askeed to add L2 regularization.
+-  [HOMEWORK]{.hw-badge} You will receive code for "do-it-yourself" logistic regression in Python and be asked to add L2 regularization.
 
 
 
-## Sources and Suggested Rewarding
+## Sources and Suggested Reading
 
 
 - James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). [An introduction to statistical learning. Springer](https://link.springer.com/book/10.1007/978-3-031-38747-0)
