@@ -74,7 +74,7 @@ def gdexample(figsize=(8,6)):
     ax.set_xlabel('w', loc='right', fontsize=12)
     ax.set_ylabel('Loss', loc='top', rotation=0, fontsize=12)
     ax.set_xticks([w1, 3])
-    ax.set_xticklabels(['$w^1$\n0', '$w^{min}$\n(goal)'])
+    ax.set_xticklabels(['$w^1$', '$w^{min}$\n(goal)'])
     ax.set_yticks([]) # Hide y-ticks for a clean "conceptual" look
 
     # Clean up the spines (axis lines)

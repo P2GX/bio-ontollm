@@ -106,7 +106,7 @@ $$ {#eq-logistic-fxn2}
 :::: {.columns}
 ::: {.column width="40%"}
 - $p(x_k)$ is the probability of passing given $x_k$ hours studied
-- Fitted: $\beta_0 \approx -4.08$, $\beta_1 \approx 1.50$
+- Fitted: $\beta_0 \approx -4.08$, $\beta_1 \approx 1.505$
 - 50% pass probability at $x=-\beta_0/\beta_1\approx 2.7$ hours
 :::
 ::: {.column width="60%"}
@@ -266,7 +266,7 @@ plt.show()
 
 ## Sigmoid: A convenient identity
 
-* The probabiliy of class 1 is $\sigma(z)$
+* The probability of class 1 is $\sigma(z)$
 * The probability of class 0 is $1-\sigma(z)$. 
 * $1-\sigma(x) = \sigma(-x)$
 
@@ -343,8 +343,9 @@ $$
 :::
 
 ## Loss function
-- A good model will minimize the difference between our prediction $\hat{y}$ and the ground truth $y$
-- this distance is defined by the **loss function** (also known as the **cost function**).
+
+- Training should bring our prediction $\hat{y}$ close to the true label $y$
+- The **loss** $\mathcal{L}(\hat{y}, y)$ measures the error for one example (we average it over the training set to get the **cost** $J$)
 - The same loss function is commonly used for logistic regression and  for neural networks, the **cross-entropy loss**.
 - Recall that our classifier output is $\hat{y} = \sigma(\mathbf{w}\cdot\mathbf{x} + b)$
 
@@ -446,7 +447,8 @@ $$
 \hat{\theta} = \arg\min_{\theta} J(\theta)
 $$
 
-- It can be shown that the logistic regression loss function is convex (which enables us to reliably find its minimum)
+- The logistic regression cost is convex: there are no local minima, so gradient descent finds the global minimum (if one exists)
+
 
 ##  Gradient descent {#graddesc}
 
@@ -502,7 +504,7 @@ gdexample(figsize=(5,4))
 plt.show()
 ``` 
 
-- We iteratively take steps towards the minimum along the slope of the function
+- We iteratively take steps towards the minimum (in the direction opposite to the slope of the function)
 - But how do we calculate the slope?
 
 
@@ -675,7 +677,7 @@ $$
 
 
 ::: {.callout-note appearance="simple" title="Intuition"}
-The gradient is a product of the error and the magnitude of the input.
+The gradient is a product of the error and the value of the input.
 
 - The Error ($\hat{y} - y$): How wrong were we?
 - The Input ($x_j$): How much did this specific feature contribute to that wrong prediction?
@@ -713,7 +715,7 @@ plt.show()
 $$
 \begin{align*}
 \mathbf{w} &\leftarrow \mathbf{w} - \eta\,\nabla_{\mathbf{w}} J \\
-b &\leftarrow b - \eta\,\frac{\partial J}{\partial b}
+b &\leftarrow b - \eta\,\frac{\partial J}{\partial b} \\
 \end{align*}
 $$
 
@@ -727,7 +729,7 @@ $$
 
 $$
 \begin{align*}
-\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &= 0 \\
+\dfrac{df}{dx} (7x^2 + 3x-9) &= 14x +3 = 0 \\
 x &= - \dfrac{3}{14}
 \end{align*}
 $$
@@ -1021,13 +1023,11 @@ def gradient_descent(X: npt.NDArray,
 
     for i in range(iterations):
         grad_b, grad_w = gradient_function(X, y, w, b)
+        if i % 1000 == 0:
+            print(f"Iteration {i}: Cost {cost_function(X, y, w, b)}")
 
         w = w - eta * grad_w
         b = b - eta * grad_b
-
-        if i % 1000 == 0:
-            print(f"Iteration {i}: Cost {cost_function(X, y, w, b)}")
-    
     return w, b
 ```
 :::
@@ -1167,6 +1167,39 @@ Model fit can be assessed using the difference between predictions and reality:
 :::
 
 ![](img/over-under.png)
+
+## Training, validation and test data
+
+We split the labeled data into three disjoint sets:
+
+| Set | Used for | How often |
+|:---|:---|:---|
+| **Training** | fitting the parameters $\mathbf{w}, b$ (minimizing $J$) | every gradient step |
+| **Validation** | choosing hyperparameters ($\lambda$, learning rate, polynomial degree, threshold) | repeatedly, during development |
+| **Test** | estimating performance on new data | **once**, at the very end |
+
+- Typical splits: 60/20/20 or 70/15/15
+- Training error is optimistic, because the parameters were fit to exactly those examples
+- Overfitting shows up as **low training error but higher validation error**
+
+## Using the splits correctly
+
+- **Never tune on the test set.** Otherwise it becomes a second validation set and the final estimate is biased
+- **Split first, then preprocess.** Compute scaling or feature selection on the training set only; otherwise information leaks from the test data (*data leakage*)
+- **Keep related samples together.** Several samples from one patient or family must go into the same split
+- **Stratify** so each split has about the same fraction of positives (important for rare diseases)
+- The "training accuracy: 95.6%" on our earlier slide says nothing about new data
+
+## $k$-fold cross-validation
+
+::: {.small-text}
+Useful if data are scarce
+:::
+
+1. Split the training data into $k$ equal folds (e.g., $k=5$)
+2. For each fold: train on the other $k-1$ folds and evaluate on the held-out fold
+3. Average the $k$ validation scores
+4. Pick the hyperparameter (e.g., $\lambda$) with the best average score, retrain on all training data, and evaluate once on the test set
 
 ## Regularization {#regularization}
 ::: {.callout-quote appearance="simple" title="Regularization"}
