@@ -88,60 +88,78 @@ The basics are explained very well by Wikipedia
 :::
 
 
-## Logistic regression: review
-
+## The logistic function
 
 - The logistic function has the form
 $$
-p(x) = \frac{1}{1+e^{-\tfrac{x-\mu}{s}}} 
+p(x) = \frac{1}{1+e^{-\tfrac{x-\mu}{s}}}
 $$ {#eq-logistic-fxn}
 
-- In @eq-logistic-fxn, $\mu$ is the location parameter (midpoint of the curve, $\tfrac{1}{2}$), and $s$ is the scale parameter.
-- We generally rewrite this with $\beta_0 = -\tfrac{\mu}{s}$ and $\beta_1=\tfrac{1}{s}$, yielding (@tbl-exam-pass)
+- $\mu$ is the location parameter (the curve's midpoint, $p(\mu)=\tfrac{1}{2}$) and $s$ is the scale parameter.
+- Rewriting with $\beta_0 = -\tfrac{\mu}{s}$ and $\beta_1=\tfrac{1}{s}$ gives
 $$
-p(x) = \frac{1}{1+e^{-(\beta_0 + \beta_1x)}} 
+p(x) = \frac{1}{1+e^{-(\beta_0 + \beta_1x)}}
 $$ {#eq-logistic-fxn2}
 
-:::{.small-text}
-- In our example, $y_k=p(x_k)$ is the probability of passing given $x_k$ hours studied
+## Fitting the exam data
+
+:::: {.columns}
+::: {.column width="40%"}
+- $p(x_k)$ is the probability of passing given $x_k$ hours studied
+- Fitted: $\beta_0 \approx -4.08$, $\beta_1 \approx 1.50$
+- 50% pass probability at $x=-\beta_0/\beta_1\approx 2.7$ hours
 :::
-
-
-
+::: {.column width="60%"}
 ```{python}
 #| echo: false
-#| fig-width: 6
-#| fig-height: 5
 #| fig-align: center
 import sys
 import matplotlib.pyplot as plt
 
-sys.path.append('utils') 
+sys.path.append('utils')
 from logreg import logreg_example
 logreg_example(figsize=(5,3.5))
 plt.show()
-``` 
+```
+:::
+::::
 
 ## Log odds
 
-- In our example, $\beta_1$ is the **change** in the log odds of passing for each additional hour studied
+- Our model: $p(x) = \dfrac{1}{1+e^{-(\beta_0 + \beta_1x)}}$ is the probability of passing after $x$ hours of study
+- The **odds** of passing are $\dfrac{p}{1-p}$; the **log odds** are their natural logarithm.
+- Let $z=\beta_0+\beta_1x$. Then $p=\dfrac{1}{1+e^{-z}}$ and $1-p=\dfrac{e^{-z}}{1+e^{-z}}$, so
 
 $$
-\log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1x
+\frac{p}{1-p} = \frac{1}{e^{-z}} = e^{z}
+\qquad\Longrightarrow\qquad
+\ln\left(\frac{p}{1-p}\right) = z = \beta_0 + \beta_1x
 $$
 
-- In our example, $\beta_1 = 1.505$, so each additional hour of studying increased log odds of passing by 1.5
-- It is more interpretable to use the odds ratio defined as 
-$$
-e^{\beta_1} = e^{1.505}\approx 4.5
-$$
+- The log odds are **linear** in $x$: $\beta_1$ is the change in log odds per additional hour studied ($\beta_1 = 1.505$ in our example)
 
-- For each additional hour, we multiply the odds of passing by 4.5
-- We can also perform multiple logistic regression with a vector of variables
+## Odds ratio
+
+- $e^{\beta_1} = e^{1.505}\approx 4.5$ is the **odds ratio**
+- Each additional hour **multiplies the odds** of passing by 4.5
+- Example: at $x\approx 2.7$ h, $p=0.5$ (odds 1:1). One hour later the odds are 4.5:1, i.e., $p = 4.5/5.5\approx 0.82$.
+
+::: {.callout-warning appearance="simple"}
+The *odds* are multiplied by 4.5, not the probability. The change in probability depends on where you start.
+:::
+
+## More than one predictor
+
+- With $n$ predictors, the model becomes
 
 $$
-p(\mathbf{x}) = \frac{1}{1+e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2+\cdots+\beta_kx_k)}}
+p(\mathbf{x}) = \frac{1}{1+e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2+\cdots+\beta_nx_n)}}
 $$ {#eq-logistic-fxn3}
+
+- Machine-learning notation: the bias is $b=\beta_0$, and the weight vector is $\mathbf{w}=(\beta_1,\ldots,\beta_n)$, so the exponent is $-(\mathbf{w}\cdot\mathbf{x}+b)$
+- Each $\beta_j$ is the change in log odds per unit of $x_j$, *holding the other predictors fixed*
+
+
 
 ## The five components of Logistic Regression
 
@@ -152,20 +170,20 @@ For each input $x$, we have a vector: $\mathbf{x} = [x_1, x_2, \ldots, x_n]$
 
 ::: {.callout-tip appearance="simple"}
 ### 2. Classification Function
-Computes the estimated class using the **Sigmoid function**: $\sigma(z) = \frac{1}{1 + e^{-z}}$
+A weighted sum $z=\mathbf{w}\cdot\mathbf{x}+b$ passed through the **sigmoid** $\sigma(z) = \frac{1}{1 + e^{-z}}$ gives the probability $\hat{y}$ of the positive class
 :::
 
 ::: {.callout-important appearance="simple"}
 ### 3. Objective Function
-A **Loss function** (Cross-Entropy) to measure how well the model is performing ( cross-entropy loss function).
+The **cross-entropy loss** measures how well the model is performing
 :::
 
 ::: {.callout-warning appearance="simple"}
 ### 4. Optimization
-**Gradient Descent**: The method used to minimize the loss and find the best weights.
+**Gradient Descent** is used to minimize the loss and find the best weights.
 :::
 
-::: {.callout-warning appearance="simple"}
+::: {.callout-caution appearance="simple"}
 ### 5. Prediction
 The **learned model** can be used to classify new data points.
 :::
@@ -174,7 +192,7 @@ The **learned model** can be used to classify new data points.
 
 For each input $x$, we create a vector of features: $\mathbf{x} = [x_1, x_2, \ldots, x_n]$.
 
-#### There are many different ways of generating a feature vector
+**There are many different ways of generating a feature vector:**
 
 
 - Raw numerical data: If the input data is numerical with $n$ dimensions, each of the dimensions can act as a feature
@@ -196,30 +214,24 @@ features can also be created (e.g., by counting positive and negative words for 
 LogReg learns a vector of weights and a bias term to solve the classification task
 :::
 
-- [Linear combination of input features]{style="color: green; font-weight: bold;"}
-- Each data point is multiplied by weights and a bias is added
-- Here, $x_{i,j}$ refers to the $j^{th}$ component of the $i^{th}$ data point.
-$$
-z_i = \sum_{j=1}^n w_jx_{i,j} + b
-$${#eq-lrweights}
-
-@eq-lrweights can be represented identically using dot product notation (where the bold font indicates a vector of weights ($\mathbf{w}$) and inputs ($\mathbf{x}$))
-
+- [Linear combination of input features]{style="color: green; font-weight: bold;"}: each feature value is multiplied by its weight, and the bias is added
+- $x_{i,j}$ is the $j^{th}$ feature of the $i^{th}$ data point
 
 $$
-z_i = \mathbf{w}\cdot \mathbf{x}_i + b
-$$
+z_i = \sum_{j=1}^n w_jx_{i,j} + b = \mathbf{w}\cdot \mathbf{x}_i + b
+$$ {#eq-lrweights}
 
-This is identical to the sums we will see at individual neurons in neural networks
+- $w_j$: how strongly feature $j$ pushes toward the positive class (its sign gives the direction)
+- $b$: the score when all features are zero
+- This is analogous to the sum computed at an individual neuron in a neural network
 
 ## Sigmoid {#sigmoid}
 
 ::: {.callout-note appearance="simple" title="Sigmoid function"}
-To create a probability, we transform z through the sigmoid function, $\sigma(z)$
+To create a probability, we transform $z$ through the sigmoid function $\sigma(z)$
 :::
 
-- The sigmoid $\sigma(z)$ takes a real-valued number $z\in (-\infty, \infty)$ and effectively [squashes]{style="color: green; font-weight: bold;"} 
-it to lie in the range $(0,1)$: $0<\sigma(z) < 1$.
+- The sigmoid takes any real number $z\in(-\infty,\infty)$ and [squashes]{style="color: green; font-weight: bold;"} it into the interval $(0,1)$
 
 $$
 \sigma(z) = \frac{1}{1+e^{-z}} = \frac{1}{1+\exp(-z)}
@@ -229,10 +241,9 @@ $$
 
 ::: {.column width="50%"}
 
-- **Interpretation:** $P(y=1 | x, w, b)$, i.e., a probability for classification
-- $\sigma(z) > 0.5 \Leftrightarrow z > 0$ 
-- i.e., whenever $z = \mathrm{w}\cdot \mathrm{x} + b$ is over zero, the model predicts the positive class ($\hat{y}=1$).
-
+- **Interpretation:** $P(y=1 \mid \mathbf{x}, \mathbf{w}, b)$, a probability for classification
+- $\sigma(0)=0.5$; $\sigma(z)\to 1$ as $z\to\infty$ and $\sigma(z)\to 0$ as $z\to-\infty$
+- $\sigma(z) > 0.5 \Leftrightarrow z > 0$: whenever $z = \mathbf{w}\cdot \mathbf{x} + b$ is positive, the model predicts class 1
 
 :::
 ::: {.column width="50%"}
@@ -255,7 +266,9 @@ plt.show()
 
 ## Sigmoid: A convenient identity
 
-$1-\sigma(x) = \sigma(-x)$
+* The probabiliy of class 1 is $\sigma(z)$
+* The probability of class 0 is $1-\sigma(z)$. 
+* $1-\sigma(x) = \sigma(-x)$
 
 <table class="no-border">
 <tbody>
@@ -269,32 +282,39 @@ $1-\sigma(x) = \sigma(-x)$
 
 ## Logit
 
-- [Odds]{style="color: green; font-weight: bold;"}: The ratio of success to failure: $p / (1-p)$.
-- [Logit]{style="color: green; font-weight: bold;"}: the natural log of the odds, $\operatorname{logit}(p)=\ln\frac{p}{1-p}$.
-- The logit is the inverse of the sigmoid function:
-  - $z=\mathbf{w}\cdot\mathbf{x}+b \in (-\infty,\infty)$, the *linear score*
-  - $p=\sigma(z)\in(0,1)$, a probability
+- Recall the **odds** $\dfrac{p}{1-p}$. The **logit** is the natural log of the odds:
+$$\operatorname{logit}(p)=\ln\left(\frac{p}{1-p}\right),\qquad p\in(0,1)$$
+- The linear score $z=\mathbf{w}\cdot\mathbf{x}+b$ can be any real number, while $p=\sigma(z)$ lies in $(0,1)$
 - The sigmoid takes $z\mapsto p$, and the logit takes $p\mapsto z$. They are **inverses**:
 $$
 \sigma(\operatorname{logit}(p)) = p \qquad\text{and}\qquad \operatorname{logit}(\sigma(z)) = z
 $$
+- So logistic regression models the logit of the probability as a *linear* function: $\operatorname{logit}\big(P(y=1\mid\mathbf{x})\big)=\mathbf{w}\cdot\mathbf{x}+b$
 
-## Proof
+## Proof: $\sigma(\operatorname{logit}(p)) = p$
 
 <table class="no-border">
 <tbody>
-<tr class="fragment"><td>$\sigma(\text{logit}(p))$</td><td>$= \dfrac{1}{1 + e^{-\left[ \ln \left( \frac{p}{1-p} \right) \right]}}$</td><td>$\bullet$ Substitute Logit into Sigmoid $z$</td></tr>
-<tr class="fragment"><td></td><td>$= \dfrac{1}{1 + e^{\left[ \ln \left( \frac{1-p}{p} \right) \right]}}$</td><td>$\bullet$ Apply $-\ln(A) = \ln(1/A)$</td></tr>
-<tr class="fragment"><td></td><td>$= \dfrac{1}{1 + \frac{1-p}{p}}$</td><td>$\bullet$ Identity: $e^{\ln(x)} = x$</td></tr>
-<tr class="fragment"><td></td><td>$= \dfrac{1}{\frac{p + 1 - p}{p}}$</td><td>$\bullet$ $1=\tfrac{p}{p}$</td></tr>
-<tr class="fragment"><td></td><td>$= \dfrac{1}{1/p}$</td><td>$\bullet$ Simplify</td></tr>
+<tr class="fragment"><td>$\sigma(\operatorname{logit}(p))$</td><td>$= \dfrac{1}{1 + e^{-\ln\left( \frac{p}{1-p} \right)}}$</td><td>$\bullet$ substitute logit for $z$ in the sigmoid</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{1 + e^{\ln\left( \frac{1-p}{p} \right)}}$</td><td>$\bullet$ apply $-\ln(A) = \ln(1/A)$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{1 + \frac{1-p}{p}}$</td><td>$\bullet$ identity: $e^{\ln(A)} = A$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{\frac{p + 1 - p}{p}}$</td><td>$\bullet$ common denominator, $1=\tfrac{p}{p}$</td></tr>
+<tr class="fragment"><td></td><td>$= \dfrac{1}{1/p}$</td><td>$\bullet$ numerator is $p+1-p=1$</td></tr>
 <tr class="fragment"><td></td><td>$= p$</td><td></td></tr>
-<tr class="fragment"><td>[Therefore]{style="color: green; font-weight: bold;"}</td><td>The logit is the inverse of the sigmoid</td><td></td></tr>
-<tr class="fragment"><td>[Similarly]{style="color: green; font-weight: bold;"}</td><td>$logit(σ(z)) = ln( σ/(1−σ) ) = ln( 1/(1+e^{-z}) · (1+e^{-z})/e^{-z} ) = ln(e^{z}) = z$</td><td></td></tr>
 </tbody>
 </table>
 
+## Proof: $\operatorname{logit}(\sigma(z)) = z$
 
+<table class="no-border">
+<tbody>
+<tr class="fragment"><td>$\operatorname{logit}(\sigma(z))$</td><td>$= \ln\left(\dfrac{\sigma(z)}{1-\sigma(z)}\right)$</td><td>$\bullet$ definition of logit</td></tr>
+<tr class="fragment"><td></td><td>$= \ln\left(\dfrac{1/(1+e^{-z})}{e^{-z}/(1+e^{-z})}\right)$</td><td>$\bullet$ $1-\sigma(z)=\frac{e^{-z}}{1+e^{-z}}$ (identity slide)</td></tr>
+<tr class="fragment"><td></td><td>$= \ln\left(\dfrac{1}{e^{-z}}\right) = \ln\left(e^{z}\right)$</td><td>$\bullet$ cancel $1+e^{-z}$</td></tr>
+<tr class="fragment"><td></td><td>$= z$</td><td>$\bullet$ $\ln(e^z)=z$</td></tr>
+<tr class="fragment"><td>[Therefore]{style="color: green; font-weight: bold;"}</td><td>the logit is the inverse of the sigmoid</td><td></td></tr>
+</tbody>
+</table>
 
 
 ## Learning a classification rule 
@@ -303,13 +323,13 @@ $$
 
 $$
 \begin{array}{c c c c c}
-\mathbf{x}& \longrightarrow & \hat{y} = \sigma(z)=\sigma(\mathbf{w}\cdot\mathbf{x}+b) & \longrightarrow \\
-\text{\small Input features} & & \text{\small Output probability} & 
+\mathbf{x}& \longrightarrow & \hat{y} = \sigma(z)=\sigma(\mathbf{w}\cdot\mathbf{x}+b) & \longrightarrow &\text{class } 0 \text{ or } 1\\
+\text{\small Input features} & & \text{\small Output probability} & &  \text{\small Decision} \\
 \end{array}
 $$
 
 - The class label $y$ is 1 (true) or 0 (false)
-- The prediction of the class label $\hat{y}=P(y = 1|x)$ is a real number between 0 and 1
+- The model output $\hat{y}=P(y = 1|x)$ is a real number between 0 and 1
 
 ::: {.callout-note}
 ## Classification Decision Rule
@@ -332,34 +352,32 @@ $$
 - We measure the difference with the loss function $\mathcal{L}(\hat{y}, y)$
 
 
+## Likelihood of one example
 
-
-## Loss function
-
-- The label is [Bernoulli]{style="color: green; font-weight: bold;"}: $P(y=1\mid x)=\hat{y}$ and $P(y=0\mid x)=1-\hat{y}$
+- The label is **Bernoulli**: $P(y=1\mid\mathbf{x})=\hat{y}$ and $P(y=0\mid\mathbf{x})=1-\hat{y}$
 - Both cases in one expression:
 $$
-p(y\mid x) = \hat{y}^{\,y}(1-\hat{y})^{1-y}
+P(y\mid\mathbf{x}) = \hat{y}^{\,y}(1-\hat{y})^{1-y}
 $$
-
-
-- Using $\hat{y}=\sigma(z)$, we can concisely write the loss function as:
+- Taking the (natural) log gives the **log-likelihood**:
 $$
-\log p(y|x) = \log[\hat{y}^y(1-\hat{y})^{1-y}] = y\log\hat{y} + (1-y)\log(1-\hat{y})
+\log P(y\mid\mathbf{x}) = y\log\hat{y} + (1-y)\log(1-\hat{y})
 $$
+- This reduces to $\log\hat{y}$ when $y=1$ and to $\log(1-\hat{y})$ when $y=0$
 
-- Note this simplifies to either $\log\hat{y}$ or $\log(1-\hat{y})$ depending on whether $y$ is 0 or 1.
-- Since it is convenient to minimize the function, we multiply it by -1: The result is known as the cross-entropy loss
+## Cross-entropy loss
+
+- We want to *maximize* the likelihood. Since we minimize losses, we multiply by $-1$ to get the negative log-likelihood, known as the **cross-entropy loss**:
 
 $$
 \mathcal{L}_{CE}(\hat{y}, y)
 = - y\log\hat{y} - (1-y)\log(1-\hat{y})
 $$
 
-- Since we have $\mathbf{\hat{y}} = \sigma(\mathbf{w}\cdot \mathbf{x} + b)$, this is equivalent to
+- With $\hat{y} = \sigma(\mathbf{w}\cdot \mathbf{x} + b)$ this is equivalent to
 
 $$
-\mathcal{L}_{CE}(\hat{y}, y)
+\mathcal{L}_{CE}
 = - y\log\sigma(\mathbf{w}\cdot \mathbf{x} + b) - (1-y)\log(1-\sigma(\mathbf{w}\cdot \mathbf{x} + b))
 $$
 
@@ -373,7 +391,7 @@ $$
 \end{cases}
 $$
 
-- If $y_i=1$, then As $\sigma(z) \rightarrow 1$, the loss $\mathcal{L}(\sigma(z), y) \rightarrow 0$.
+- If $y_i=1$, then as $\sigma(z) \rightarrow 1$, the loss $\mathcal{L}(\sigma(z), y) \rightarrow 0$.
 
 ```{python}
 #| echo: false
@@ -633,7 +651,7 @@ $$
 
 
 ## Part C: $\frac{\partial z}{\partial w_j}$: Gradient of the $z$ with respect to the Weight $w_j$
- The Since $z = w_1x_1 + w_2x_2 + \dots + b$, the derivative with respect to $w_j$ is simply the feature it is multiplied by:
+ Then since $z = w_1x_1 + w_2x_2 + \dots + b$, the derivative with respect to $w_j$ is simply the feature it is multiplied by:
  $$
  \frac{\partial z}{\partial w_j} = x_j
  $$
@@ -667,7 +685,7 @@ The gradient is a product of the error and the magnitude of the input.
 
 ## Bias term
 
--  [HOMEWORK]{.hw-badge}  You will adapt this example  The term for the partial derivative of the bias can be determined analogously to be
+-  [HOMEWORK]{.hw-badge}  You will adapt this example.  The term for the partial derivative of the bias can be determined analogously to be
 
 $$
 \frac{\partial \mathcal{L}}{\partial b} = (\hat{y} - y)
@@ -693,10 +711,10 @@ plt.show()
 
 * Update the weights and biases 
 $$
-\begin{eqnarray*}
-\mathbf{w} &\leftarrow &\mathbf{w} - \eta\Delta \mathbf{w} \\
-b &\leftarrow &\mathbf{b} - \eta\Delta b
-\end{eqnarray*}
+\begin{align*}
+\mathbf{w} &\leftarrow \mathbf{w} - \eta\,\nabla_{\mathbf{w}} J \\
+b &\leftarrow b - \eta\,\frac{\partial J}{\partial b}
+\end{align*}
 $$
 
 * Let's do one simple example -- finding the minimum of a function
@@ -708,10 +726,10 @@ $$
 * It is straightforward to find the minimum analytically by setting the derivative to zero
 
 $$
-\begin{eqnarray*}
-\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &=& 0 \\
-x &=& - \dfrac{3}{14}
-\end{eqnarray*}
+\begin{align*}
+\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &= 0 \\
+x &= - \dfrac{3}{14}
+\end{align*}
 $$
 
 * To use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size $\eta$^[$\eta$="eta"]
@@ -792,7 +810,7 @@ for i in range(10):
     history_y.append(f(t))
 
 # Plot the path with dotted lines and markers
-plt.plot(history_x, history_y, linestyle='--', color='r', marker='o', label=f'Path ($\eta$={eta})')
+plt.plot(history_x, history_y, linestyle='--', color='r', marker='o', label=rf'Path ($\eta$={eta})')
 
 plt.axvline(-3/14, color='g', linestyle=':', label='Minimum')
 plt.legend()
@@ -816,8 +834,8 @@ $$
 * __batch training__ refers to averaging over all training data
 * As the volume of training data increased, it became less sensible to pass all data to the model for each gradient descent step.
 * __minibatch training__ refers to using a subset of all data for each gradient descent step.
-* Because this procedure is noisy compared to full batch training, we refer to it as __stochastic gradient descent__ (SGD).
-* The noisiness may even be an advantage because it may help avoid falling into local minima
+* Minibatch and one-at-a-time (stochastic) GD is noisy compared to full batch training
+* In non-convex problems such as neural networks, the noise can help escape poor local minima (not relevant for logistic regression, which is convex)
 * minibatch size is a hyperparameter, but typically the order of examples is randomized and chunks of data are chosen until all samples have been used.
 
 ## Updates
@@ -834,7 +852,7 @@ $$
 w_j \leftarrow w_j - \eta \frac{\partial C}{\partial w_j} 
 $$
 
-## Stochastic gradient descent
+## Gradient descent: pseudocode
 
 - We will usually possess multiple labeled examples to train the logistic regression
 - pseudocode for full-batch gradient descent (GD)
@@ -848,7 +866,8 @@ $$
 2: & \textbf{for } i \leftarrow 1 \text{ to } \text{iterations } \textbf{do} \\
 3: & \quad \hat{\mathbf{y}} \leftarrow \sigma(\mathbf{Xw} + b) \\
 4: & \quad \mathbf{w} \leftarrow \mathbf{w} - \eta \frac{1}{m} \mathbf{X}^T(\hat{\mathbf{y}} - \mathbf{y}) \\
-5: & \textbf{end for} \\
+5: & \quad b \leftarrow b - \eta \frac{1}{m} \sum_{i=1}^{m}(\hat{y}_i - y_i) \\
+6: & \textbf{end for} \\
 \hline
 \end{array}
 $$
@@ -876,7 +895,7 @@ example at a time
 - We will show how to perform LR "from scratch" to promote understanding
 - Usually, it is recommendable to use library code (scikit-learn etc.) for actual analysis
 -  [HOMEWORK]{.hw-badge}  You will adapt this example 
-- Here we have created points two classes and want to learn LR parameters for classification
+- Here we have created points from two classes and want to learn LR parameters for classification
 
 :::
 :::{.column width="48%"}
@@ -907,7 +926,7 @@ def sigmoid(z: npt.NDArray) -> npt.NDArray:
 :::
 
 -  NumPy N-Dimensional Array: the function takes an array and returns an array
-- The function takes the data (X,y) and the current values of the parameters w and b
+
 
 ## Cost function
 
@@ -935,7 +954,7 @@ def cost_function(
 
 - i.e., we calculate the Binary Cross-Entropy Cost Function
 $$
-C(w,b) = \frac{1}{m} \mathcal{L}(\sigma(z_i), y_i)
+C(w,b) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}(\sigma(z_i), y_i)
 $$
 
 
@@ -993,7 +1012,7 @@ def gradient_function(
 ```python
 def gradient_descent(X: npt.NDArray, 
     y: npt.NDArray, 
-    alpha: float, 
+    eta: float, 
     iterations: int
 ) -> typing.Tuple[npt.NDArray, float]:
     n = X.shape[1]
@@ -1003,8 +1022,8 @@ def gradient_descent(X: npt.NDArray,
     for i in range(iterations):
         grad_b, grad_w = gradient_function(X, y, w, b)
 
-        w = w - alpha * grad_w
-        b = b - alpha * grad_b
+        w = w - eta * grad_w
+        b = b - eta * grad_b
 
         if i % 1000 == 0:
             print(f"Iteration {i}: Cost {cost_function(X, y, w, b)}")
@@ -1013,11 +1032,9 @@ def gradient_descent(X: npt.NDArray,
 ```
 :::
 
-* 
-$$w_j \leftarrow w_j - \eta \frac{\partial C}{\partial w_j}$$
-
-* 
-$$b \leftarrow b - \eta \frac{\partial C}{\partial b}$$
+* eta ($\eta) is the learning rate
+*  $$w_j \leftarrow w_j - \eta \frac{\partial C}{\partial w_j}$$
+* $$b \leftarrow b - \eta \frac{\partial C}{\partial b}$$
 
 ## Prediction
 
@@ -1080,7 +1097,7 @@ training accuracy: 95.60%
 ```
 :::
 
-## Decision decision_boundary
+## Decision boundary
 - As mentioned above, the decision boundary for the output of the sigmoid function is typically taken to be 0.5:
 $$
 \begin{align*}
@@ -1241,16 +1258,16 @@ $$ {#eq-l2-gradient-final}
 When we update our weights ($w_j \leftarrow w_j - \alpha \frac{\partial J}{\partial w_j}$)
  using @eq-l2-gradient-final, the L2 term (i.e., weight penalty) alters the step:
 
-* **The Core Error $(\hat{y} - y)x_j$:** Same as above!
+* **The average error $(\hat{y} - y)x_j$:** Same as above!
 * **The Weight Penalty $\frac{\lambda}{m} w_j$:**  The larger a weight grows, the harder gradient descent penalizes it, effectively preventing any single feature from dominating the model.
 
 <br>
 
-- The Sum of Convex Functions is Convex
+- The Sum of convex Functions is convex
 - The above  total cost function $J(\mathbf{w})$ is composed of two distinct components
 $$J(\mathbf{w}) = \mathcal{L}_{\text{cross-entropy}}(\mathbf{w}) + \mathcal{L}_{\text{L2}}(\mathbf{w})$$
-- THe Standard  negative log-likelihood (cross-entropy loss) for logistic regression is  convex.
-- L2 Penalty ($\frac{\lambda}{2m}\|\mathbf{w}\|_2^2$) is a quadratic function ("bowl shaped"), which is strictly convex.
+- The standard  negative log-likelihood (cross-entropy loss) for logistic regression is  convex.
+- L2 penalty ($\frac{\lambda}{2m}\|\mathbf{w}\|_2^2$) is a quadratic function ("bowl shaped"), which is strictly convex.
 - Thus logistic regression with L2 penalty has a unique solution
 - We still need to decide which value to use for $\lambda$, which is a [hyperparameter]{style="color: green; font-weight: bold;"}.
 - The optimal value of $\lambda$ can be estimated with $k$-Fold Cross-Validation
@@ -1262,6 +1279,6 @@ $$J(\mathbf{w}) = \mathcal{L}_{\text{cross-entropy}}(\mathbf{w}) + \mathcal{L}_{
 ## Sources and Suggested Reading
 
 
-- James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). [An introduction to statistical learning. Springer](https://link.springer.com/book/10.1007/978-3-031-38747-0)
+- James, G., et al. (2023). [An introduction to statistical learning. Springer](https://link.springer.com/book/10.1007/978-3-031-38747-0)
 - Sperandei S (2014) [Understanding logistic regression analysis. _Biochem Med (Zagreb)_ **24**:12-8](https://pmc.ncbi.nlm.nih.gov/articles/PMC3936971/)
 - Bewick V, et al. (2005) [Statistics review 14: Logistic regression _Crit Care_ **9**:112-8](https://pubmed.ncbi.nlm.nih.gov/15693993/)
