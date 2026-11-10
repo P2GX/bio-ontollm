@@ -62,6 +62,8 @@ This course is held as a part of the [Master Curriculum](https://www.mi.fu-berli
 * [HPO vectorization (for RAG-HPO)](notebooks/hpo_vectorization.ipynb){target="_blank"}
 * [RAG-HPO](notebooks/rag-hpo.ipynb){target="_blank"}
 * [t-SPIRES](notebooks/toy-spires.ipynb){target="_blank"}
+* [Logistic Regression from scratch](notebooks/logreg_for_students.ipynb){target="_blank"}
+* [Regularization](notebooks/logreg-overfit_for_students.ipynb){target="_blank"}
 
 ### background
 :::{.small-text}
