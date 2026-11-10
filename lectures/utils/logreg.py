@@ -207,3 +207,94 @@ def logreg_example(figsize=(7, 5)):
     ax.spines["right"].set_visible(False)
 
     fig.tight_layout()
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle, FancyBboxPatch, FancyArrowPatch
+
+BLUE, PURPLE, RED = "#5064A0", "#8C64B4", "#D23232"
+
+
+def plot_logreg_neuron(figsize=(12.5, 3.6), savepath=None):
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.set_xlim(-0.8, 18.0)
+    ax.set_ylim(-2.4, 4.8)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    def circle(xy, r, color, label, fs=11, tc="white"):
+        c = Circle(xy, r, fc=color, ec=color, zorder=3)
+        ax.add_patch(c)
+        if label:
+            ax.text(*xy, label, color=tc, ha="center", va="center", fontsize=fs, zorder=4)
+        return c
+
+    def box(xy, w, h, color):
+        b = FancyBboxPatch((xy[0] - w / 2, xy[1] - h / 2), w, h,
+                           boxstyle="round,pad=0,rounding_size=0.08",
+                           fc=color, ec=color, zorder=3)
+        ax.add_patch(b)
+        return b
+
+    def arrow(p0, p1, a=None, b=None):
+        ax.add_patch(FancyArrowPatch(p0, p1, arrowstyle="-|>", mutation_scale=12,
+                                     lw=1.5, color="black", patchA=a, patchB=b, zorder=2))
+
+    # inputs and weights
+    xs = [(0, 2.5, r"$x_1$"), (0, 1.0, r"$x_2$"), (0, -1.4, r"$x_n$")]
+    ws = [r"$w_1$", r"$w_2$", r"$w_n$"]
+    sum_xy = (3.4, 0.8)
+    s = circle(sum_xy, 0.7, BLUE, r"$\Sigma$", fs=14)
+    for (x, y, lab), w in zip(xs, ws):
+        c = circle((x, y), 0.5, PURPLE, lab)
+        arrow((x, y), sum_xy, a=c, b=s)
+        mx, my = (x + sum_xy[0]) / 2, (y + sum_xy[1]) / 2
+        ang = np.degrees(np.arctan2(sum_xy[1] - y, sum_xy[0] - x))
+        ax.text(mx, my + 0.3, w, fontsize=10, ha="center", va="center",
+                rotation=ang, rotation_mode="anchor")
+    ax.text(0, -0.2, r"$\vdots$", fontsize=14, ha="center", va="center")
+
+    # bias (same symbol as the deck: z = w.x + b)
+    ax.text(3.4, 4.2, r"bias $b$", fontsize=11, ha="center", va="center")
+    arrow((3.4, 3.95), sum_xy, b=s)
+
+    # sigmoid box
+    sig_xy = (8.2, 0.8)
+    sg = box(sig_xy, 1.4, 1.4, BLUE)
+    t = np.linspace(-3, 3, 100)
+    ax.plot(sig_xy[0] + t * 0.2,
+            sig_xy[1] + 0.9 * (1 / (1 + np.exp(-1.2 * t)) - 0.5),
+            color="white", lw=2, zorder=4)
+    ax.plot([8.2, 8.2], [0.15, 1.45], color="white", ls=":", lw=1, zorder=4)
+    ax.text(8.2, 1.75, "Sigmoid function", fontsize=9, ha="center", va="bottom")
+
+    # threshold box
+    th_xy = (13.0, 0.8)
+    tb = box(th_xy, 1.4, 1.4, BLUE)
+    ax.plot([12.4, 13.0, 13.0, 13.6], [0.35, 0.35, 1.25, 1.25], color="white", lw=2, zorder=4)
+    ax.plot([13.0, 13.0], [0.15, 1.45], color="white", ls=":", lw=1, zorder=4)
+    ax.text(13.0, 1.75, "Threshold function", fontsize=9, ha="center", va="bottom")
+
+    # output
+    out_xy = (17.0, 0.8)
+    o = circle(out_xy, 0.5, RED, "")
+    ax.text(17.0, 1.65, "Predicted\nclass", fontsize=9, ha="center", va="bottom")
+
+    # arrows with labels
+    arrow(sum_xy, sig_xy, a=s, b=sg)
+    ax.text(5.5, 0.95, r"$z=\sum_{j=1}^{n} w_j x_j + b$", fontsize=10, ha="center", va="bottom")
+
+    arrow(sig_xy, th_xy, a=sg, b=tb)
+    ax.text(10.6, 1.1, r"$\hat{y}=\sigma(z)=\frac{1}{1+e^{-z}}$", fontsize=10,
+            ha="center", va="bottom")
+    ax.text(10.6, 0.5, "probability", fontsize=8, ha="center", va="top", color="0.35")
+
+    arrow(th_xy, out_xy, a=tb, b=o)
+    ax.text(15.1, 1.1, r"$\hat{y}\geq 0.5 \Rightarrow$ class 1", fontsize=10, ha="center", va="bottom")
+    ax.text(15.1, 0.5, r"$\hat{y}<0.5 \Rightarrow$ class 0", fontsize=10, ha="center", va="top")
+
+    fig.tight_layout()
+    if savepath:
+        fig.savefig(savepath, dpi=200, bbox_inches="tight")
+    return fig
