@@ -1730,7 +1730,7 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 30.76%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.18%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
@@ -1744,14 +1744,14 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.30%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.16%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.08%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.40%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -2009,7 +2009,7 @@
     "href": "lectures/logreg.html#fitting-the-exam-data",
     "title": "Approaches to biomedical knowledge",
     "section": "Fitting the exam data",
-    "text": "Fitting the exam data\n\n\n\n\\(p(x_k)\\) is the probability of passing given \\(x_k\\) hours studied\nFitted: \\(\\beta_0 \\approx -4.08\\), \\(\\beta_1 \\approx 1.50\\)\n50% pass probability at \\(x=-\\beta_0/\\beta_1\\approx 2.7\\) hours",
+    "text": "Fitting the exam data\n\n\n\n\\(p(x_k)\\) is the probability of passing given \\(x_k\\) hours studied\nFitted: \\(\\beta_0 \\approx -4.08\\), \\(\\beta_1 \\approx 1.505\\)\n50% pass probability at \\(x=-\\beta_0/\\beta_1\\approx 2.7\\) hours",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2105,7 +2105,7 @@
     "href": "lectures/logreg.html#sigmoid-a-convenient-identity",
     "title": "Approaches to biomedical knowledge",
     "section": "Sigmoid: A convenient identity",
-    "text": "Sigmoid: A convenient identity\n\nThe probabiliy of class 1 is \\(\\sigma(z)\\)\nThe probability of class 0 is \\(1-\\sigma(z)\\).\n\\(1-\\sigma(x) = \\sigma(-x)\\)\n\n\n\n\n\n\\(1-\\sigma(x)\\)\n\n\n\\(= 1- \\dfrac{1}{1+e^{-x}}\\)\n\n\n\\(\\bullet\\) definition of \\(\\sigma(x)\\)\n\n\n\n\n\n\n\\(= \\dfrac{1+e^{-x} - 1}{1+e^{-x}}\\)\n\n\n\\(\\bullet\\) common denominator\n\n\n\n\n\n\n\\(= \\dfrac{e^{-x}}{1+e^{-x}} \\cdot \\dfrac{e^{x}}{e^{x}}\\)\n\n\n\\(\\bullet\\) multiply by \\(1=\\frac{e^x}{e^x}\\)\n\n\n\n\n\n\n\\(= \\dfrac{1}{1+e^{x}}\\)\n\n\n\\(\\bullet\\) simplify\n\n\n\n\n\n\n\\(= \\sigma(-x)\\)\n\n\n\\(\\bullet\\) definition of \\(\\sigma(-x)\\)",
+    "text": "Sigmoid: A convenient identity\n\nThe probability of class 1 is \\(\\sigma(z)\\)\nThe probability of class 0 is \\(1-\\sigma(z)\\).\n\\(1-\\sigma(x) = \\sigma(-x)\\)\n\n\n\n\n\n\\(1-\\sigma(x)\\)\n\n\n\\(= 1- \\dfrac{1}{1+e^{-x}}\\)\n\n\n\\(\\bullet\\) definition of \\(\\sigma(x)\\)\n\n\n\n\n\n\n\\(= \\dfrac{1+e^{-x} - 1}{1+e^{-x}}\\)\n\n\n\\(\\bullet\\) common denominator\n\n\n\n\n\n\n\\(= \\dfrac{e^{-x}}{1+e^{-x}} \\cdot \\dfrac{e^{x}}{e^{x}}\\)\n\n\n\\(\\bullet\\) multiply by \\(1=\\frac{e^x}{e^x}\\)\n\n\n\n\n\n\n\\(= \\dfrac{1}{1+e^{x}}\\)\n\n\n\\(\\bullet\\) simplify\n\n\n\n\n\n\n\\(= \\sigma(-x)\\)\n\n\n\\(\\bullet\\) definition of \\(\\sigma(-x)\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2165,7 +2165,7 @@
     "href": "lectures/logreg.html#loss-function",
     "title": "Approaches to biomedical knowledge",
     "section": "Loss function",
-    "text": "Loss function\n\nA good model will minimize the difference between our prediction \\(\\hat{y}\\) and the ground truth \\(y\\)\nthis distance is defined by the loss function (also known as the cost function).\nThe same loss function is commonly used for logistic regression and for neural networks, the cross-entropy loss.\nRecall that our classifier output is \\(\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\\)\nFor logistic regression with binary classification, \\(y\\) can be either 0 or 1, but \\(\\hat{y}\\) is a probability that ranges from 0 to 1.\nWe measure the difference with the loss function \\(\\mathcal{L}(\\hat{y}, y)\\)",
+    "text": "Loss function\n\nTraining should bring our prediction \\(\\hat{y}\\) close to the true label \\(y\\)\nThe loss \\(\\mathcal{L}(\\hat{y}, y)\\) measures the error for one example (we average it over the training set to get the cost \\(J\\))\nThe same loss function is commonly used for logistic regression and for neural networks, the cross-entropy loss.\nRecall that our classifier output is \\(\\hat{y} = \\sigma(\\mathbf{w}\\cdot\\mathbf{x} + b)\\)\nFor logistic regression with binary classification, \\(y\\) can be either 0 or 1, but \\(\\hat{y}\\) is a probability that ranges from 0 to 1.\nWe measure the difference with the loss function \\(\\mathcal{L}(\\hat{y}, y)\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2225,7 +2225,7 @@
     "href": "lectures/logreg.html#optimizing-the-loss",
     "title": "Approaches to biomedical knowledge",
     "section": "Optimizing the loss",
-    "text": "Optimizing the loss\n\n\n\n\n\n\nOptimization Goal\n\n\nTo create a high-performing classifier, we minimize the Cost Function \\(J(\\theta)\\), which is the average loss over the entire training set of \\(m\\) examples.\n\n\n\n\nIf we symbolize the parameters (weights, bias) of the logistic regression as \\(\\theta\\), our objective function is:\n\n\\[\nJ(\\theta) = \\frac{1}{m} \\sum_{i=1}^{m} \\mathcal{L}(\\hat{y}^{(i)}, y^{(i)})\n\\]\n\nWe seek \\(\\hat{\\theta}\\), the parameters that minimize the loss\n\n\\[\n\\hat{\\theta} = \\arg\\min_{\\theta} J(\\theta)\n\\]\n\nIt can be shown that the logistic regression loss function is convex (which enables us to reliably find its minimum)",
+    "text": "Optimizing the loss\n\n\n\n\n\n\nOptimization Goal\n\n\nTo create a high-performing classifier, we minimize the Cost Function \\(J(\\theta)\\), which is the average loss over the entire training set of \\(m\\) examples.\n\n\n\n\nIf we symbolize the parameters (weights, bias) of the logistic regression as \\(\\theta\\), our objective function is:\n\n\\[\nJ(\\theta) = \\frac{1}{m} \\sum_{i=1}^{m} \\mathcal{L}(\\hat{y}^{(i)}, y^{(i)})\n\\]\n\nWe seek \\(\\hat{\\theta}\\), the parameters that minimize the loss\n\n\\[\n\\hat{\\theta} = \\arg\\min_{\\theta} J(\\theta)\n\\]\n\nThe logistic regression cost is convex: there are no local minima, so gradient descent finds the global minimum (if one exists)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2261,7 +2261,7 @@
     "href": "lectures/logreg.html#gradient-descent",
     "title": "Approaches to biomedical knowledge",
     "section": "Gradient descent",
-    "text": "Gradient descent\n\n\n\n\n\n\n\n\n\n\nWe iteratively take steps towards the minimum along the slope of the function\nBut how do we calculate the slope?",
+    "text": "Gradient descent\n\n\n\n\n\n\n\n\n\n\nWe iteratively take steps towards the minimum (in the direction opposite to the slope of the function)\nBut how do we calculate the slope?",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2381,7 +2381,7 @@
     "href": "lectures/logreg.html#putting-it-all-together",
     "title": "Approaches to biomedical knowledge",
     "section": "Putting it all together",
-    "text": "Putting it all together\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\underbrace{\\left[ \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} \\right]}_{\\text{Part A}} \\cdot \\underbrace{\\left[ \\hat{y}(1-\\hat{y}) \\right]}_{\\text{Part B}} \\cdot \\underbrace{x_j}_{\\text{Part C}}\n\\]\n\nThanks to cancelations, we are left with\n\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} &= (\\hat{y} - y)x_j\n\\end{align*}\n\\]\n\n\n\n\n\n\nIntuition\n\n\nThe gradient is a product of the error and the magnitude of the input.\n\nThe Error (\\(\\hat{y} - y\\)): How wrong were we?\nThe Input (\\(x_j\\)): How much did this specific feature contribute to that wrong prediction?",
+    "text": "Putting it all together\n\\[\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} = \\underbrace{\\left[ \\frac{\\hat{y} - y}{\\hat{y}(1-\\hat{y})} \\right]}_{\\text{Part A}} \\cdot \\underbrace{\\left[ \\hat{y}(1-\\hat{y}) \\right]}_{\\text{Part B}} \\cdot \\underbrace{x_j}_{\\text{Part C}}\n\\]\n\nThanks to cancelations, we are left with\n\n\\[\n\\begin{align*}\n\\frac{\\partial \\mathcal{L}}{\\partial w_j} &= (\\hat{y} - y)x_j\n\\end{align*}\n\\]\n\n\n\n\n\n\nIntuition\n\n\nThe gradient is a product of the error and the value of the input.\n\nThe Error (\\(\\hat{y} - y\\)): How wrong were we?\nThe Input (\\(x_j\\)): How much did this specific feature contribute to that wrong prediction?",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2405,7 +2405,7 @@
     "href": "lectures/logreg.html#basic-idea-of-gradient-descent",
     "title": "Approaches to biomedical knowledge",
     "section": "Basic idea of gradient descent",
-    "text": "Basic idea of gradient descent\n\nUpdate the weights and biases \\[\n\\begin{align*}\n\\mathbf{w} &\\leftarrow \\mathbf{w} - \\eta\\,\\nabla_{\\mathbf{w}} J \\\\\nb &\\leftarrow b - \\eta\\,\\frac{\\partial J}{\\partial b}\n\\end{align*}\n\\]\nLet’s do one simple example – finding the minimum of a function\n\n\\[\nf(x) = 7x^2 + 3x-9\n\\]\n\nIt is straightforward to find the minimum analytically by setting the derivative to zero\n\n\\[\n\\begin{align*}\n\\dfrac{df}{dx} (7x^2 + 3x-9) &=& 14x +3 &= 0 \\\\\nx &= - \\dfrac{3}{14}\n\\end{align*}\n\\]\n\nTo use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size \\(\\eta\\)1\n\n\\[\nx \\leftarrow x-\\eta (14x +3 )\n\\]\n\\(\\eta\\)=“eta”",
+    "text": "Basic idea of gradient descent\n\nUpdate the weights and biases \\[\n\\begin{align*}\n\\mathbf{w} &\\leftarrow \\mathbf{w} - \\eta\\,\\nabla_{\\mathbf{w}} J \\\\\nb &\\leftarrow b - \\eta\\,\\frac{\\partial J}{\\partial b} \\\\\n\\end{align*}\n\\]\nLet’s do one simple example – finding the minimum of a function\n\n\\[\nf(x) = 7x^2 + 3x-9\n\\]\n\nIt is straightforward to find the minimum analytically by setting the derivative to zero\n\n\\[\n\\begin{align*}\n\\dfrac{df}{dx} (7x^2 + 3x-9) &= 14x +3 = 0 \\\\\nx &= - \\dfrac{3}{14}\n\\end{align*}\n\\]\n\nTo use gradient descent to solve this equation, we need to define the update equation based on the first derivative and a step size \\(\\eta\\)1\n\n\\[\nx \\leftarrow x-\\eta (14x +3 )\n\\]\n\\(\\eta\\)=“eta”",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2537,7 +2537,7 @@
     "href": "lectures/logreg.html#gradient-descent-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Gradient descent",
-    "text": "Gradient descent\n\ndef gradient_descent(X: npt.NDArray, \n    y: npt.NDArray, \n    eta: float, \n    iterations: int\n) -&gt; typing.Tuple[npt.NDArray, float]:\n    n = X.shape[1]\n    w = np.zeros(n)\n    b = 0\n\n    for i in range(iterations):\n        grad_b, grad_w = gradient_function(X, y, w, b)\n\n        w = w - eta * grad_w\n        b = b - eta * grad_b\n\n        if i % 1000 == 0:\n            print(f\"Iteration {i}: Cost {cost_function(X, y, w, b)}\")\n    \n    return w, b\n\n\neta ($) is the learning rate\n\\[w_j \\leftarrow w_j - \\eta \\frac{\\partial C}{\\partial w_j}\\]\n\\[b \\leftarrow b - \\eta \\frac{\\partial C}{\\partial b}\\]",
+    "text": "Gradient descent\n\ndef gradient_descent(X: npt.NDArray, \n    y: npt.NDArray, \n    eta: float, \n    iterations: int\n) -&gt; typing.Tuple[npt.NDArray, float]:\n    n = X.shape[1]\n    w = np.zeros(n)\n    b = 0\n\n    for i in range(iterations):\n        grad_b, grad_w = gradient_function(X, y, w, b)\n        if i % 1000 == 0:\n            print(f\"Iteration {i}: Cost {cost_function(X, y, w, b)}\")\n\n        w = w - eta * grad_w\n        b = b - eta * grad_b\n    return w, b\n\n\neta ($) is the learning rate\n\\[w_j \\leftarrow w_j - \\eta \\frac{\\partial C}{\\partial w_j}\\]\n\\[b \\leftarrow b - \\eta \\frac{\\partial C}{\\partial b}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -2610,6 +2610,42 @@
     "title": "Approaches to biomedical knowledge",
     "section": "The Bias-Variance Tradeoff",
     "text": "The Bias-Variance Tradeoff\n\n\nBias\n\nError introduced by using a predictive model that is incapable of capturing the underlying structure.\nUnderfitting: Models that are too simple have high bias and low variance.\n\n\nVariance\n\nError due to excessive sensitivity to small fluctuations and noise in the training data.\nOverfitting: Overly complex models typically have low bias and high variance.",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#training-validation-and-test-data",
+    "href": "lectures/logreg.html#training-validation-and-test-data",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Training, validation and test data",
+    "text": "Training, validation and test data\nWe split the labeled data into three disjoint sets:\n\n\n\n\n\n\n\n\nSet\nUsed for\nHow often\n\n\n\n\nTraining\nfitting the parameters \\(\\mathbf{w}, b\\) (minimizing \\(J\\))\nevery gradient step\n\n\nValidation\nchoosing hyperparameters (\\(\\lambda\\), learning rate, polynomial degree, threshold)\nrepeatedly, during development\n\n\nTest\nestimating performance on new data\nonce, at the very end\n\n\n\n\nTypical splits: 60/20/20 or 70/15/15\nTraining error is optimistic, because the parameters were fit to exactly those examples\nOverfitting shows up as low training error but higher validation error",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#using-the-splits-correctly",
+    "href": "lectures/logreg.html#using-the-splits-correctly",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Using the splits correctly",
+    "text": "Using the splits correctly\n\nNever tune on the test set. Otherwise it becomes a second validation set and the final estimate is biased\nSplit first, then preprocess. Compute scaling or feature selection on the training set only; otherwise information leaks from the test data (data leakage)\nKeep related samples together. Several samples from one patient or family must go into the same split\nStratify so each split has about the same fraction of positives (important for rare diseases)\nThe “training accuracy: 95.6%” on our earlier slide says nothing about new data",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/logreg.html#k-fold-cross-validation",
+    "href": "lectures/logreg.html#k-fold-cross-validation",
+    "title": "Approaches to biomedical knowledge",
+    "section": "\\(k\\)-fold cross-validation",
+    "text": "\\(k\\)-fold cross-validation\n\nUseful if data are scarce\n\n\nSplit the training data into \\(k\\) equal folds (e.g., \\(k=5\\))\nFor each fold: train on the other \\(k-1\\) folds and evaluate on the held-out fold\nAverage the \\(k\\) validation scores\nPick the hyperparameter (e.g., \\(\\lambda\\)) with the best average score, retrain on all training data, and evaluate once on the test set",
     "crumbs": [
       "Home",
       "Lectures",
