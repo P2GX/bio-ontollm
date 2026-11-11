@@ -1793,28 +1793,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 30.44%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.00%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.50%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.58%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.42%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.24%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.54%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.18%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -1936,50 +1936,36 @@
     "text": "MAP: Shortcomings?\n\n\nthe optimization problem addressed by genGO and MGSA is known to be NP-complete.\nWe observe that gene 2 and 3 are in the ON state (e.g., differentially expressed).\nIf \\(T_1\\) were the only active term, then the observation could be explained by risking an error of one false-negative. The same can be noticed if \\(T_2\\) is the only active term.\nthus there is no single optimum solution. A single MAP solution does not account for this."
   },
   {
-    "objectID": "lectures/mgsa.html#monte-carlo-markov-chain-algorithm",
-    "href": "lectures/mgsa.html#monte-carlo-markov-chain-algorithm",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Monte Carlo Markov Chain Algorithm",
-    "text": "Monte Carlo Markov Chain Algorithm\n\nA different approach is to calculate the marginal probabilities for each term being in the active state.\nIn general, if a joint probability is defined over two random variables \\(X\\) and \\(Y\\) as \\(P(X,Y)=P(X|Y)P(Y)\\), then the marginal probability for \\(X=x'\\) is calculated by summing or integrating over all possible values of \\(Y\\):\n\n\\[\nP(X=x')=\\sum_{i} P(X=x',Y=y_i)\n\\]\nor\n\\[\nP(X=x')=\\int_Y P(X=x',Y) \\mathrm{d}Y\n\\]"
-  },
-  {
     "objectID": "lectures/mgsa.html#mcmc-4",
     "href": "lectures/mgsa.html#mcmc-4",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\n\nIt is often difficult or impossible to derive marginal probabilities for complicated probability distributions because there are simply too many possible configurations of the variables to be able to calculate each one, as would be required for an analytical solution.\nFor this reason, a number of estimation algorithms have been developed that in essence sample from the distribution of the posterior probability and take the proportion of samples in which \\(X\\) takes on some specific value \\(x'\\) as an estimate of the posterior probability of \\(x'\\)\n\n\n\n\n\n\n\nMCMC\n\n\nOne of the best known and most effective algorithms for this purpose is the Metropolis-Hasting algorithm, which is a Markov chain Monte Carlo (MCMC) method. The MCMC algorithm performs a random walk over the term and parameter configurations, which asymptotically provides a random sampler according to the target distribution \\(P(T|O)\\)."
+    "text": "MCMC\nGiven the current configuration of the terms denoted by \\(T^t\\), the algorithm proposes a neighbor state \\(T^p\\) in accordance to a proposal density function \\(Q_T(\\cdot|T^t)\\). A value \\(r\\) is sampled uniformly from the range (0,1). Then, if\n\\[\nr &lt; P_{\\text{accept}}(T^t,T^p) =\n\\frac{P(T^{p}|O)Q_T(T^{t}|T^{p})}{P(T^{t}|O)Q_T(T^{p}|T^t)}\n\\label{eqn:acceptance}\n\\]\nthe proposal is accepted, i.e., \\(T^{t+1} = T^p\\), otherwise it is rejected, i.e., \\(T^{t+1} = T^t\\)."
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-5",
     "href": "lectures/mgsa.html#mcmc-5",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\nGiven the current configuration of the terms denoted by \\(T^t\\), the algorithm proposes a neighbor state \\(T^p\\) in accordance to a proposal density function \\(Q_T(\\cdot|T^t)\\). A value \\(r\\) is sampled uniformly from the range (0,1). Then, if\n\\[\nr &lt; P_{\\text{accept}}(T^t,T^p) =\n\\frac{P(T^{p}|O)Q_T(T^{t}|T^{p})}{P(T^{t}|O)Q_T(T^{p}|T^t)}\n\\label{eqn:acceptance}\n\\]\nthe proposal is accepted, i.e., \\(T^{t+1} = T^p\\), otherwise it is rejected, i.e., \\(T^{t+1} = T^t\\)."
+    "text": "MCMC\nUsing Bayes’ law, we have\n\\[\nP(T^{p}|O) = \\dfrac{P(O|T^{p})P(T^{p})}{P(O)}\n\\label{eqn:cond.prob}\n\\]\nand similarly for \\(T^{t}\\). Substituting these expressions for \\(P(T^{p}|O)\\) and \\(P(T^{t}|O)\\) cancels out the normalization constant \\(P(O)\\). The acceptance probability is then:\n\\[\nP_{\\text{accept}}(T^t,T^p) =\n\\frac{P(O|T^{p})P(T^{p})Q_T(T^{t}|T^{p})}{P(O|T^{t})P(T^{t})Q_T(T^{p}|T^t)}.\n\\label{eqn:accept.prop.2}\n\\tag{5}\\]\n\nWe have \\(P(O|T)\\) and \\(P(T)\\) from the statement of the MGSA network"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-6",
     "href": "lectures/mgsa.html#mcmc-6",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\nUsing Bayes’ law, we have\n\\[\nP(T^{p}|O) = \\dfrac{P(O|T^{p})P(T^{p})}{P(O)}\n\\label{eqn:cond.prob}\n\\]\nand similarly for \\(T^{t}\\). Substituting these expressions for \\(P(T^{p}|O)\\) and \\(P(T^{t}|O)\\) cancels out the normalization constant \\(P(O)\\). The acceptance probability is then:\n\\[\nP_{\\text{accept}}(T^t,T^p) =\n\\frac{P(O|T^{p})P(T^{p})Q_T(T^{t}|T^{p})}{P(O|T^{t})P(T^{t})Q_T(T^{p}|T^t)}.\n\\label{eqn:accept.prop.2}\n\\tag{5}\\]\n\nWe have \\(P(O|T)\\) and \\(P(T)\\) from the statement of the MGSA network"
+    "text": "MCMC\nEquation 5 is used iteratively to define a random walk through the space of configurations. A burn-in period consisting of a certain number of iterations is used to initialize the MCMC chain (in our implementation of the MGSA algorithm in the Ontologizer, the default is 20,000 iterations).\n\nFollowing this, \\(l\\) further iterations (by default, \\(10^6\\)) are performed. Let \\(C(T_i)\\) be the number of samples in which term \\(T_i\\) was active. Then\n\n\\[\nP(T_i|O)\\approx \\frac{C(T_i)}{l}.\n\\label{eqn:mgsa-marginal}\n\\]"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-7",
     "href": "lectures/mgsa.html#mcmc-7",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
-    "text": "MCMC\nEquation 5 is used iteratively to define a random walk through the space of configurations. A burn-in period consisting of a certain number of iterations is used to initialize the MCMC chain (in our implementation of the MGSA algorithm in the Ontologizer, the default is 20,000 iterations).\n\nFollowing this, \\(l\\) further iterations (by default, \\(10^6\\)) are performed. Let \\(C(T_i)\\) be the number of samples in which term \\(T_i\\) was active. Then\n\n\\[\nP(T_i|O)\\approx \\frac{C(T_i)}{l}.\n\\label{eqn:mgsa-marginal}\n\\]"
+    "text": "MCMC\n\n\n\n\n\n\nIn order to finish the description of the algorithm, one needs to define classes of operations of which a proposal is chosen, that is, we need to specify \\(Q_T(T^p|T^t)\\).\n\n\n\nDenote by \\(T^p \\leftrightarrow_T T^t\\) the binary relation that states that \\(T^p\\) be constructed from \\(T^t\\) by either\n\ntoggling the active/inactive state of a single term, or by\nexchanging the state of a pair of terms that contains a single active term and a single inactive term."
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-8",
     "href": "lectures/mgsa.html#mcmc-8",
-    "title": "Approaches to biomedical knowledge",
-    "section": "MCMC",
-    "text": "MCMC\n\n\n\n\n\n\nIn order to finish the description of the algorithm, one needs to define classes of operations of which a proposal is chosen, that is, we need to specify \\(Q_T(T^p|T^t)\\).\n\n\n\nDenote by \\(T^p \\leftrightarrow_T T^t\\) the binary relation that states that \\(T^p\\) be constructed from \\(T^t\\) by either\n\ntoggling the active/inactive state of a single term, or by\nexchanging the state of a pair of terms that contains a single active term and a single inactive term."
-  },
-  {
-    "objectID": "lectures/mgsa.html#mcmc-9",
-    "href": "lectures/mgsa.html#mcmc-9",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC",
     "text": "MCMC\nDenote by \\(N(T)\\) the neighborhood of a given configuration for \\(T\\), that is, the number of different operations that can be applied once to \\(T\\) in order to get a new configuration. At first, there are \\(m\\) terms in total, each of which can be toggled. In addition, there are \\(m_{0|T}m_{1|T}\\) possibilities to combine terms that are active with terms that are inactive. Thus, there are a total of \\(N(T)=m+m_{0|T}m_{1|T}\\) valid state transitions. We would like to sample the valid proposals with equal probability; therefore, the proposal distribution \\(Q_T\\) is determined by\n\\[\nQ_T(T^p|T^t)=\\begin{cases}\n                  \\frac{1}{N(T^t)}, & \\text{if } T^p \\leftrightarrow_T\n                  T^t\\\\ 0, & \\text{otherwise.}\n               \\end{cases},\n\\]\nwhich we can use to rewrite Equation 5 to:\n\\[\nP_{\\text{accept}}(T^t,T^p) =\n\\frac{P(O|T^{p})P(T^{p})N(T^t)}{P(O|T^{t})P(T^{t})N(T^p)}.\n\\label{eqn:accept.prop.3}\n\\]"
@@ -2017,7 +2003,7 @@
     "href": "lectures/mgsa.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\n\nBauer S, et al. (2010) GOing Bayesian: model-based gene set analysis of genome-scale data. Nucleic Acids Res 38:3523-32\nvan Ravenzwaaij D, et al. (2018) A simple introduction to Markov Chain Monte-Carlo sampling. Psychon Bull Rev 25:143-154\nChandra, R and Simmons J (2024) Bayesian Neural Networks via MCMC: A Python-Based Tutorial. IEEE Access 12:70519–70549"
+    "text": "Sources\n\nBauer S, et al. (2010) GOing Bayesian: model-based gene set analysis of genome-scale data. Nucleic Acids Res 38:3523-32\nvan Ravenzwaaij D, et al. (2018) A simple introduction to Markov Chain Monte-Carlo sampling. Psychon Bull Rev 25:143-154\nChandra, R and Simmons J (2024) Bayesian Neural Networks via MCMC: A Python-Based Tutorial. IEEE Access 12:70519–70549\nKruschke, J. K. (2011). Doing Bayesian data analysis: A tutorial with R and BUGS. Elsevier Academic Press"
   },
   {
     "objectID": "lectures/logreg.html#overview-logistic-regression",
@@ -4859,7 +4845,7 @@
     "href": "lectures/neural.html#overview-neural-networks",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview: Neural networks",
-    "text": "Overview: Neural networks\n\n\n\n\n\n\nGame plan\n\n\nThis lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.\n\n\n\n\n\nPart 1: Review\n\nWhat is an ANN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Architecture and Backprop\n\nChain rule & Jacobians\nVectorized derivatives\n\n\n\n\nPart 3: Gradients\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits",
+    "text": "Overview: Neural networks\n\n\n\nLearning objectives\n\n\n\ndescribe a feed-forward network as a composition of layers\nderive the backward pass for a dense and a sigmoid layer\nmap each backprop formula to a line of code\ntrain a small network to classify handwritten digits\n\n\n\n\n\nNeural networks: Review\nANN Architecture and Backprop\nGradient descent\nPython implementation",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4867,11 +4853,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#part-1",
-    "href": "lectures/neural.html#part-1",
+    "objectID": "lectures/neural.html#ann-intro",
+    "href": "lectures/neural.html#ann-intro",
     "title": "Approaches to biomedical knowledge",
     "section": "ANNs: Overview",
-    "text": "ANNs: Overview\n\n\n\n\n\n\n\n\n\n\n\n\n\nAn artificial neural network (ANN) is a function comprised of neurons, weights, and activation functions\nNeurons are grouped into three main categories of layers:\n\nInput layer\nHidden layers\nOutput layers\n\nNaming convention for an N-layer ANN\n\nN-1 layers of hidden units\n1 output layer\nIn our example, we have a 3-layer ANN",
+    "text": "ANNs: Overview\n\n\n\n\n\n\n\n\n\n\n\n\n\nAn artificial neural network (ANN) is a function composed of neurons, weights, and activation functions\nNeurons are grouped into three main categories of layers:\n\nInput layer: Raw features of input data\nHidden layers: intermediate representations\nOutput layer: The prediction\n\nEach edge is a learnable weight\nNaming convention for an N-layer ANN\n\nN-1 layers of hidden units\n1 output layer\nIn this figure, we have 2 hidden layers + output = 3-layer ANN",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4883,7 +4869,7 @@
     "href": "lectures/neural.html#neuron",
     "title": "Approaches to biomedical knowledge",
     "section": "Neuron",
-    "text": "Neuron\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 1\n\n\n\n\nimage credit: https://en.wikipedia.org/wiki/Biological_neuron_model\n\n\n\n\n\n\n\n\nNeuron\n\n\nEach neuron receives the weight sum of activations from the previous layer (or the input values) and applies a non-linear activation function\n\n\n\n\nFully connected layer. In a Feed-Forward Network (FFN), a Fully Connected layer — also known as a Dense layer or Linear layer—is a layer where every input neuron is connected to every output neuron: \\[z = \\sum_{i=1}^{4} (w_i x_i) + b\\]\nA common activation function is the Sigmoid function\n\n\\[f(z) = \\frac{1}{1 + e^{-z}}\\]",
+    "text": "Neuron\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 1\n\n\n\n\nimage credit: https://en.wikipedia.org/wiki/Biological_neuron_model\n\n\n\n\n\nNeuron\n\n\nEach neuron computes a weighted sum of its inputs (the input values, or the activations of the previous layer), adds a bias, and applies a non-linear activation function.\n\n\n\n\\[\n\\begin{align*}\nz &= \\sum_{i=1}^{n} w_i x_i + b = \\mathbf{w}^T\\mathbf{x} + b\n\\\\\nh &= \\sigma(z)\n\\end{align*}\n\\]\n\n\\(w_i\\): weights, \\(b\\): bias. Both are learnable\n\\(z\\): the pre-activation, \\(h\\): the activation (hidden layer weights)\nA layer in which every neuron receives every output of the previous layer is called a fully connected (dense, linear) layer",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4895,7 +4881,7 @@
     "href": "lectures/neural.html#activation-functions",
     "title": "Approaches to biomedical knowledge",
     "section": "Activation functions",
-    "text": "Activation functions\n\nActivation functions decide whether a neuron should be “fired” (activated) by calculating the weighted sum and adding bias.\n\n\n\nSigmoid\n\\[\n\\sigma(x) = \\frac{1}{1 + e^{-x}}\n\\tag{1}\\]\n\nReLU (Rectified Linear Unit)\n\\[\nf(x) = \\max(0, x)\n\\tag{2}\\]",
+    "text": "Activation functions\n\nWithout a non-linearity, a stack of dense layers collapses into a single linear map: e.g., \\(\\mathbf{W}_2(\\mathbf{W}_1\\mathbf{x}) = (\\mathbf{W}_2\\mathbf{W}_1)\\mathbf{x}\\).\nActivation functions add non-linearity, enabling ANNs to learn complex patterns\n\n\n\n\nSigmoid\n\\[\n\\sigma(z) = \\frac{1}{1 + e^{-z}}\n\\tag{1}\\]\n\nReLU (Rectified Linear Unit)\n\\[\nf(z) = \\max(0, z)\n\\tag{2}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4907,7 +4893,7 @@
     "href": "lectures/neural.html#representation-power",
     "title": "Approaches to biomedical knowledge",
     "section": "Representation power",
-    "text": "Representation power\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nApproximation\n\n\nA neural network with at least one hidden layer is a universal approximator in that it can represent any function\n\n\n\n\nThe capacity of the ANN increases with more hidden units and more hidden layers1\n\n\nCybenko G (1989) Approximation by superpositions of a sigmoidal function. Mathematics of Control, Signals, and Systems (MCSS)",
+    "text": "Representation power\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nApproximation\n\n\nA network with one hidden layer and enough hidden units can approximate any continuous function on a bounded domain to arbitrary accuracy.1\n\n\n\n\nThe theorem says a good network exists. It does not say we can find it, or how many units are needed\nIn practice, depth often represents complex functions far more efficiently than width\nFinding the weights is the job of backprop + gradient descent\n\n\nCybenko G (1989) Approximation by superpositions of a sigmoidal function. Math Control Signals 2:303–314",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4915,11 +4901,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#forward-pass",
-    "href": "lectures/neural.html#forward-pass",
+    "objectID": "lectures/neural.html#forward-pass-input-prediction-loss",
+    "href": "lectures/neural.html#forward-pass-input-prediction-loss",
     "title": "Approaches to biomedical knowledge",
-    "section": "Forward pass",
-    "text": "Forward pass",
+    "section": "Forward pass: input → prediction → loss",
+    "text": "Forward pass: input → prediction → loss",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4927,11 +4913,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#backward-pass",
-    "href": "lectures/neural.html#backward-pass",
+    "objectID": "lectures/neural.html#backward-pass-loss-gradients",
+    "href": "lectures/neural.html#backward-pass-loss-gradients",
     "title": "Approaches to biomedical knowledge",
-    "section": "Backward pass",
-    "text": "Backward pass",
+    "section": "Backward pass: loss → gradients",
+    "text": "Backward pass: loss → gradients\n\n\n\n\n\n\n\n\n\n\nFollowing this, weights are updated to reduce the error",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4943,7 +4929,7 @@
     "href": "lectures/neural.html#applications-in-bio-medicine",
     "title": "Approaches to biomedical knowledge",
     "section": "Applications in bio-medicine",
-    "text": "Applications in bio-medicine\n\n\nFigure 2: Weiss R, et al (2022) Applications of Neural Networks in Biomedical Data Analysis. Biomedicines. 10(7):1469.\n\nThere is hardly any topic in biomedicine that has not been modeled with ANNs of one type of another\nDeep understanding of the basics of (simple) feed-forward networks is a prerequisite for understanding more sophisticated models in use today",
+    "text": "Applications in bio-medicine\n\n\n\n\n\n\n\n\nWeiss R, et al (2022) Applications of Neural Networks in Biomedical Data Analysis. Biomedicines 10:1469.\n\n\nThere is hardly any topic in biomedicine that has not been modeled with ANNs of one type or another",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4951,23 +4937,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#overview-neural-networks-1",
-    "href": "lectures/neural.html#overview-neural-networks-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Overview: Neural networks",
-    "text": "Overview: Neural networks\n\n\n\n\n\n\nGame plan\n\n\nThis lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.\n\n\n\n\n\nPart 1: Review\n\nWhat is an ANN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Architecture and Backprop\n\nChain rule & Jacobians\nVectorized derivatives\n\n\n\n\nPart 3: Gradients\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/neural.html#part-2",
-    "href": "lectures/neural.html#part-2",
+    "objectID": "lectures/neural.html#ann",
+    "href": "lectures/neural.html#ann",
     "title": "Approaches to biomedical knowledge",
     "section": "Review: ANN Architecture and Matrix Representation",
-    "text": "Review: ANN Architecture and Matrix Representation\n\n\n\n\n\n\nExample ANN\n\n\n\nWe will review the architecture of simple ANNs using the classic digit recognition dataset available in skikit-learn.\nHOMEWORK We will code a simple ANN to work with this.\nInput: 8x8 grey-scale images of handwritten digits\nClassification goal: Determine which of the digits \\(0,\\ldots, 9\\) is represented by the image (\\(10\\times 1\\) output vector)",
+    "text": "Review: ANN Architecture and Matrix Representation\n\n\n\nExample ANN\n\n\n\nWe will review the architecture of simple ANNs using the classic digit recognition dataset available in scikit-learn.\nInput: \\(8\\times 8\\) grey-scale images of handwritten digits, flattened row by row into a vector of 64 pixel values\nClassification goal: Determine which of the digits \\(0,\\ldots, 9\\) is represented by the image (\\(10\\times 1\\) output vector)\nHOMEWORK You will code a simple ANN for this classification task.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4979,7 +4953,7 @@
     "href": "lectures/neural.html#ann-architecture",
     "title": "Approaches to biomedical knowledge",
     "section": "ANN Architecture",
-    "text": "ANN Architecture\n\nInput: 8x8 grey-scale images of handwritten digits\nGoal: Determine which digit the image represents (\\(0,\\ldots, 9\\))\nInput layer: \\(X^{64\\times 1}\\)\nOutput layer: \\(Y^{10\\times 1}\\)\nHidden layer(s): three hidden layers (128, 64, 32 neurons)\n\n\n\nFigure 3: ANN Architecture: \\(64 \\to 128 \\to 64 \\to 32 \\to 10\\)",
+    "text": "ANN Architecture\n\n\n\nInput: 8x8 grey-scale images of handwritten digits\nGoal: Determine which digit the image represents (\\(0,\\ldots, 9\\))\nInput layer: \\(X^{64\\times 1}\\)\nOutput layer: \\(Y^{10\\times 1}\\)\nHidden layer(s): two hidden layers (128, 64 neurons)\n\n\n\n\n\n\n\n\nANN Architecture: \\(64 \\to 128 \\to 64 \\to 10\\) (column height \\(\\propto \\sqrt{\\text{layer size}}\\))",
     "crumbs": [
       "Home",
       "Lectures",
@@ -4991,7 +4965,7 @@
     "href": "lectures/neural.html#representing-the-network-using-matrices",
     "title": "Approaches to biomedical knowledge",
     "section": "Representing the network using matrices",
-    "text": "Representing the network using matrices\n\n\n\n\n\n\n\n\nFigure 4: The activation for the first neuron of the first hidden layer is determined by the weighted sum of each of the values in the input; this weighted sum is passed to the sigmoid activation function\n\n\n\n\n\n\\(w_{j,i}\\): the weights. They are learnable parameters\n\\(z_j\\): the weighted sums or the pre-activations.\n\\(a_j\\): the activations and these are passed on as the input to the next layer\n\n\n\n\\[\n\\begin{bmatrix}\nw_{1,1} & w_{1,2} & \\cdots & w_{1,64} \\\\\nw_{2,1} & w_{2,2} & \\cdots & w_{2,64} \\\\\n& & & \\\\\n\\vdots & \\vdots & \\ddots & \\vdots \\\\\n  & & & \\\\\nw_{128,1} & w_{128,2} & \\cdots &   w_{128,64} \\\\\n\\end{bmatrix}^{128\\times 64}\n\\begin{bmatrix}\nx_1\\\\\nx_2\\\\\n\\vdots \\\\\nx_{64}\n\\end{bmatrix}^{64\\times 1}\n+\n\\begin{bmatrix}\nb_1\\\\\nb_2\\\\\n\\; \\\\\n\\vdots \\\\\n\\; \\\\\nb_{128}\n\\end{bmatrix}^{128\\times 1}\n=\n\\begin{bmatrix}\nz_1\\\\\nz_2\\\\\n\\; \\\\\n\\vdots \\\\\n\\; \\\\\nz_{128}\n\\end{bmatrix}^{128\\times 1}\n\\]\nfollowed by activation\n\\[\n\\begin{bmatrix}\n\\sigma(z_1)\\\\\n\\sigma(z_2)\\\\\n\\; \\\\\n\\vdots \\\\\n\\; \\\\\n\\sigma(z_{128})\n\\end{bmatrix}^{128\\times 1}\n=\n\\begin{bmatrix}\na_1\\\\\na_2\\\\\n\\; \\\\\n\\vdots \\\\\n\\; \\\\\na_{128}\n\\end{bmatrix}^{128\\times 1}\n\\]",
+    "text": "Representing the network using matrices\n\n\n\n\n\n\n\n\n\n\n\n\\(w_{j,i}\\): weight from input \\(i\\) to neuron \\(j\\) (learnable)\n\\(z_j\\): the weighted sum, or pre-activation\n\\(h_j\\): the activation, passed on to the next layer\nRow \\(j\\) of \\(\\mathbf{W}\\) holds the weights into neuron \\(j\\)\n\n\n\n\\[\n\\mathbf{z} = \\mathbf{W}\\mathbf{x} + \\mathbf{b}, \\qquad \\mathbf{h} = \\sigma(\\mathbf{z})\n\\]\n\n\\[\n\\underbrace{\\begin{bmatrix}\nw_{1,1} & \\cdots & w_{1,64} \\\\\n\\vdots & \\ddots & \\vdots \\\\\nw_{128,1} & \\cdots & w_{128,64}\n\\end{bmatrix}}_{128\\times 64}\n\\underbrace{\\begin{bmatrix} x_1\\\\ \\vdots \\\\ x_{64} \\end{bmatrix}}_{64\\times 1}\n+\n\\underbrace{\\begin{bmatrix} b_1\\\\ \\vdots \\\\ b_{128} \\end{bmatrix}}_{128\\times 1}\n=\n\\underbrace{\\begin{bmatrix} z_1\\\\ \\vdots \\\\ z_{128} \\end{bmatrix}}_{128\\times 1}\n\\]\nfollowed by the element-wise activation \\(h_j=\\sigma(z_j)\\), \\(j=1,\\ldots,128\\).\n\\[\n\\underbrace{\\begin{bmatrix} h_1\\\\ \\vdots \\\\ h_{128} \\end{bmatrix}}_{128\\times 1} =\n\\underbrace{\\begin{bmatrix} \\sigma(z_1)\\\\ \\vdots \\\\ \\sigma(z_{128}) \\end{bmatrix}}_{128\\times 1}\n\\]\n\nBy convention, the output of the activation function can be represented as \\(a_j=\\sigma(z_j)\\) or \\(h_j=\\sigma(z_j)\\)\nIn these slides, we will use \\(h_j=\\sigma(z_j)\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5003,7 +4977,7 @@
     "href": "lectures/neural.html#the-forward-pass-step-by-step",
     "title": "Approaches to biomedical knowledge",
     "section": "The Forward Pass: Step-by-Step",
-    "text": "The Forward Pass: Step-by-Step\nA single ANN layer implements a three-step cycle:\n\n\n1. Weighted Sum (\\(\\mathbf{z}\\))\nThe input vector \\(\\mathbf{x}\\) (or activations from the previous layer \\(\\mathbf{a}_{l-1}\\)) is multiplied by the weight matrix \\(W\\) and the bias vector \\(\\mathbf{b}\\) is added. \\[\\mathbf{z} = W \\mathbf{x} + \\mathbf{b}\\]\n2. Activation (\\(\\mathbf{a}\\))\nA non-linear function \\(\\sigma\\) (like Sigmoid or ReLU) is applied element-wise to the pre-activations. \\[\\mathbf{a} = \\sigma(\\mathbf{z})\\]\n\n3. Propagation\nThe resulting activation vector \\(\\mathbf{a}\\) is output and becomes the incoming input vector for the subsequent layer.\n\n\n\nSummary/Nomenclature\n\n\n\nInput Layer: Receives raw features \\(\\mathbf{x}\\) (e.g., genomic features).\nHidden Layer(s):\n\nCompute weighted sums of inputs.\nApply activation functions to introduce non-linearity.\n\nOutput Layer: Produces the final prediction \\(\\hat{y}\\) (e.g., disease risk probability).\nFoeward pass: Perform this three-step forward pass sequentially through all layers to compute the final output.",
+    "text": "The Forward Pass: Step-by-Step\nA single ANN layer implements a three-step cycle:\n\n\n1. Weighted Sum (\\(\\mathbf{z}\\))\nThe input vector \\(\\mathbf{x}\\) (or activations from the previous layer \\(\\mathbf{a}_{l-1}\\)) is multiplied by the weight matrix \\(W\\) and the bias vector \\(\\mathbf{b}\\) is added. \\[\\mathbf{z} = \\mathbf{W} \\mathbf{x} + \\mathbf{b}\\]\n2. Activation (\\(\\mathbf{h}\\))\nA non-linear function \\(\\sigma\\) (like Sigmoid or ReLU) is applied element-wise to the pre-activations. \\[\\mathbf{h}_i = \\sigma(\\mathbf{z}_i)\\]\n\n3. Propagation\nThe resulting activation vector \\(\\mathbf{h}\\) is output and becomes the incoming input vector for the subsequent layer.\n\n\n\nSummary/Nomenclature\n\n\n\nInput Layer: Receives raw features \\(\\mathbf{x}\\) (e.g., genomic features).\nHidden Layer(s):\n\nCompute weighted sums of inputs.\nApply activation functions to introduce non-linearity.\n\nOutput Layer: Produces the final prediction \\(\\hat{y}\\) (e.g., disease risk probability).\nForward pass: Perform this three-step forward pass sequentially through all layers to compute the final output.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5011,11 +4985,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#neurons-as-functions",
-    "href": "lectures/neural.html#neurons-as-functions",
+    "objectID": "lectures/neural.html#the-network-as-a-function",
+    "href": "lectures/neural.html#the-network-as-a-function",
     "title": "Approaches to biomedical knowledge",
-    "section": "Neurons as functions",
-    "text": "Neurons as functions\nEach neuron in the hidden layers can be thought of as a function that takes the results of all neurons in the previous layer as input and returns a number between 0 and 1.\nThe entire network can be thought of as a function that takes 64 numbers as input and returns 10 numbers as output.",
+    "section": "The network as a function",
+    "text": "The network as a function\n\n\nA neuron is a function of the previous layer’s activations: \\[h_j = \\sigma\\!\\left(\\mathbf{w}_j^T\\,\\mathbf{h}_{l-1} + b_j\\right)\\] With the sigmoid, its value lies between 0 and 1.\n\nThe network is a function \\(\\mathbb{R}^{64}\\to\\mathbb{R}^{10}\\), a composition of layers: \\[\\hat{\\mathbf{y}} = f_3\\bigl(f_2\\bigl(f_1(\\mathbf{x})\\bigr)\\bigr)\\] where \\(f_l(\\mathbf{h}) = \\sigma(\\mathbf{W}_l\\mathbf{h} + \\mathbf{b}_l)\\)\n\nBecause the network is a composition of functions, its derivative follows from the chain rule. That is the basis of backprop.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5027,7 +5001,7 @@
     "href": "lectures/neural.html#backpropagation",
     "title": "Approaches to biomedical knowledge",
     "section": "Backpropagation",
-    "text": "Backpropagation\n\n\n\n\n\n\nBackpropagation\n\n\nBackprop is the core algorithm behind deep learning.\nA key idea of neural nets is to decompose computation into a series of layers, which form modular blocks that can be chained together into a computation graph to perform backprop.\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe forward operation of each layer computes an output based on its input and the current values of the parameters (\\(\\theta\\))\nThe learning problem is to find the parameters that achieve a desired mapping.\nWe do this via gradient descent.",
+    "text": "Backpropagation\n\n\n\nBackpropagation\n\n\nBackprop is the core algorithm behind deep learning: an efficient way to compute the gradient of the loss with respect to every parameter, using the chain rule.\n\n\n\n\n\n\n\n\n\n\n\n\n\nEach layer is a modular block: its forward operation computes an output from its input and its parameters \\(\\theta\\). Blocks chain together into a computation graph\nLearning means finding the parameters that minimize the loss, which we do with gradient descent\nGradient descent needs \\(\\partial\\mathcal{L}/\\partial\\theta\\) for every layer. Backprop obtains these by running the blocks in reverse",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5051,7 +5025,7 @@
     "href": "lectures/neural.html#backprop-by-hand",
     "title": "Approaches to biomedical knowledge",
     "section": "Backprop by hand",
-    "text": "Backprop by hand\n\nOur network will have a sigmoid activation function in the hidden layer, no activation in the output layer:\n\n\\[\n\\sigma(x) = \\dfrac{1}{1+e^{-x}}\n\\]\n\nWe will use a squared-error loss function (where \\(y\\) is the label, i.e., zero or one) and \\(a_3\\) is the output of the ANN: \\[\n\\mathcal{L} = \\dfrac{1}{2}(y-a_3)^2\n\\]",
+    "text": "Backprop by hand\n\nOur network will have a sigmoid activation function in the hidden layer, no activation in the output layer:\n\n\\[\n\\sigma(z) = \\dfrac{1}{1+e^{-z}}\n\\]\n\nWe will use a squared-error loss function (where \\(y\\) is the label, i.e., zero or one) and \\(a_3\\) is the output of the ANN: \\[\n\\mathcal{L} = \\dfrac{1}{2}(y-a_3)^2\n\\]\nOur network will have a sigmoid activation function in the hidden layer, no activation in the output layer:\n\n\\[\n\\sigma(z) = \\dfrac{1}{1+e^{-z}}\n\\]\n\nWe will use a squared-error loss function (where \\(y\\) is the label, i.e., zero or one) and \\(\\hat{y}\\) is the output of the ANN: \\[\n\\mathcal{L} = \\dfrac{1}{2}(y-\\hat{y})^2\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5063,19 +5037,7 @@
     "href": "lectures/neural.html#backprop-by-hand-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Backprop by hand",
-    "text": "Backprop by hand\n\n\nForward pass equations\n\n\\(z_1 = w_1x_1 + w_3x_2 + b_1\\)\n\\(a_1 = \\sigma(z_1)\\)\n\\(z_2 = w_2x_1 + w_4x_2 + b_2\\)\n\\(a_2 = \\sigma(z_2)\\)\n\\(a_3 = w_5a_1 +  w_6a_2 + b_3\\)\n\\(z_1\\) and \\(z_2\\) are intermediate values that form the argument to the activation function\n\\(x_1\\), \\(x_2\\), and \\(y\\) are constants as far as the loss function is concerned. However, the loss will change as a function of the parameters \\[\n\\mathcal{L} = L(w_1,  w_2,w_3, w_4, w_5, w_6, b_1, b_2, b_3; x_1, x_2, y)\n\\]\nEquivalently: \\(\\mathcal{L} = L(\\Theta; \\mathbf{x};y)\\)",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/neural.html#chain-rule-review",
-    "href": "lectures/neural.html#chain-rule-review",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Chain rule (review)",
-    "text": "Chain rule (review)\n\nTo understand backprop, it is essential to be familiar with the chain rule\n\n\n\n\nIf \\(f\\) and \\(g\\) are differentiable functions, then \\[\n\\left(f(g(x))\\right)^{\\prime} = f^{\\prime}(g(x))\\cdot g^{\\prime}(x)\n\\]\nThe chain rule can also be written as follows. If \\(y=f(u)\\) and \\(u=g(x)\\), then \\[\n\\dfrac{dy}{dx} =\\dfrac{dy}{du}\\dfrac{du}{dx}\n\\]\n\n\nExamples\n\nPower Rule: \\(y = (5+3x)^5\\)\n\nLet \\(u = 5+3x\\), so \\(y = u^5\\)\n\\(\\frac{dy}{du} = 5u^4\\) and \\(\\frac{du}{dx} = 3\\) \\[\\frac{dy}{dx} = 5(5+3x)^4 \\cdot 3 = 15(5+3x)^4\\]\n\nTrig: \\(y = \\sin(4x+3)\\)\n\nLet \\(u = 4x+3\\), so \\(y = \\sin(u)\\)\n\\(\\frac{dy}{du} = \\cos(u)\\) and \\(\\frac{du}{dx} = 4\\) \\[\\frac{dy}{dx} = \\cos(4x+3) \\cdot 4 = 4\\cos(4x+3)\\]",
+    "text": "Backprop by hand\n\n\nForward pass equations\n\n\\(z_1 = w_1x_1 + w_3x_2 + b_1\\)\n\\(h_1 = \\sigma(z_1)\\)\n\\(z_2 = w_2x_1 + w_4x_2 + b_2\\)\n\\(h_2 = \\sigma(z_2)\\)\n\\(\\hat{y} = w_5h_1 +  w_6h_2 + b_3\\)\n\\(z_1\\) and \\(z_2\\) are intermediate values that form the argument to the activation function\n\\(x_1\\), \\(x_2\\), and \\(y\\) are constants as far as the loss function is concerned. However, the loss will change as a function of the parameters \\[\n\\mathcal{L} = L(w_1,  w_2,w_3, w_4, w_5, w_6, b_1, b_2, b_3; x_1, x_2, y)\n\\]\nEquivalently: \\(\\mathcal{L} = L(\\Theta; \\mathbf{x};y)\\)\n\n\n\n\n\n\n\n\n\n\n\n\nThe parameters of the toy neural network are \\(\\theta = (w_1,w_2,w_3,w_4,w_5,w_6,b_1,b_2,b_3)\\)\nGoal: find the derivative of the loss function with respect to each of these parameters",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5111,7 +5073,7 @@
     "href": "lectures/neural.html#how-does-the-loss-change-as-w_6-changes",
     "title": "Approaches to biomedical knowledge",
     "section": "How does the loss change as \\(w_6\\) changes?",
-    "text": "How does the loss change as \\(w_6\\) changes?\n\n\n\nWe have by the chain rule\n\n\\[\n\\dfrac{\\partial \\mathcal{L}}{\\partial w_6} =\n\\dfrac{\\partial \\mathcal{L}}{\\partial a_3} \\cdot \\dfrac{\\partial a_3}{\\partial w_6}\n\\]\n\nfrom the above, we had that \\(\\dfrac{\\partial \\mathcal{L}}{\\partial a_3} = a_3 - y\\)\nwe can reuse this value and now just need \\(\\dfrac{\\partial a_3}{\\partial w_6}\\)\n\n\\[\n\\dfrac{\\partial a_3}{\\partial w_6}\n=\n\\dfrac{\\partial (w_5a_1 + w_6a_2+b_3)}{\\partial w_6} = a_2\n\\]\n\nWe have calculate the value of \\(a_2\\) in the forward pass, so this is easy \\[\n\\dfrac{\\partial \\mathcal{L}}{\\partial w_6} =  ( a_3 - y)a_2\n\\]\n\n\n\n\n\n\n\n\n\n\n\n\nSimilar logic gets us \\(\\dfrac{\\partial \\mathcal{L}}{\\partial w_5} =  ( a_3 - y)a_1\\)",
+    "text": "How does the loss change as \\(w_6\\) changes?\n\n\n\nWe have by the chain rule:\n\n\\[\n\\dfrac{\\partial \\mathcal{L}}{\\partial w_6} =\n\\dfrac{\\partial \\mathcal{L}}{\\partial a_3} \\cdot \\dfrac{\\partial a_3}{\\partial w_6}\n\\]\n\nfrom the above, we had that \\(\\dfrac{\\partial \\mathcal{L}}{\\partial a_3} = a_3 - y\\)\nwe can reuse this value and now just need \\(\\dfrac{\\partial a_3}{\\partial w_6}\\)\n\n\\[\n\\dfrac{\\partial a_3}{\\partial w_6}\n=\n\\dfrac{\\partial (w_5a_1 + w_6a_2+b_3)}{\\partial w_6} = a_2\n\\]\n\nWe have calculated the value of \\(a_2\\) in the forward pass, so this is easy1 \\[\n\\dfrac{\\partial \\mathcal{L}}{\\partial w_6} =  ( a_3 - y)a_2\n\\]\n\n\n\n\n\n\n\n\n\n\n\n\nSimilar logic gets us \\(\\dfrac{\\partial \\mathcal{L}}{\\partial w_5} =  ( a_3 - y)a_1\\)\n\n\nThe final layer of the network does not have an activation function",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5371,18 +5333,6 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#gradient-descent",
-    "href": "lectures/neural.html#gradient-descent",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Gradient descent",
-    "text": "Gradient descent\n\n\nPart 1: Review\n\nWhat is an ANN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Architecture and Backprop\n\nChain rule & Jacobians\nVectorized derivatives\n\n\n\n\nPart 3: Gradients\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
     "objectID": "lectures/neural.html#stochastic-gradient-descent",
     "href": "lectures/neural.html#stochastic-gradient-descent",
     "title": "Approaches to biomedical knowledge",
@@ -5399,7 +5349,7 @@
     "href": "lectures/neural.html#momentum",
     "title": "Approaches to biomedical knowledge",
     "section": "Momentum",
-    "text": "Momentum\n\nIf the local landscape includes many local minima, vanilla GD may “get stuck” in a local minimum\nSeveral procedures have been developed that add a form of momentum to the standard GD update rule - this adds inertia to the GD and potentially allows GD to move past local minima.\nRecall that the standard update step is \\[\nx \\leftarrow x - \\eta\\dfrac{\\partial f}{\\partial x}\n\\]\nWith momentum, this becomes\n\n\\[\n\\begin{eqnarray*}\nv &\\leftarrow & \\mu v- \\eta\\dfrac{\\partial f}{\\partial x}\\\\\nx &\\leftarrow & x + v\n\\end{eqnarray*}\n\\]\n\nfor some initial velocity \\(v\\) (usually initialized to zero) and mass \\(\\mu\\in \\left[0,1\\right]\\).\nEffectively, this adds back a fraction of the previous step size, which tends to keep things going in the same direction",
+    "text": "Momentum\n\nIf the local landscape includes many local minima, vanilla GD may “get stuck” in a local minimum\nSeveral procedures have been developed that add a form of momentum to the standard GD update rule - this adds inertia to the GD and potentially allows GD to move past local minima.\nRecall that the standard update step is \\[\nx \\leftarrow x - \\eta\\dfrac{\\partial f}{\\partial x}\n\\]\nWith momentum, this becomes\n\n\\[\n\\begin{eqnarray*}\nv &\\leftarrow & \\mu v- \\eta\\dfrac{\\partial f}{\\partial x}\\\\\nx &\\leftarrow & x + v\n\\end{eqnarray*}\n\\]\n\nfor some initial velocity \\(v\\) (usually initialized to zero) and mass \\(\\mu\\in \\left[0,1\\right]\\).\nEffectively, this adds back a fraction of the previous GD step size, which tends to keep things going in the same direction",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5407,20 +5357,8 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#python-implementation",
-    "href": "lectures/neural.html#python-implementation",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Python implementation",
-    "text": "Python implementation\n\n\n\n\n\n\nGame plan\n\n\nThis lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.\n\n\n\n\n\nPart 1: Review\n\nWhat is an ANN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Architecture and Backprop\n\nChain rule & Jacobians\nVectorized derivatives\n\n\n\n\nPart 3: Gradients\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: Python\n\nFull implementation of ANN\nClassify handwritten digits",
-    "crumbs": [
-      "Home",
-      "Lectures",
-      "Approaches to biomedical knowledge"
-    ]
-  },
-  {
-    "objectID": "lectures/neural.html#part-4",
-    "href": "lectures/neural.html#part-4",
+    "objectID": "lectures/neural.html#python",
+    "href": "lectures/neural.html#python",
     "title": "Approaches to biomedical knowledge",
     "section": "FFN in Python: Dimensions and orientations",
     "text": "FFN in Python: Dimensions and orientations\n\nMost FFN software frameworks arrange data in the transposed form.\nIn theoretical notation (as in the previous slides of this lecture), we generally use column vectors: \\[\n\\underbrace{\\mathbf{y}}_{m \\times 1} = \\underbrace{\\mathbf{W}}_{m \\times n} \\underbrace{\\mathbf{x}}_{n \\times 1} + \\underbrace{\\mathbf{b}}_{m \\times 1}\n\\]\nFrameworks such as scikit-learn and PyTorch use the transpose (row-major) form:\n\n\\[\n\\begin{aligned}\n(\\mathbf{y})^T &= (\\mathbf{W}\\mathbf{x} + \\mathbf{b})^T \\\\\n\\mathbf{y}^T &= (\\mathbf{W}\\mathbf{x})^T + \\mathbf{b}^T \\\\\n\\underbrace{\\mathbf{y}^T}_{1 \\times m} &= \\underbrace{\\mathbf{x}^T}_{1 \\times n} \\underbrace{\\mathbf{W}^T}_{n \\times m} + \\underbrace{\\mathbf{b}^T}_{1 \\times m}\n\\end{aligned}\n\\]\n\nThis will be relevant for our implementation.",
@@ -5447,7 +5385,7 @@
     "href": "lectures/neural.html#from-vectors-to-batches-in-python",
     "title": "Approaches to biomedical knowledge",
     "section": "From Vectors to Batches in Python",
-    "text": "From Vectors to Batches in Python\nIn practice, we rarely compute one sample at a time. We use batches to leverage GPU parallelism.\n1. The “Flat” Array Notation (n,)\nIn NumPy/scikit-learn, a 1D array has the shape (n,).\n\nIt is neither a row nor a column matrix.\nHowever, when you use dot() or @, Python treats it as a row vector by default:\n\n\\(\\text{Shape } (n,) \\times \\text{Shape } (n, m) \\rightarrow \\text{Shape } (m,)\\) is like \\(\\mathbf{x}^{1\\times n}\\mathbf{W}^{n\\times m} \\rightarrow \\mathbf{y}^{1\\times m}\\)\n\n\n2. Batch Representation (The Design Matrix)\nWhen we move to a batch of \\(k\\) samples, we stack our row vectors \\(\\mathbf{x}^T\\) into a Design Matrix \\(\\mathbf{X}\\).\n\\[\n\\underbrace{\\mathbf{Y}}_{k \\times m} = \\underbrace{\\mathbf{X}}_{k \\times n} \\underbrace{\\mathbf{W}^T}_{n \\times m} + \\underbrace{\\mathbf{b}^T}_{1 \\times m}\n\\]\n\n\n\n\n\n\nBroadcasting the Bias\n\n\nNote that \\(\\mathbf{b}^T\\) is \\(1 \\times m\\), but \\(\\mathbf{Y}\\) is \\(k \\times m\\). Python uses broadcasting to automatically “stretch” the bias vector so it is added to every single row in the batch.",
+    "text": "From Vectors to Batches in Python\nIn practice, we rarely compute one sample at a time. We use batches to leverage GPU parallelism.\n1. The “Flat” Array Notation (n,)\nIn NumPy/scikit-learn, a 1D array has the shape (n,).\n\nIt is neither a row nor a column matrix.\nHowever, when you use dot() or @, Python treats it as a row vector by default:\n\n\\(\\text{Shape } (n,) \\times \\text{Shape } (n, m) \\rightarrow \\text{Shape } (m,)\\) is like \\(\\mathbf{x}^{1\\times n}\\mathbf{W}^{n\\times m} \\rightarrow \\mathbf{y}^{1\\times m}\\)\n\n\n2. Batch Representation (The Design Matrix)\nWhen we move to a batch of \\(k\\) samples, we stack our row vectors \\(\\mathbf{x}^T\\) into a Design Matrix \\(\\mathbf{X}\\).\n\\[\n\\underbrace{\\mathbf{Y}}_{k \\times m} = \\underbrace{\\mathbf{X}}_{k \\times n} \\underbrace{\\mathbf{W}^T}_{n \\times m} + \\underbrace{\\mathbf{b}^T}_{1 \\times m}\n\\]\n\n\n\n\n\n\nBroadcasting the Bias\n\n\nNote that \\(\\mathbf{b}^T\\) is \\(1 \\times m\\), but \\(\\mathbf{Y}\\) is \\(k \\times m\\). NumPy and PyTorch use broadcasting to automatically “stretch” the bias vector so it is added to every single row in the batch.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5507,7 +5445,7 @@
     "href": "lectures/neural.html#preparing-the-dataset",
     "title": "Approaches to biomedical knowledge",
     "section": "Preparing the dataset",
-    "text": "Preparing the dataset\n\nWe need to reshape the input data to conform to Python conventions.\nLet us first examine the shape of the original data from sklearn\n\n\nprint(f\"Shape of digits: '{digits.data.shape}'\")\nprint(f\"Shape of an element: '{digits.data[0].shape}'\")\n\nShape of digits: '(1797, 64)'\nShape of an element: '(64,)'\n\n\n\nWe have 1797 examples of input data points that have a dimension of 64\n\n\n\nX = digits.data.reshape(-1, 1, 64)\nprint(f\"Shape of X: '{X.shape}'\")\nprint(f\"Shape of an element: '{X[0].shape}'\")\n\nShape of X: '(1797, 1, 64)'\nShape of an element: '(1, 64)'\n\n\n\nWe have transformed the elements of X from (64,) into (1, 64), i.e., a row vector with 64 columns, to work with numpy",
+    "text": "Preparing the dataset\n\nWe need to reshape the input data to conform to Python conventions.\nLet us first examine the shape of the original data from sklearn\n\n\nprint(f\"Shape of digits: '{digits.data.shape}'\")\nprint(f\"Shape of an element: '{digits.data[0].shape}'\")\n\nShape of digits: '(1797, 64)'\nShape of an element: '(64,)'\n\n\n\nWe have 1797 examples of input data points that have a dimension of 64\n\n\nX = digits.data.reshape(-1, 1, 64)\nprint(f\"Shape of X: '{X.shape}'\")\nprint(f\"Shape of an element: '{X[0].shape}'\")\n\nShape of X: '(1797, 1, 64)'\nShape of an element: '(1, 64)'\n\n\n\nWe have transformed the elements of X from (64,) into (1, 64), i.e., a row vector with 64 columns, to work with numpy",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5579,7 +5517,7 @@
     "href": "lectures/neural.html#making-the-actual-prediction",
     "title": "Approaches to biomedical knowledge",
     "section": "Making the actual prediction",
-    "text": "Making the actual prediction\n\nIn the above, we sent just a single example to the predict function. Therefore, the function returned a single (10,1)row vector representing the probabilities of the digits \\(0,\\ldots, 9\\).\nIn the following code block, we evaluate all test examples together\n\n\nout = network.predict(X_test)\ncm = np.zeros((10,10), dtype=\"uint32\")\nfor i in range(len(y_test)):\n    # Convert the One-Hot ground truth back to an integer (0-9)\n    true_label = np.argmax(y_test[i])\n    # Convert the network output (probabilities) to an integer (0-9)\n    predicted_label = np.argmax(out[i])\n    cm[true_label, predicted_label] += 1\nprint()\nprint(np.array2string(cm))\nprint()\nprint(\"Accuracy = %0.7f\" % (np.diag(cm).sum() / cm.sum()))\n\n[[33  0  0  0  0  0  0  0  0  0]\n [ 0 28  0  0  0  0  0  0  0  0]\n [ 0  0 33  0  0  0  0  0  0  0]\n [ 0  0  0 33  0  1  0  0  0  0]\n [ 0  0  0  0 46  0  0  0  0  0]\n [ 0  0  0  0  0 45  1  0  0  1]\n [ 0  0  0  0  0  1 34  0  0  0]\n [ 0  0  0  0  0  0  0 33  0  1]\n [ 0  0  0  0  0  1  0  0 29  0]\n [ 0  0  0  0  0  0  0  0  1 39]]\n\nAccuracy = 0.9805556",
+    "text": "Making the actual prediction\n\nIn the above, we sent just a single example to the predict function. Therefore, the function returned a single (10,1)row vector representing the probabilities of the digits \\(0,\\ldots, 9\\).\nIn the following code block, we evaluate all test examples together\n\n\nout = network.predict(X_test)\ncm = np.zeros((10,10), dtype=\"uint32\") # confusion matrix\nfor i in range(len(y_test)):\n    # Convert the One-Hot ground truth back to an integer (0-9)\n    true_label = np.argmax(y_test[i])\n    # Convert the network output (probabilities) to an integer (0-9)\n    predicted_label = np.argmax(out[i])\n    cm[true_label, predicted_label] += 1\nprint()\nprint(np.array2string(cm))\nprint()\nprint(\"Accuracy = %0.7f\" % (np.diag(cm).sum() / cm.sum()))\n\n[[33  0  0  0  0  0  0  0  0  0]\n [ 0 28  0  0  0  0  0  0  0  0]\n [ 0  0 33  0  0  0  0  0  0  0]\n [ 0  0  0 33  0  1  0  0  0  0]\n [ 0  0  0  0 46  0  0  0  0  0]\n [ 0  0  0  0  0 45  1  0  0  1]\n [ 0  0  0  0  0  1 34  0  0  0]\n [ 0  0  0  0  0  0  0 33  0  1]\n [ 0  0  0  0  0  1  0  0 29  0]\n [ 0  0  0  0  0  0  0  0  1 39]]\n\nAccuracy = 0.9805556",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5615,7 +5553,7 @@
     "href": "lectures/neural.html#minibatches",
     "title": "Approaches to biomedical knowledge",
     "section": "Minibatches",
-    "text": "Minibatches\n\nLayer = typing.Union[FullyConnectedLayer, ActivationLayer]\nArrayOfFloats = npt.NDArray[np.float64]\ndef fit(self,  x_train: ArrayOfFloats, y_train: npt.NDArray[np.float64], \n        minibatches: int,  learning_rate: float, batch_size: int=64) -&gt; None:\n    for i in range(minibatches):\n        idx = np.argsort(np.random.random(x_train.shape[0]))[:batch_size]\n        x_batch = x_train[idx]\n        y_batch = y_train[idx]\n        for j in range(batch_size):\n            output = x_batch[j]\n            for layer in self.layers:\n                output = layer.forward(output)\n            error = mse_prime(y_batch[j], output)\n            for layer in reversed(self.layers):\n                error = layer.backward(error)\n        for layer in self.layers:\n            layer.step(learning_rate)\n\n\nX_train has shape (1437, 1, 64), i.e., 1437 examples. Correspondingly, y_train has the same number of expected outcomes coding unsing one-hot vectors : (1437, 10)\nline 6: idx is a row vector, i.e., (64,) of randomly chosen indices for the current minibatch\nline 7: x_batch has shape (64, 1, 64),\nline 8: y_batch has share (64,10)\nline 9: We now iterate through each of the examples of the minibatch",
+    "text": "Minibatches\n\nLayer = typing.Union[FullyConnectedLayer, ActivationLayer]\nArrayOfFloats = npt.NDArray[np.float64]\ndef fit(self,  x_train: ArrayOfFloats, y_train: npt.NDArray[np.float64], \n        minibatches: int,  learning_rate: float, batch_size: int=64) -&gt; None:\n    for i in range(minibatches):\n        idx = np.argsort(np.random.random(x_train.shape[0]))[:batch_size]\n        x_batch = x_train[idx]\n        y_batch = y_train[idx]\n        for j in range(batch_size):\n            output = x_batch[j]\n            for layer in self.layers:\n                output = layer.forward(output)\n            error = mse_prime(y_batch[j], output)\n            for layer in reversed(self.layers):\n                error = layer.backward(error)\n        for layer in self.layers:\n            layer.step(learning_rate)\n\n\nX_train has shape (1437, 1, 64), i.e., 1437 examples. Correspondingly, y_train has the same number of expected outcomes coding using one-hot vectors : (1437, 10)\nline 6: idx is a row vector, i.e., (64,) of randomly chosen indices for the current minibatch\nline 7: x_batch has shape (64, 1, 64),\nline 8: y_batch has shape (64,10)\nline 9: We now iterate through each of the examples of the minibatch",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5623,8 +5561,8 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#forward-pass-1",
-    "href": "lectures/neural.html#forward-pass-1",
+    "objectID": "lectures/neural.html#forward-pass",
+    "href": "lectures/neural.html#forward-pass",
     "title": "Approaches to biomedical knowledge",
     "section": "Forward pass",
     "text": "Forward pass\n\nLayer = typing.Union[FullyConnectedLayer, ActivationLayer]\nArrayOfFloats = npt.NDArray[np.float64]\ndef fit(self,  x_train: ArrayOfFloats, y_train: npt.NDArray[np.float64], \n        minibatches: int,  learning_rate: float, batch_size: int=64) -&gt; None:\n    for i in range(minibatches):\n        idx = np.argsort(np.random.random(x_train.shape[0]))[:batch_size]\n        x_batch = x_train[idx]\n        y_batch = y_train[idx]\n        for j in range(batch_size):\n            output = x_batch[j]\n            for layer in self.layers:\n                output = layer.forward(output)\n            error = mse_prime(y_batch[j], output)\n            for layer in reversed(self.layers):\n                error = layer.backward(error)\n        for layer in self.layers:\n            layer.step(learning_rate)\n\n\nlines 10-12: This snippet of code performs the forward just like with predict",
@@ -5639,7 +5577,7 @@
     "href": "lectures/neural.html#gradient-of-error-with-respect-to-output",
     "title": "Approaches to biomedical knowledge",
     "section": "Gradient of error with respect to output",
-    "text": "Gradient of error with respect to output\n\nLayer = typing.Union[FullyConnectedLayer, ActivationLayer]\nArrayOfFloats = npt.NDArray[np.float64]\ndef fit(self,  x_train: ArrayOfFloats, y_train: npt.NDArray[np.float64], \n        minibatches: int,  learning_rate: float, batch_size: int=64) -&gt; None:\n    for i in range(minibatches):\n        idx = np.argsort(np.random.random(x_train.shape[0]))[:batch_size]\n        x_batch = x_train[idx]\n        y_batch = y_train[idx]\n        for j in range(batch_size):\n            output = x_batch[j]\n            for layer in self.layers:\n                output = layer.forward(output)\n            error = mse_prime(y_batch[j], output)\n            for layer in reversed(self.layers):\n                error = layer.backward(error)\n        for layer in self.layers:\n            layer.step(learning_rate)\n\n\nlines 13: This function calculates the first derivative of the squared error.\nSee Equation 10\nIn our toy implementation, we are doing one example at a time and accumulate the error within the FullyConnectedLayer class to be able to perform gradient descent\n\nHOMEWORK You will code mse_prime function.",
+    "text": "Gradient of error with respect to output\n\nLayer = typing.Union[FullyConnectedLayer, ActivationLayer]\nArrayOfFloats = npt.NDArray[np.float64]\ndef fit(self,  x_train: ArrayOfFloats, y_train: npt.NDArray[np.float64], \n        minibatches: int,  learning_rate: float, batch_size: int=64) -&gt; None:\n    for i in range(minibatches):\n        idx = np.argsort(np.random.random(x_train.shape[0]))[:batch_size]\n        x_batch = x_train[idx]\n        y_batch = y_train[idx]\n        for j in range(batch_size):\n            output = x_batch[j]\n            for layer in self.layers:\n                output = layer.forward(output)\n            error = mse_prime(y_batch[j], output)\n            for layer in reversed(self.layers):\n                error = layer.backward(error)\n        for layer in self.layers:\n            layer.step(learning_rate)\n\n\nlines 13: This function calculates the first derivative of the squared error.\nSee Equation 10\nIn our toy implementation, we are doing one example at a time and accumulate the error within the FullyConnectedLayer class to be able to perform gradient descent\nHOMEWORK You will code mse_prime function.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5663,7 +5601,7 @@
     "href": "lectures/neural.html#back-activation",
     "title": "Approaches to biomedical knowledge",
     "section": "Back: Activation",
-    "text": "Back: Activation\nThis is the full class for the Activation Layer\n\nclass ActivationLayer:\n    input: typing.Optional[npt.NDArray[np.float64]]\n\n    def forward(self, input_data: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:\n        self.input = input_data\n        return sigmoid(input_data)\n\n    def backward(self, output_error: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:\n        return sigmoid_prime(self.input) * output_error # type: ignore (We know self.input will be npt.NDArray[np.float64]\n    \n    def step(self, eta: float) -&gt; None:\n        return\n\n\nClass definition of an Activation layer\nThe forward pass stores the input data vector and returns the sigmoid activation of that vector\nThe backward pass returns the first derivative of the sigmoid function on the storedinput_dataand multiplies it by theoutput_error` that it receives as an argument\nThis is an implementation of Equation 11, where the output_error is \\(\\frac{\\partial E}{\\partial \\mathbf{y}}\\) \\[\n\\frac{\\partial E}{\\partial \\mathbf{x}} = \\frac{\\partial E}{\\partial \\mathbf{y}} \\odot \\sigma'(\\mathbf{x})\n\\]\nDoes nothing, as there are no weights in the sigmoid function that could be updated by backprop. {.fragment}",
+    "text": "Back: Activation\nThis is the full class for the Activation Layer\n\nclass ActivationLayer:\n    input: typing.Optional[npt.NDArray[np.float64]]\n\n    def forward(self, input_data: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:\n        self.input = input_data\n        return sigmoid(input_data)\n\n    def backward(self, output_error: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:\n        return sigmoid_prime(self.input) * output_error # type: ignore (We know self.input will be npt.NDArray[np.float64]\n    \n    def step(self, eta: float) -&gt; None:\n        return\n\n\nClass definition of an Activation layer\nThe forward pass stores the input data vector and returns the sigmoid activation of that vector\nThe backward pass returns the first derivative of the sigmoid function on the storedinput_dataand multiplies it by theoutput_error` that it receives as an argument\nThis is an implementation of Equation 11, where the output_error is \\(\\frac{\\partial E}{\\partial \\mathbf{y}}\\) \\[\n\\frac{\\partial E}{\\partial \\mathbf{x}} = \\frac{\\partial E}{\\partial \\mathbf{y}} \\odot \\sigma'(\\mathbf{x})\n\\]\nDoes nothing, as there are no weights in the sigmoid function that could be updated by backprop.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5707,8 +5645,8 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#gradient-descent-1",
-    "href": "lectures/neural.html#gradient-descent-1",
+    "objectID": "lectures/neural.html#gradient-descent",
+    "href": "lectures/neural.html#gradient-descent",
     "title": "Approaches to biomedical knowledge",
     "section": "Gradient descent",
     "text": "Gradient descent\n\nLayer = typing.Union[FullyConnectedLayer, ActivationLayer]\nArrayOfFloats = npt.NDArray[np.float64]\ndef fit(self,  x_train: ArrayOfFloats, y_train: npt.NDArray[np.float64], \n        minibatches: int,  learning_rate: float, batch_size: int=64) -&gt; None:\n    for i in range(minibatches):\n        idx = np.argsort(np.random.random(x_train.shape[0]))[:batch_size]\n        x_batch = x_train[idx]\n        y_batch = y_train[idx]\n        for j in range(batch_size):\n            output = x_batch[j]\n            for layer in self.layers:\n                output = layer.forward(output)\n            error = mse_prime(y_batch[j], output)\n            for layer in reversed(self.layers):\n                error = layer.backward(error)\n        for layer in self.layers:\n            layer.step(learning_rate)\n\n\nWe perform the steps in lines 6-15 for each example in the minibatch. At the end of this loop, we have accumulated changes for each iteration with the self.delta_w += weights_error command in the previous slide\nlines 16-17 implement gradient descent.\nAs mentioned, there is nothing to change in the activation layers, so we only need to look at the layer.step method for the fully connected layer",
@@ -5719,8 +5657,8 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#gradient-descent-2",
-    "href": "lectures/neural.html#gradient-descent-2",
+    "objectID": "lectures/neural.html#gradient-descent-1",
+    "href": "lectures/neural.html#gradient-descent-1",
     "title": "Approaches to biomedical knowledge",
     "section": "Gradient descent",
     "text": "Gradient descent\n\nclass FullyConnectedLayer:\n\n    (..omitted...)\n\n    def step(self, eta: float) -&gt; None:\n        self.weights -= eta * self.delta_w / self.passes\n        self.bias -= eta * self.delta_b / self.passes\n        #  reset for the next minibatch\n        self.delta_w = np.zeros(self.weights.shape)\n        self.delta_b = np.zeros(self.bias.shape)\n        self.passes = 0\n\n\neta (\\(\\eta\\)) is the learning rate\nThe self.delta_w += weights_error, self.delta_b += output_error and self.passes += 1 were called once for each example in the minibatch\nTherefore, line 6 implements the following gradient descent step \\(\\mathbf{W} \\leftarrow \\mathbf{W} - \\eta\\Delta \\mathbf{W}\\), where \\(\\Delta\\) is the average loss for each example\nSimilarly, line 7 implements \\(\\mathbf{b} \\leftarrow \\mathbf{b} - \\eta\\Delta \\mathbf{b}\\).\nlines 8-10 reset the variables for the next iteration of backprop",
@@ -5735,7 +5673,19 @@
     "href": "lectures/neural.html#wrap-up",
     "title": "Approaches to biomedical knowledge",
     "section": "Wrap-up",
-    "text": "Wrap-up\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provided a review of artificial neural networks and the matrix math behind forward and backwards propagation.\n\n\n\n\nHOMEWORK You will be asked to study and extend the code for this simple ANN\n\n\n\n\n\nFurther reading\n\n\n\n\nKneusel RT (2021) Math for Deep Learning, No Starch Press, 2021\n\n\nParr T and Howard J The Matrix Calculus You Need For Deep Learning: Web resource\n\n\nBaydin AG et al (2018) Automatic differentiation in machine learning: a survey arXiv",
+    "text": "Wrap-up\n\n\n\n\n\n\nGame plan\n\n\nThis lecture provided a review of artificial neural networks and the matrix math behind forward and backwards propagation.\n\n\n\n\nHOMEWORK You will be asked to study and extend the code for this simple ANN",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/neural.html#further-reading",
+    "href": "lectures/neural.html#further-reading",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Further reading",
+    "text": "Further reading\n\nKneusel RT (2021) Math for Deep Learning, No Starch Press, 2021 |\nParr T and Howard J The Matrix Calculus You Need For Deep Learning: Web resource |\nBaydin AG et al (2018) Automatic differentiation in machine learning: a survey arXiv |\nDetailed tutorial on ANNs and Backprop (Andrej Karpathy)",
     "crumbs": [
       "Home",
       "Lectures",
