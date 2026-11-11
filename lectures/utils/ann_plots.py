@@ -532,77 +532,76 @@ def draw_forward_block_diagram(fig_size = (9, 4)):
     plt.tight_layout()
 
 
-def draw_toy_network(figsize=(12, 6)):
+def draw_toy_network(figsize=(8, 5)):
     fig, ax = plt.subplots(figsize=figsize)
-    ax.set_xlim(0, 12)
-    ax.set_ylim(0, 6)
+    ax.set_xlim(1.3, 8.7)
+    ax.set_ylim(1.4, 6.5)
+    ax.set_aspect('equal')
     ax.axis('off')
 
-    # 1. Colors & Settings
+    # 1. Colors & settings
     c_input, c_hidden, c_output = '#fde68a', '#93c5fd', '#f87171'
-    edge_props = dict(arrowstyle="-|>", color="black", lw=1.2, shrinkA=18, shrinkB=18, mutation_scale=15)
-    
+    radius = 0.4
+
     # Node positions
-    l1_pos = [(2, 5), (2, 2)]  # Input (x0, x1)
-    l2_pos = [(5, 5), (5, 2)]  # Hidden (a0, a1)
-    l3_pos = [(8, 3.5)]       # Output (a2)
-    
-    # 2. Draw Connections and Weights (No Superscripts)
+    l1_pos = [(2, 5), (2, 2)]   # input  (x1, x2)
+    l2_pos = [(5, 5), (5, 2)]   # hidden (h1, h2)
+    l3_pos = (8, 3.5)           # output (y-hat)
+
+    # 2. Draw the neurons first, so the arrows can be clipped against them
+    node_font = {'fontsize': 14, 'fontweight': 'bold', 'ha': 'center', 'va': 'center'}
+
+    def neuron(pos, color, label):
+        circle = patches.Circle(pos, radius, facecolor=color, edgecolor='black', zorder=3)
+        ax.add_patch(circle)
+        ax.text(pos[0], pos[1], label, zorder=4, **node_font)
+        return circle
+
+    in_nodes = [neuron(p, c_input, f'$x_{i + 1}$') for i, p in enumerate(l1_pos)]
+    hid_nodes = [neuron(p, c_hidden, f'$h_{i + 1}$') for i, p in enumerate(l2_pos)]
+    out_node = neuron(l3_pos, c_output, r'$\hat{y}$')
+
+    # 3. Connections and weight labels
+    edge_props = dict(arrowstyle="-|>", color="black", lw=1.2, mutation_scale=15,
+                      shrinkA=0, shrinkB=0)
     w_font = {'fontsize': 11, 'fontweight': 'bold', 'ha': 'center'}
-    
-    # Layer 1 Connections (Input -> Hidden)
+
+    # Input -> hidden
     for i, p1 in enumerate(l1_pos):
         for j, p2 in enumerate(l2_pos):
-            ax.annotate("", xy=p2, xytext=p1, arrowprops=edge_props)
-            
-            # --- Anti-Overlap Logic ---
-            # For straight lines (0->0, 1->1), use the midpoint.
-            # For diagonal lines (0->1, 1->0), move label closer to the destination node.
+            ax.annotate("", xy=p2, xytext=p1,
+                        arrowprops=dict(edge_props, patchA=in_nodes[i], patchB=hid_nodes[j]))
             if i == j:
+                # straight lines: label at the midpoint, above (top row) or below (bottom row)
                 mx, my = (p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2
                 offset = 0.25 if i == 0 else -0.4
             else:
-                # Move 70% of the way toward the hidden layer to avoid the center cross
+                # diagonals: label 70% of the way to the destination, on the outer side of the
+                # line, so w2 and w3 do not end up side by side in the middle of the crossing
                 mx = p1[0] + 0.7 * (p2[0] - p1[0])
                 my = p1[1] + 0.7 * (p2[1] - p1[1])
-                offset = 0.2 if i == 0 else -0.4 # Shift slightly so it's not ON the line
-            if i==0 and j==0:
-                idx = 1
-            elif i==0 and j==1:
-                idx = 2
-            elif i==1 and j==0:
-                idx = 3
-            else:
-                idx = 4
-            ax.text(mx, my + offset, f'$w_{idx}$', **w_font)
+                offset = -0.4 if i == 0 else 0.25
+            ax.text(mx, my + offset, f'$w_{2 * i + j + 1}$', **w_font)   # w1, w2, w3, w4
 
-    # Layer 2 Connections (Hidden -> Output)
+    # Hidden -> output
     for j, p2 in enumerate(l2_pos):
-        ax.annotate("", xy=l3_pos[0], xytext=p2, arrowprops=edge_props)
-        # Midpoint is fine here as there are only two lines going to one point
-        ax.text((p2[0]+8)/2, (p2[1]+3.5)/2 + 0.3, f'$w_{j+5}$', **w_font)
+        ax.annotate("", xy=l3_pos, xytext=p2,
+                    arrowprops=dict(edge_props, patchA=hid_nodes[j], patchB=out_node))
+        ax.text((p2[0] + l3_pos[0]) / 2, (p2[1] + l3_pos[1]) / 2 + 0.3, f'$w_{j + 5}$', **w_font)
 
-    # 3. Draw Neurons
-    node_font = {'fontsize': 14, 'fontweight': 'bold', 'ha': 'center', 'va': 'center'}
-    for i, (x, y) in enumerate(l1_pos):
-        ax.add_patch(patches.Circle((x, y), 0.4, color=c_input, ec='black', zorder=3))
-        ax.text(x, y, f'$x_{i+1}$', **node_font)
-
-    for i, (x, y) in enumerate(l2_pos):
-        ax.add_patch(patches.Circle((x, y), 0.4, color=c_hidden, ec='black', zorder=3))
-        ax.text(x, y, f'$a_{i+1}$', **node_font)
-
-    ax.add_patch(patches.Circle(l3_pos[0], 0.4, color=c_output, ec='black', zorder=3))
-    ax.text(8, 3.5, '$a_3$', **node_font)
-
-    # 4. Draw Biases
-    bias_props = dict(arrowstyle="-|>", color="gray", lw=1.0, shrinkB=18, mutation_scale=12, ls='--')
+    # 4. Biases
+    bias_props = dict(arrowstyle="-|>", color="gray", lw=1.0, mutation_scale=12, ls='--',
+                      shrinkA=0, shrinkB=0)
     for i, p2 in enumerate(l2_pos):
-        ax.annotate("", xy=p2, xytext=(p2[0]-0.6, p2[1]+1), arrowprops=bias_props)
-        ax.text(p2[0]-0.6, p2[1]+1.1, f'$b_{i+1}$', color='gray', fontweight='bold')
-    
-    ax.annotate("", xy=l3_pos[0], xytext=(7.4, 4.5), arrowprops=bias_props)
+        ax.annotate("", xy=p2, xytext=(p2[0] - 0.6, p2[1] + 1),
+                    arrowprops=dict(bias_props, patchB=hid_nodes[i]))
+        ax.text(p2[0] - 0.6, p2[1] + 1.1, f'$b_{i + 1}$', color='gray', fontweight='bold')
+
+    ax.annotate("", xy=l3_pos, xytext=(7.4, 4.5), arrowprops=dict(bias_props, patchB=out_node))
     ax.text(7.4, 4.6, '$b_3$', color='gray', fontweight='bold')
+
+    return fig
+
 
   
 
@@ -756,3 +755,83 @@ def plot_gd(figsize=(9, 6)):
     # Quarto will automatically collect this plot
     plt.show()
 
+
+def draw_backprop_chain(fig_size=(10, 3.6)):
+    c_block = '#F2DAB3'      # same beige as draw_forward_block_diagram
+    c_loss = '#F8C9C9'
+    c_fwd = 'black'
+    c_bwd = '#3b82f6'        # same blue as draw_nn_backpropagation
+    lw = 1.6
+    fs = 15                  # font size for labels
+    fs_small = 13            # font size for gradient labels
+
+    fig, ax = plt.subplots(figsize=fig_size)
+    ax.set_xlim(0, 15)
+    ax.set_ylim(0.7, 6.3)
+    ax.axis('off')
+
+    def arrow(p_from, p_to, color):
+        ax.annotate("", xy=p_to, xytext=p_from,
+                    arrowprops=dict(arrowstyle="-|>", color=color, lw=lw,
+                                    mutation_scale=18, shrinkA=0, shrinkB=0))
+
+    def box(x0, width, color, label):
+        ax.add_patch(patches.Rectangle((x0, 3.0), width, 1.6, facecolor=color,
+                                       edgecolor='black', linewidth=1.0, zorder=2))
+        ax.text(x0 + width / 2, 3.8, label, ha='center', va='center',
+                fontsize=fs + 3, zorder=3)
+
+    y_fwd, y_bwd = 4.15, 3.45   # heights of the forward / backward arrows
+    blocks = [(2.0, r'$f_1$'), (5.6, r'$f_2$'), (9.2, r'$f_3$')]
+    w = 2.0
+    loss_x, loss_w = 12.8, 1.8
+
+    for x0, lab in blocks:
+        box(x0, w, c_block, lab)
+    box(loss_x, loss_w, c_loss, r'$\mathcal{L}$')
+
+    # --- forward arrows (black), labels above ---
+    fwd = [  # (from_x, to_x, label)
+        (0.9, 2.0, None),
+        (4.0, 5.6, r'$\mathbf{h}_1$'),
+        (7.6, 9.2, r'$\mathbf{h}_2$'),
+        (11.2, 12.8, r'$\hat{\mathbf{y}}$'),
+    ]
+    for xa, xb, lab in fwd:
+        arrow((xa, y_fwd), (xb, y_fwd), c_fwd)
+        if lab:
+            ax.text((xa + xb) / 2, y_fwd + 0.25, lab, ha='center', va='bottom', fontsize=fs)
+    ax.text(0.45, y_fwd, r'$\mathbf{x}$', ha='center', va='center', fontsize=fs)
+
+    # label for the true value y entering the loss
+    arrow((loss_x + loss_w / 2, 5.5), (loss_x + loss_w / 2, 4.6), c_fwd)
+    ax.text(loss_x + loss_w / 2, 5.65, r'$y$', ha='center', va='bottom', fontsize=fs)
+
+    # --- backward arrows (blue), labels below ---
+    bwd = [  # (from_x, to_x, label)
+        (12.8, 11.2, r'$\partial\mathcal{L}/\partial\hat{\mathbf{y}}$'),
+        (9.2, 7.6, r'$\partial\mathcal{L}/\partial\mathbf{h}_2$'),
+        (5.6, 4.0, r'$\partial\mathcal{L}/\partial\mathbf{h}_1$'),
+    ]
+    for xa, xb, lab in bwd:
+        arrow((xa, y_bwd), (xb, y_bwd), c_bwd)
+        ax.text((xa + xb) / 2, y_bwd - 0.2, lab, ha='center', va='top',
+                fontsize=fs_small, color=c_bwd)
+
+    # --- parameters: theta_l flows in (black), gradient flows out (blue) ---
+    for i, (x0, _) in enumerate(blocks, start=1):
+        xc = x0 + w / 2
+        arrow((xc - 0.55, 1.75), (xc - 0.55, 3.0), c_fwd)
+        arrow((xc + 0.55, 3.0), (xc + 0.55, 1.75), c_bwd)
+        ax.text(xc - 0.55, 1.6, rf'$\theta_{i}$', ha='center', va='top', fontsize=fs)
+        ax.text(xc + 0.55, 1.6, rf'$\partial\mathcal{{L}}/\partial\theta_{i}$',
+                ha='left', va='top', fontsize=fs_small, color=c_bwd)
+
+    # --- legend ---
+    ax.text(0.2, 6.2, 'forward', ha='left', va='top', fontsize=fs,
+            fontfamily='monospace', color=c_fwd)
+    ax.text(2.7, 6.2, 'backward', ha='left', va='top', fontsize=fs,
+            fontfamily='monospace', color=c_bwd)
+
+    plt.tight_layout()
+    return fig

@@ -6,8 +6,8 @@ jupyter: python3
 format: 
   revealjs:
     theme: [default] 
-    css: ../style/styles.css            
-    footer: "<span style='margin-left: 3rem;'>[🏠 Home](/index.html) | bioonto-llm</span>"
+    css: ../style/styles.css
+    footer: "<span style='margin-left: 3rem;'>[🏠](/index.html)</span>"
     slide-number: true
     show-slide-number: all
     incremental: false 
@@ -19,12 +19,29 @@ format:
     controls: true
 ---
 
+```{python}
+#| include: false
+import sys
+sys.path.append('utils')
+import matplotlib.pyplot as plt
+from ann_plots import *
+```
+
+
+
 ## Overview: Neural networks
+
+::: {.callout-note icon=false title="Learning objectives"}
+- describe a feed-forward network as a composition of layers
+- derive the backward pass for a dense and a sigmoid layer
+- map each backprop formula to a line of code
+- train a small network to classify handwritten digits
+:::
 
 * [Neural networks: Review](#ann-intro)
 * [ANN Architecture and Backprop](#ann)
-* [Part 3: Gradients](#part-3)
-* [Part 4: Python](#part-4)
+* [Gradient descent](#gradient)
+* [Python implementation](#python)
 
 
 ## ANNs: Overview {#ann-intro}
@@ -35,11 +52,6 @@ format:
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-sys.path.append('utils') 
-from ann_plots import plot_neural_net
-
 plot_neural_net(figsize=(8,5))
 plt.show()
 ```
@@ -48,15 +60,16 @@ plt.show()
 
 ::: {.column width="50%"}
 
-- An artificial neural network (ANN) is a function comprised of neurons, weights, and activation functions
+- An artificial neural network (ANN) is a **function** composed of neurons, weights, and activation functions
 - Neurons are grouped into three main categories of layers:
-    - Input layer
-    - Hidden layers
-    - Output layers
+    - **Input layer**: Raw features of input data
+    - **Hidden layers**: intermediate representations
+    - **Output layer**: The prediction
+- Each edge is a learnable **weight**
 - Naming convention for an N-layer ANN
     - N-1 layers of hidden units
     - 1 output layer
-    - In our example, we have a 3-layer ANN
+    - In this figure, we have 2 hidden layers + output = **3-layer ANN**
 
 :::
 :::
@@ -70,18 +83,12 @@ plt.show()
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-sys.path.append('utils') 
-import matplotlib.pyplot as plt
-from ann_plots import plot_neuron
-
 fig = plot_neuron(figsize=(6, 6))
 plt.show()
 ```
 
-::: {#fig-ann layout-align="center"}
-![](./img/Neuron.png){width=40% fig-align="center"}
+::: {#fig-bio-neuron layout-align="center"}
+![](./img/Neuron.png){width=50% fig-align="center"}
 :::
 ::: {.tiny-credit}
 image credit: <https://en.wikipedia.org/wiki/Biological_neuron_model>
@@ -90,28 +97,29 @@ image credit: <https://en.wikipedia.org/wiki/Biological_neuron_model>
 :::
 ::: {.column width="50%"}
 
-::: {.callout-important  icon=false, title="Neuron"}
-
-    Each neuron receives the weight sum of activations from the previous layer (or the input values) and applies a non-linear activation function
-
+::: {.callout-important  icon=false title="Neuron"}
+Each neuron computes a **weighted sum** of its inputs (the input values, or the activations of the previous layer), adds a **bias**, and applies a **non-linear activation function**.
 :::
 
-- Fully connected layer. In a Feed-Forward Network (FFN), a [Fully Connected layer]{style="color: green; font-weight: bold;"} — also 
-known as a __Dense layer__ or __Linear layer__—is a layer where every input neuron 
-is connected to every output neuron: $$z = \sum_{i=1}^{4} w_i x_i + b$$ {#eq-weighed-sum}
-- A common activation function is the Sigmoid function 
-
 $$
-\sigma(z) = \frac{1}{1 + e^{-z}}
-$$ {#eq-sigmoid-fn}
+\begin{align*}
+z &= \sum_{i=1}^{n} w_i x_i + b = \mathbf{w}^T\mathbf{x} + b
+\\
+h &= \sigma(z)
+\end{align*}
+$$ 
+
+- $w_i$: weights, $b$: bias. Both are **learnable**
+- $z$: the pre-activation, $h$: the activation (hidden layer weights)
+- A layer in which every neuron receives every output of the previous layer is called a **fully connected** (dense, linear) layer
 
 :::
 ::::
 
 ## Activation functions
 
-
-* Activation functions introduce non-linearity.
+* Without a non-linearity, a stack of dense layers collapses into a single linear map: e.g., $\mathbf{W}_2(\mathbf{W}_1\mathbf{x}) = (\mathbf{W}_2\mathbf{W}_1)\mathbf{x}$.
+* Activation functions add non-linearity, enabling ANNs to learn complex patterns
 
 <br/>
 
@@ -120,7 +128,7 @@ $$ {#eq-sigmoid-fn}
 **Sigmoid**
 
 $$ 
-\sigma(x) = \frac{1}{1 + e^{-x}} 
+\sigma(z) = \frac{1}{1 + e^{-z}} 
 $$ {#eq-sigmoid}
 
 :::
@@ -128,7 +136,7 @@ $$ {#eq-sigmoid}
 **ReLU** (Rectified Linear Unit)
 
 $$ 
-f(x) = \max(0, x) 
+f(z) = \max(0, z) 
 $$ {#eq-relu}
 
 :::
@@ -141,88 +149,70 @@ $$ {#eq-relu}
 
 
 ::: {.columns}
-::: {.column width="50%"}
+::: {.column width="55%"}
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-sys.path.append('utils') 
-from ann_plots import plot_maximum_chaos
-
-plot_maximum_chaos()
+plot_maximum_chaos(figsize=(9,4.5))
 plt.show()
 ```
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="45%"}
 
-::: {.callout-note icon=false, title="Approximation"}
-
-    A neural network with at least one hidden layer is a universal approximator in that it can represent any function
-
+::: {.callout-note icon=false title="Approximation"}
+A network with one hidden layer and enough hidden units can approximate any continuous function on a bounded domain to arbitrary accuracy.^[Cybenko G (1989) Approximation by superpositions of a sigmoidal function. _Math Control Signals_ **2**:303–314]
 :::
 
-* The capacity of the ANN increases with more hidden units and more hidden layers^[Cybenko G (1989) Approximation by superpositions of a sigmoidal function. Mathematics of Control, Signals, and Systems (MCSS)]
-
+* The theorem says a good network exists. It does not say we can find it, or how many units are needed
+* In practice, depth often represents complex functions far more efficiently than width
+* Finding the weights is the job of backprop + gradient descent
 :::
 :::
 
-## Forward pass
+## Forward pass: input → prediction → loss
 
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from ann_plots import draw_nn_forward_pass
-
 draw_nn_forward_pass(figsize=(8,5))
-plt.plot()
+plt.show()
 ```
 
-## Backward pass
+## Backward pass: loss → gradients
 
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from ann_plots import draw_nn_backpropagation
-
 draw_nn_backpropagation(figsize=(8,5))
-plt.plot()
+plt.show()
 ```
 
+* Following this, weights are updated to reduce the error
 
 ## Applications in bio-medicine
 
-::: {#fig-ann layout-align="center"}
-![](./img/anns-in-biomed.png){width=75% fig-align="center"}
-
-Weiss R, et al (2022) Applications of Neural Networks in Biomedical Data Analysis. Biomedicines. 10(7):1469.
+::: {layout-align="center"}
+![](./img/anns-in-biomed.png){width=65% fig-align="center"}
 :::
 
-- There is hardly any topic in biomedicine that has not been modeled with ANNs of one type of another
-- Deep understanding of the basics of (simple) feed-forward networks is a prerequisite for understanding more sophisticated models in use today
+::: {.tiny-credit}
+Weiss R, et al (2022) [Applications of Neural Networks in Biomedical Data Analysis. _Biomedicines_ **10**:1469](https://pubmed.ncbi.nlm.nih.gov/35884772/).
+:::
 
-
+- There is hardly any topic in biomedicine that has not been modeled with ANNs of one type or another
 
 
 ## Review: ANN Architecture and Matrix Representation {#ann}
 
 
-::: {.callout-note icon=false, title="Example ANN"}
+::: {.callout-note icon=false title="Example ANN"}
 
-- We will review the architecture of simple ANNs using the classic digit recognition dataset available in `skikit-learn`.
-- [HOMEWORK]{.hw-badge} We will code a simple ANN to work with this.
-- Input: 8x8 grey-scale images of handwritten digits
+- We will review the architecture of simple ANNs using the classic digit recognition dataset available in `scikit-learn`.
+- Input: $8\times 8$ grey-scale images of handwritten digits, **flattened** row by row into a vector of 64 pixel values
 - Classification goal: Determine which of the digits $0,\ldots, 9$ is represented by the image ($10\times 1$ output vector)
+- [HOMEWORK]{.hw-badge} You will code a simple ANN for this classification task.
 
 :::
 
@@ -244,125 +234,103 @@ for i in range(64):
     ax = fig.add_subplot(8, 8, i + 1, xticks=[], yticks=[])
     ax.imshow(digits.images[i], cmap=plt.cm.binary, interpolation='nearest')
     # label the image with the target value
-    ax.text(0, 7, str(digits.target[i]))
+    ax.text(0, 7, str(digits.target[i]), color='red')
 ```
 
 
 ## ANN Architecture
 
+:::: {.columns}
+::: {.column width="40%"}
 - Input: 8x8 grey-scale images of handwritten digits
 - Goal: Determine which digit the image represents ($0,\ldots, 9$)
 - Input layer: $X^{64\times 1}$
 - Output layer: $Y^{10\times 1}$
-- Hidden layer(s): three hidden layers (128, 64, 32 neurons)
+- Hidden layer(s): two hidden layers (128, 64 neurons)
+:::
 
-::: {#fig-ann layout-align="center"}
+::: {.column width="60%"}
+::: {layout-align="center"}
 ![](./img/ann.svg){width=100% fig-align="center"}
 
-ANN Architecture: $64 \to 128 \to 64 \to 32 \to 10$
+ANN Architecture: $64 \to 128 \to 64 \to 10$ (column height $\propto \sqrt{\text{layer size}}$)
 :::
----
+:::
+::::
+
 
 ## Representing the network using matrices
 
-::: {.columns}
-::: {.column width="50%"}
+::::: {.columns}
+:::: {.column width="50%"}
 
-::: {#fig-ann layout-align="center"}
+::: {layout-align="center"}
 ![](./img/ann2.svg){width=100% fig-align="center"}
-
-The activation for the first neuron of the first hidden layer is determined by the weighted sum of each of the values in the input; this weighted sum is passed to the sigmoid activation function
 :::
-::: {style="font-size: 0.65em;"}
-- $w_{j,i}$: the __weights__. They are __learnable__ parameters
-- $z_j$: the __weighted sums__ or the __pre-activations__.
-- $a_j$: the __activations__ and these are passed on as the input to the next layer
+::: {style="font-size: 0.8em;"}
+- $w_{j,i}$: **weight** from input $i$ to neuron $j$ (learnable)
+- $z_j$: the weighted sum, or **pre-activation**
+- $h_j$: the **activation**, passed on to the next layer
+- Row $j$ of $\mathbf{W}$ holds the weights into neuron $j$
 :::
 
-:::
-::: {.column width="50%"}
-
+::::
+:::: {.column width="50%"}
 
 $$
-\begin{bmatrix}
-w_{1,1} & w_{1,2} & \cdots & w_{1,64} \\
- w_{2,1} & w_{2,2} & \cdots & w_{2,64} \\
- & & & \\
- \vdots & \vdots & \ddots & \vdots \\
-  & & & \\
- w_{128,1} & w_{128,2} & \cdots &   w_{128,64} \\
-\end{bmatrix}^{128\times 64}
-\begin{bmatrix}
-x_1\\
-x_2\\
-\vdots \\
-x_{64}
-\end{bmatrix}^{64\times 1}
+\mathbf{z} = \mathbf{W}\mathbf{x} + \mathbf{b}, \qquad \mathbf{h} = \sigma(\mathbf{z})
+$$
+
+::: {style="font-size: 0.85em;"}
+$$
+\underbrace{\begin{bmatrix}
+w_{1,1} & \cdots & w_{1,64} \\
+\vdots & \ddots & \vdots \\
+w_{128,1} & \cdots & w_{128,64}
+\end{bmatrix}}_{128\times 64}
+\underbrace{\begin{bmatrix} x_1\\ \vdots \\ x_{64} \end{bmatrix}}_{64\times 1}
 +
-\begin{bmatrix}
-b_1\\
-b_2\\
-\; \\
-\vdots \\
-\; \\
-b_{128}
-\end{bmatrix}^{128\times 1}
+\underbrace{\begin{bmatrix} b_1\\ \vdots \\ b_{128} \end{bmatrix}}_{128\times 1}
 =
-\begin{bmatrix}
-z_1\\
-z_2\\
-\; \\
-\vdots \\
-\; \\
-z_{128}
-\end{bmatrix}^{128\times 1}
+\underbrace{\begin{bmatrix} z_1\\ \vdots \\ z_{128} \end{bmatrix}}_{128\times 1}
 $$
 
-followed by activation
+followed by the element-wise activation $h_j=\sigma(z_j)$, $j=1,\ldots,128$.
 
 $$
-\begin{bmatrix}
-\sigma(z_1)\\
-\sigma(z_2)\\
-\; \\
-\vdots \\
-\; \\
-\sigma(z_{128})
-\end{bmatrix}^{128\times 1}
-=
-\begin{bmatrix}
-a_1\\
-a_2\\
-\; \\
-\vdots \\
-\; \\
-a_{128}
-\end{bmatrix}^{128\times 1}
+\underbrace{\begin{bmatrix} h_1\\ \vdots \\ h_{128} \end{bmatrix}}_{128\times 1} =
+\underbrace{\begin{bmatrix} \sigma(z_1)\\ \vdots \\ \sigma(z_{128}) \end{bmatrix}}_{128\times 1}
 $$
 
+* By convention, the output of the activation function can be represented as $a_j=\sigma(z_j)$ or $h_j=\sigma(z_j)$
+* In these slides, we will use $h_j=\sigma(z_j)$
 :::
+::::
+:::::
 
-:::
+
+
+
 
 ## The Forward Pass: Step-by-Step
 
 A single ANN [layer]{style="color: green; font-weight: bold;"} implements a three-step cycle:
 
-::: {.columns}
+::::: {.columns}
 
-::: {.column width="45%"}
+:::: {.column width="45%"}
 ### 1. Weighted Sum ($\mathbf{z}$)
 The input vector $\mathbf{x}$ (or activations from the previous layer $\mathbf{a}_{l-1}$) is multiplied by the weight matrix $W$ and the bias vector $\mathbf{b}$ is added.
-$$\mathbf{z} = W \mathbf{x} + \mathbf{b}$$
+$$\mathbf{z} = \mathbf{W} \mathbf{x} + \mathbf{b}$$
 
-### 2. Activation ($\mathbf{a}$)
+### 2. Activation ($\mathbf{h}$)
 A non-linear function $\sigma$ (like Sigmoid or ReLU) is applied element-wise to the pre-activations.
-$$\mathbf{a} = \sigma(\mathbf{z})$$
-:::
+$$\mathbf{h}_i = \sigma(\mathbf{z}_i)$$
+::::
 
-::: {.column width="55%"}
+:::: {.column width="55%"}
 ### 3. Propagation
-The resulting activation vector $\mathbf{a}$ is output and becomes the incoming input vector for the subsequent layer.
+The resulting activation vector $\mathbf{h}$ is output and becomes the incoming input vector for the subsequent layer.
 
 ::: {.callout-tip icon=false title="Summary/Nomenclature"}
 1. **Input Layer**: Receives raw features $\mathbf{x}$ (e.g., genomic features).
@@ -372,44 +340,44 @@ The resulting activation vector $\mathbf{a}$ is output and becomes the incoming 
 3. **Output Layer**: Produces the final prediction $\hat{y}$ (e.g., disease risk probability).
 4. **Forward pass**: Perform this three-step forward pass sequentially through all layers to compute the final output.
 :::
+::::
+
+:::::
+
+## The network as a function
+
+:::: {.columns}
+::: {.column width="50%"}
+**A neuron** is a function of the previous layer's activations:
+$$h_j = \sigma\!\left(\mathbf{w}_j^T\,\mathbf{h}_{l-1} + b_j\right)$$
+With the sigmoid, its value lies between 0 and 1.
 :::
 
+::: {.column width="50%"}
+**The network** is a function $\mathbb{R}^{64}\to\mathbb{R}^{10}$, a composition of layers:
+$$\hat{\mathbf{y}} = f_3\bigl(f_2\bigl(f_1(\mathbf{x})\bigr)\bigr)$$
+where $f_l(\mathbf{h}) = \sigma(\mathbf{W}_l\mathbf{h} + \mathbf{b}_l)$
 :::
+::::
 
-## Neurons as functions
-
-Each neuron in the hidden layers can be thought of as a function that takes the results of all neurons in the previous layer as input and returns a number between 0 and 1.
-
-The entire network can be thought of as a function that takes 64 numbers as input and returns 10 numbers as output.
-
-
+Because the network is a composition of functions, its derivative follows from the **chain rule**. That is the basis of backprop.
 
 ## Backpropagation
 
-::: {.callout-note icon=false, title="Backpropagation"}
-
-Backprop is __the__ core algorithm behind deep learning.
-
-A key idea of neural nets is to decompose computation into a series of layers, which form modular blocks that can be chained together into a computation graph to perform backprop.
-
+::: {.callout-note icon=false title="Backpropagation"}
+Backprop is the **core**  algorithm behind deep learning: an efficient way to compute the gradient of the loss with respect to **every parameter**, using the chain rule.
 :::
 
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from ann_plots import draw_forward_block_diagram
-
-draw_forward_block_diagram(fig_size = (7, 2.5))
-plt.plot()
+draw_backprop_chain(fig_size = (7, 2.5))
+plt.show()
 ```
 
-- The forward operation of each layer computes an output based on its input and the current values of the parameters ($\theta$)
-- The learning problem is to find the parameters that minimize the loss function^[and thereby achieve a desired mapping]. 
-- We do this via [gradient descent]{style="color: green; font-weight: bold;"}. 
+- Each layer is a modular block: its forward operation computes an output from its input and its parameters $\theta$. Blocks chain together into a computation graph
+- Learning means finding the parameters that minimize the loss, which we do with [gradient descent]{style="color: green; font-weight: bold;"}
+- Gradient descent needs $\partial\mathcal{L}/\partial\theta$ for every layer. Backprop obtains these by running the blocks in reverse
 
 
 
@@ -420,12 +388,6 @@ plt.plot()
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from ann_plots import draw_toy_network
-
 draw_toy_network(figsize=(8, 5))
 plt.plot()
 ```
@@ -438,7 +400,7 @@ plt.plot()
 - Our network will have a sigmoid activation function in the hidden layer, no activation in the output layer:
 
 $$
-\sigma(x) = \dfrac{1}{1+e^{-x}}
+\sigma(z) = \dfrac{1}{1+e^{-z}}
 $$
 
 - We will use a squared-error loss function (where $y$ is the label, i.e.,  zero or one) and $a_3$ is the output of the ANN:
@@ -446,20 +408,30 @@ $$
 \mathcal{L} = \dfrac{1}{2}(y-a_3)^2
 $$
 
+- Our network will have a sigmoid activation function in the hidden layer, no activation in the output layer:
+
+$$
+\sigma(z) = \dfrac{1}{1+e^{-z}}
+$$
+
+- We will use a squared-error loss function (where $y$ is the label, i.e.,  zero or one) and $\hat{y}$ is the output of the ANN:
+$$
+\mathcal{L} = \dfrac{1}{2}(y-\hat{y})^2
+$$
+
 ## Backprop by hand
 
-::: {.columns}
+:::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="55%"}
 
 ### Forward pass equations
 
-
 * $z_1 = w_1x_1 + w_3x_2 + b_1$
-* $a_1 = \sigma(z_1)$
+* $h_1 = \sigma(z_1)$
 * $z_2 = w_2x_1 + w_4x_2 + b_2$
-* $a_2 = \sigma(z_2)$
-* $a_3 = w_5a_1 +  w_6a_2 + b_3$
+* $h_2 = \sigma(z_2)$
+* $\hat{y} = w_5h_1 +  w_6h_2 + b_3$
 * $z_1$ and $z_2$ are intermediate values that form the argument to the activation function
 * $x_1$, $x_2$, and $y$ are constants as far as the loss function is concerned. However, the loss will change as a function of the parameters 
 $$
@@ -468,65 +440,27 @@ $$
 
 * Equivalently: $\mathcal{L} = L(\Theta; \mathbf{x};y)$
 
-
 :::
 
-::: {.column width="50%"}
+::: {.column width="45%"}
 
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-sys.path.append('utils') 
-from ann_plots import draw_toy_network
-
 draw_toy_network(figsize=(8, 5))
-plt.plot()
-``` 
+plt.show()
+```
 
-:::
-::::
-
-:::{.mybox}
+:::{.small-text}
 The parameters of the toy neural network are $\theta = (w_1,w_2,w_3,w_4,w_5,w_6,b_1,b_2,b_3)$
-* Goal: find the derivative of the loss function with respect to each of these parameters
+
+Goal: find the derivative of the loss function with respect to each of these parameters
 :::
 
-## Chain rule (review)
-
-- To understand backprop, it is essential to be familiar with the chain rule
-
-:::: {.columns}
-
-::: {.column width="50%"}
-- If $f$ and $g$ are differentiable functions, then
-$$
-\left(f(g(x))\right)^{\prime} = f^{\prime}(g(x))\cdot g^{\prime}(x)
-$$
-
-- The chain rule can also be written as follows. If $y=f(u)$ and $u=g(x)$, then 
-$$
-\dfrac{dy}{dx} =\dfrac{dy}{du}\dfrac{du}{dx}
-$$
-
-:::
-::: {.column width="50%"}
-Examples
-
-- **Power Rule**: $y = (5+3x)^5$
-  - Let $u = 5+3x$, so $y = u^5$
-  - $\frac{dy}{du} = 5u^4$ and $\frac{du}{dx} = 3$
-  $$\frac{dy}{dx} = 5(5+3x)^4 \cdot 3 = 15(5+3x)^4$$
-
-- **Trig**: $y = \sin(4x+3)$
-  - Let $u = 4x+3$, so $y = \sin(u)$
-  - $\frac{dy}{du} = \cos(u)$ and $\frac{du}{dx} = 4$
-  $$\frac{dy}{dx} = \cos(4x+3) \cdot 4 = 4\cos(4x+3)$$
- 
 
 :::
 ::::
+
 
 ## Calculating partial derivatives
 
@@ -544,9 +478,6 @@ $$
 
 ## Derivative of the loss function
 
-:::
-
-:::
 
 - In our toy network, $a_3$ was the output of the network (i.e., the *prediction*).
 - $y$ is the true value
@@ -1251,50 +1182,7 @@ $$ {#eq-partial-deriv-weights}
 
 
 
-## Gradient descent
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 1: Review](#part-1)
-* What is an ANN?
-* Forward vs. Reverse pass
-* Biomed applications
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Architecture and Backprop](#part-2)
-* Chain rule & Jacobians
-* Vectorized derivatives
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" }
-### [Part 3: Gradients](#part-3)
-* Loss functions (MSE)
-* Momentum & Adam
-* Learning rates
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: Python](#part-4)
-* Full implementation of ANN
-* Classify handwritten digits
-:::
-
-::::
-
-
-# Gradient descent {#part-3}
+# Gradient descent {#gradient}
 
 
 - See the [previous lecture]{style="color: green; font-weight: bold;"} for an introduction to gradient descent in the setting of logistic regression.
@@ -1353,55 +1241,7 @@ $$
 
 
 
-## Python implementation
-
-::: {.callout-note title="Game plan"}
-This lecture covers a review of artificial neural networks and backpropagation as a prerequisite for understanding transformers and LLMs.
-:::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 1: Review](#part-1)
-* What is an ANN?
-* Forward vs. Reverse pass
-* Biomed applications
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Architecture and Backprop](#part-2)
-* Chain rule & Jacobians
-* Vectorized derivatives
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 3: Gradients](#part-3)
-* Loss functions (MSE)
-* Momentum & Adam
-* Learning rates
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%" }
-### [Part 4: Python](#part-4)
-* Full implementation of ANN
-* Classify handwritten digits
-:::
-
-::::
-
-
-
-## FFN in Python: Dimensions and orientations {#part-4}
+## FFN in Python: Dimensions and orientations {#python}
 
 - Most FFN software frameworks arrange data in the transposed form.
 - In theoretical notation (as in the previous slides of this lecture), we generally use column vectors:
