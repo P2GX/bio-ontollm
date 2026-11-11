@@ -899,49 +899,7 @@ use of the MCMC algorithm to sample from the posterior distribution.
   single optimum solution. A single MAP solution does not account for
   this.
 
-## Monte Carlo Markov Chain Algorithm
 
-* A different approach is to calculate the marginal probabilities for
-each term being in the `active` state. 
-* In general, if a joint
-probability is defined over two random variables $X$ and $Y$ as
-$P(X,Y)=P(X|Y)P(Y)$, then the marginal
-probability for $X=x'$ is calculated by summing or integrating over all
-possible values of $Y$:
-
-$$
- P(X=x')=\sum_{i} P(X=x',Y=y_i)
-$$
-
-  or
-
-$$
-P(X=x')=\int_Y P(X=x',Y) \mathrm{d}Y
-$$ 
-
-## MCMC
-
-* It is often difficult or
-impossible to derive marginal probabilities for complicated
-probability distributions because there are simply too many possible
-configurations of the variables to be able to calculate each one, as
-would be required for an analytical solution. 
-* For this reason, a
-number of estimation algorithms have been developed that in essence
-sample from the distribution of the posterior probability and take the
-proportion of samples in which $X$ takes on some specific value
-$x'$ as an estimate of the posterior probability of $x'$  
-
-::: {.callout-note icon=false, title="MCMC"}
-
- One of the best known and most effective algorithms for this purpose
-is the Metropolis-Hasting algorithm, which is a Markov chain Monte
-Carlo (MCMC) method. The
-MCMC algorithm performs a random walk over the term and parameter
-configurations, which asymptotically provides a random sampler
-according to the target distribution $P(T|O)$.
-
-:::
 
 ## MCMC
 
@@ -1093,3 +1051,4 @@ $$
 - Bauer S, et al. (2010) [GOing Bayesian: model-based gene set analysis of genome-scale data. *Nucleic Acids Res* **38**:3523-32](https://pubmed.ncbi.nlm.nih.gov/20172960/) 
 - van Ravenzwaaij D, et al. (2018) [A simple introduction to Markov Chain Monte-Carlo sampling. *Psychon Bull Rev* **25**:143-154](https://pubmed.ncbi.nlm.nih.gov/26968853/)
 - Chandra, R and Simmons J (2024) [Bayesian Neural Networks via MCMC: A Python-Based Tutorial. *IEEE Access* **12**:70519–70549](http://dx.doi.org/10.1109/ACCESS.2024.3401234)
+- Kruschke, J. K. (2011). [Doing Bayesian data analysis: A tutorial with R and BUGS. Elsevier Academic Press](https://nyu-cdsc.github.io/learningr/assets/kruschke_bayesian_in_R.pdf)
