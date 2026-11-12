@@ -604,11 +604,6 @@ $$
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from ann_plots import draw_toy_network
 draw_toy_network()
 plt.show()
 ``` 
@@ -1043,11 +1038,6 @@ plt.show()
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from ann_plots import plot_gd
 plot_gd(figsize=(8, 5))
 plt.show()
 ``` 
@@ -1068,7 +1058,7 @@ $$
 
 ## Gradient descent (GD): Momentum
 
-** See [previous lecture]{style="color: green; font-weight: bold;"} for introduction to GD
+* See [previous lecture]{style="color: green; font-weight: bold;"} for introduction to GD
 * Plain GD can be slow on flat regions and can oscillate across narrow valleys. __Momentum__ adds inertia to the update: each step keeps part of the direction of the previous steps (and may carry the parameters past shallow local minima)
 
 * Recall that the standard update step is
@@ -1123,15 +1113,13 @@ To go from the column-vector theory to the row-vector implementation (as in PyTo
 
 In practice, we rarely compute one sample at a time. We use **batches** to leverage GPU parallelism.
 
-### 1. The "Flat" Array Notation `(n,)`
-In NumPy/scikit-learn, a 1D array has the shape `(n,)`.
+**1. The "flat" array notation `(n,)`.** In NumPy/scikit-learn, a 1D array has the shape `(n,)`.
 
 * It is neither a row nor a column matrix.
 * **However**, when you use `dot()` or `@`, Python treats it as a **row vector** by default:
   * $\text{Shape } (n,) \times \text{Shape } (n, m) \rightarrow \text{Shape } (m,)$ is like $\mathbf{x}^{1\times n}\mathbf{W}^{n\times m} \rightarrow \mathbf{y}^{1\times m}$
 
-### 2. Batch Representation (The Design Matrix)
-When we move to a batch of $k$ samples, we stack our row vectors $\mathbf{x}^T$ into a **Design Matrix** $\mathbf{X}$.
+**2. Batch representation (the design matrix).** For a batch of $k$ samples, we stack the row vectors $\mathbf{x}^T$ into a **design matrix** $\mathbf{X}$:
 
 $$
 \underbrace{\mathbf{Y}}_{k \times m} = \underbrace{\mathbf{X}}_{k \times n} \underbrace{\mathbf{W}^T}_{n \times m} + \underbrace{\mathbf{b}^T}_{1 \times m}
@@ -1226,10 +1214,8 @@ import numpy.typing as npt
 from sklearn import datasets
 import typing
 import matplotlib.pyplot as plt
-import numpy as np
-from sklearn import datasets
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
+
 
 digits = datasets.load_digits()
 first_digit = digits.data[0] # type: ignore
@@ -1392,11 +1378,8 @@ We obtain
     return result
 ```
 
-- `input_data` has shape `(1, 64)`: a 2-D array with one row and 64 columns, i.e., one example written as a row vector
-- `input_data.shape[0]` is the number of examples (1 here), so the loop runs once. `output = input_data[i]` takes the first row, which is a 1-D array of shape `(64,)`
-- A 1-D array `(n,)` is neither a row nor a column; `np.dot` treats it like a row vector
-- We iterate through the layers.
-- For instance, the first layer was created by `FullyConnectedLayer(64, 128)`
+- `input_data` has shape `(1, 64)`: one example as a row. `input_data.shape[0]` is the number of examples (1 here), so `output = input_data[i]` is the first row, a 1-D array of shape `(64,)` (`np.dot` treats it like a row vector)
+- The first layer was created by `FullyConnectedLayer(64, 128)`. Its `forward` is:
 
 ```{python}
 #| fig-align: center
@@ -1407,11 +1390,9 @@ def forward(self, input_data: npt.NDArray[np.float64]) -> npt.NDArray[np.float64
     return np.dot(self.input, self.weights) + self.bias
 ```
 
-- `self.weights` is a matrix with shape `(64, 128)` and  and `self.bias` has shape `(1,128)` (and the `input_data` argument to this function was the output from the calling code, i.e., `(64,)`, a row vector)
-- The call to `np.dot` returns a vector with shape `(1,128)`.
-
+- `self.weights` is $\mathbf{W}^T$ with shape `(64, 128)` and `self.bias` has shape `(1,128)`. `np.dot` returns `(128,)`, and adding the bias broadcasts the result to `(1,128)`:
 $$
-\mathbf{z}^{1\times 128} = \mathbf{x}^{1,64} W^{64, 128}  + \mathbf{b}^{1\times 128}
+\underbrace{\mathbf{z}^T}_{1\times 128} = \underbrace{\mathbf{h}^T}_{1\times 64}\,\underbrace{\mathbf{W}^T}_{64\times 128} + \underbrace{\mathbf{b}^T}_{1\times 128}
 $$
 
 ## Predict (Activation layer)
@@ -1450,7 +1431,8 @@ def forward(self, input_data: npt.NDArray[np.float64]) -> npt.NDArray[np.float64
 
 - In the above, we sent just a single example to the `predict` function. 
 - Therefore, the function returned a list with a single `(1,10)` row vector of scores for the digits $0,\ldots, 9$. 
-- The largest score gives the predicted digit- In the following code block, we evaluate all test examples together
+- The largest score gives the predicted digit
+- In the following code block, we evaluate all test examples together
 
 ```{python}
 #| fig-align: center

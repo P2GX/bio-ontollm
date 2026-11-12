@@ -127,7 +127,7 @@ def plot_neuron(figsize=(6, 6)):
                 arrowprops=dict(arrowstyle="->", lw=2))
     ax.annotate('', xy=out_node, xytext=(act_node[0]+0.5, act_node[1]), 
                 arrowprops=dict(arrowstyle="->", lw=2, color='red'))
-    ax.text(9.2, 2.5, 'Output ($y$)', fontsize=12, va='center')
+    ax.text(9.2, 2.5, '$h$', fontsize=12, va='center')
 
     # Formatting
     ax.set_xlim(0, 10)
