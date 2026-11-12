@@ -606,36 +606,36 @@ def draw_toy_network(figsize=(8, 5)):
   
 
 
-def plot_3d_spiral(figsize=(8, 6)):
-    # Explicitly creating the figure and axis with 3D projection
+def plot_3d_spiral(figsize=(8, 6),t0=None):
     fig = plt.figure(figsize=figsize)
     ax = fig.add_subplot(111, projection='3d')
-
-    # Define the parameter t
+    # time series
     t = np.linspace(0, 10 * np.pi, 500)
-
-    # Define the components of f(t)
+    # components of f(t)
     x = t * np.cos(t)
     y = t * np.sin(t)
     z = t
 
-    # Use .plot and .scatter (they support 3D automatically on a 3D axis)
-    ax.plot(x, y, z, color='gray', alpha=0.5, label='Path')
-    
-    # Color the points by t to show the flow of the function
+    ax.plot(x, y, z, color='gray', alpha=0.5)
     scatter = ax.scatter(x, y, z, c=t, cmap='viridis', s=10) # type: ignore
 
-    # Labeling using LaTeX
+    if t0 is not None:
+        # point on the curve and its tangent vector f'(t0)
+        p = np.array([t0 * np.cos(t0), t0 * np.sin(t0), t0])
+        v = np.array([np.cos(t0) - t0 * np.sin(t0), np.sin(t0) + t0 * np.cos(t0), 1.0])
+        ax.scatter(*p, color='red', s=60, depthshade=False)
+        ax.quiver(*p, *v, length=14, normalize=True, color='red', linewidth=3,
+                  arrow_length_ratio=0.25)
+        tip = p + 14 * v / np.linalg.norm(v)
+        ax.text(*(tip + np.array([0, 0, 2.5])), r'$\partial\mathbf{f}/\partial t$',
+                color='red', fontsize=18, ha='center')
 
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-
-    # Style adjustments for clear slides
+    ax.set_xlabel(r'$f_1(t)$')
+    ax.set_ylabel(r'$f_2(t)$')
+    ax.set_zlabel(r'$f_3(t)$')
     ax.grid(True, linestyle='--', alpha=0.6)
-    
-    plt.colorbar(scatter, label='Time ($t$)', pad=0.1, shrink=0.5)
-
+    plt.colorbar(scatter, label='$t$', pad=0.1, shrink=0.5)
+    return fig
 
 
 

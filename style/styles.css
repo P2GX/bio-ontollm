@@ -311,3 +311,8 @@ table.small-table td.greycell {
   color: #cc5500;      /* dark orange */
   font-weight: bold;
 }
+
+/* keep the aspect ratio when an image is shrunk to fit its column */
+.reveal .slides img {
+  height: auto;
+}
