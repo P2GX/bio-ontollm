@@ -979,6 +979,10 @@ background-color: #f3f7fe;
 .emph {
 color: #cc5500; 
 font-weight: bold;
+}
+
+.reveal .slides img {
+height: auto;
 }</style>
   <style type="text/css">.reveal
 div.sourceCode
@@ -1537,7 +1541,7 @@ Peter N Robinson
 </div>
 </div>
 </div>
-<div id="32c7fc64" class="cell" data-execution_count="1">
+<div id="7e11c37d" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1670,7 +1674,7 @@ p(x) = \frac{1}{1+e^{-(\beta_0 + \beta_1x)}}
 <li>50% pass probability at <span class="math inline">\(x=-\beta_0/\beta_1\approx 2.7\)</span> hours</li>
 </ul>
 </div><div class="column" style="width:60%;">
-<div id="0c92c896" class="cell" data-execution_count="2">
+<div id="d1ed5a6e" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1878,7 +1882,7 @@ z_i = \sum_{j=1}^n w_jx_{i,j} + b = \mathbf{w}\cdot \mathbf{x}_i + b
 <li><span class="math inline">\(\sigma(z) &gt; 0.5 \Leftrightarrow z &gt; 0\)</span>: whenever <span class="math inline">\(z = \mathbf{w}\cdot \mathbf{x} + b\)</span> is positive, the model predicts class 1</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div id="74cfc091" class="cell" data-fig-height="1.5" data-fig-width="2" data-execution_count="3">
+<div id="c3a5f4d7" class="cell" data-fig-height="1.5" data-fig-width="2" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2175,7 +2179,7 @@ P(y\mid\mathbf{x}) = \hat{y}^{\,y}(1-\hat{y})^{1-y}
 \]</span></p></li>
 <li><p>If <span class="math inline">\(y_i=1\)</span>, then as <span class="math inline">\(\sigma(z) \rightarrow 1\)</span>, the loss <span class="math inline">\(\mathcal{L}(\sigma(z), y) \rightarrow 0\)</span>.</p></li>
 </ul>
-<div id="e09802aa" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="4">
+<div id="2137e088" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2294,7 +2298,7 @@ b &amp;\leftarrow b - \eta\,\frac{\partial J}{\partial b}
 </section>
 <section id="gradient-descent" class="slide level2">
 <h2>Gradient descent</h2>
-<div id="517c6134" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="5">
+<div id="f46ccfa0" class="cell" data-fig-height="5" data-fig-width="6" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2622,7 +2626,7 @@ b &amp;\leftarrow b - \eta\,\frac{\partial J}{\partial b}
 <section>
 <section id="gradient-descent-1" class="title-slide slide level1 center">
 <h1>Gradient descent</h1>
-<div id="16f1ed2e" class="cell" data-execution_count="6">
+<div id="d9bf9e0f" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2664,7 +2668,7 @@ x \leftarrow x-\eta (14x +3 )
 <aside><ol class="aside-footnotes"><li id="fn1"><p><span class="math inline">\(\eta\)</span>=“eta”</p></li></ol></aside></section>
 <section id="gradient-descent-example" class="slide level2">
 <h2>Gradient descent example</h2>
-<div id="c1310a74" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="7">
+<div id="b692a21f" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-label="1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a aria-label="2"></a><span class="im">import</span> matplotlib.pylab <span class="im">as</span> plt</span>
 <span id="cb1-3"><a aria-label="3"></a></span>
@@ -2701,7 +2705,7 @@ x \leftarrow x-\eta (14x +3 )
 </section>
 <section id="gradient-descent-overshoot" class="slide level2">
 <h2>Gradient descent: Overshoot</h2>
-<div id="f54f053a" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="8">
+<div id="69c376e1" class="cell" data-fig-height="3" data-fig-width="3" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

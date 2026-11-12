@@ -978,6 +978,10 @@ background-color: #f3f7fe;
 .emph {
 color: #cc5500; 
 font-weight: bold;
+}
+
+.reveal .slides img {
+height: auto;
 }</style>
   <style type="text/css">.reveal
 div.sourceCode
@@ -1631,7 +1635,7 @@ Peter N Robinson
 <h2>RNN types</h2>
 <div class="columns">
 <div class="column" style="width:65%;">
-<div id="3e869b8a" class="cell" data-execution_count="1">
+<div id="c7d158b7" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1724,7 +1728,7 @@ where
 <ul>
 <li>RNNs can be portrayed as (equivalent) folded or unfolded networks</li>
 </ul>
-<div id="bc71fc67" class="cell" data-execution_count="2">
+<div id="db601c96" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1758,7 +1762,7 @@ where
 \tag{3}\]</span></span></p>
 <p><br></p>
 </div><div class="column" style="width:55%;">
-<div id="327cfd29" class="cell" data-execution_count="3">
+<div id="843835b6" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2122,7 +2126,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 <li>The point of sentiment analysis is to perform binary classification about the opinion expressed by a certain text</li>
 <li>The classic example is to predict whether a movie review is positive or negative</li>
 </ul>
-<div id="fecd36d6" class="cell" data-execution_count="4">
+<div id="567376ba" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2134,7 +2138,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="sentiment-analysis-embedding" class="slide level2">
 <h2>Sentiment analysis: embedding</h2>
-<div id="b3510784" class="cell" data-execution_count="5">
+<div id="a41856b6" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2146,7 +2150,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="sentiment-analysis-unrolling-the-rnn" class="slide level2">
 <h2>Sentiment analysis: Unrolling the RNN</h2>
-<div id="690a6fce" class="cell" data-execution_count="6">
+<div id="5d7f1b69" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2291,7 +2295,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="loss" class="slide level2">
 <h2>Loss</h2>
-<div id="dfbe8cfb" class="cell" data-execution_count="7">
+<div id="bf85f48c" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -2396,7 +2400,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="lstms-vs-rnns" class="slide level2">
 <h2>LSTMS vs RNNs</h2>
-<div id="2f9b3475" class="cell" data-execution_count="8">
+<div id="23cbd047" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2412,7 +2416,7 @@ o_t &amp;= \mathbf{V}a_t + c &amp; \bullet \text{calculate output} \\
 </section>
 <section id="lstms-vs-rnns-1" class="slide level2">
 <h2>LSTMS vs RNNs</h2>
-<div id="4925351f" class="cell" data-execution_count="9">
+<div id="3490baf4" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2632,7 +2636,7 @@ P(\mathrm{Denmark}\mid \text{Something is rotten in the state of})
 <h2>RNN Language model equations</h2>
 <div class="columns">
 <div class="column" style="width:45%;">
-<div id="52f14da8" class="cell" data-execution_count="10">
+<div id="686abcf5" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2693,7 +2697,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <h2>Training</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="d623affb" class="cell" data-execution_count="11">
+<div id="9a1bc3ca" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2722,7 +2726,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <h2>Generative RNNs</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="0332876e" class="cell" data-execution_count="12">
+<div id="fe83afb8" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2769,7 +2773,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <li>machine translation</li>
 </ul></li>
 </ul>
-<div id="c2b3aea5" class="cell" data-execution_count="13">
+<div id="bbd70d06" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2807,7 +2811,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 
 <section id="the-encoder-decoder-model-2" class="title-slide slide level1 center">
 <h1>The Encoder-Decoder Model</h1>
-<div id="5ac36af1" class="cell" data-execution_count="14">
+<div id="f43f4518" class="cell" data-execution_count="14">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2887,7 +2891,7 @@ f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^de) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{
 <ul>
 <li><span class="math inline">\(\mathbf{c}_i\)</span> thus takes information from the entire encoder into account and is dynamically updated at each step of decoding</li>
 </ul>
-<div id="e27b044c" class="cell" data-execution_count="15">
+<div id="3432eab0" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
