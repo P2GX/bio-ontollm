@@ -557,7 +557,7 @@
     "href": "lectures/rag.html#rag",
     "title": "Approaches to biomedical knowledge",
     "section": "Retrieval augmented generation (RAG)",
-    "text": "Retrieval augmented generation (RAG)\n\nRAG was primarily designed to address three potential issues of LLMs\nLLMs are trained on massive amounts of broad, general data.\n\nThe focus of LLMs on huge data corpora may lead to inferior performance in specialized tasks\nThis restricts their ability to incorporate new data after training\n\nThe cost and effort involved in training an LLM means they cannot be updated frequently, and may therefore struggle with very recent data/information\n\nLLMs may generate convincing yet inaccurate responses (“hallucination”)\n\nWe will see later on that LLMs may also struggle with named entity recognition (NER) of ontology terms. RAG-like approaches can be helpful here as well"
+    "text": "Retrieval augmented generation (RAG)\n\nRAG was primarily designed to address three potential issues of LLMs\n\nSpecialization gap: Broad training data limits depth on specialized tasks\nKnowledge cutoff: Knowledge frozen at training time\nHallucination: Fabricates specifics (citations, quotes, stats, facts, identifiers), especially with scant training data\n\nLLMs may also struggle with named entity recognition (NER) of ontology terms. RAG-like approaches can be helpful here as well"
   },
   {
     "objectID": "lectures/rag.html#rag-basic-idea",
@@ -1793,28 +1793,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.82%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.90%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.12%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.20%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.10%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.18%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.44%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.08%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -4390,14 +4390,14 @@
     "href": "lectures/lstm.html#overview-rnns-and-lstms",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview: RNNs and LSTMs",
-    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Python\n\nSentiment analysis\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: RNNs as Language Models\n\nAttention mechanism\nEncoder-decoder RNNs"
+    "text": "Overview: RNNs and LSTMs\n\nbiomedical data often are arranged as sequences: clinical notes, visit histories, ICU time series, DNA and protein sequences.\n\n\nRNNs: the hidden state, unfolding, backpropagation through time, vanishing gradients\nPython: an RNN sentiment classifier in PyTorch\nLSTMs: gates and the cell state\nRNN language models: next-word prediction, encoder-decoder, attention"
   },
   {
-    "objectID": "lectures/lstm.html#part-1",
-    "href": "lectures/lstm.html#part-1",
+    "objectID": "lectures/lstm.html#rnns",
+    "href": "lectures/lstm.html#rnns",
     "title": "Approaches to biomedical knowledge",
     "section": "RNNs: Modelling sequences",
-    "text": "RNNs: Modelling sequences\n\n\n\n\n\n\nSequences\n\n\n\na sentence (sequences of works)\na time series (sequence of numbers)\na patient’s visit history (Sequence of observations and measures at different times)\n\n\n\n\n\nSequences can have wildly different lengths from one example to the next.\nIt is not straightforward to model sequences with standard ANNs, which take a fixed-dimensional input vector"
+    "text": "RNNs: Modelling sequences\n\n\n\nSequences\n\n\n\na sentence (sequences of words)\na time series (sequence of numbers)\na patient’s visit history (Sequence of observations and measures at different times)\n\n\n\n\n\nSequences can have wildly different lengths from one example to the next.\nIt is not straightforward to model sequences with standard ANNs, which take a fixed-dimensional input vector"
   },
   {
     "objectID": "lectures/lstm.html#rnn-basic-idea",
@@ -4589,15 +4589,8 @@
     "text": "What tanh? (2)\n\nWe can also show that \\(\\tanh\\)’s derivative has its maximum at 1.0 (when the input is 0).\nTherefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time\n\nAdditionally\n\nSigmoid restricts outputs strictly between \\(0\\) and \\(1\\). Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign (either all positive or all negative). This forces the gradient descent updates to violently “zig-zag” during optimization, slowing down convergence.\n\\(\\tanh\\) outputs range from \\(-1\\) to \\(1\\). Because it is zero-centered, the average output is close to zero. This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.\nA number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs"
   },
   {
-    "objectID": "lectures/lstm.html#overview-rnns-and-lstms-1",
-    "href": "lectures/lstm.html#overview-rnns-and-lstms-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Overview: RNNs and LSTMs",
-    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Python\n\nSentiment analysis\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: RNNs as Language Models\n\nAttention mechanism\nEncoder-decoder RNNs"
-  },
-  {
-    "objectID": "lectures/lstm.html#part-2",
-    "href": "lectures/lstm.html#part-2",
+    "objectID": "lectures/lstm.html#python",
+    "href": "lectures/lstm.html#python",
     "title": "Approaches to biomedical knowledge",
     "section": "Python: RNN-based sentiment analysis",
     "text": "Python: RNN-based sentiment analysis\n\nThe point of sentiment analysis is to perform binary classification about the opinion expressed by a certain text\nThe classic example is to predict whether a movie review is positive or negative"
@@ -4673,15 +4666,8 @@
     "text": "Model Evaluation & Accuracy\n\nEvaluation Mode (model.eval()): Disables layers like Dropout during testing so evaluation is deterministic.\nNo-Gradient Context (torch.no_grad()): Saves memory and speeds up computation by disabling gradient tracking since we aren’t updating weights.\nBatch Accuracy Calculation: Compares predicted classes against ground-truth labels to compute overall test set accuracy.\n\nmodel.eval()\ncorrect = 0\ntotal = 0\nwith torch.no_grad():\n    for texts, labels, lengths in test_loader:\n        texts = texts.to(device)\n        labels = labels.to(device)\n        outputs = model(texts, lengths)\n        _, predicted = torch.max(outputs.data, 1)\n        total += labels.size(0)\n        correct += (predicted == labels).sum().item()\n\naccuracy = 100 * correct / total\nprint(f'Accuracy: {accuracy:.2f}%')\n\nAccuracy: 73.94% (as compared to the 50% we would have expected by chance, but much worse than the training accuracy of 97.85% - thus, we are overfitting! In the practical, we will discuss some methods for reducing overfitting)"
   },
   {
-    "objectID": "lectures/lstm.html#overview-rnns-and-lstms-2",
-    "href": "lectures/lstm.html#overview-rnns-and-lstms-2",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Overview: RNNs and LSTMs",
-    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Python\n\nSentiment analysis\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: RNNs as Language Models\n\nAttention mechanism\nEncoder-decoder RNNs"
-  },
-  {
-    "objectID": "lectures/lstm.html#part-3",
-    "href": "lectures/lstm.html#part-3",
+    "objectID": "lectures/lstm.html#lstm",
+    "href": "lectures/lstm.html#lstm",
     "title": "Approaches to biomedical knowledge",
     "section": "Long Short-Term Memory Networks (LSTMs)",
     "text": "Long Short-Term Memory Networks (LSTMs)\n\nThe key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network.\nA challenge for RNNs is to keep track of information from distant parts of the sentence:\n\n\nThe rates the phone company was increasing were already expensive\n\n\nIt is easy to relate “was” to “company” because “was” comes immediately after “company”\nIt is harder to relate “were” to “rates” because there are five other intervening words\nThe hidden state of the RNN is being asked to perform two things: inform the current output and to update and carry forward the information needed for future outputs\nLSTMS attempt to address the challenge by adding a context layer to the existing hidden layer and by introducing gates to control flow of information\n\n\nHochreiter, S. and J. Schmidhuber. 1997. Long short-term memory. Neural Computation, 9(8):1735–1780."
@@ -4743,22 +4729,15 @@
     "text": "Output gate\nNext, we generate the mask for the add gate to select the information to add to the current context.\n\n\n \n\n\n\n\n\n\n\nThe output gate decides what information is required for the current hidden state\n\n\\[\n\\begin{align*}\n\\mathbf{o}_t &= \\sigma(\\mathbf{U}\\mathbf{o}_{t-1} + \\mathbf{W}_o\\mathbf{x}_{t})   \\\\\n\\mathbf{h}_t &= \\mathbf{o}_t \\odot \\tanh(\\mathbf{c}_t)\n\\end{align*}\n\\tag{7}\\]"
   },
   {
-    "objectID": "lectures/lstm.html#lstm",
-    "href": "lectures/lstm.html#lstm",
+    "objectID": "lectures/lstm.html#lstm-1",
+    "href": "lectures/lstm.html#lstm-1",
     "title": "Approaches to biomedical knowledge",
     "section": "LSTM",
     "text": "LSTM\n\nIn Summary\n\nan LSTM accepts as input the context layer (\\(\\mathbf{c}_{t-1}\\)) and hidden layer (\\(\\mathbf{h}_{t-1}\\)) from the previous time step, along with the current input vector (\\(\\mathbf{x}_{t}\\)).\nIt generates \\(\\mathbf{c}_{t}\\) and \\(\\mathbf{h}_{t}\\) as output that is passed to the next step\nThe hidden state \\(\\mathbf{h}_{t}\\) is used to generate the output of the network similar to an RNN\nLSTMs can be used as drop-in replacements for RNNs in many contexts and often perform better"
   },
   {
-    "objectID": "lectures/lstm.html#overview-rnns-and-lstms-3",
-    "href": "lectures/lstm.html#overview-rnns-and-lstms-3",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Overview: RNNs and LSTMs",
-    "text": "Overview: RNNs and LSTMs\n\n\n\n\n\n\nGame plan\n\n\nRecurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data (like clinical notes, time-series measurements, or genetic sequences).\n\n\n\n\n\nPart 1: RNNs\n\nWhat is an RNN?\nForward vs. Reverse pass\nBiomed applications\n\n\n\n\nPart 2: Python\n\nSentiment analysis\n\n\n\n\nPart 3: LSTMs\n\nLoss functions (MSE)\nMomentum & Adam\nLearning rates\n\n\n\n\nPart 4: RNNs as Language Models\n\nAttention mechanism\nEncoder-decoder RNNs"
-  },
-  {
-    "objectID": "lectures/lstm.html#part-4",
-    "href": "lectures/lstm.html#part-4",
+    "objectID": "lectures/lstm.html#rnn-lm",
+    "href": "lectures/lstm.html#rnn-lm",
     "title": "Approaches to biomedical knowledge",
     "section": "RNNs as Language Models",
     "text": "RNNs as Language Models\nthat language models predict the next word in a sequence given some preceding context. For example, if the preceding context is “Something is rotten in the state of” and we want to know how likely the next word is “Denmark”1 we would compute:\n\\[\nP(\\mathrm{Denmark}\\mid \\text{Something is rotten in the state of})\n\\]\n\nThat is, we are computing the probability of the word “Denmark” given the previous 7 words.\nRNN language models process the input sequence one word at a time, attempting to predict the next word from the current word (\\(x_t\\)) and the previous hidden state (\\(h_{t-1}\\)).\n\nIn Hamlet, the palace guard Marcellus, says this right after Hamlet has just seen his father’s ghost for the first time."
