@@ -212,12 +212,10 @@ Here is a good example of the influence that prompt engineering can have on resu
 ## Retrieval augmented generation (RAG) {#rag}
 
 - RAG was primarily designed to address three potential issues of LLMs
-- LLMs are trained on massive amounts of broad, general data.
-    - The focus of LLMs on huge data corpora may lead to inferior performance in specialized tasks
-    - This restricts their ability to incorporate new data after training
-        - The cost and effort involved in training an LLM means they cannot be updated frequently, and may therefore struggle with very recent data/information
-    - LLMs may generate convincing yet inaccurate responses ("hallucination")
-- We will see later on that LLMs may also struggle with named entity recognition (NER) of ontology terms. RAG-like approaches can be helpful here as well 
+    - **Specialization gap**: Broad training data limits depth on specialized tasks
+    - **Knowledge cutoff**: Knowledge frozen at training time
+    - **Hallucination**: Fabricates specifics (citations, quotes, stats, facts, identifiers), especially with scant training data
+- LLMs may also struggle with named entity recognition (NER) of ontology terms. RAG-like approaches can be helpful here as well 
 
 ## RAG: Basic idea
 

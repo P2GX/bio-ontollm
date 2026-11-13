@@ -22,57 +22,23 @@ format:
 
 ## Overview: RNNs and LSTMs
 
-::: {.callout-note title="Game plan"}
-Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data 
-(like clinical notes, time-series measurements, or genetic sequences).
+::: {.mybox}
+biomedical data often are arranged as sequences: clinical notes, visit histories, ICU time series, DNA and protein sequences.
 :::
 
-:::: {.columns}
+1. [**RNNs**](#rnns): the hidden state, unfolding, backpropagation through time, vanishing gradients
+2. [**Python**](#python): an RNN sentiment classifier in PyTorch
+3. [**LSTMs**](#lstm): gates and the cell state
+4. [**RNN language models**](#rnn-lm): next-word prediction, encoder-decoder, attention
 
-::: {.column width="48%"}
-### [Part 1: RNNs](#part-1)
-* What is an RNN?
-* Forward vs. Reverse pass
-* Biomed applications
-:::
 
-::: {.column width="4%"}
-<br>
-:::
 
-::: {.column width="48%" .dimmed}
-### [Part 2: Python](#part-2)
-* Sentiment analysis
-:::
 
-::::
+## RNNs: Modelling sequences {#rnns}
 
-:::: {.columns}
+::: {.callout-important  icon=false title="Sequences"}
 
-::: {.column width="48%" .dimmed}
-### [Part 3: LSTMs](#part-3)
-* Loss functions (MSE)
-* Momentum & Adam
-* Learning rates
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: RNNs as Language Models](#part-4)
-* Attention mechanism
-* Encoder-decoder RNNs
-:::
-
-::::
-
-## RNNs: Modelling sequences {#part-1}
-
-::: {.callout-important  icon=false, title="Sequences"}
-
-- a sentence (sequences of works)
+- a sentence (sequences of words)
 - a time series (sequence of numbers)
 - a patient's visit history (Sequence of observations and measures at different times) 
 
@@ -612,57 +578,9 @@ This allows the weights to be updated in both positive and negative directions s
 - A number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs
 
 
-## Overview: RNNs and LSTMs
-
-::: {.callout-note title="Game plan"}
-Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data 
-(like clinical notes, time-series measurements, or genetic sequences).
-:::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 1: RNNs](#part-1)
-* What is an RNN?
-* Forward vs. Reverse pass
-* Biomed applications
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" }
-### [Part 2: Python](#part-2)
-* Sentiment analysis
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 3: LSTMs](#part-3)
-* Loss functions (MSE)
-* Momentum & Adam
-* Learning rates
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: RNNs as Language Models](#part-4)
-* Attention mechanism
-* Encoder-decoder RNNs
-:::
 
 
-::::
-
-
-## Python: RNN-based sentiment analysis {#part-2}
+## Python: RNN-based sentiment analysis {#python}
 
 - The point of sentiment analysis is to perform binary classification about the opinion expressed by a certain text
 - The classic example is to predict whether a movie review is positive or negative
@@ -899,57 +817,7 @@ print(f'Accuracy: {accuracy:.2f}%')
 
 
 
-## Overview: RNNs and LSTMs
-
-::: {.callout-note title="Game plan"}
-Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data 
-(like clinical notes, time-series measurements, or genetic sequences).
-:::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 1: RNNs](#part-1)
-* What is an RNN?
-* Forward vs. Reverse pass
-* Biomed applications
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Python](#part-2)
-* Sentiment analysis
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" }
-### [Part 3: LSTMs](#part-3)
-* Loss functions (MSE)
-* Momentum & Adam
-* Learning rates
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: RNNs as Language Models](#part-4)
-* Attention mechanism
-* Encoder-decoder RNNs
-:::
-
-
-::::
-
-
-## Long Short-Term Memory Networks (LSTMs) {#part-3}
+## Long Short-Term Memory Networks (LSTMs) {#lstm}
 
 - The key innovation in LSTM is the use of gating mechanisms to control the flow of information through the network. 
 - A challenge for RNNs is to keep track of information from distant parts of the sentence:
@@ -1157,57 +1025,8 @@ vector ($\mathbf{x}_{t}$).
 - The hidden state $\mathbf{h}_{t}$ is used to generate the output of the network similar to an RNN
 - LSTMs can be used as drop-in replacements for RNNs in many contexts and often perform better
 
-## Overview: RNNs and LSTMs
 
-::: {.callout-note title="Game plan"}
-Recurrent Neural Networks (RNNs) and extensions such as LSTMs introduced the concept of processing sequential data 
-(like clinical notes, time-series measurements, or genetic sequences).
-:::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 1: RNNs](#part-1)
-* What is an RNN?
-* Forward vs. Reverse pass
-* Biomed applications
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Python](#part-2)
-* Sentiment analysis
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 3: LSTMs](#part-3)
-* Loss functions (MSE)
-* Momentum & Adam
-* Learning rates
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" }
-### [Part 4: RNNs as Language Models](#part-4)
-* Attention mechanism
-* Encoder-decoder RNNs
-:::
-
-
-::::
-
-
-## RNNs as Language Models {#part-4}
+## RNNs as Language Models {#rnn-lm}
 
 that language models predict the next word in a sequence given some preceding
 context. For example, if the preceding context is “Something is rotten in the state of” and we want
