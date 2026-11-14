@@ -2011,3 +2011,84 @@ def rnn_vs_lstm_2():
     ax.axis("off")
 
     plt.tight_layout()
+
+
+
+def plot_rnn(figsize=(13, 5.4), show_equations=True, highlight=None):
+
+    F_COL, G_COL = "#D9822B", "#1F8A7D"
+    DIM = "#C9CED6"
+    if highlight == "g":      # output slide: grey out the state update
+        F_COL = DIM
+    elif highlight == "f":    # basic-idea slide: grey out the output
+        G_COL = DIM
+    IN_FC, IN_EC = "#A8DE8A", "#3B6B2A"
+    H_FC, H_EC = "#86A8DD", "#1F3A5F"
+    O_FC, O_EC = "#E8AFC5", "#B0194F"
+    TXT = "#1B2A41"
+    YX, YH, YO = 0.7, 2.3, 3.9
+
+    fig, ax = plt.subplots(figsize=figsize, dpi=300)
+    ax.set_xlim(-0.6, 13.8); ax.set_ylim(-1.55, 4.7); ax.set_aspect("equal"); ax.axis("off")
+
+    def arrow(p0, p1, col, lw=2.2, **kw):
+        ax.add_patch(FancyArrowPatch(p0, p1, arrowstyle="-|>", mutation_scale=16,
+                                    color=col, lw=lw, shrinkA=0, shrinkB=0, zorder=2, **kw))
+
+    def circ(x, y, label, fc, ec):
+        ax.add_patch(Circle((x, y), 0.42, fc=fc, ec=ec, lw=1.6, zorder=3))
+        ax.text(x, y, label, ha="center", va="center", fontsize=14, color=TXT, zorder=4)
+
+    def hbox(x, y, label):
+        ax.add_patch(FancyBboxPatch((x-0.55, y-0.36), 1.1, 0.72, boxstyle="round,pad=0,rounding_size=0.1",
+                                    fc=H_FC, ec=H_EC, lw=1.6, zorder=3))
+        ax.text(x, y, label, ha="center", va="center", fontsize=15, color=TXT, zorder=4)
+
+    def lab(x, y, s, col, ha="left"):
+        ax.text(x, y, s, ha=ha, va="center", fontsize=13, color=col, fontweight="bold", zorder=4)
+
+    # ---------- folded ----------
+    cx = 1.9
+    circ(cx, YX, r"$\mathbf{x}_t$", IN_FC, IN_EC)
+    hbox(cx, YH, r"$\mathbf{h}_t$")
+    circ(cx, YO, r"$\mathbf{y}_t$", O_FC, O_EC)
+    arrow((cx, YX+0.42), (cx, YH-0.36), F_COL);  lab(cx+0.12, 1.5, r"$\mathbf{W}_{xh}$", F_COL)
+    arrow((cx, YH+0.36), (cx, YO-0.42), G_COL);  lab(cx+0.12, 3.1, r"$\mathbf{W}_{hy}$", G_COL)
+    loop = Path([(cx-0.55, YH+0.15), (cx-2.0, YH+1.5), (cx-2.0, YH-1.5), (cx-0.55, YH-0.15)],
+                [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4])
+    ax.add_patch(FancyArrowPatch(path=loop, arrowstyle="-|>", mutation_scale=16, color=F_COL, lw=2.2, zorder=2))
+    lab(cx-1.95, YH, r"$\mathbf{W}_{hh}$", F_COL, ha="right")
+
+    # ---------- unfold arrow ----------
+    
+    ax.add_patch(Polygon([(3.3,YH-0.22),(4.05,YH-0.22),(4.05,YH-0.5),(4.7,YH),(4.05,YH+0.5),(4.05,YH+0.22),(3.3,YH+0.22)], closed=True, fc="#CFE0F7", ec="#6E93C9", lw=1.2, zorder=1))
+    ax.text(4.0, YH+0.8, "unfold", ha="center", fontsize=13, color=TXT)
+
+    # ---------- unfolded ----------
+    xs = [6.9, 9.4, 11.9]
+    ts = [r"t-1", r"t", r"t+1"]
+    for x, t in zip(xs, ts):
+        circ(x, YX, rf"$\mathbf{{x}}_{{{t}}}$", IN_FC, IN_EC)
+        hbox(x, YH, rf"$\mathbf{{h}}_{{{t}}}$")
+        circ(x, YO, rf"$\mathbf{{y}}_{{{t}}}$", O_FC, O_EC)
+        arrow((x, YX+0.42), (x, YH-0.36), F_COL);  lab(x+0.12, 1.5, r"$\mathbf{W}_{xh}$", F_COL)
+        arrow((x, YH+0.36), (x, YO-0.42), G_COL);  lab(x+0.12, 3.1, r"$\mathbf{W}_{hy}$", G_COL)
+    for a, b in zip(xs[:-1], xs[1:]):
+        arrow((a+0.55, YH), (b-0.55, YH), F_COL);  lab((a+b)/2, YH+0.28, r"$\mathbf{W}_{hh}$", F_COL, ha="center")
+    arrow((xs[0]-1.35, YH), (xs[0]-0.55, YH), F_COL)
+    arrow((xs[-1]+0.55, YH), (xs[-1]+1.45, YH), F_COL)
+    ax.text(xs[0]-1.65, YH, r"$\cdots$", ha="center", va="center", fontsize=18, color=TXT)
+    ax.text(xs[-1]+1.7, YH, r"$\cdots$", ha="center", va="center", fontsize=18, color=TXT)
+
+    # ---------- function legend ----------
+    def func_row(y, col, name, eq):
+        ax.add_patch(Rectangle((1.3, y-0.17), 0.34, 0.34, fc=col, ec="none"))
+        ax.text(1.8, y, name, ha="left", va="center", fontsize=13, color=col, fontweight="bold")
+        ax.text(4.9, y, eq, ha="left", va="center", fontsize=15, color=TXT)
+    func_row(-0.45, F_COL, "state update  f",
+            r"$\mathbf{h}_t = \tanh\!\left(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h\right)$")
+    func_row(-1.1, G_COL, "output  g",
+            r"$\mathbf{y}_t = g\left(\mathbf{W}_{hy}\mathbf{h}_t + \mathbf{b}_y\right)$")
+    ax.text(13.5, -1.4, "same weights at every step", ha="right", fontsize=10.5, color="#6B7A90", style="italic")
+
+    return fig
