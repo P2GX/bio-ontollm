@@ -1793,28 +1793,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.90%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.02%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.20%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.24%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.18%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.30%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.08%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.28%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -4404,35 +4404,28 @@
     "href": "lectures/lstm.html#rnn-basic-idea",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN: Basic idea",
-    "text": "RNN: Basic idea\n\n\n\n\n\n\n\n\n\n\n\nKey idea: RNNs have an internal (hidden) state that is updates as a sequence is processed \\[\n\\mathbf{h}_t = f_W(\\mathbf{h}_{t-1}, \\mathbf{x}_t)\n\\]\n\\(\\mathbf{h}_t\\): New state\n\\(f_W\\): function with learnable parameters W\n\\(\\mathbf{h}_{t-1}\\): Prior state\n\\(\\mathbf{x}_{t}\\): Input at time \\(t\\)\nU, V, and W are learnable matrices\n\n\nImage credit: Wikipedia"
+    "text": "RNN: Basic idea\n\n\n\n\n\n\n\n\n\n\n\n\n\nKey idea: an RNN keeps a hidden state that is updated as the sequence is processed\n\n\\[\n\\mathbf{h}_t = f(\\mathbf{h}_{t-1}, \\mathbf{x}_t)\n\\]\n\n\n\n\n\n\n\nSymbol\nMeaning\n\n\n\n\n\\(\\mathbf{x}_t\\)\ninput at time \\(t\\)\n\n\n\\(\\mathbf{h}_{t-1}\\)\nprevious state (\\(\\mathbf{h}_0\\) is usually zeros)\n\n\n\\(\\mathbf{h}_t\\)\nnew state\n\n\n\\(f\\)\nstate-update function, with learnable matrices \\(\\mathbf{W}_{xh}\\) and \\(\\mathbf{W}_{hh}\\)"
   },
   {
     "objectID": "lectures/lstm.html#rnn-output",
     "href": "lectures/lstm.html#rnn-output",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN: Output",
-    "text": "RNN: Output\n\nThere is a separate function for the output of an RNN\n\n\n\n\n\n\n\n\n\n\n\n\nKey idea: RNNs have an internal (hidden) state that is updates as a sequence is processed \\[\n\\mathbf{y}_t = f_W_{hy}(\\mathbf{h}_{t})\n\\]\nThe output at time \\(t\\), $_t $, is calculated from the hidden state\n\\(f_W_{hy}\\): function with learnable parameters W_{hy}\n\\(\\mathbf{h}_{t}\\): hidden state at time \\(t\\)\nConvert the dimension of the hidden state to the dimension of the output\n\n\nImage credit: Wikipedia"
-  },
-  {
-    "objectID": "lectures/lstm.html#unfolding-the-rnn",
-    "href": "lectures/lstm.html#unfolding-the-rnn",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Unfolding the RNN",
-    "text": "Unfolding the RNN\n\n\nThis unfolded view is equivalent\nThe parameters \\(\\mathbf{U}\\), \\(\\mathbf{V}\\), and \\(\\mathbf{W}\\) are learnable weight matrices that are the same for each time step"
+    "text": "RNN: Output\n\n\n\n\n\n\n\n\n\n\n\n\n\nA separate function turns the hidden state into the output, at each step if needed\n\n\\[\n\\mathbf{y}_t = g(\\mathbf{W}_{hy}\\mathbf{h}_t + \\mathbf{b}_y)\n\\]\n\n\n\n\n\n\n\nSymbol\nMeaning\n\n\n\n\n\\(\\mathbf{h}_t\\)\nhidden state at time \\(t\\) (from the state update)\n\n\n\\(\\mathbf{W}_{hy}\\)\nlearnable matrix: hidden dimension → output dimension\n\n\n\\(\\mathbf{b}_y\\)\nbias vector\n\n\n\\(g\\)\noutput activation (teal arrows), e.g. softmax for classification"
   },
   {
     "objectID": "lectures/lstm.html#rnn-types",
     "href": "lectures/lstm.html#rnn-types",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN types",
-    "text": "RNN types\n\n\n\n\n\n\n\n\n\n\n\n\n\nMany-to-one: e.g., sequence of words, predict whether text is positive or negative (sentiment analysis\nOne-to-many: e.g., image captioning. From one image, create a sequence of words to describe the image\nMany-to-many (synched): one output for each input, e.g. part-of-speech prediction\nMany-to-many (encoder-decoder): e.g., translation\n\n\nSee: Das S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research. PMID:37988518."
+    "text": "RNN types\n\n\n\n\n\n\n\n\n\n\n\n\n\nMany-to-one: e.g., sequence of words, predict whether text is positive or negative (sentiment analysis\nOne-to-many: e.g., image captioning. From one image, create a sequence of words to describe the image\nMany-to-many (synched): one output for each input, e.g. part-of-speech prediction\nMany-to-many (encoder-decoder): e.g., translation\n\n\nSee: Das S, et al (2023) Recurrent Neural Networks (RNNs): Architectures, Training Tricks, and Introduction to Influential Research"
   },
   {
     "objectID": "lectures/lstm.html#rnns-overview",
     "href": "lectures/lstm.html#rnns-overview",
     "title": "Approaches to biomedical knowledge",
     "section": "RNNs: Overview",
-    "text": "RNNs: Overview\n\n\n\n\n\n\nRecurrent Neural Networks\n\n\nUnlike standard feed-forward networks, Recurrent Neural Networks (RNNs) introduce a hidden state (\\(\\mathbf{h}_t\\)) that acts as a “memory,” carrying information from time step \\(t-1\\) to time step \\(t\\).\n\npossess both current and past features of the temporal sequences\nadapt to the long-term historical changes in the data\nstore the past information to solve context-dependent tasks\nmake predictions simultaneously with existing observations.\n\n\n\n\n\n\n\n\nMienye ID et al (2024) Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517."
+    "text": "RNNs: Overview\n\n\n\nRecurrent Neural Networks\n\n\nUnlike standard feed-forward networks, Recurrent Neural Networks (RNNs) introduce a hidden state (\\(\\mathbf{h}_t\\)) that acts as a “memory,” carrying information from time step \\(t-1\\) to time step \\(t\\).\n\npossess both current and past features of the temporal sequences\nadapt to the long-term historical changes in the data\nstore the past information to solve context-dependent tasks\nmake predictions simultaneously with existing observations.\n\n\n\n\n\n\n\nMienye ID et al (2024) Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517."
   },
   {
     "objectID": "lectures/lstm.html#rnn-architecture-hidden-layer",
@@ -4481,14 +4474,7 @@
     "href": "lectures/lstm.html#understanding-the-hidden-state-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Understanding the hidden state (2)",
-    "text": "Understanding the hidden state (2)\n\nWe define these two matrices as follows\n\nw_xh = np.array([[1], [0]])\nw_hh = np.array([[0, 0],  [1, 0]])\n\nThis corresponds to \\[\n\\begin{align*}\nz_t^{(2\\times 1)} &= w_{hh}^{(2\\times 2)} h_{t-1}^{(2\\times 1)} + w_{xh}^{(2\\times 1)} x_t^{(1\\times 1)} \\\\\n&= \\begin{bmatrix} 0 & 0 \\\\ 1 & 0 \\end{bmatrix} \\begin{bmatrix} h_{1, t-1} \\\\ h_{2, t-1} \\end{bmatrix}+ \\begin{bmatrix} 1\\\\0\\end{bmatrix} \\begin{bmatrix}x_t\\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\ 1\\cdot h_{1, t-1} + 0\\cdot h_{2, t-1}  \\end{bmatrix}  + \\begin{bmatrix} 1 \\cdot x_t \\\\ 0 \\cdot x_t \\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\  h_{1, t-1}  \\end{bmatrix} + \\begin{bmatrix} x_t \\\\ 0  \\end{bmatrix} \\\\\n&= \\begin{bmatrix} x_t \\\\  h_{1, t-1}  \\end{bmatrix}  \\\\\n\\end{align*}\n\\]\nThat is, Combined State Pre-Activation (\\(z_t\\)) consists of two numbers: the current input (\\(x_t\\)) and the first element of the previous hidden state (\\(h_{1, t-1}\\))"
-  },
-  {
-    "objectID": "lectures/lstm.html#understanding-the-hidden-state-3",
-    "href": "lectures/lstm.html#understanding-the-hidden-state-3",
-    "title": "Approaches to biomedical knowledge",
-    "section": "Understanding the hidden state (3)",
-    "text": "Understanding the hidden state (3)\nAssuming positive inputs \\(x_t \\ge 0\\), applying the \\(\\text{ReLU}\\) function produces: \\[\nh_t = \\text{ReLU}(z_t) = \\text{ReLU} \\left( \\begin{bmatrix} x_t \\\\ h_{1, t-1} \\end{bmatrix} \\right) = \\begin{bmatrix} x_t \\\\ h_{1, t-1} \\end{bmatrix} = \\begin{bmatrix} \\text{Current Input } (x_t) \\\\ \\text{Previous Input } (x_{t-1}) \\end{bmatrix}\\] $$\nThus\n\nRow 1 of \\(h_t\\) always receives \\(x_t\\) via \\(w_{xh}\\).\nRow 2 of \\(h_t\\) receives the previous value \\(x_{t-1}\\) copied from row 1 via \\(w_{hh}\\).\n\n\\[\\begin{aligned}\nh_t &= \\text{ReLU}\\left( w_{hh} h_{t-1} + w_{xh} x_t \\right) \\\\\n    &= \\text{ReLU}\\left(\n        \\begin{bmatrix} 0 & 0 \\\\ 1 & 0 \\end{bmatrix} \\begin{bmatrix} h_{1, t-1} \\\\ h_{2, t-1} \\end{bmatrix}\n        +\n        \\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix} x_t\n       \\right) \\\\\n    &= \\text{ReLU}\\left(\n        \\begin{bmatrix} 0 \\\\ h_{1, t-1} \\end{bmatrix}\n        +\n        \\begin{bmatrix} x_t \\\\ 0 \\end{bmatrix}\n       \\right) \\\\\n    &= \\text{ReLU}\\left(\n        \\begin{bmatrix} x_t \\\\ h_{1, t-1} \\end{bmatrix}\n       \\right)\n\\end{aligned}\\]\n$$"
+    "text": "Understanding the hidden state (2)\n\nWe define these two matrices as follows\n\nw_xh = np.array([[1], [0]])\nw_hh = np.array([[0, 0],  [1, 0]])\n\nThis corresponds to \\[\n\\begin{align*}\nz_t^{(2\\times 1)} &= w_{hh}^{(2\\times 2)} h_{t-1}^{(2\\times 1)} + w_{xh}^{(2\\times 1)} x_t^{(1\\times 1)} \\\\\n&= \\begin{bmatrix} 0 & 0 \\\\ 1 & 0 \\end{bmatrix} \\begin{bmatrix} h_{1, t-1} \\\\ h_{2, t-1} \\end{bmatrix}+ \\begin{bmatrix} 1\\\\0\\end{bmatrix} \\begin{bmatrix}x_t\\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\ 1\\cdot h_{1, t-1} + 0\\cdot h_{2, t-1}  \\end{bmatrix}  + \\begin{bmatrix} 1 \\cdot x_t \\\\ 0 \\cdot x_t \\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\  h_{1, t-1}  \\end{bmatrix} + \\begin{bmatrix} x_t \\\\ 0  \\end{bmatrix} \\\\\n&= \\begin{bmatrix} x_t \\\\  h_{1, t-1}  \\end{bmatrix}  \\\\\n\\end{align*}\n\\]\nThat is, Combined State Pre-Activation (\\(z_t\\)) consists of two numbers: the current input (\\(x_t\\)) and the first element of the previous hidden state (\\(h_{1, t-1}\\)) ## Understanding the hidden state (3)\n\nAssuming positive inputs \\(x_t \\ge 0\\), applying the \\(\\text{ReLU}\\) function produces: \\[\n\\mathbf{h}_t = \\text{ReLU}(\\mathbf{z}_t) = \\begin{bmatrix} x_t \\\\ h_{1, t-1} \\end{bmatrix} = \\begin{bmatrix} x_t \\\\ x_{t-1} \\end{bmatrix}\n\\]\nThus\n\nRow 1 of \\(\\mathbf{h}_t\\) always receives \\(x_t\\) via \\(\\mathbf{W}_{xh}\\).\nRow 2 of \\(\\mathbf{h}_t\\) receives the previous input \\(x_{t-1}\\), copied from row 1 via \\(\\mathbf{W}_{hh}\\)."
   },
   {
     "objectID": "lectures/lstm.html#understanding-the-hidden-state-4",
@@ -4509,7 +4495,7 @@
     "href": "lectures/lstm.html#rnn-forward-pass-algorithm",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN Forward Pass Algorithm",
-    "text": "RNN Forward Pass Algorithm\n\nInputs:\n\nA sequence of input vectors \\(\\mathbf{X} = \\langle\\mathbf{x}_1, \\mathbf{x}_2, \\dots, \\mathbf{x}_T\\rangle\\)\nNetwork parameter matrices (\\(U, W, V\\)) and bias vectors (\\(\\mathbf{b}_h, \\mathbf{b}_y\\))\nActivation functions \\(g\\) (hidden layer, e.g., \\(\\tanh\\)) and \\(f\\) (output, e.g. softmax)\n\nOutput: A sequence of predicted output vectors \\(\\mathbf{Y} = \\langle\\mathbf{y}_1, \\mathbf{y}_2, \\dots, \\mathbf{y}_T\\rangle\\)\n\nAlgorithm:\n\\[\n\\begin{aligned}\n&\\text{1. } \\mathbf{h}_0 \\leftarrow \\mathbf{0} && \\bullet \\text{Initialize the baseline context vector with zeros} \\\\\n&\\text{2. } \\mathbf{Y} \\leftarrow \\langle \\rangle && \\bullet \\text{Initialize an empty sequence to store outputs} \\\\\n&\\text{3. } \\textbf{for } t \\leftarrow 1 \\textbf{ to } T \\textbf{ do} && \\\\\n&\\text{4. } \\quad \\mathbf{z}_t \\leftarrow U\\mathbf{h}_{t-1} + W\\mathbf{x}_t + \\mathbf{b}_h && \\bullet \\text{Linear combination of past memory and new input} \\\\\n&\\text{5. } \\quad \\mathbf{h}_t \\leftarrow g(\\mathbf{z}_t) &&\\bullet \\text{Compute the updated hidden state} \\\\\n&\\text{6. } \\quad \\mathbf{y}_t \\leftarrow f(V\\mathbf{h}_t + \\mathbf{b}_y) && \\bullet \\text{Generate the prediction for the current time step} \\\\\n&\\text{7. } \\quad \\mathbf{Y} \\leftarrow \\mathbf{Y} \\parallel \\langle\\mathbf{y}_t\\rangle && \\bullet \\text{Append the current step output vector to the sequence} \\\\\n&\\text{8. } \\textbf{end for} && \\\\\n&\\text{9. } \\textbf{return } \\mathbf{Y} &&\n\\end{aligned}\n\\]"
+    "text": "RNN Forward Pass Algorithm\n\nInputs:\n\nA sequence of input vectors \\(\\mathbf{X} = \\langle\\mathbf{x}_1, \\mathbf{x}_2, \\dots, \\mathbf{x}_T\\rangle\\)\nNetwork parameter matrices (\\(U, W, V\\)) and bias vectors (\\(\\mathbf{b}_h, \\mathbf{b}_y\\))\nActivation functions \\(g\\) (hidden layer, e.g., \\(\\tanh\\)) and \\(f\\) (output, e.g. softmax)\n\nOutput: A sequence of predicted output vectors \\(\\mathbf{Y} = \\langle\\mathbf{y}_1, \\mathbf{y}_2, \\dots, \\mathbf{y}_T\\rangle\\)\n\nAlgorithm:\n\\[\n\\begin{aligned}\n&\\text{1. } \\mathbf{h}_0 \\leftarrow \\mathbf{0} & \\bullet \\text{Initialize the baseline context vector with zeros} \\\\\n&\\text{2. } \\mathbf{Y} \\leftarrow \\langle \\rangle & \\bullet \\text{Initialize an empty sequence to store outputs} \\\\\n&\\text{3. } \\textbf{for } t \\leftarrow 1 \\textbf{ to } T \\textbf{ do} & \\\\\n&\\text{4. } \\quad \\mathbf{z}_t \\leftarrow U\\mathbf{h}_{t-1} + W\\mathbf{x}_t + \\mathbf{b}_h & \\bullet \\text{Linear combination of past memory and new input} \\\\\n&\\text{5. } \\quad \\mathbf{h}_t \\leftarrow g(\\mathbf{z}_t) &\\bullet \\text{Compute the updated hidden state} \\\\\n&\\text{6. } \\quad \\mathbf{y}_t \\leftarrow f(V\\mathbf{h}_t + \\mathbf{b}_y) & \\bullet \\text{Generate the prediction for the current time step} \\\\\n&\\text{7. } \\quad \\mathbf{Y} \\leftarrow \\mathbf{Y} \\parallel \\langle\\mathbf{y}_t\\rangle && \\bullet \\text{Append the current step output vector to the sequence} \\\\\n&\\text{8. } \\textbf{end for} & \\\\\n&\\text{9. } \\textbf{return } \\mathbf{Y} &\n\\end{aligned}\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#training-rnns",
@@ -4684,7 +4670,7 @@
     "href": "lectures/lstm.html#lstms-vs-rnns-1",
     "title": "Approaches to biomedical knowledge",
     "section": "LSTMS vs RNNs",
-    "text": "LSTMS vs RNNs\n\n\n\n\n\n\n\n\n\n\nIn contrast, LSTM modules have four intacting structures and are connected by the cell state in addition to the hidden state"
+    "text": "LSTMS vs RNNs\n\n\n\n\n\n\n\n\n\n\nIn contrast, LSTM modules have four interacting structures and are connected by the cell state in addition to the hidden state"
   },
   {
     "objectID": "lectures/lstm.html#lstms",
@@ -4817,7 +4803,7 @@
     "href": "lectures/lstm.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\nSources for this lecture include\n\nDan Jurafsky and James H. Martin (2026) Speech and Language Processing (3rd ed. draft) https://web.stanford.edu/~jurafsky/\nAlex Sherstinsky (2020) Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network, Physica D: Nonlinear Phenomena, Volume 404,132306\nAndrej Karpathy and Justin Johnson and Li Fei-Fei (2015) Visualizing and Understanding Recurrent Networks, arXiv, https://arxiv.org/abs/1506.02078\nAurélien Géron (2025) Hands-On Machine Learning with Scikit-Learn and PyTorch, O’Reilly"
+    "text": "Sources\nSources for this lecture include\n\nDan Jurafsky and James H. Martin (2026) Speech and Language Processing (3rd ed. draft)\nAlex Sherstinsky (2020) Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network, Physica D: Nonlinear Phenomena, Volume 404,132306\nAndrej Karpathy and Justin Johnson and Li Fei-Fei (2015) Visualizing and Understanding Recurrent Networks, arXiv\nAurélien Géron (2025) Hands-On Machine Learning with Scikit-Learn and PyTorch, O’Reilly"
   },
   {
     "objectID": "lectures/neural.html#overview-neural-networks",
