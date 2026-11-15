@@ -8,7 +8,8 @@ This folder contains scripts and files that were used to create graphics or othe
 We will usually transform these files into png files
 
 ```bash
-pdflatex myfile.tex
-pdftoppm -png -singlefile -r 300 myfile.pdf -o myfile
+pdflatex rnn.tex
+pdfcrop --margin 4 rnn.pdf
+pdftoppm -png -singlefile -r 300 rnn-crop.pdf -o rnn
 ``` 
-
+(produces a cropped rnn.pn file)

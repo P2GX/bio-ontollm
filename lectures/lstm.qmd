@@ -31,13 +31,15 @@ from rnn_plots import *
 ## Overview: RNNs and LSTMs
 
 ::: {.mybox}
-biomedical data often are arranged as sequences: clinical notes, visit histories, ICU time series, DNA and protein sequences.
+Biomedical data  are often arranged as sequences: clinical notes, visit histories, ICU time series, DNA and protein sequences.
 :::
 
-1. [**RNNs**](#rnns): the hidden state, unfolding, backpropagation through time, vanishing gradients
-2. [**Python**](#python): an RNN sentiment classifier in PyTorch
-3. [**LSTMs**](#lstm): gates and the cell state
-4. [**RNN language models**](#rnn-lm): next-word prediction, encoder-decoder, attention
+* [**RNNs**](#rnns)
+* [**Toy example**](#toy)
+* [**Training RNNs**](#training)
+* [**Python**](#python)
+* [**LSTMs**](#lstm)
+* [**RNN language models**](#rnn-lm)
 
 
 
@@ -52,8 +54,32 @@ biomedical data often are arranged as sequences: clinical notes, visit histories
 
 :::
 
-- Sequences can have wildly different lengths from one example to the next.
-- It is not straightforward to model sequences with standard ANNs, which take a fixed-dimensional input vector
+
+It is not straightforward to model sequences with standard ANNs
+
+- **Variable length**: For sequences, inputs can have arbitrary length, but an ANN needs a fixed-size input vector
+- **Order matters**: e.g.,  "Cat chases dog" differs from "Dog chases cat"
+- **No sharing across positions**: a pattern learned at position $i$ is not recognized at position $j$
+
+## RNNs: Overview
+
+::: {.callout-important icon=false title="Recurrent Neural Networks"}
+
+Unlike feed-forward networks, Recurrent Neural Networks (RNNs) introduce a hidden state ($\mathbf{h}_t$)
+that acts as a "memory," carrying information from time step $t-1$ to time step $t$.
+
+- process a sequence **one element at a time**, in order
+- **reuse the same weights** at every step, so any sequence length works
+- the hidden state **summarizes what has been seen so far**
+- can produce an output at every step, or only at the end
+
+:::
+
+![](./img/rnn.png){width=40% fig-align="center"}
+
+::: {.tiny-credit}
+* Mienye ID et al (2024) [Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications, Information 15(9), 517](https://www.mdpi.com/2078-2489/15/9/517).
+:::
 
 
 ## RNN: Basic idea
@@ -69,10 +95,13 @@ plt.show()
 
 
 ::: {.small-text}
-- `Key idea`: an RNN keeps a hidden state that is updated as the sequence is processed
+- **Key idea**: an RNN keeps a hidden state that is updated as the sequence is processed
+
+- **Key idea**: an RNN keeps a hidden state that is updated as the sequence is processed
 
 $$
 \mathbf{h}_t = f(\mathbf{h}_{t-1}, \mathbf{x}_t)
+= \tanh(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h)
 $$
 
 | Symbol | Meaning |
@@ -80,6 +109,7 @@ $$
 | $\mathbf{x}_t$ | input at time $t$ |
 | $\mathbf{h}_{t-1}$ | previous state ($\mathbf{h}_0$ is usually zeros) |
 | $\mathbf{h}_t$ | new state |
+| $\mathbf{b}_h$ | bias vector |
 | $f$ | state-update function, with learnable matrices $\mathbf{W}_{xh}$ and $\mathbf{W}_{hh}$ |
 :::
 
@@ -103,10 +133,9 @@ $$
 
 | Symbol | Meaning |
 |:--|:----------------------------------------------------------------|
-| $\mathbf{h}_t$ | hidden state at time $t$ (from the state update) |
 | $\mathbf{W}_{hy}$ | learnable matrix: hidden dimension → output dimension |
 | $\mathbf{b}_y$ | bias vector |
-| $g$ | output activation (teal arrows), e.g. softmax for classification |
+| $g$ | output activation: **chosen to match the task**, e.g., *softmax*, *sigmoid*, *linear* |
 :::
 
 
@@ -127,9 +156,9 @@ plt.show()
 :::
 ::: {.column width="34%"}
 
-- **Many-to-one**: e.g., sequence of words, predict whether text is positive or negative (sentiment analysis
+- **Many-to-one**: e.g., sequence of words, predict whether text is positive or negative (sentiment analysis)
 - **One-to-many**: e.g., image captioning. From one image, create a sequence of words to describe the image
-- **Many-to-many (synched)**: one output for each input, e.g. part-of-speech prediction
+- **Many-to-many (aligned)**: one output for each input, e.g. part-of-speech prediction, or tagging each token in a note as part of a phenotype mention
 - **Many-to-many (encoder-decoder)**: e.g., translation
 
 ::: {.tiny-credit}
@@ -138,101 +167,6 @@ See: Das S, et al (2023) [Recurrent Neural Networks (RNNs): Architectures, Train
 
 :::
 ::::
-
-
-
-
-## RNNs: Overview 
-
-::: {.callout-important  icon=false title="Recurrent Neural Networks"}
-
-Unlike standard feed-forward networks, Recurrent Neural Networks (RNNs) introduce a hidden state ($\mathbf{h}_t$) 
-that acts as a "memory," carrying information from time step $t-1$ to time step $t$.
-
-- possess both current and past features of the temporal sequences
-- adapt to the long-term historical changes in the data
-- store the past information to solve context-dependent tasks
-- make predictions simultaneously with existing observations.
-
-:::
-
-![](./img/rnn.png){width=40% fig-align="center"}
-
-
-::: {.tiny-credit}
-* Mienye ID et al (2024) [Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517](https://www.mdpi.com/2078-2489/15/9/517).
-:::
-
-## RNN Architecture: hidden layer
-
-> RNNs are designed to process sequential data by maintaining a hidden state that captures information about previous inputs. 
-
-
-The basic architecture consists of an input layer, a hidden layer, and an output layer. 
-
-- RNNs have recurrent connections, allowing information to cycle within the networks. 
-At each time step, $t$, the RNN takes an input vector, $x_t$
-, and updates its hidden state, $h_t$ using the following equation:
-
-$$
-\mathbf{h}_t = \sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h)
-$$ {#eq-rnn-hidden}
-
-where
-<div style="fontsize=0.8rem">
-- $\mathbf{x}_t$: Input at time $t$
-- $\mathbf{W}_{xh}$:  is the weight matrix between the input and hidden layer
-- $\mathbf{W}_{hh}$ the weight matrix for the recurrent connection
-- $\mathbf{b}_h$: the bias vector
-- $\sigma_h$: the activation function, typically the hyperbolic tangent function (tanh) or the rectified linear unit 
-</div>
-![](./img/rnn.png){width=20% fig-align="center"}
-
-
-## RNN Architecture: output
-
-The output at each time step, $t$, is given by the following:
-$$
-\mathbf{y}_i = \sigma_y(\mathbf{W}_{hy}\mathbf{h}_t +  \mathbf{b}_y)
-$$ {#eq-rnn-output}
-
-
-where 
-
-- $\mathbf{W}_{hy}$: the weight matrix between the hidden and output layers, 
-- $\mathbf{b}_y$: the bias vector, 
-- $\sigma_y$ the activation function for the output layer.
-
-![](./img/rnn.png){width=20% fig-align="center"}
-
-## Recursivity
-
-- RNNs can be portrayed as (equivalent) folded or unfolded networks
-
-
-```{python}
-#| echo: false
-#| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-sys.path.append('utils') 
-from rnn_plots import basic_rnn
-
-basic_rnn(figsize=(6,4))
-plt.show()
-```
-
-::: {style="font-size: 0.75em;"}
-
-- The hidden layer from the previous time step provides a form of memory, or context, that encodes earlier processing and informs the decisions to be made at
-later points in time. 
-- This approach does not impose a fixed-length limit on this prior context; the context embodied in the previous hidden layer can include
-information extending back to the beginning of the sequence.
-:::
-
-::: {style="font-size: 0.5em;"}
-Adapted from Jurafsky D and Martin JH (2026) Speech and Language Processing (3rd ed. draft)
-:::
 
 
 ## Activation Functions
@@ -265,30 +199,27 @@ plt.show()
 :::
 ::::
 
-## RNN Architecture
 
-- Compared to ANNs, the significant change for RNNs is the new set of weights that connect the hidden layer from the previous time step
-to the current hidden layer ($\mathbf{W}_{hh}$ the weight matrix for the recurrent connection ).
-- $\mathbf{W}_{hh}$ determines how the network makes use of past context in calculating the output for the current input. 
-- These weights are also trained by backpropagation
-- The activation function for the output layer can be a sigmoid function (for binary classification) or a soft-max function (for categorical classfication).
+## Understanding the hidden state {#toy}
 
+- To demonstrate that a hidden state can actually "remember" previous steps, 
+Let us construct _by hand_ an RNN that outputs the **increase** $x_t - x_{t-1}$ when the input goes up, and $0$ otherwise.^[Adapted from an example (output 1 if both $x_t$ and $x_{t-1}$ are 1) in the Stanford [CS231N lecture on RNNs](https://www.youtube.com/watch?v=6niqTuYFZLQ).]
 
-## Understanding the hidden state
-
-- To demonstrate that a hidden state can actually "remember" previous steps, let us construct _by hand_ an RNN that outputs 
-$x_t$ if $x_t > x_{t-1}$, otherwise it outputs zero.^[Adapted from an example to output 1 if both $x_t$ and $x_{t-1}$ are 1, zero otherwise, from Stanford CS231N online lecture on RNNs]
 - The general equation for the hidden state pre-activation is:
 $$
-z_t = w_{hh} h_{t-1} + w_{xh} x_t
+\mathbf{z}_t = \mathbf{W}_{hh} h_{t-1} + \mathbf{W}_{xh} \mathbf{x}_t
 $$
 - In this toy example, we define the hidden state to be a $2\times 1$ column vector that memorizes both the current input and the immediate history.
 $$
 \begin{align*}
-z_t^{(2\times 1)} &= w_{hh}^{(2\times 2)} h_{t-1}^{(2\times 1)} + w_{xh}^{(2\times 1)} x_t^{(1\times 1)} \\
-h_t^{(2\times 1)} &= \mathrm{relu}(z_t^{(2\times 1)})
+\mathbf{z}_t^{(2\times 1)} &= \mathbf{W}_{hh}^{(2\times 2)}\, \mathbf{h}_{t-1}^{(2\times 1)} + \mathbf{W}_{xh}^{(2\times 1)}\, x_t^{(1\times 1)} \\
+\mathbf{h}_t^{(2\times 1)} &= \mathrm{ReLU}(\mathbf{z}_t^{(2\times 1)})
 \end{align*}
 $$
+
+::: {.small-text}
+We set the biases to zero and use ReLU rather than tanh because it makes the arithmetic exact.
+:::
 
 ## Understanding the hidden state (2)
 
@@ -302,7 +233,7 @@ w_hh = np.array([[0, 0],  [1, 0]])
 - This corresponds to 
 $$
 \begin{align*}
-z_t^{(2\times 1)} &= w_{hh}^{(2\times 2)} h_{t-1}^{(2\times 1)} + w_{xh}^{(2\times 1)} x_t^{(1\times 1)} \\
+\mathbf{z}_t^{(2\times 1)} &= \mathbf{W}_{hh}^{(2\times 2)} h_{t-1}^{(2\times 1)} + \mathbf{W}_{xh}^{(2\times 1)} \mathbf{x}_t^{(1\times 1)} \\
  &= \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} h_{1, t-1} \\ h_{2, t-1} \end{bmatrix}+ \begin{bmatrix} 1\\0\end{bmatrix} \begin{bmatrix}x_t\end{bmatrix} \\
 &= \begin{bmatrix} 0  \\ 1\cdot h_{1, t-1} + 0\cdot h_{2, t-1}  \end{bmatrix}  + \begin{bmatrix} 1 \cdot x_t \\ 0 \cdot x_t \end{bmatrix} \\
 &= \begin{bmatrix} 0  \\  h_{1, t-1}  \end{bmatrix} + \begin{bmatrix} x_t \\ 0  \end{bmatrix} \\
@@ -310,10 +241,11 @@ z_t^{(2\times 1)} &= w_{hh}^{(2\times 2)} h_{t-1}^{(2\times 1)} + w_{xh}^{(2\tim
 \end{align*} 
 $$
 
-- That is, Combined State Pre-Activation ($z_t$) consists of two numbers: the current input ($x_t$) and the first element of the previous hidden state ($h_{1, t-1}$)
+- That is, the combined state pre-activation ($\mathbf{z}_t$) consists of two numbers: the current input ($\mathbf{x}_t$) and the first element of the previous hidden state ($\mathbf{h}_{1, t-1}$)
+
 ## Understanding the hidden state (3)
 
-Assuming positive inputs $x_t \ge 0$, applying the $\text{ReLU}$ function produces:
+Assuming non-negative inputs $x_t \ge 0$, applying the $\text{ReLU}$ function produces:
 $$
 \mathbf{h}_t = \text{ReLU}(\mathbf{z}_t) = \begin{bmatrix} x_t \\ h_{1, t-1} \end{bmatrix} = \begin{bmatrix} x_t \\ x_{t-1} \end{bmatrix}
 $$
@@ -323,6 +255,13 @@ Thus
 - Row 1 of $\mathbf{h}_t$ always receives $x_t$ via $\mathbf{W}_{xh}$.
 - Row 2 of $\mathbf{h}_t$ receives the previous input $x_{t-1}$, copied from row 1 via $\mathbf{W}_{hh}$.
 
+::: {.small-text}
+For non-negative inputs $x_t \ge 0$:
+
+- Row 1 of $\mathbf{h}_t$ always receives $x_t$ via $\mathbf{W}_{xh}$.
+- Row 2 of $\mathbf{h}_t$ receives the previous value of row 1, i.e. $x_{t-1}$, via $\mathbf{W}_{hh}$.
+- At $t=1$ we have $\mathbf{h}_0 = \mathbf{0}$, so row 2 starts at $0$.
+:::
 
 ## Understanding the hidden state (4)
 
@@ -334,106 +273,120 @@ This corresponds to
 $$
 y_t = \text{ReLU}\left( w_{yh} h_t \right)
 $$
+
 - $w_{yh}$ is a 1D row weight vector (or 1D array of shape $(2,)$).
-- $h_t$ is a column vector of shape $(2, 1)$:$$h_t = \begin{bmatrix} h_{1, t} \\ h_{2, t} \end{bmatrix} = \begin{bmatrix} x_t \\ x_{t-1} \end{bmatrix}$$
-- Expanding the dot product using the weights $w_{yh} = \begin{bmatrix} 1 & -1 \end{bmatrix}$:$$\begin{align*}    w_{yh} h_t &= \begin{bmatrix} 1 & -1 \end{bmatrix} \begin{bmatrix} h_{1, t} \\ h_{2, t} \end{bmatrix} \\    &= (1 \cdot h_{1, t}) + (-1 \cdot h_{2, t}) \\    &= h_{1, t} - h_{2, t} \\    &= x_t - x_{t-1}    \end{align*}$$
+- $h_t$ is a column vector of shape $(2, 1)$:
+
+$$
+h_t = \begin{bmatrix} h_{1, t} \\ h_{2, t} \end{bmatrix} = \begin{bmatrix} x_t \\ x_{t-1} \end{bmatrix}
+$$
+- Expanding the dot product using the weights 
+$$
+\begin{align*}
+w_{yh} &= \begin{bmatrix} 1 & -1 \end{bmatrix} \begin{bmatrix} h_{1, t} \\ h_{2, t} \end{bmatrix} \\    
+ &= h_{1, t} - h_{2, t} \\    &= x_t - x_{t-1}    
+ \end{align*}
+ $$
 
 
 ## Understanding the hidden state (5)
 
 Applying the Activation Function ($\text{ReLU}$):
+
 - Finally, the scalar result passes through the element-wise $\text{ReLU}$ function to ensure the output is non-negative:
 $$y_t = \text{ReLU}(x_t - x_{t-1}) = \max(0, x_t - x_{t-1})$$
 - If $x_t > x_{t-1}$, the output is positive ($x_t - x_{t-1}$). 
 - If $x_t \le x_{t-1}$, the output floors at $0$.
 
 
-> * Of course, real RNNs are trained to learn the parameters of the network, but we have shown in this simple example that the architecture of an RNN can be made to `remember` past information
+> * Of course, real RNNs are trained to learn the parameters of the network, but we have shown in this simple example that the architecture of an RNN can be made to *remember* past information
 > * In the following slides, we will show how RNNs are trained.
 
+## RNN Forward Pass Algorithm {#training}
 
-## RNN Forward Pass Algorithm
-
-<div style="font-size: 0.8em;">
-**Inputs:** 
+::: {.small-text}
+**Inputs:**
 
 - A sequence of input vectors $\mathbf{X} = \langle\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_T\rangle$
-- Network parameter matrices ($U, W, V$) and bias vectors ($\mathbf{b}_h, \mathbf{b}_y$)
-- Activation functions $g$ (hidden layer, e.g., $\tanh$) and $f$ (output, e.g. softmax)
+- Parameter matrices $\mathbf{W}_{xh}, \mathbf{W}_{hh}, \mathbf{W}_{hy}$ and bias vectors $\mathbf{b}_h, \mathbf{b}_y$
+- Output activation $g$ (e.g. softmax); the hidden activation is $\tanh$
 
 **Output:** A sequence of predicted output vectors $\mathbf{Y} = \langle\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_T\rangle$
-</div>
+:::
 
 ### **Algorithm:**
 
 $$
 \begin{aligned}
-&\text{1. } \mathbf{h}_0 \leftarrow \mathbf{0} & \bullet \text{Initialize the baseline context vector with zeros} \\
+&\text{1. } \mathbf{h}_0 \leftarrow \mathbf{0} & \bullet \text{Initialize the hidden state with zeros} \\
 &\text{2. } \mathbf{Y} \leftarrow \langle \rangle & \bullet \text{Initialize an empty sequence to store outputs} \\
-&\text{3. } \textbf{for } t \leftarrow 1 \textbf{ to } T \textbf{ do} & \\
-&\text{4. } \quad \mathbf{z}_t \leftarrow U\mathbf{h}_{t-1} + W\mathbf{x}_t + \mathbf{b}_h & \bullet \text{Linear combination of past memory and new input} \\
-&\text{5. } \quad \mathbf{h}_t \leftarrow g(\mathbf{z}_t) &\bullet \text{Compute the updated hidden state} \\
-&\text{6. } \quad \mathbf{y}_t \leftarrow f(V\mathbf{h}_t + \mathbf{b}_y) & \bullet \text{Generate the prediction for the current time step} \\
-&\text{7. } \quad \mathbf{Y} \leftarrow \mathbf{Y} \parallel \langle\mathbf{y}_t\rangle && \bullet \text{Append the current step output vector to the sequence} \\
+&\text{3. } \textbf{for } t \leftarrow 1 \textbf{ to } T \textbf{ do} & \bullet \text{Iterate over sequence} \\
+&\text{4. } \quad \mathbf{z}_t \leftarrow \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{W}_{xh}\mathbf{x}_t + \mathbf{b}_h & \bullet \text{Combine past memory and new input} \\
+&\text{5. } \quad \mathbf{h}_t \leftarrow \tanh(\mathbf{z}_t) & \bullet \text{Compute the updated hidden state} \\
+&\text{6. } \quad \mathbf{y}_t \leftarrow g(\mathbf{W}_{hy}\mathbf{h}_t + \mathbf{b}_y) & \bullet \text{Generate the prediction for time step } t \\
+&\text{7. } \quad \mathbf{Y} \leftarrow \mathbf{Y} \parallel \langle\mathbf{y}_t\rangle & \bullet \text{Append the output to the sequence} \\
 &\text{8. } \textbf{end for} & \\
 &\text{9. } \textbf{return } \mathbf{Y} &
 \end{aligned}
 $$
 
 
-
 ## Training RNNs
 
 ::: {.callout-tip appearance="minimal" icon=false style="background-color: #fafbfc; border-left: 4px solid #34495e; font-size: 0.85em;" title="Training"}
-As previously with ANN networks, we use a training set, a loss function, and backpropagation to
-train the RNN.
+As with ANNs, we use a training set, a loss function, and backpropagation to train the RNN.
 :::
 
-- There are now three sets of weights to update: 
-- $\mathbf{W}_{xh}$:  is the weight matrix between the input and hidden layer
-- $\mathbf{W}_{hh}$ the weight matrix for the recurrent connection
-- $\mathbf{W}_{hy}$: the weight matrix between the hidden and output layers, 
-
-
+- Three weight matrices (plus biases) are learned, and they are **shared across all time steps**:
+  - $\mathbf{W}_{xh}$: input → hidden
+  - $\mathbf{W}_{hh}$: hidden → hidden (the recurrent connection)
+  - $\mathbf{W}_{hy}$: hidden → output
+- A loss $L_t$ is computed at each time step that has a target, and the total loss is
+$$
+L = \sum_{t=1}^{T} L_t
+$$
+- For a many-to-one task such as sentiment prediction, only the last step has a target, so $L = L_T$
 
 
 ## Training of RNNs
 
-
 ![](./img/rnn-train.png){width=75% fig-align="center"}
+
 
 <div style="font-size: 11px; line-height: 1.2;">
 
-| Column 1 | Column 2 | Column 3 |
+| | | |
 |:---|:---|:---|
-| **$W$**: Recurrent weight matrix | **$a$**: Hidden state activation | **$L$**: Loss value |
-| **$U$**: Input weight matrix | **$o$**: Weighted output value | **$x$**: Input vector  |
-| **$V$**: Output weight matrix | **$\hat{y}$**: Predicted value ($\text{y hat}$) | **$b$**: Bias matrix (hidden) |
-| **$s$**: Weighted sum ($s_{t}$) | **$y$**: True target value | **$c$**: Bias matrix (output) |
-
+| **$W$**: recurrent weights | **$s$**: hidden pre-activation | **$L$**: loss |
+| **$U$**: input weights | **$a$**: hidden state | **$x$**: input vector |
+| **$V$**: output weights | **$o$**: output scores (before softmax) | **$y$**: true target |
+| **$b$**: hidden bias vector | **$c$**: output bias vector | **$\hat{y}$**: predicted probabilities |
 
 </div>
+
 
 ## Training of RNNs: Forward pass
 
 :::: {.columns}
 
-::: {.column width="30%"}
+::: {.column width="60%"}
 
 ![](./img/rnn-onecol.png){width=75% fig-align="center"}
 
 :::
-::: {.column width="70%"}
+::: {.column width="40%"}
 
 $$
 \begin{align*}
-s_t &= \mathbf{W}a_{t+1} + \mathbf{U}x_{t} + b & \bullet \text{current input and previous hidden and bias} \\
-a_t &= \tanh(s_t)  & \bullet \text{non-linear activation function} \\
-o_t &= \mathbf{V}a_t + c & \bullet \text{calculate output} \\
-\hat{y}_t &= \mathrm{softmax}(o_t)& \bullet \text{normalised probability distribution of the output} \\
-\mathcal{L} &= -y_t\log(\hat{y}_t) & \bullet \text{loss} \\
+z_t &= \mathbf{Wh}_{t-1} + \mathbf{U}x_{t} + b  \\
+h_t &= \tanh(z_t)   \\
+o_t &= \mathbf{Vh}_t + c  \\
+\hat{\mathbf{y}}_t &= \mathrm{softmax}(o_t) \\
+L_t &= -\mathbf{y}_t^\top \log \hat{\mathbf{y}}_t  \\
 \end{align*}
 $$
+
+$L_t$ is the **cross-entropy loss** at step $t$
 :::
 ::::
 
@@ -457,84 +410,189 @@ $$
 
 ## The Vanishing and Exploding Gradient Problems
 
-- It can be shown that when calculating the gradients of such "telescoped" terms, we encounter the product of many Jacobian matrices:
+- Backpropagating from step $t$ to an earlier step $t-n$ multiplies together many Jacobian matrices:
+
 $$
-\frac{\partial \mathbf{h}_t}{\partial \mathbf{h}_{t-n}} = \prod_{k=t-n}^{t-1} \mathbf{J}_k
+\frac{\partial \mathbf{h}_t}{\partial \mathbf{h}_{t-n}} = \prod_{k=t-n}^{t-1} \mathbf{J}_k,
+\qquad
+\mathbf{J}_k = \frac{\partial \mathbf{h}_{k+1}}{\partial \mathbf{h}_k}
+= \mathrm{diag}\!\left(1-\mathbf{h}_{k+1}^2\right)\mathbf{W}_{hh}
 $$
 
+- If the Jacobians are "small" (norm below 1), the product shrinks toward zero as $n$ grows: **vanishing gradients**
+- If they are "large" (norm above 1), it grows without bound: **exploding gradients**
 
-where $\mathbf{J}_k$ is the Jacobian matrix of the hidden state at time step $k$. If the eigenvalues of $\mathbf{J}_k$
- are less than 1, the product of these matrices will tend to zero as $n$ increases, leading to vanishing gradients. If they are greater than one, the 
- gradients will explode.[^2]
+- **Vanishing**: the gradient signal from distant time steps is too weak to update the weights, so the network cannot learn long-term dependencies
+- **Exploding**: updates become huge and unstable, so the loss jumps around or becomes NaN
 
- - The vanishing gradient problem prevents the network from effectively learning long-term dependencies, as the gradient signal becomes too weak to update the weights meaningfully for earlier layers. 
- - The exploding gradient problem can cause the model to converge too quickly to a poor local minimum or make the training process fail entirely due to excessively large updates.
-
-[^2]: Mienye ID et al (2024) [Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications Information, Information 15(9), 517](https://www.mdpi.com/2078-2489/15/9/517).
-
-
-## The Vanishing and Exploding Gradient Problem: Intuition
-
-- Let us examine an example to understand why the vanishing gradient problem occurs. 
-- For simplicity, Let's consider the following symmetric matrix $A$:
-$$A = \begin{bmatrix}  0.65 & 0.15 \\  0.15 & 0.65  \end{bmatrix}$$
-- To diagonalize $A$, we first find its eigenvalues $\lambda$ by solving $\det(A - \lambda I) = 0$:
-- Eigenvalues ($\lambda$):Solving the characteristic polynomial gives:$$\lambda_1 = 0.8, \quad \lambda_2 = 0.5$$
-- Eigenvectors ($P$):The corresponding eigenvectors form the columns of matrix $P$:$$P = \begin{bmatrix}     1 & 1 \\     1 & -1     \end{bmatrix}, \quad     P^{-1} = \begin{bmatrix}     0.5 & 0.5 \\     0.5 & -0.5     \end{bmatrix}$$
-
-## The Vanishing and Exploding Gradient Problem: Intuition (2)
-- Any diagonalizable matrix can be factored as:$$A = P D P^{-1}$$
-- where $D$ is a diagonal matrix containing the eigenvalues -- in our example we have:
-$$D = \begin{bmatrix}  0.8 & 0 \\  0 & 0.5  \end{bmatrix}$$
-- When we multiple the matrix by itself many times, the intermediate terms cancel out
-$$\begin{align*} A^n &= (P D P^{-1}) (P D P^{-1}) \dots (P D P^{-1}) \\ &= P D (P^{-1} P) D (P^{-1} P) \dots D P^{-1} \\ &= P D^n P^{-1} \end{align*}$$
-- Because $D$ is a diagonal matrix, raising it to the power $n$ simply means raising each individual eigenvalue to the power $n$:$$D^n = \begin{bmatrix}  0.8^n & 0 \\  0 & 0.5^n  \end{bmatrix}$$
+::: {.small-text}
+Mienye ID et al (2024) [Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications, Information **15**:517](https://www.mdpi.com/2078-2489/15/9/517).
+:::
 
 
-## The Vanishing and Exploding Gradient Problem: Intuition (3)
+## Vanishing and Exploding Gradients: Intuition
 
-For $n = 1$:$$D^1 =  \begin{bmatrix} 0.8^1 & 0 \\ 0 & 0.5^1 \end{bmatrix}  = \begin{bmatrix} 0.8 & 0 \\ 0 & 0.5 \end{bmatrix} $$
-For $n = 5$:$$D^5 = \begin{bmatrix} 0.8^5 & 0 \\ 0 & 0.5^5 \end{bmatrix} = \begin{bmatrix} 0.32768 & 0 \\ 0 & 0.03125 \end{bmatrix}$$
-For $n = 20$:$$D^{20} = \begin{bmatrix} 0.8^{20} & 0 \\ 0 & 0.5^{20} \end{bmatrix} \approx \begin{bmatrix} 0.0115 & 0 \\ 0 & 0.00000095 \end{bmatrix}$$
+- To see why gradients vanish, pretend every Jacobian is the same symmetric matrix $A$, so the product is $A^n$
+- For example:
 
-- Because both eigenvalues ($\lambda_1 = 0.8$ and $\lambda_2 = 0.5$) are less than $1$, raising them to a large power $n$ forces them to decay exponentially toward zero.
+$$
+A = \begin{bmatrix} 0.65 & 0.15 \\ 0.15 & 0.65 \end{bmatrix}
+$$
 
-## The Vanishing and Exploding Gradient Problem: Intuition (4)
+- Its eigenvalues solve $\det(A - \lambda I) = 0$, which gives
 
-- This is the algebraic root of the vanishing gradient problem in RNNs: if the eigenvalues of the hidden-to-hidden Jacobian matrices are less than 1, long-term gradient signals shrink to zero before they can reach earlier time steps. 
-- Conversely, if eigenvalues are greater than 1, $D^n$ explodes toward infinity, causing exploding gradients.
+$$
+\lambda_1 = 0.8, \quad \lambda_2 = 0.5
+$$
+
+- The corresponding eigenvectors form the columns of $P$:
+
+$$
+P = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}, \quad
+P^{-1} = \begin{bmatrix} 0.5 & 0.5 \\ 0.5 & -0.5 \end{bmatrix}
+$$
+
+## Vanishing and Exploding Gradients: Intuition (2)
+
+- Any diagonalizable matrix can be factored as
+
+$$
+A = P D P^{-1}
+$$
+
+- where $D$ is the diagonal matrix of eigenvalues, here
+
+$$
+D = \begin{bmatrix} 0.8 & 0 \\ 0 & 0.5 \end{bmatrix}
+$$
+
+- When we multiply the matrix by itself many times, the intermediate $P^{-1}P = I$ terms cancel:
+
+$$
+\begin{align*}
+A^n &= (P D P^{-1}) (P D P^{-1}) \cdots (P D P^{-1}) \\
+&= P D (P^{-1} P) D (P^{-1} P) \cdots D P^{-1} \\
+&= P D^n P^{-1}
+\end{align*}
+$$
+
+- Because $D$ is diagonal, $D^n$ just raises each eigenvalue to the power $n$:
+
+$$
+D^n = \begin{bmatrix} 0.8^n & 0 \\ 0 & 0.5^n \end{bmatrix}
+$$
+
+## Vanishing and Exploding Gradients: Intuition (3)
+
+$$
+\begin{align*}
+D^{1}  &= \begin{bmatrix} 0.8 & 0 \\ 0 & 0.5 \end{bmatrix} \\[4pt]
+D^{5}  &= \begin{bmatrix} 0.32768 & 0 \\ 0 & 0.03125 \end{bmatrix} \\[4pt]
+D^{20} &\approx \begin{bmatrix} 0.0115 & 0 \\ 0 & 9.5\times 10^{-7} \end{bmatrix}
+\end{align*}
+$$
+
+- Both eigenvalues are below $1$, so the powers decay exponentially toward zero. A gradient signal 20 steps back is reduced to about 1% of its size, or far less
+- This is the algebraic root of the vanishing gradient problem: if the hidden-to-hidden Jacobians are "small", long-term gradient signals vanish before they reach earlier time steps
+- Conversely, with an eigenvalue above $1$ (say $1.2$), the same power explodes: $1.2^{20} \approx 38$, and it keeps growing
+
+
+## Vanishing and Exploding Gradients: Intuition
+
+- To see why gradients vanish, pretend every Jacobian is the same symmetric matrix $A$, so the product is $A^n$
+- For example:
+
+$$
+A = \begin{bmatrix} 0.65 & 0.15 \\ 0.15 & 0.65 \end{bmatrix}
+$$
+
+- Its eigenvalues solve $\det(A - \lambda I) = 0$, which gives
+
+$$
+\lambda_1 = 0.8, \quad \lambda_2 = 0.5
+$$
+
+- The corresponding eigenvectors form the columns of $P$:
+
+$$
+P = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}, \quad
+P^{-1} = \begin{bmatrix} 0.5 & 0.5 \\ 0.5 & -0.5 \end{bmatrix}
+$$
+
+## Vanishing and Exploding Gradients: Intuition (2)
+
+- Any diagonalizable matrix can be factored as
+
+$$
+A = P D P^{-1}
+$$
+
+- where $D$ is the diagonal matrix of eigenvalues, here
+
+$$
+D = \begin{bmatrix} 0.8 & 0 \\ 0 & 0.5 \end{bmatrix}
+$$
+
+- When we multiply the matrix by itself many times, the intermediate $P^{-1}P = I$ terms cancel:
+
+$$
+\begin{align*}
+A^n &= (P D P^{-1}) (P D P^{-1}) \cdots (P D P^{-1}) \\
+&= P D (P^{-1} P) D (P^{-1} P) \cdots D P^{-1} \\
+&= P D^n P^{-1}
+\end{align*}
+$$
+
+- $D$ is diagonal, thus: $D^n = \begin{bmatrix} 0.8^n & 0 \\ 0 & 0.5^n \end{bmatrix}$
+
+## Vanishing and Exploding Gradients: Intuition (3)
+
+$$
+\begin{align*}
+D^{1}  &= \begin{bmatrix} 0.8 & 0 \\ 0 & 0.5 \end{bmatrix} \\[4pt]
+D^{5}  &= \begin{bmatrix} 0.32768 & 0 \\ 0 & 0.03125 \end{bmatrix} \\[4pt]
+D^{20} &\approx \begin{bmatrix} 0.0115 & 0 \\ 0 & 9.5\times 10^{-7} \end{bmatrix}
+\end{align*}
+$$
+
+- Both eigenvalues are below $1$, so the powers decay exponentially toward zero. A gradient signal 20 steps back is reduced to about 1% of its size, or far less
+- This is the algebraic root of the vanishing gradient problem: if the hidden-to-hidden Jacobians are "small", long-term gradient signals vanish before they reach earlier time steps
+- Conversely, with an eigenvalue above $1$ (say $1.2$), the same power explodes: $1.2^{20} \approx 38$, and it keeps growing
 
 ## Why tanh?
 
-- Why do we tend not to use the sigmoid activation function in RNNs?
-- This has to do with the vanishing gradient problem
-- The maximum value of the sigmoid derivative is exactly $0.25$
-- Recall that the sigmoid is $\sigma(z) = \frac{1}{1+e^{-z}}$ and the first derivative is $\sigma^{\prime}(z) = \sigma(z)(1-\sigma(z))$
-- Using the chain rule on $\sigma(z) - \sigma(z)^2$ to calculate the second derivative, we get 
-$$
-\begin{align*}
-\sigma^{\prime\prime}(z) &= \sigma^{\prime}(z) - 2\sigma(z)\sigma^{\prime}(z) \\
-&= \sigma^{\prime}(z)(1-2\sigma(z)) \\
-\end{align*}
-$$
-- set $\sigma^{\prime\prime}(z) = 0$ to find crtical points: $\sigma^{\prime}(z)(1-2\sigma(z)) = 0$. We note that the slope of the sigmoid function ($\sigma^{\prime}$) is never zero for finite values, and so we solve the other term.
-- $1-2\sigma(z) = 0$ implies $\sigma(z) = \frac{1}{2}$ (Maximum slope of the sigmoid function occurs when $\sigma(z) = \frac{1}{2}$ )
-- It is easy to show that if $\frac{1}{1+e^z} = \frac{1}{2}$, then $z=0$. The slope of the sigmoid has its max at the center point, $z=0$
-- We can now calculate the maximum value of the slope: $\sigma^{\prime}(z)(0) = \sigma(z)(0)(1-\sigma(z)(0)) = 0.5(1-0.5)=0.25$
+- Why do we tend not to use the sigmoid in RNNs? Because of the vanishing gradient problem
+- Each backward step multiplies the gradient by the activation derivative, so the **size of that derivative** matters
 
-## What tanh? (2)
+:::: {.columns}
+::: {.column width="50%"}
+- Sigmoid: $\sigma'(z) = \sigma(z)\bigl(1-\sigma(z)\bigr) \le \tfrac14$
+  - a product $p(1-p)$ is largest at $p=\tfrac12$, i.e. $z=0$
+- Tanh: $\tanh'(z) = 1-\tanh^2(z) \le 1$
+  - maximal at $z=0$
+  - $\tanh(z) = 2\sigma(2z)-1$, so its slope is 4 times steeper
+:::
+::: {.column width="50%"}
 
-- We can also show that $\tanh$'s derivative has its maximum at 1.0 (when the input is 0). 
-- Therefore, the sigmoid will tend to reduce gradients substantially more than the tanh during backpropagation in time
+```{python}
+#| echo: false
+#| fig-align: center
+plot_derivatives()
+plt.show()
+```
+:::
+::::
 
-Additionally
 
-- Sigmoid restricts outputs strictly between $0$ and $1$. Because the outputs are always positive, the gradients for the weights in the next layer will all carry the same sign 
-(either all positive or all negative). This forces the gradient descent updates to violently "zig-zag" during optimization, slowing down convergence.
-- $\tanh$ outputs range from $-1$ to $1$. Because it is zero-centered, the average output is close to zero. 
-This allows the weights to be updated in both positive and negative directions smoothly, which acts as a natural regularizer and helps the model converge much faster.
-- A number of techniques have been developed to mitigate the unstable gradient problem including gradient clipping and LSTMs
+## Why tanh? (2)
 
+- Tanh is **zero-centered** (outputs in $[-1,1]$), while sigmoid outputs are always positive. Positive-only inputs make all the weight gradients of the next layer share one sign, which tends to cause zig-zag updates and slower convergence
+- But tanh is **not a cure**: $\tanh'(z) \to 0$ for large $|z|$, so it still saturates and gradients still vanish over long sequences
+
+::: {.callout-important icon=false title="What actually helps"}
+- **Exploding gradients**: gradient clipping
+- **Vanishing gradients**: gated architectures (LSTM, GRU), which we turn to next
+:::
 
 
 
@@ -601,7 +659,7 @@ train_data, test_data = train_test_split(df, test_size=0.2, random_state=42)
 * **Truncation & Padding**: Fixing sequences to a uniform length ($\text{max\_length} = 250$) for batching tensors.
 
 ```python 
-Build vocabulary index (starting at 1, reserving 0 for padding)
+# Build vocabulary index (starting at 1, reserving 0 for padding)
 vocab = {word for phrase in df["text"] for word in phrase}
 word_to_idx = {word: idx for idx, word in enumerate(vocab, start=1)}
 
@@ -629,7 +687,7 @@ from torch.utils.data import Dataset, DataLoader
 
 class SentimentDataset(Dataset):
     def __init__(self, data):
-        self.texts = data['text'].values. ## The movie reviews
+        self.texts = data['text'].values ## The movie reviews
         self.labels = data['label'].values ## Positive (1) or negative (0) reviews?
         self.lengths = data['length'].values ## How long (how many chars is the text)
     
@@ -837,7 +895,7 @@ nearly unchanged; values corresponding to lower values are essentially **erased*
   <img src="./img/lstm.png" style="width: 100%; display: block;">
 
   <!-- Highlight Box (Adjust top, left, width, height as needed) -->
-  <div style="position: absolute; 4px solid #1a73e8; 
+  <div style="position: absolute; border: 4px solid #1a73e8; 
        background-color: rgba(26, 115, 232, 0.25); border-radius: 8px; z-index: 999;
        top: 24%; left: 20%; width: 10%; height: 35%;">
   </div>
@@ -870,7 +928,7 @@ $$ {#eq-forget-gate}
   <img src="./img/lstm.png" style="width: 100%; display: block;">
 
   <!-- Highlight Box (Adjust top, left, width, height as needed) -->
-  <div style="position: absolute; 4px solid #1a73e8; 
+  <div style="position: absolute; border: 4px solid #1a73e8; 
        background-color: rgba(26, 115, 232, 0.25); border-radius: 8px; z-index: 999;
        top: 34%; left: 30%; width: 10%; height: 25%;">
   </div>
@@ -896,7 +954,7 @@ current context.
   <img src="./img/lstm.png" style="width: 100%; display: block;">
 
   <!-- Highlight Box (Adjust top, left, width, height as needed) -->
-  <div style="position: absolute; 4px solid #1a73e8; 
+  <div style="position: absolute; border: 4px solid #1a73e8; 
        background-color: rgba(26, 115, 232, 0.25); border-radius: 8px; z-index: 999;
        top: 24%; left: 40%; width: 10%; height: 35%;">
   </div>
@@ -923,7 +981,7 @@ current context.
   <img src="./img/lstm.png" style="width: 100%; display: block;">
 
   <!-- Highlight Box (Adjust top, left, width, height as needed) -->
-  <div style="position: absolute; 4px solid #1a73e8; 
+  <div style="position: absolute; border: 4px solid #1a73e8; 
        background-color: rgba(26, 115, 232, 0.25); border-radius: 8px; z-index: 999;
        top: 24%; left: 50%; width: 20%; height: 35%;">
   </div>
@@ -1124,7 +1182,7 @@ figure adapted from Jurafsky and Martin (2026) Speech and Language Processing
 ::::
 
 
-# The Encoder-Decoder Model 
+## The Encoder-Decoder Model 
 
 - RNNs were among early examples of the **encoder-decoder model**
   - encode an input sequence of length $n$
@@ -1144,7 +1202,7 @@ encode_decode()
 plt.plot()
 ```
 
-# The Encoder-Decoder Model 
+## The Encoder-Decoder Model 
 
 - Encoder decoder models have three major components
 
@@ -1161,7 +1219,7 @@ plt.plot()
 > Ich bin ein Berliner `<s>` I am a doughnut
 
 
-# The Encoder-Decoder Model 
+## The Encoder-Decoder Model 
 
 ```{python}
 #| echo: false
@@ -1170,7 +1228,7 @@ doughnut()
 plt.plot()
 ```
 
-# The Encoder-Decoder Model 
+## The Encoder-Decoder Model 
 
 - Note that the order of the words does not have to be the same
 

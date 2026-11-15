@@ -2092,3 +2092,16 @@ def plot_rnn(figsize=(13, 5.4), show_equations=True, highlight=None):
     ax.text(13.5, -1.4, "same weights at every step", ha="right", fontsize=10.5, color="#6B7A90", style="italic")
 
     return fig
+
+
+def plot_derivatives(figsize=(5.5, 3.5)):
+    z = np.linspace(-6, 6, 400)
+    sig = 1 / (1 + np.exp(-z))
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.plot(z, 1 - np.tanh(z) ** 2, lw=2, label=r"$\tanh'(z)$ (max 1)")
+    ax.plot(z, sig * (1 - sig), lw=2, label=r"$\sigma'(z)$ (max 0.25)")
+    ax.axhline(0.25, ls="--", lw=1, color="gray")
+    ax.set_xlabel("z")
+    ax.legend()
+    fig.tight_layout()
+    return fig

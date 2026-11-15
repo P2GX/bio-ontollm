@@ -316,3 +316,11 @@ table.small-table td.greycell {
 .reveal .slides img {
   height: auto;
 }
+
+
+.reveal table {
+  border-collapse: collapse;
+}
+.reveal table tbody tr:last-child td {
+  border-bottom: 1px solid #34495e;  /* match your deck's accent colour */
+}
