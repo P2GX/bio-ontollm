@@ -69,11 +69,11 @@ $$
         \begin{pmatrix}
             2 & 0\\
             0 & 2c
-        \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = c \qquad \longleftarrow \text{condition number}
+        \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = \frac{2}{2c} = \frac{1}{c} \qquad \longleftarrow \text{condition number}
 \end{align}
 $$
 
-A large condition number means an ill posed optimization problem which will converge slowly. This is an intuitive description, the mathematical formalization of these ideas is more complicated.
+Here we take $0<c\leq 1$: the smaller $c$, the flatter the loss is in the $y$-direction compared to the $x$-direction, the larger the condition number $\kappa=1/c$. A large condition number means an ill posed optimization problem which will converge slowly. This is an intuitive description, the mathematical formalization of these ideas is more complicated.
 
 ## Let's plot this:
 
@@ -86,7 +86,7 @@ import plotly.graph_objects as go
 # Fixed grid and coefficient values
 grid = np.linspace(-1, 5, 40)
 X, Y = np.meshgrid(grid, grid)
-c_values = list(range(1, 11))
+c_values = [round(0.1 * k, 1) for k in range(1, 11)]
 
 def loss_surface(c, lam=0):
     return (X-2)**2 + c*(Y-2)**2 + (lam / 2) * (X**2 + Y**2)
@@ -123,7 +123,7 @@ def make_surface_slider(lam=0):
             name=str(c),
             data=[
                 go.Surface(z=loss_surface(c, lam)),
-                minimum_marker(c_values[0], lam)
+                minimum_marker(c, lam)
             ],
             layout=go.Layout(title_text=f"c = {c}, mu = {lam}")
         )
@@ -132,7 +132,7 @@ def make_surface_slider(lam=0):
     fig.frames = frames
 
     fig.update_layout(
-        title=f"c = 1, lambda = {lam}",
+        title=f"c = {c_values[0]}, mu = {lam}",
         scene=dict(
             xaxis=dict(title="x", range=[-1, 5], autorange=False),
             yaxis=dict(title="y", range=[-1, 5], autorange=False),
@@ -205,21 +205,21 @@ y_t
 \end{aligned}
 $$
 
-In order for this to converge we must have
+In order for this to converge we must have (for $0<c\leq 1$ the $x$-direction, which is the steepest, is the restrictive one)
 
 $$
-|1-2c\eta|<1
+|1-2\eta|<1 \text{ and } |1-2c\eta|<1
 \quad\Longleftrightarrow\quad
-0<\eta<\frac{1}{c}.
+0<\eta<1.
 $$
 
-Let $c=10$, $\eta=0.08$, and start at $(x_0,y_0)=(0,0)$. The minimum is at $(2,2)$. The update equations become
+Let $c=0.1$, $\eta=0.8$, and start at $(x_0,y_0)=(0,0)$. The minimum is at $(2,2)$. The update equations become
 
 $$
 \boxed{
 \begin{aligned}
-x_{t+1}&=0.84x_t+0.32,\\
-y_{t+1}&=-0.6y_t+3.2.
+x_{t+1}&=-0.6x_t+3.2,\\
+y_{t+1}&=0.84y_t+0.32.
 \end{aligned}
 }
 $$
@@ -231,7 +231,7 @@ $$
     \nabla\mathcal{L}(x_0,y_0)=
     \begin{pmatrix}
         -4\\
-        -40
+        -0.4
     \end{pmatrix}
     \quad &\longrightarrow \quad
     \begin{pmatrix}
@@ -243,38 +243,101 @@ $$
         0\\
         0
     \end{pmatrix}
-    -0.08
+    -0.8
     \begin{pmatrix}
         -4\\
-        -40
+        -0.4
     \end{pmatrix}
     =
     \begin{pmatrix}
-        0.32\\
         3.2\\
+        0.32\\
     \end{pmatrix} 
     \\[8pt]
     \nabla\mathcal{L}(x_1,y_1) =
     \begin{pmatrix}
-    -3.36\\
-    24
+    2.4\\
+    -0.336
     \end{pmatrix}
     \quad &\longrightarrow \quad
     \begin{pmatrix}x_2\\y_2
     \end{pmatrix}
     =
-    \begin{pmatrix}0.32\\3.2
+    \begin{pmatrix}3.2\\0.32
     \end{pmatrix}
-    -0.08
-    \begin{pmatrix}-3.36\\24
+    -0.8
+    \begin{pmatrix}2.4\\-0.336
     \end{pmatrix}
     =
-    \begin{pmatrix}0.5888\\1.28
+    \begin{pmatrix}1.28\\0.5888
     \end{pmatrix}
 \end{align}
 $$
 
-- The $x$-coordinate moves steadily towards $2$, while the $y$-coordinate overshoots the minimum and switches sides. Both converge because the absolute values of their updates are less than 1. 
+- The $x$-coordinate overshoots the minimum and switches sides, but its error shrinks by a factor $|1-2\eta|=0.6$ per step. The $y$-coordinate moves steadily towards $2$, but only shrinks its error by a factor $1-2c\eta=0.84$ per step: it is the slow direction and determines how long convergence takes. Both converge because the absolute values of their update factors are less than 1. 
+
+## Example: a smaller learning rate
+
+Same problem, same form, but now $c=0.1$, $\eta=0.45$, and again start at $(x_0,y_0)=(0,0)$. The update equations become
+
+$$
+\boxed{
+\begin{aligned}
+x_{t+1}&=0.1x_t+1.8,\\
+y_{t+1}&=0.91y_t+0.18.
+\end{aligned}
+}
+$$
+
+$$
+\begin{align}
+    \nabla\mathcal{L}(x_0,y_0)=
+    \begin{pmatrix}
+        -4\\
+        -0.4
+    \end{pmatrix}
+    \quad &\longrightarrow \quad
+    \begin{pmatrix}
+        x_1\\
+        y_1
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        0\\
+        0
+    \end{pmatrix}
+    -0.45
+    \begin{pmatrix}
+        -4\\
+        -0.4
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        1.8\\
+        0.18
+    \end{pmatrix}
+    \\[8pt]
+    \nabla\mathcal{L}(x_1,y_1) =
+    \begin{pmatrix}
+    -0.4\\
+    -0.364
+    \end{pmatrix}
+    \quad &\longrightarrow \quad
+    \begin{pmatrix}x_2\\y_2
+    \end{pmatrix}
+    =
+    \begin{pmatrix}1.8\\0.18
+    \end{pmatrix}
+    -0.45
+    \begin{pmatrix}-0.4\\-0.364
+    \end{pmatrix}
+    =
+    \begin{pmatrix}1.98\\0.3438
+    \end{pmatrix}
+\end{align}
+$$
+
+- The $x$-coordinate is already almost at the minimum after two steps: its error shrinks by a factor $|1-2\eta|=0.1$ per step. The $y$-coordinate moves steadily towards $2$, but way too slowly: its error only shrinks by a factor $1-2c\eta=0.91$ per step, so we need $57$ steps to get within $0.01$ of the minimum (against $3$ for $x$). This is slow convergence caused by the small curvature along $y$, i.e. by the large condition number $\kappa=1/c=10$.
 
 
 ## Adding a Ridge (in the Hessian)
@@ -302,7 +365,8 @@ H\mathcal{L}_R &= H\mathcal{L} + \mu\mathcal{I}
     \begin{pmatrix}
         2+\mu & 0\\
         0 & 2c+\mu
-    \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = \frac{2c+\mu}{2+\mu} \,.
+    \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = \frac{2+\mu}{2c+\mu} \,,\\[5pt]
+\kappa\big|_{c=0.1,\,\mu=4} &= \frac{2+4}{2\cdot 0.1+4} = \frac{6}{4.2} \approx 1.43 \qquad \left(\text{instead of } \kappa=\frac{1}{c}=10 \text{ for } \mu=0\right).
 \end{align}
 $$
 
@@ -317,7 +381,7 @@ $$
 ## Plot with Regularization
 ```{python}
 #| echo: false
-make_surface_slider(lam=2).show()
+make_surface_slider(lam=4).show()
 ```
 
 ## Takeaways
