@@ -643,97 +643,77 @@ def unrolled_rnn_sentiment(figsize=(15, 6)):
 
     plt.tight_layout()
 
+CYAN, CYAN_EDGE = "#AEEEEE", "#3A8F8F"
+HID, HID_EDGE = "#FFE9C7", "#C9892B"     # hidden states
+OUT, OUT_EDGE = "#E6F0D8", "#5E9A3A"     # output
+EDGE = "#333333"
 
-def rnn_language_model(figsize=(6, 6.5)):
-    """
-    a chain of embeddings e_{t-2..t} feeding through
-    weight boxes W into hidden states h_{t-2..t}, chained by weight boxes U,
-    with the final hidden state h_t projected through a flared weight box V
-    into an output y_hat_t.
-    """
-
-    CYAN = "#AEEEEE"
-    CYAN_EDGE = "#3AA0A0"
-    WHITE = "white"
-    EDGE = "black"
-
+def rnn_language_model(figsize=(7.0, 6.4)):
     fig, ax = plt.subplots(figsize=figsize)
+    cols = [0.0, 3.6, 7.2]
+    xs = [r"$\mathbf{x}_{t-2}$", r"$\mathbf{x}_{t-1}$", r"$\mathbf{x}_t$"]
+    es = [r"$\mathbf{e}_{t-2}$", r"$\mathbf{e}_{t-1}$", r"$\mathbf{e}_t$"]
+    hs = [r"$\mathbf{h}_{t-2}$", r"$\mathbf{h}_{t-1}$", r"$\mathbf{h}_t$"]
+    x_y, e_y, h_y = 0.0, 1.9, 4.6
+    ew, eh = 1.45, 0.8           # circle size
+    bw, bh = 1.15, 0.75          # weight-box size
 
-    # ----------------------------------------------------------------------
-    # Layout
-    # ----------------------------------------------------------------------
-    col_x = [0.0, 2.2, 4.4]                 # x positions for t-2, t-1, t
-    e_labels = [r"$e_{t-2}$", r"$e_{t-1}$", r"$e_t$"]
-    h_labels = [r"$h_{t-2}$", r"$h_{t-1}$", r"$h_t$"]
+    def arrow(p0, p1, lw=1.8, color=ARROW_BLUE):
+        ax.annotate("", xy=p1, xytext=p0,
+                    arrowprops=dict(arrowstyle="-|>", lw=lw, color=color,
+                                    shrinkA=0, shrinkB=0, mutation_scale=16), zorder=1)
 
-    e_y = 0.0
-    w_y0, w_h = 0.75, 1.15
-    h_y = 2.55
-    ell_w, ell_h = 1.35, 0.75    # circle (ellipse) size
-    sq_w = 0.9                   # W/U square width
+    def node(xc, yc, label, fc="white", ec=EDGE, fs=15):
+        ax.add_patch(Ellipse((xc, yc), ew, eh, fc=fc, ec=ec, lw=1.6, zorder=3))
+        ax.text(xc, yc, label, fontsize=fs, ha="center", va="center", zorder=4)
 
-    # ----------------------------------------------------------------------
-    # Bottom row: e_t embeddings, W boxes, h_t hidden states
-    # ----------------------------------------------------------------------
-    for xc, e_lab, h_lab in zip(col_x, e_labels, h_labels):
-        # embedding circle
-        ax.add_patch(Ellipse((xc, e_y), ell_w, ell_h, facecolor=WHITE,
-                            edgecolor=EDGE, linewidth=1.3, zorder=3))
-        ax.text(xc, e_y, e_lab, fontsize=13, ha="center", va="center", zorder=4)
+    def box(xc, yc, label, fs=14):
+        ax.add_patch(FancyBboxPatch((xc - bw/2, yc - bh/2), bw, bh,
+                     boxstyle="round,pad=0.02,rounding_size=0.12",
+                     fc=CYAN, ec=CYAN_EDGE, lw=1.6, zorder=3))
+        ax.text(xc, yc, label, fontsize=fs, ha="center", va="center", zorder=4)
 
-        # W square
-        ax.add_patch(Rectangle((xc - sq_w / 2, w_y0), sq_w, w_h,
-                                facecolor=CYAN, edgecolor=CYAN_EDGE, linewidth=1.3, zorder=2))
-        ax.text(xc, w_y0 + w_h / 2, r"W_{xh}", fontsize=14, ha="center", va="center", zorder=4)
+    for xc, xl, el, hl in zip(cols, xs, es, hs):
+        node(xc, x_y, xl)
+        node(xc, e_y, el)
+        node(xc, h_y, hl, fc=HID, ec=HID_EDGE)
+        # x -> e  (embedding E)
+        arrow((xc, x_y + eh/2), (xc, e_y - eh/2))
+        ax.text(xc + 0.2, (x_y + e_y)/2 + 0.02, r"$\mathbf{E}$", fontsize=14,
+                ha="left", va="center", color="#444444")
+        # e -> W_xh -> h
+        bm = (e_y + h_y) / 2
+        arrow((xc, e_y + eh/2), (xc, bm - bh/2))
+        arrow((xc, bm + bh/2), (xc, h_y - eh/2))
+        box(xc, bm, r"$\mathbf{W}_{xh}$")
 
-        # hidden state circle
-        ax.add_patch(Ellipse((xc, h_y), ell_w, ell_h, facecolor=WHITE,
-                            edgecolor=EDGE, linewidth=1.3, zorder=3))
-        ax.text(xc, h_y, r"W_{hh}", fontsize=13, ha="center", va="center", zorder=4)
+    # recurrent connections h_{t-1} -> W_hh -> h_t, and a stub from the left
+    bx = [(cols[i] + cols[i+1]) / 2 for i in range(2)]
+    for i, xc in enumerate(bx):
+        arrow((cols[i] + ew/2, h_y), (xc - bw/2, h_y))
+        box(xc, h_y, r"$\mathbf{W}_{hh}$")
+        arrow((xc + bw/2, h_y), (cols[i+1] - ew/2, h_y))
+    ax.text(-2.05, h_y, r"$\cdots$", fontsize=22, ha="center", va="center")
+    arrow((-1.55, h_y), (cols[0] - ew/2, h_y))
 
-    # ----------------------------------------------------------------------
-    # U boxes chaining the hidden states horizontally
-    # ----------------------------------------------------------------------
-    u_w = 0.6
-    for i in range(len(col_x) - 1):
-        xc = (col_x[i] + col_x[i + 1]) / 2
-        ax.add_patch(Rectangle((xc - u_w / 2, h_y - u_w / 2), u_w, u_w,
-                                facecolor=CYAN, edgecolor=CYAN_EDGE, linewidth=1.3, zorder=4))
-        ax.text(xc, h_y, "U", fontsize=13, ha="center", va="center", zorder=5)
+    # output: h_t -> W_hy (flared) -> softmax -> y_hat
+    xc = cols[-1]
+    v0, v1 = h_y + eh/2 + 0.7, h_y + eh/2 + 2.1
+    ax.add_patch(Polygon([(xc - 0.45, v0), (xc + 0.45, v0), (xc + 0.95, v1), (xc - 0.95, v1)],
+                         closed=True, fc=CYAN, ec=CYAN_EDGE, lw=1.6, zorder=3))
+    ax.text(xc, (v0 + v1)/2, r"$\mathbf{W}_{hy}$", fontsize=14, ha="center", va="center", zorder=4)
+    arrow((xc, h_y + eh/2), (xc, v0))
+    yh = v1 + 0.75 + eh/2
+    arrow((xc, v1), (xc, yh - eh/2))
+    ax.text(xc + 0.25, (v1 + yh - eh/2)/2, "softmax", fontsize=11, style="italic",
+            ha="left", va="center", color="#444444")
+    node(xc, yh, r"$\hat{\mathbf{y}}_t$", fc=OUT, ec=OUT_EDGE)
+    ax.text(xc + 1.1, yh, r"$|V|$ probabilities", fontsize=11, ha="left", va="center", color="#444444")
 
-    # ----------------------------------------------------------------------
-    # V trapezoid (flares wider toward the top) above the last hidden state,
-    # and the final output circle y_hat_t
-    # ----------------------------------------------------------------------
-    xc = col_x[-1]
-    v_y0, v_y1 = h_y + ell_h / 2 + 0.15, h_y + ell_h / 2 + 1.7
-    v_bottom_w, v_top_w = sq_w, 1.5
-
-    v_poly = Polygon(
-        [
-            (xc - v_bottom_w / 2, v_y0),
-            (xc + v_bottom_w / 2, v_y0),
-            (xc + v_top_w / 2, v_y1),
-            (xc - v_top_w / 2, v_y1),
-        ],
-        closed=True, facecolor=CYAN, edgecolor=CYAN_EDGE, linewidth=1.3, zorder=2,
-    )
-    ax.add_patch(v_poly)
-    ax.text(xc, (v_y0 + v_y1) / 2, r"W_{hy}", fontsize=14, ha="center", va="center", zorder=4)
-
-    y_hat_y = v_y1 + ell_h / 2 + 0.15
-    ax.add_patch(Ellipse((xc, y_hat_y), ell_w, ell_h, facecolor=WHITE,
-                        edgecolor=EDGE, linewidth=1.3, zorder=3))
-    ax.text(xc, y_hat_y, r"$\hat{y}_t$", fontsize=13, ha="center", va="center", zorder=4)
-
-    # ----------------------------------------------------------------------
-    # Layout
-    # ----------------------------------------------------------------------
-    ax.set_xlim(col_x[0] - 1.6, col_x[-1] + 1.4)
-    ax.set_ylim(e_y - ell_h / 2 - 0.3, y_hat_y + ell_h / 2 + 0.5)
+    ax.set_xlim(-2.6, 10.6)
+    ax.set_ylim(x_y - 0.7, yh + 0.8)
     ax.set_aspect("equal")
     ax.axis("off")
-
     plt.tight_layout()
 
 def rnn_next_word(figsize=(14, 6.5)):

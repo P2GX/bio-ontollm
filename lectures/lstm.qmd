@@ -207,7 +207,7 @@ Let us construct _by hand_ an RNN that outputs the **increase** $x_t - x_{t-1}$ 
 
 - The general equation for the hidden state pre-activation is:
 $$
-\mathbf{z}_t = \mathbf{W}_{hh} h_{t-1} + \mathbf{W}_{xh} \mathbf{x}_t
+\mathbf{z}_t = \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{W}_{xh} \mathbf{x}_t
 $$
 - In this toy example, we define the hidden state to be a $2\times 1$ column vector that memorizes both the current input and the immediate history.
 $$
@@ -233,7 +233,7 @@ w_hh = np.array([[0, 0],  [1, 0]])
 - This corresponds to 
 $$
 \begin{align*}
-\mathbf{z}_t^{(2\times 1)} &= \mathbf{W}_{hh}^{(2\times 2)} h_{t-1}^{(2\times 1)} + \mathbf{W}_{xh}^{(2\times 1)} \mathbf{x}_t^{(1\times 1)} \\
+\mathbf{z}_t^{(2\times 1)} &= \mathbf{W}_{hh}^{(2\times 2)} \mathbf{h}_{t-1}^{(2\times 1)} + \mathbf{W}_{xh}^{(2\times 1)} \mathbf{x}_t^{(1\times 1)} \\
  &= \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} h_{1, t-1} \\ h_{2, t-1} \end{bmatrix}+ \begin{bmatrix} 1\\0\end{bmatrix} \begin{bmatrix}x_t\end{bmatrix} \\
 &= \begin{bmatrix} 0  \\ 1\cdot h_{1, t-1} + 0\cdot h_{2, t-1}  \end{bmatrix}  + \begin{bmatrix} 1 \cdot x_t \\ 0 \cdot x_t \end{bmatrix} \\
 &= \begin{bmatrix} 0  \\  h_{1, t-1}  \end{bmatrix} + \begin{bmatrix} x_t \\ 0  \end{bmatrix} \\
@@ -241,7 +241,7 @@ $$
 \end{align*} 
 $$
 
-- That is, the combined state pre-activation ($\mathbf{z}_t$) consists of two numbers: the current input ($\mathbf{x}_t$) and the first element of the previous hidden state ($\mathbf{h}_{1, t-1}$)
+- That is, the combined state pre-activation ($\mathbf{z}_t$) consists of two numbers: the current input ($\mathbf{x}_t$) and the first element of the previous hidden state ($h_{1, t-1}$)
 
 ## Understanding the hidden state (3)
 
@@ -267,14 +267,14 @@ For non-negative inputs $x_t \ge 0$:
 
 - Our next step is to produce the output
 ```python
-y_t = relu(w_yh @ h_t.flatten())
+y_t = relu(w_hy @ h_t.flatten())
 ```
 This corresponds to
 $$
-y_t = \text{ReLU}\left( w_{yh} h_t \right)
+y_t = \text{ReLU}\left( w_{hy} h_t \right)
 $$
 
-- $w_{yh}$ is a 1D row weight vector (or 1D array of shape $(2,)$).
+- $w_{hy}$ is a 1D row weight vector (or 1D array of shape $(2,)$).
 - $h_t$ is a column vector of shape $(2, 1)$:
 
 $$
@@ -283,7 +283,7 @@ $$
 - Expanding the dot product using the weights 
 $$
 \begin{align*}
-w_{yh} &= \begin{bmatrix} 1 & -1 \end{bmatrix} \begin{bmatrix} h_{1, t} \\ h_{2, t} \end{bmatrix} \\    
+\mathbf{W}_{hy}\mathbf{h}_t &= \begin{bmatrix} 1 & -1 \end{bmatrix} \begin{bmatrix} h_{1, t} \\ h_{2, t} \end{bmatrix} \\    
  &= h_{1, t} - h_{2, t} \\    &= x_t - x_{t-1}    
  \end{align*}
  $$
@@ -378,9 +378,9 @@ $$
 
 $$
 \begin{align*}
-z_t &= \mathbf{Wh}_{t-1} + \mathbf{U}x_{t} + b  \\
+z_t &= \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{W}_{xh}\mathbf{x}_{t} + b  \\
 h_t &= \tanh(z_t)   \\
-o_t &= \mathbf{Vh}_t + c  \\
+o_t &= \mathbf{W_{hy}\mathbf{h}_t + \mathbf{b}_y  \\
 \hat{\mathbf{y}}_t &= \mathrm{softmax}(o_t) \\
 L_t &= -\mathbf{y}_t^\top \log \hat{\mathbf{y}}_t  \\
 \end{align*}
@@ -390,7 +390,7 @@ $L_t$ is the **cross-entropy loss** at step $t$
 :::
 ::::
 
-## Backpropagation Through Time (BTT)
+## Backpropagation Through Time (BPTT)
 
 - The gradients are calculated layer by layer  from the last time step towards the initial time step.
 - We will not present a derivation of the gradients, which is mainly analogous to the derivation we presented for ANNs 
@@ -398,9 +398,9 @@ $L_t$ is the **cross-entropy loss** at step $t$
 
 $$
 \begin{align*}
-\mathbf{h}_i &= \sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h) \\
-&=\sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\sigma_h(\mathbf{W}_{xh}\mathbf{x}_{t-1} + \mathbf{W}_{hh}\mathbf{h}_{t-2} + \mathbf{b}_h)  + \mathbf{b}_h) \\
-&=\sigma_h(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\sigma_h(\mathbf{W}_{xh}\mathbf{x}_{t-1} + \mathbf{W}_{hh}\sigma_h(\mathbf{W}_{xh}\mathbf{x}_{t-2} + \mathbf{W}_{hh}\mathbf{h}_{t-3} + \mathbf{b}_h) + \mathbf{b}_h)  + \mathbf{b}_h) \\
+\mathbf{h}_t &= \tanh(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h) \\
+&=\tanh(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\tanh(\mathbf{W}_{xh}\mathbf{x}_{t-1} + \mathbf{W}_{hh}\mathbf{h}_{t-2} + \mathbf{b}_h)  + \mathbf{b}_h) \\
+&=\tanh(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\tanh(\mathbf{W}_{xh}\mathbf{x}_{t-1} + \mathbf{W}_{hh}\tanh(\mathbf{W}_{xh}\mathbf{x}_{t-2} + \mathbf{W}_{hh}\mathbf{h}_{t-3} + \mathbf{b}_h) + \mathbf{b}_h)  + \mathbf{b}_h) \\
 &=\ldots
 \end{align*}  
 $$
@@ -836,7 +836,7 @@ input vectors,  e.g. $(1,\,0.5,\,0) \odot (7,\,8,\,9) = (7,\,4,\,0)$
 
 $$
 \begin{align*}
-\mathbf{f}_t &= \sigma(\mathbf{U}_t\mathbf{h}_{t-1} + \mathbf{W}_f\mathbf{x}_t) \\
+\mathbf{f}_t &= \sigma(\mathbf{W}{hf}\mathbf{h}{t-1}+\mathbf{W}{xf}\mathbf{x}t+\mathbf{b}_f) \\
 \mathbf{k}_t &= \mathbf{c}_{t-1} \odot\mathbf{f}_t 
 \end{align*}
 $$ {#eq-forget-gate}
@@ -1014,15 +1014,14 @@ plt.plot()
 ::: {.column width="45%"}
 
 $$
-\begin{align}
-\mathbf{e}_t &= \mathbf{E}\mathbf{x}_t & \quad \text{Retrieve embedding} \\
-\mathbf{h}_t &= g(\mathbf{U}\mathbf{h}_{t-1} + \mathbf{E}\mathbf{e}_t)  & \quad \text{new hidden layer } \\
-\hat{\mathbf{y}_t} &= \mathrm{softmax}(\mathbf{EV}\mathbf{h}_t) & \quad \text{generate  output} \\
-\end{align}
+\begin{align*}
+\mathbf{e}_t &= \mathbf{E}\mathbf{x}_t && \text{Retrieve embedding} \\
+\mathbf{h}_t &= \tanh(\mathbf{W}_{xh}\mathbf{e}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h) && \text{new hidden layer} \\
+\hat{\mathbf{y}}_t &= \mathrm{softmax}(\mathbf{W}_{hy}\mathbf{h}_t + \mathbf{b}_y) && \text{generate output}
+\end{align*}
 $$
 
-- $g$ is an activation function such as tanh.
-- The softmax operation creates a probability distribution oover the entire vocabulary
+- The softmax operation creates a probability distribution over the entire vocabulary
 - The probability that a particular word $k$ is the next word is then
 $$
 P(w_{t+1}| w_1,\ldots, w_t ) = \hat{\mathbf{y}_t}[k]
@@ -1044,17 +1043,17 @@ $$
 - The model predicts a set of probabilities $\hat{y}_{i}$ for each class
 - For a multi-class classification problem with $K$ classes, the cross-entropy loss is 
 $$
-\log L(\theta) = -\sum _{i=1}^{C} y_{i}\log \hat{y}_{i}\\
+\log L_{\mathrm{CE}} = -\sum _{i=1}^{K} y_{i}\log \hat{y}_{i}\\
 $$ {#eq-ce-loss}
 
-- For the correct class ($y_k = 1$), the loss term $-\log(p_k)$ decreases as $p_k$ increases. 
+- For the correct class ($y_k = 1$), the loss term $-\log(p_k)$ decreases as $\hat{y}_k$ increases. 
 - Weight updates that increase the probability of an incorrect class must decrease the probability of the correct class, thereby increasing the loss
 
 ## Training RNN language Models
 
 - **self-supervision**: We use a corpus of text as training. The model is trained to predict the next word.
 - No need for gold-standard labelling.
-- We minimize therror in predicting the next word with a **cross-entropy** loss function
+- We minimize the error in predicting the next word with a **cross-entropy** loss function
 
 $$
 L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \mathbf{y}_t[w]\log \hat{\mathbf{y}_t}[w]
@@ -1086,7 +1085,7 @@ figure adapted from Jurafsky and Martin (2026) Speech and Language Processing
 :::
 ::: {.column width="25%"}
 
-::: {.small-text}
+::: {.medium-text}
 - At each position $t$, take correct word $w_t$ and hidden state $h_t$, which encodes information from $w_1,\ldots,w_{t-1}$
 - Compute probability distribution over possible next words
 - Compute loss for the next token 
@@ -1193,10 +1192,10 @@ plt.plot()
 > Ich habe ein tolles Buch zu Ende gelesen! `<s>` I finished a great book!
 
 - Simplest version of the decoder
-- Take the context vector (the last hidden state of the encoder): $c$
+- Take the context vector (the last hidden state of the encoder): $\mathbf{c}$
 - Use the context vector as its own first hidden state: $\mathbf{h}_{0}^d = \mathbf{c} = \mathbf{h}_n^{e}$
 - Generate outputs autoregressively until end of sentence marker is reached
-- There are many more sophisticated architectures. For insance, we can make the context vector available at each decoding timestep
+- There are many more sophisticated architectures. For instance, we can make the context vector available at each decoding timestep
 
 $$
 \begin{align}
@@ -1235,11 +1234,12 @@ $$
 $$
 f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^de) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e
 $$
+
+
 - We calculate one such score for each of the encoder states and use softmax to convert into a probability distribution
 $$
 \begin{align}
-\alpha_{ij} &= \mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)\\
-&= \dfrac{\exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e))}
+\alpha_{ij} &= \mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)= \dfrac{\exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e))}
 {\sum_k \exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{k}^e))}
 \end{align}
 $$
@@ -1247,6 +1247,7 @@ $$
 $$
 \mathbf{c}_i = \sum_j \alpha_{ij}\mathbf{h}_{j}^e
 $$
+
 
 ## Attention: 
 
