@@ -919,6 +919,15 @@ font-weight: bold;
 
 .reveal .slides img {
 height: auto;
+}
+.reveal table {
+border-collapse: collapse;
+}
+.reveal table tbody tr:last-child td {
+border-bottom: 1px solid #34495e; 
+}
+.reveal .fragment.fade-out.collapse.visible {
+display: none;
 }</style>
   <style type="text/css">.reveal
 div.sourceCode
@@ -1944,7 +1953,7 @@ Position-wise, applied independently per token; expands to <span class="math inl
 <aside><ol class="aside-footnotes"><li id="fn1"><p>EOS=end of sequence</p></li></ol></aside></section>
 <section id="autoregressive-text-generation" class="slide level2">
 <h2>Autoregressive text generation</h2>
-<div id="5f300f14" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="1">
+<div id="8d233680" class="cell" data-fig-height="5" data-fig-width="5" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2195,7 +2204,7 @@ P(x_i) = \frac{\exp(z_i / t)}{\sum_j \exp(z_j / t)}
 </tbody>
 </table>
 <div class="small-table">
-<div id="b6152c90" class="cell" data-execution_count="2">
+<div id="3b876bc2" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 <style scoped>
