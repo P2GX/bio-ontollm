@@ -25,29 +25,34 @@ format:
 These slides are intended to provide some extra background to better understand the interplay of parameter fitting, regularization and optimization.
 ::: -->
 
-Why regularize? Two points of view, Statistical Learning Theory (SLT) concerned with bias-variance tradeoff, model complexity, and so on, and on the other hand optimization. SLT does not tell us why a quadratic should be better, it just tells us any $||w||^\alpha$ is ok, so why is $\alpha=2$ so popular? Looking at optimization will show us! 
+::: {.incremental}
 
-In the lecture you saw cross entropy loss, typical for sigmoid activation, but why? What about a naive squared error?
-$$
-\begin{equation}
-    \mathcal{L}(\vec{w}) = \frac{1}{2}\sum_{i=1}^N || y_i-\sigma(\vec{w}\cdot\vec{x}_i) ||^2\,.
-\end{equation}
-$$
+- Why regularize? Two points of view, Statistical Learning Theory (SLT) concerned with bias-variance tradeoff, model complexity, and so on, and on the other hand optimization. SLT does not tell us why a quadratic should be better, it just tells us any $||w||^\alpha$ is ok, so why is $\alpha=2$ so popular? Looking at optimization will show us! 
+- In the lecture you saw cross entropy loss, typical for sigmoid activation, but why? What about a naive squared error?
+    $$
+    \begin{equation}
+        \mathcal{L}(\vec{w}) = \frac{1}{2}\sum_{i=1}^N || y_i-\sigma(\vec{w}\cdot\vec{x}_i) ||^2\,.
+    \end{equation}
+    $$
 
-This can be used, but has some issues (this example comes from [here](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)). Different losses have a different speeds of learning. The learning rate is largely determined by the gradient of the loss $\nabla\mathcal{L}$. Slow learning appears when these derivatives become small. For sigmoid (activation) with quadratic vs. cross entropy loss (seen in class) we have
+- This can be used, but has some issues (this example comes from [here](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)). Different losses have a different speeds of learning. The learning rate is largely determined by the gradient of the loss $\nabla\mathcal{L}$. Slow learning appears when these derivatives become small. For sigmoid (activation) with quadratic vs. cross entropy loss (seen in class) we have
 
-$$
-\begin{aligned}
-    \nabla\mathcal{L}_{squared} &\propto \sigma'(x) \cdot \sigma(x)\,,\quad \sigma'(x)\underbrace{\to 0}_{\lim_{x\to 1}}\\
-    \nabla\mathcal{L}_{ent} &\propto \sigma(x)-y\,,
-\end{aligned}
-$$
+    $$
+    \begin{aligned}
+        \nabla\mathcal{L}_{squared} &\propto \sigma'(x) \cdot \sigma(x)\,,\quad \sigma'(x)\underbrace{\to 0}_{\lim_{x\to 1}}\\
+        \nabla\mathcal{L}_{ent} &\propto \sigma(x)-y\,,
+    \end{aligned}
+    $$
+
+:::
 
 
 ## Convergence Speed
 One way to (maybe) gain inuition about the cross entropy: we can actually obtain it for sigmoid activation by imposing a learning rate proportional to the error between data point and prediction, we can think of activation and loss **pairs** that fit well together.
 
 <br>
+
+. . .
 
 Let us look more closely at an example of convergence. In general, around an isolated minimum of $L$ we can write the function as a pure quadratic, or a sum of squares to keep things simple: 
 
@@ -72,6 +77,8 @@ $$
         \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = \frac{2}{2c} = \frac{1}{c} \qquad \longleftarrow \text{condition number}
 \end{align}
 $$
+
+. . .
 
 Here we take $0<c\leq 1$: the smaller $c$, the flatter the loss is in the $y$-direction compared to the $x$-direction, the larger the condition number $\kappa=1/c$. A large condition number means an ill posed optimization problem which will converge slowly. This is an intuitive description, the mathematical formalization of these ideas is more complicated.
 
@@ -205,6 +212,8 @@ y_t
 \end{aligned}
 $$
 
+. . .
+
 In order for this to converge we must have (for $0<c\leq 1$ the $x$-direction, which is the steepest, is the restrictive one)
 
 $$
@@ -212,6 +221,8 @@ $$
 \quad\Longleftrightarrow\quad
 0<\eta<1.
 $$
+
+. . .
 
 Let $c=0.1$, $\eta=0.8$, and start at $(x_0,y_0)=(0,0)$. The minimum is at $(2,2)$. The update equations become
 
@@ -274,6 +285,8 @@ $$
 \end{align}
 $$
 
+. . .
+
 - The $x$-coordinate overshoots the minimum and switches sides, but its error shrinks by a factor $|1-2\eta|=0.6$ per step. The $y$-coordinate moves steadily towards $2$, but only shrinks its error by a factor $1-2c\eta=0.84$ per step: it is the slow direction and determines how long convergence takes. Both converge because the absolute values of their update factors are less than 1. 
 
 ## Example: a smaller learning rate
@@ -288,6 +301,8 @@ y_{t+1}&=0.91y_t+0.18.
 \end{aligned}
 }
 $$
+
+. . .
 
 $$
 \begin{align}
@@ -336,6 +351,8 @@ $$
     \end{pmatrix}
 \end{align}
 $$
+
+. . .
 
 - The $x$-coordinate is already almost at the minimum after two steps: its error shrinks by a factor $|1-2\eta|=0.1$ per step. The $y$-coordinate moves steadily towards $2$, but way too slowly: its error only shrinks by a factor $1-2c\eta=0.91$ per step, so we need $57$ steps to get within $0.01$ of the minimum (against $3$ for $x$). This is slow convergence caused by the small curvature along $y$, i.e. by the large condition number $\kappa=1/c=10$.
 
