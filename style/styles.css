@@ -324,3 +324,8 @@ table.small-table td.greycell {
 .reveal table tbody tr:last-child td {
   border-bottom: 1px solid #34495e;  /* match your deck's accent colour */
 }
+
+
+.reveal .fragment.fade-out.collapse.visible {
+  display: none;
+}

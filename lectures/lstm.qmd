@@ -432,75 +432,8 @@ Mienye ID et al (2024) [Recurrent Neural Networks: A Comprehensive Review of Arc
 
 ## Vanishing and Exploding Gradients: Intuition
 
-- To see why gradients vanish, pretend every Jacobian is the same symmetric matrix $A$, so the product is $A^n$
-- For example:
+- To gain intuition about why gradients vanish owing to repeated (Jacobian) matrix multiplications, consider a symmetric matrix $A$, so the product is $A^n$
 
-$$
-A = \begin{bmatrix} 0.65 & 0.15 \\ 0.15 & 0.65 \end{bmatrix}
-$$
-
-- Its eigenvalues solve $\det(A - \lambda I) = 0$, which gives
-
-$$
-\lambda_1 = 0.8, \quad \lambda_2 = 0.5
-$$
-
-- The corresponding eigenvectors form the columns of $P$:
-
-$$
-P = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}, \quad
-P^{-1} = \begin{bmatrix} 0.5 & 0.5 \\ 0.5 & -0.5 \end{bmatrix}
-$$
-
-## Vanishing and Exploding Gradients: Intuition (2)
-
-- Any diagonalizable matrix can be factored as
-
-$$
-A = P D P^{-1}
-$$
-
-- where $D$ is the diagonal matrix of eigenvalues, here
-
-$$
-D = \begin{bmatrix} 0.8 & 0 \\ 0 & 0.5 \end{bmatrix}
-$$
-
-- When we multiply the matrix by itself many times, the intermediate $P^{-1}P = I$ terms cancel:
-
-$$
-\begin{align*}
-A^n &= (P D P^{-1}) (P D P^{-1}) \cdots (P D P^{-1}) \\
-&= P D (P^{-1} P) D (P^{-1} P) \cdots D P^{-1} \\
-&= P D^n P^{-1}
-\end{align*}
-$$
-
-- Because $D$ is diagonal, $D^n$ just raises each eigenvalue to the power $n$:
-
-$$
-D^n = \begin{bmatrix} 0.8^n & 0 \\ 0 & 0.5^n \end{bmatrix}
-$$
-
-## Vanishing and Exploding Gradients: Intuition (3)
-
-$$
-\begin{align*}
-D^{1}  &= \begin{bmatrix} 0.8 & 0 \\ 0 & 0.5 \end{bmatrix} \\[4pt]
-D^{5}  &= \begin{bmatrix} 0.32768 & 0 \\ 0 & 0.03125 \end{bmatrix} \\[4pt]
-D^{20} &\approx \begin{bmatrix} 0.0115 & 0 \\ 0 & 9.5\times 10^{-7} \end{bmatrix}
-\end{align*}
-$$
-
-- Both eigenvalues are below $1$, so the powers decay exponentially toward zero. A gradient signal 20 steps back is reduced to about 1% of its size, or far less
-- This is the algebraic root of the vanishing gradient problem: if the hidden-to-hidden Jacobians are "small", long-term gradient signals vanish before they reach earlier time steps
-- Conversely, with an eigenvalue above $1$ (say $1.2$), the same power explodes: $1.2^{20} \approx 38$, and it keeps growing
-
-
-## Vanishing and Exploding Gradients: Intuition
-
-- To see why gradients vanish, pretend every Jacobian is the same symmetric matrix $A$, so the product is $A^n$
-- For example:
 
 $$
 A = \begin{bmatrix} 0.65 & 0.15 \\ 0.15 & 0.65 \end{bmatrix}
@@ -608,6 +541,9 @@ sentiment_analysis_basic_idea()
 plt.plot()
 ```
 
+- This is the **many-to-one** case: we read the whole review and use only the **final hidden state** $\mathbf{h}_T$ for the prediction
+
+
 ## Sentiment analysis: embedding
 
 ```{python}
@@ -630,51 +566,35 @@ plt.plot()
 
 ## Sentiment analysis
 
-- We will present a bare-bones implementaton of an RNN trained to perform sentiment analysis using the IMDB movie review dataset.
-- The full script is available in the course material, we will briefly review some of the salient blocks of code
-- We make use of the pytorch framework for most of the heavy lifting
+- We will present a bare-bones implementation of an RNN trained to perform sentiment analysis on the IMDB movie review dataset
+  - 50,000 reviews, balanced between positive and negative; we merge the original train/test splits and re-split 80/20
+- The full script is available in the [course material](notebooks/rnn-sentiment.ipynb); we will briefly review some of the salient blocks of code
+- We use PyTorch for most of the heavy lifting: **embedding → RNN → linear layer**
 
-## Data Preparation & Tokenization
 
-* **Loading:** Fetching the IMDb movie review corpus directly via Hugging Face (`stanfordnlp/imdb`).
-* **Normalization:** Lowercasing and tokenizing reviews into word lists.
+## Data Preparation
 
 ```python
-from datasets import load_dataset
-import pandas as pd
-from sklearn.model_selection import train_test_split
-
-# 1. Load and merge train/test splits
 hf_dataset = load_dataset("stanfordnlp/imdb")
-df = pd.concat([pd.DataFrame(hf_dataset["train"]), 
+df = pd.concat([pd.DataFrame(hf_dataset["train"]),
                 pd.DataFrame(hf_dataset["test"])], ignore_index=True)
 
-# 2. Lowercase and split text into tokens
-df["text"] = df["text"].str.lower().str.split()
-train_data, test_data = train_test_split(df, test_size=0.2, random_state=42)
+def tokenize(text):
+    text = text.lower().replace("<br />", " ")
+    return re.findall(r"[a-z0-9']+", text)
+
+df["text"] = df["text"].apply(tokenize)
 ```
 
-## Data Preparation & Tokenization (2) 
-* **Vocabulary Mapping**: Assign a unique integer index to every distinct word.
-* **Truncation & Padding**: Fixing sequences to a uniform length ($\text{max\_length} = 250$) for batching tensors.
+1. **Load and merge** the 25k + 25k IMDb reviews, then **tokenize** (lowercase, drop `<br />`, keep words)
+2. **Split 80/20** (40,000 train, 10,000 test) *before* building anything from the data
+3. **Vocabulary** from the training reviews only: `<pad>` = 0, `<unk>` = 1, words seen at least twice (64,843 entries)
+4. **Encode**: words → integer ids, truncated or padded to 250 tokens; we also keep each review's true length so the RNN can skip the padding
 
-```python 
-# Build vocabulary index (starting at 1, reserving 0 for padding)
-vocab = {word for phrase in df["text"] for word in phrase}
-word_to_idx = {word: idx for idx, word in enumerate(vocab, start=1)}
+::: {.small-text}
+See notebook for details; mainly "book-keeping" code to load, cleanse, prepare and tokenize the text
+:::
 
-max_length = 250
-def encode_and_pad(text):
-    truncated = text[:max_length]  
-    encoded = [word_to_idx[word] for word in truncated]
-    length = len(encoded)
-    padded = encoded + [0] * (max_length - length)
-    return padded, length
-
-# Apply transformation
-train_data[["text", "length"]] = train_data["text"].apply(lambda t: pd.Series(encode_and_pad(t)))
-test_data[["text", "length"]] = test_data["text"].apply(lambda t: pd.Series(encode_and_pad(t)))
-```
 
 ## Custom PyTorch Datasets & DataLoaders
 
@@ -811,7 +731,9 @@ accuracy = 100 * correct / total
 print(f'Accuracy: {accuracy:.2f}%')
 ```
 
-- Accuracy: 73.94% (as compared to the 50% we would have expected by chance, but much worse than the training accuracy of 97.85% - thus, we are overfitting! In the practical, we will discuss some methods for reducing overfitting)
+- Accuracy: 78.40% (as compared to the 50% we would have expected by chance)
+- much worse than the training accuracy of 93.33% - thus, we are overfitting! 
+- In the practical, we will discuss some methods for reducing overfitting
 
 
 
@@ -828,8 +750,8 @@ print(f'Accuracy: {accuracy:.2f}%')
 - LSTMS attempt to address the challenge by adding a context layer to the existing hidden layer and by introducing **gates** to control flow of information
 
 ::: { .tiny-credit}
-Hochreiter, S. and J. Schmidhuber. 1997. Long short-term
-memory. Neural Computation, 9(8):1735–1780.
+Hochreiter, S. and J. Schmidhuber. 1997. [Long short-term
+memory. Neural Computation, 9(8):1735–1780](https://dl.acm.org/doi/10.1162/neco.1997.9.8.1735)
 :::
 
 ## LSTMS vs RNNs
@@ -870,7 +792,7 @@ plt.plot()
 LSTMs have [three gates]{style="color: green; font-weight: bold;"}:
 
 - forget gate 
-- add gate
+- add (input) gate
 - output gate
 
 Each gate consists of 
@@ -883,7 +805,7 @@ Each gate consists of
 - Combining this with a pointwise multiplication has an effect similar to that of a **binary mask**. 
 - Values in the layer being gated that align with values near 1 in the mask are **passed through**
 nearly unchanged; values corresponding to lower values are essentially **erased**.
-
+- Each gate has its own weights, e.g. $\mathbf{W}_{xf}, \mathbf{W}_{hf}, \mathbf{b}_f$ for the forget gate (first letter: which vector, second: which gate)
 
 
 
@@ -907,9 +829,9 @@ nearly unchanged; values corresponding to lower values are essentially **erased*
 - It computes a weighted sum of the previous state’s hidden layer and the current input and passes that through a sigmoid. 
 - This mask is then multiplied element-wise
 by the context vector to remove the information from context that is no longer required. 
-- Element-wise multiplication of two vectors, represented by the $\odot$ 
-operator,^[called the Hadamard product] results in a vector where  element $i$ is the product of element $i$ in the two
-input vectors:
+- Element-wise multiplication of two vectors, written $\odot$ 
+(the **Hadamard product**) results in a vector where  element $i$ is the product of element $i$ in the two
+input vectors,  e.g. $(1,\,0.5,\,0) \odot (7,\,8,\,9) = (7,\,4,\,0)$
 :::
 
 $$
@@ -935,18 +857,18 @@ $$ {#eq-forget-gate}
 </div>
 :::
 
-
-- Then we compute the actual information we need to extract from the previous hidden state and 
-current inputs
+- Next we compute the **candidate** information that could be added to the context, from the previous hidden state and the current input
 
 $$
-\mathbf{g}_t = \tanh(\mathbf{U}_g\mathbf{h}_{t-1} + \mathbf{W}_g\mathbf{x}_t)
+\tilde{\mathbf{c}}_t = \tanh(\mathbf{W}_{h\tilde{c}}\mathbf{h}_{t-1} + \mathbf{W}_{x\tilde{c}}\mathbf{x}_t + \mathbf{b}_{\tilde{c}})
 $$ {#eq-lstm-info-to-extract}
-- This is the same as with the vanilla RNN
+
+- This is the same computation as the hidden-state update of the vanilla RNN
+- But the result is **not** the new hidden state: it only proposes what to write into the context
 
 ## Add gate 
-Next, we generate the mask for the add gate to select the information to add to the
-current context.
+
+* The add gate generates a mask that selects which parts of the candidate are written to the context.
 
 ::: {.r-stack}
 <div style="position: relative; width: 50%; margin: auto;">
@@ -963,17 +885,19 @@ current context.
 
 $$
 \begin{align*}
-\mathbf{i}_t &= \sigma(\mathbf{U}\mathbf{h}_{t-1} + \mathbf{W}_i\mathbf{x}_{t}) &\quad  \\
-\mathbf{j}_t &= \mathbf{g}_t \odot \mathbf{i}_t &\quad \text{See previous slide} \\
-\mathbf{c}_t &= \mathbf{j}_t + \mathbf{k}_t &\quad \text{add to context vector} \\
+\mathbf{i}_t &= \sigma(\mathbf{W}_{hi}\mathbf{h}_{t-1} + \mathbf{W}_{xi}\mathbf{x}_t + \mathbf{b}_i) && \text{add mask} \\
+\mathbf{j}_t &= \tilde{\mathbf{c}}_t \odot \mathbf{i}_t && \text{selected new information} \\
+\mathbf{c}_t &= \mathbf{j}_t + \mathbf{k}_t && \text{new context: new info + surviving old info}
 \end{align*}
 $$ {#eq-add-gate}
+
+- Thus: $\mathbf{c}_t = \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t$
 
 
 
 ## Output gate 
-Next, we generate the mask for the add gate to select the information to add to the
-current context.
+
+* Finally, the output gate decides which parts of the context are exposed as the new hidden state.
 
 ::: {.r-stack}
 <div style="position: relative; width: 50%; margin: auto;">
@@ -988,12 +912,11 @@ current context.
 </div>
 :::
 
-- The output gate  decides what information is required for the current hidden state
 
 $$
 \begin{align*}
-\mathbf{o}_t &= \sigma(\mathbf{U}\mathbf{o}_{t-1} + \mathbf{W}_o\mathbf{x}_{t})   \\
-\mathbf{h}_t &= \mathbf{o}_t \odot \tanh(\mathbf{c}_t)
+\mathbf{o}_t &= \sigma(\mathbf{W}_{ho}\mathbf{h}_{t-1} + \mathbf{W}_{xo}\mathbf{x}_t + \mathbf{b}_o) && \text{output mask} \\
+\mathbf{h}_t &= \mathbf{o}_t \odot \tanh(\mathbf{c}_t) && \text{new hidden state}
 \end{align*}
 $$ {#eq-output-gate}
 
@@ -1010,6 +933,41 @@ vector ($\mathbf{x}_{t}$).
 - It generates $\mathbf{c}_{t}$ and $\mathbf{h}_{t}$ as output that is passed to the next step
 - The hidden state $\mathbf{h}_{t}$ is used to generate the output of the network similar to an RNN
 - LSTMs can be used as drop-in replacements for RNNs in many contexts and often perform better
+
+
+## LSTM: All equations
+
+$$
+\begin{align*}
+\mathbf{f}_t &= \sigma(\mathbf{W}_{hf}\mathbf{h}_{t-1} + \mathbf{W}_{xf}\mathbf{x}_t + \mathbf{b}_f) && \text{forget gate} \\
+\mathbf{i}_t &= \sigma(\mathbf{W}_{hi}\mathbf{h}_{t-1} + \mathbf{W}_{xi}\mathbf{x}_t + \mathbf{b}_i) && \text{add gate} \\
+\mathbf{o}_t &= \sigma(\mathbf{W}_{ho}\mathbf{h}_{t-1} + \mathbf{W}_{xo}\mathbf{x}_t + \mathbf{b}_o) && \text{output gate} \\
+\tilde{\mathbf{c}}_t &= \tanh(\mathbf{W}_{h\tilde{c}}\mathbf{h}_{t-1} + \mathbf{W}_{x\tilde{c}}\mathbf{x}_t + \mathbf{b}_{\tilde{c}}) && \text{candidate} \\
+\mathbf{c}_t &= \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t && \text{cell state (additive!)} \\
+\mathbf{h}_t &= \mathbf{o}_t \odot \tanh(\mathbf{c}_t) && \text{hidden state}
+\end{align*}
+$$
+
+- Inputs: $\mathbf{x}_t$, $\mathbf{h}_{t-1}$, $\mathbf{c}_{t-1}$ — outputs: $\mathbf{h}_t$, $\mathbf{c}_t$
+- Four weight-matrix pairs instead of one, so an LSTM layer has about **four times** the parameters of an RNN layer of the same size
+
+## Why does the cell state help?
+
+- Recall: for an RNN, $\dfrac{\partial \mathbf{h}_{t}}{\partial \mathbf{h}_{t-1}} = \mathrm{diag}(1-\mathbf{h}_t^2)\,\mathbf{W}_{hh}$ — a **matrix product** at every step, which shrinks or explodes
+- For the LSTM cell state, the update is **additive**: $\mathbf{c}_t = \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t$
+- Along the direct path through the cell state
+
+$$
+\frac{\partial \mathbf{c}_t}{\partial \mathbf{c}_{t-1}} \approx \mathrm{diag}(\mathbf{f}_t)
+\qquad\Rightarrow\qquad
+\frac{\partial \mathbf{c}_t}{\partial \mathbf{c}_k} \approx \prod_{j=k+1}^{t} \mathrm{diag}(\mathbf{f}_j)
+$$
+
+- No weight matrix and no tanh derivative in this product, only the gate values in $(0,1)$
+- If the network learns $\mathbf{f}_j \approx 1$ for information it needs to keep, the gradient passes through many steps **almost unchanged**
+- It is "approximate" because we ignore the (smaller) paths via the gates' dependence on $\mathbf{h}_{t-1}$
+- Gradients *can* still vanish, but now the network can learn when and what to keep
+
 
 
 ## RNNs as Language Models {#rnn-lm}

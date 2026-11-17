@@ -646,9 +646,7 @@ def unrolled_rnn_sentiment(figsize=(15, 6)):
 
 def rnn_language_model(figsize=(6, 6.5)):
     """
-    rnn_language_model_diagram.py
-
-    Recreates panel (b): a chain of embeddings e_{t-2..t} feeding through
+    a chain of embeddings e_{t-2..t} feeding through
     weight boxes W into hidden states h_{t-2..t}, chained by weight boxes U,
     with the final hidden state h_t projected through a flared weight box V
     into an output y_hat_t.
@@ -686,12 +684,12 @@ def rnn_language_model(figsize=(6, 6.5)):
         # W square
         ax.add_patch(Rectangle((xc - sq_w / 2, w_y0), sq_w, w_h,
                                 facecolor=CYAN, edgecolor=CYAN_EDGE, linewidth=1.3, zorder=2))
-        ax.text(xc, w_y0 + w_h / 2, "W", fontsize=14, ha="center", va="center", zorder=4)
+        ax.text(xc, w_y0 + w_h / 2, r"W_{xh}", fontsize=14, ha="center", va="center", zorder=4)
 
         # hidden state circle
         ax.add_patch(Ellipse((xc, h_y), ell_w, ell_h, facecolor=WHITE,
                             edgecolor=EDGE, linewidth=1.3, zorder=3))
-        ax.text(xc, h_y, h_lab, fontsize=13, ha="center", va="center", zorder=4)
+        ax.text(xc, h_y, r"W_{hh}", fontsize=13, ha="center", va="center", zorder=4)
 
     # ----------------------------------------------------------------------
     # U boxes chaining the hidden states horizontally
@@ -721,7 +719,7 @@ def rnn_language_model(figsize=(6, 6.5)):
         closed=True, facecolor=CYAN, edgecolor=CYAN_EDGE, linewidth=1.3, zorder=2,
     )
     ax.add_patch(v_poly)
-    ax.text(xc, (v_y0 + v_y1) / 2, "V", fontsize=14, ha="center", va="center", zorder=4)
+    ax.text(xc, (v_y0 + v_y1) / 2, r"W_{hy}", fontsize=14, ha="center", va="center", zorder=4)
 
     y_hat_y = v_y1 + ell_h / 2 + 0.15
     ax.add_patch(Ellipse((xc, y_hat_y), ell_w, ell_h, facecolor=WHITE,
