@@ -1765,28 +1765,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.28%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.50%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.20%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.54%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 2.94%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.34%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.62%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 34.66%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -4411,14 +4411,14 @@
     "href": "lectures/lstm.html#toy",
     "title": "Approaches to biomedical knowledge",
     "section": "Understanding the hidden state",
-    "text": "Understanding the hidden state\n\nTo demonstrate that a hidden state can actually “remember” previous steps, Let us construct by hand an RNN that outputs the increase \\(x_t - x_{t-1}\\) when the input goes up, and \\(0\\) otherwise.1\nThe general equation for the hidden state pre-activation is: \\[\n\\mathbf{z}_t = \\mathbf{W}_{hh} h_{t-1} + \\mathbf{W}_{xh} \\mathbf{x}_t\n\\]\nIn this toy example, we define the hidden state to be a \\(2\\times 1\\) column vector that memorizes both the current input and the immediate history. \\[\n\\begin{align*}\n\\mathbf{z}_t^{(2\\times 1)} &= \\mathbf{W}_{hh}^{(2\\times 2)}\\, \\mathbf{h}_{t-1}^{(2\\times 1)} + \\mathbf{W}_{xh}^{(2\\times 1)}\\, x_t^{(1\\times 1)} \\\\\n\\mathbf{h}_t^{(2\\times 1)} &= \\mathrm{ReLU}(\\mathbf{z}_t^{(2\\times 1)})\n\\end{align*}\n\\]\n\n\nWe set the biases to zero and use ReLU rather than tanh because it makes the arithmetic exact.\n\nAdapted from an example (output 1 if both \\(x_t\\) and \\(x_{t-1}\\) are 1) in the Stanford CS231N lecture on RNNs."
+    "text": "Understanding the hidden state\n\nTo demonstrate that a hidden state can actually “remember” previous steps, Let us construct by hand an RNN that outputs the increase \\(x_t - x_{t-1}\\) when the input goes up, and \\(0\\) otherwise.1\nThe general equation for the hidden state pre-activation is: \\[\n\\mathbf{z}_t = \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{W}_{xh} \\mathbf{x}_t\n\\]\nIn this toy example, we define the hidden state to be a \\(2\\times 1\\) column vector that memorizes both the current input and the immediate history. \\[\n\\begin{align*}\n\\mathbf{z}_t^{(2\\times 1)} &= \\mathbf{W}_{hh}^{(2\\times 2)}\\, \\mathbf{h}_{t-1}^{(2\\times 1)} + \\mathbf{W}_{xh}^{(2\\times 1)}\\, x_t^{(1\\times 1)} \\\\\n\\mathbf{h}_t^{(2\\times 1)} &= \\mathrm{ReLU}(\\mathbf{z}_t^{(2\\times 1)})\n\\end{align*}\n\\]\n\n\nWe set the biases to zero and use ReLU rather than tanh because it makes the arithmetic exact.\n\nAdapted from an example (output 1 if both \\(x_t\\) and \\(x_{t-1}\\) are 1) in the Stanford CS231N lecture on RNNs."
   },
   {
     "objectID": "lectures/lstm.html#understanding-the-hidden-state-2",
     "href": "lectures/lstm.html#understanding-the-hidden-state-2",
     "title": "Approaches to biomedical knowledge",
     "section": "Understanding the hidden state (2)",
-    "text": "Understanding the hidden state (2)\n\nWe define these two matrices as follows\n\nw_xh = np.array([[1], [0]])\nw_hh = np.array([[0, 0],  [1, 0]])\n\nThis corresponds to \\[\n\\begin{align*}\n\\mathbf{z}_t^{(2\\times 1)} &= \\mathbf{W}_{hh}^{(2\\times 2)} h_{t-1}^{(2\\times 1)} + \\mathbf{W}_{xh}^{(2\\times 1)} \\mathbf{x}_t^{(1\\times 1)} \\\\\n&= \\begin{bmatrix} 0 & 0 \\\\ 1 & 0 \\end{bmatrix} \\begin{bmatrix} h_{1, t-1} \\\\ h_{2, t-1} \\end{bmatrix}+ \\begin{bmatrix} 1\\\\0\\end{bmatrix} \\begin{bmatrix}x_t\\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\ 1\\cdot h_{1, t-1} + 0\\cdot h_{2, t-1}  \\end{bmatrix}  + \\begin{bmatrix} 1 \\cdot x_t \\\\ 0 \\cdot x_t \\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\  h_{1, t-1}  \\end{bmatrix} + \\begin{bmatrix} x_t \\\\ 0  \\end{bmatrix} \\\\\n&= \\begin{bmatrix} x_t \\\\  h_{1, t-1}  \\end{bmatrix}  \\\\\n\\end{align*}\n\\]\nThat is, the combined state pre-activation (\\(\\mathbf{z}_t\\)) consists of two numbers: the current input (\\(\\mathbf{x}_t\\)) and the first element of the previous hidden state (\\(\\mathbf{h}_{1, t-1}\\))"
+    "text": "Understanding the hidden state (2)\n\nWe define these two matrices as follows\n\nw_xh = np.array([[1], [0]])\nw_hh = np.array([[0, 0],  [1, 0]])\n\nThis corresponds to \\[\n\\begin{align*}\n\\mathbf{z}_t^{(2\\times 1)} &= \\mathbf{W}_{hh}^{(2\\times 2)} \\mathbf{h}_{t-1}^{(2\\times 1)} + \\mathbf{W}_{xh}^{(2\\times 1)} \\mathbf{x}_t^{(1\\times 1)} \\\\\n&= \\begin{bmatrix} 0 & 0 \\\\ 1 & 0 \\end{bmatrix} \\begin{bmatrix} h_{1, t-1} \\\\ h_{2, t-1} \\end{bmatrix}+ \\begin{bmatrix} 1\\\\0\\end{bmatrix} \\begin{bmatrix}x_t\\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\ 1\\cdot h_{1, t-1} + 0\\cdot h_{2, t-1}  \\end{bmatrix}  + \\begin{bmatrix} 1 \\cdot x_t \\\\ 0 \\cdot x_t \\end{bmatrix} \\\\\n&= \\begin{bmatrix} 0  \\\\  h_{1, t-1}  \\end{bmatrix} + \\begin{bmatrix} x_t \\\\ 0  \\end{bmatrix} \\\\\n&= \\begin{bmatrix} x_t \\\\  h_{1, t-1}  \\end{bmatrix}  \\\\\n\\end{align*}\n\\]\nThat is, the combined state pre-activation (\\(\\mathbf{z}_t\\)) consists of two numbers: the current input (\\(\\mathbf{x}_t\\)) and the first element of the previous hidden state (\\(h_{1, t-1}\\))"
   },
   {
     "objectID": "lectures/lstm.html#understanding-the-hidden-state-3",
@@ -4432,7 +4432,7 @@
     "href": "lectures/lstm.html#understanding-the-hidden-state-4",
     "title": "Approaches to biomedical knowledge",
     "section": "Understanding the hidden state (4)",
-    "text": "Understanding the hidden state (4)\n\nOur next step is to produce the output\n\ny_t = relu(w_yh @ h_t.flatten())\nThis corresponds to \\[\ny_t = \\text{ReLU}\\left( w_{yh} h_t \\right)\n\\]\n\n\\(w_{yh}\\) is a 1D row weight vector (or 1D array of shape \\((2,)\\)).\n\\(h_t\\) is a column vector of shape \\((2, 1)\\):\n\n\\[\nh_t = \\begin{bmatrix} h_{1, t} \\\\ h_{2, t} \\end{bmatrix} = \\begin{bmatrix} x_t \\\\ x_{t-1} \\end{bmatrix}\n\\] - Expanding the dot product using the weights \\[\n\\begin{align*}\nw_{yh} &= \\begin{bmatrix} 1 & -1 \\end{bmatrix} \\begin{bmatrix} h_{1, t} \\\\ h_{2, t} \\end{bmatrix} \\\\    \n&= h_{1, t} - h_{2, t} \\\\    &= x_t - x_{t-1}    \n\\end{align*}\n\\]"
+    "text": "Understanding the hidden state (4)\n\nOur next step is to produce the output\n\ny_t = relu(w_hy @ h_t.flatten())\nThis corresponds to \\[\ny_t = \\text{ReLU}\\left( w_{hy} h_t \\right)\n\\]\n\n\\(w_{hy}\\) is a 1D row weight vector (or 1D array of shape \\((2,)\\)).\n\\(h_t\\) is a column vector of shape \\((2, 1)\\):\n\n\\[\nh_t = \\begin{bmatrix} h_{1, t} \\\\ h_{2, t} \\end{bmatrix} = \\begin{bmatrix} x_t \\\\ x_{t-1} \\end{bmatrix}\n\\] - Expanding the dot product using the weights \\[\n\\begin{align*}\n\\mathbf{W}_{hy}\\mathbf{h}_t &= \\begin{bmatrix} 1 & -1 \\end{bmatrix} \\begin{bmatrix} h_{1, t} \\\\ h_{2, t} \\end{bmatrix} \\\\    \n&= h_{1, t} - h_{2, t} \\\\    &= x_t - x_{t-1}    \n\\end{align*}\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#understanding-the-hidden-state-5",
@@ -4467,14 +4467,14 @@
     "href": "lectures/lstm.html#training-of-rnns-forward-pass",
     "title": "Approaches to biomedical knowledge",
     "section": "Training of RNNs: Forward pass",
-    "text": "Training of RNNs: Forward pass\n\n\n\n\n\n\n\n\n\\[\n\\begin{align*}\nz_t &= \\mathbf{Wh}_{t-1} + \\mathbf{U}x_{t} + b  \\\\\nh_t &= \\tanh(z_t)   \\\\\no_t &= \\mathbf{Vh}_t + c  \\\\\n\\hat{\\mathbf{y}}_t &= \\mathrm{softmax}(o_t) \\\\\nL_t &= -\\mathbf{y}_t^\\top \\log \\hat{\\mathbf{y}}_t  \\\\\n\\end{align*}\n\\]\n\\(L_t\\) is the cross-entropy loss at step \\(t\\)"
+    "text": "Training of RNNs: Forward pass\n\n\n\n\n\n\n\n\n\\[\n\\begin{align*}\nz_t &= \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{W}_{xh}\\mathbf{x}_{t} + b  \\\\\nh_t &= \\tanh(z_t)   \\\\\no_t &= \\mathbf{W_{hy}\\mathbf{h}_t + \\mathbf{b}_y  \\\\\n\\hat{\\mathbf{y}}_t &= \\mathrm{softmax}(o_t) \\\\\nL_t &= -\\mathbf{y}_t^\\top \\log \\hat{\\mathbf{y}}_t  \\\\\n\\end{align*}\n\\]\n\\(L_t\\) is the cross-entropy loss at step \\(t\\)"
   },
   {
-    "objectID": "lectures/lstm.html#backpropagation-through-time-btt",
-    "href": "lectures/lstm.html#backpropagation-through-time-btt",
+    "objectID": "lectures/lstm.html#backpropagation-through-time-bptt",
+    "href": "lectures/lstm.html#backpropagation-through-time-bptt",
     "title": "Approaches to biomedical knowledge",
-    "section": "Backpropagation Through Time (BTT)",
-    "text": "Backpropagation Through Time (BTT)\n\nThe gradients are calculated layer by layer from the last time step towards the initial time step.\nWe will not present a derivation of the gradients, which is mainly analogous to the derivation we presented for ANNs\nThe one exception is the fact that the gradients for the hidden state weights depend on previous time points\n\n\\[\n\\begin{align*}\n\\mathbf{h}_i &= \\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{b}_h) \\\\\n&=\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_{t-1} + \\mathbf{W}_{hh}\\mathbf{h}_{t-2} + \\mathbf{b}_h)  + \\mathbf{b}_h) \\\\\n&=\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_{t-1} + \\mathbf{W}_{hh}\\sigma_h(\\mathbf{W}_{xh}\\mathbf{x}_{t-2} + \\mathbf{W}_{hh}\\mathbf{h}_{t-3} + \\mathbf{b}_h) + \\mathbf{b}_h)  + \\mathbf{b}_h) \\\\\n&=\\ldots\n\\end{align*}  \n\\]"
+    "section": "Backpropagation Through Time (BPTT)",
+    "text": "Backpropagation Through Time (BPTT)\n\nThe gradients are calculated layer by layer from the last time step towards the initial time step.\nWe will not present a derivation of the gradients, which is mainly analogous to the derivation we presented for ANNs\nThe one exception is the fact that the gradients for the hidden state weights depend on previous time points\n\n\\[\n\\begin{align*}\n\\mathbf{h}_t &= \\tanh(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{b}_h) \\\\\n&=\\tanh(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\tanh(\\mathbf{W}_{xh}\\mathbf{x}_{t-1} + \\mathbf{W}_{hh}\\mathbf{h}_{t-2} + \\mathbf{b}_h)  + \\mathbf{b}_h) \\\\\n&=\\tanh(\\mathbf{W}_{xh}\\mathbf{x}_t + \\mathbf{W}_{hh}\\tanh(\\mathbf{W}_{xh}\\mathbf{x}_{t-1} + \\mathbf{W}_{hh}\\tanh(\\mathbf{W}_{xh}\\mathbf{x}_{t-2} + \\mathbf{W}_{hh}\\mathbf{h}_{t-3} + \\mathbf{b}_h) + \\mathbf{b}_h)  + \\mathbf{b}_h) \\\\\n&=\\ldots\n\\end{align*}  \n\\]"
   },
   {
     "objectID": "lectures/lstm.html#the-vanishing-and-exploding-gradient-problems",
@@ -4628,7 +4628,7 @@
     "href": "lectures/lstm.html#forget-gate",
     "title": "Approaches to biomedical knowledge",
     "section": "Forget gate",
-    "text": "Forget gate\n\n\n \n\n\n\n\n\n\n\n\nThe forget fate deletes information from the context that is no longer relevant\nIt computes a weighted sum of the previous state’s hidden layer and the current input and passes that through a sigmoid.\nThis mask is then multiplied element-wise by the context vector to remove the information from context that is no longer required.\nElement-wise multiplication of two vectors, written \\(\\odot\\) (the Hadamard product) results in a vector where element \\(i\\) is the product of element \\(i\\) in the two input vectors, e.g. \\((1,\\,0.5,\\,0) \\odot (7,\\,8,\\,9) = (7,\\,4,\\,0)\\)\n\n\n\\[\n\\begin{align*}\n\\mathbf{f}_t &= \\sigma(\\mathbf{U}_t\\mathbf{h}_{t-1} + \\mathbf{W}_f\\mathbf{x}_t) \\\\\n\\mathbf{k}_t &= \\mathbf{c}_{t-1} \\odot\\mathbf{f}_t\n\\end{align*}\n\\tag{2}\\]"
+    "text": "Forget gate\n\n\n \n\n\n\n\n\n\n\n\nThe forget fate deletes information from the context that is no longer relevant\nIt computes a weighted sum of the previous state’s hidden layer and the current input and passes that through a sigmoid.\nThis mask is then multiplied element-wise by the context vector to remove the information from context that is no longer required.\nElement-wise multiplication of two vectors, written \\(\\odot\\) (the Hadamard product) results in a vector where element \\(i\\) is the product of element \\(i\\) in the two input vectors, e.g. \\((1,\\,0.5,\\,0) \\odot (7,\\,8,\\,9) = (7,\\,4,\\,0)\\)\n\n\n\\[\n\\begin{align*}\n\\mathbf{f}_t &= \\sigma(\\mathbf{W}{hf}\\mathbf{h}{t-1}+\\mathbf{W}{xf}\\mathbf{x}t+\\mathbf{b}_f) \\\\\n\\mathbf{k}_t &= \\mathbf{c}_{t-1} \\odot\\mathbf{f}_t\n\\end{align*}\n\\tag{2}\\]"
   },
   {
     "objectID": "lectures/lstm.html#cell-input",
@@ -4691,21 +4691,21 @@
     "href": "lectures/lstm.html#rnn-language-model-equations",
     "title": "Approaches to biomedical knowledge",
     "section": "RNN Language model equations",
-    "text": "RNN Language model equations\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\n\\begin{align}\n\\mathbf{e}_t &= \\mathbf{E}\\mathbf{x}_t & \\quad \\text{Retrieve embedding} \\\\\n\\mathbf{h}_t &= g(\\mathbf{U}\\mathbf{h}_{t-1} + \\mathbf{E}\\mathbf{e}_t)  & \\quad \\text{new hidden layer } \\\\\n\\hat{\\mathbf{y}_t} &= \\mathrm{softmax}(\\mathbf{EV}\\mathbf{h}_t) & \\quad \\text{generate  output} \\\\\n\\end{align}\n\\]\n\n\\(g\\) is an activation function such as tanh.\nThe softmax operation creates a probability distribution oover the entire vocabulary\nThe probability that a particular word \\(k\\) is the next word is then \\[\nP(w_{t+1}| w_1,\\ldots, w_t ) = \\hat{\\mathbf{y}_t}[k]\n\\]\n\\(\\hat{\\mathbf{y}}\\) is a vector with one field for every word in the vocabulary\nThe output is then the highest-probability word"
+    "text": "RNN Language model equations\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\n\\begin{align*}\n\\mathbf{e}_t &= \\mathbf{E}\\mathbf{x}_t && \\text{Retrieve embedding} \\\\\n\\mathbf{h}_t &= \\tanh(\\mathbf{W}_{xh}\\mathbf{e}_t + \\mathbf{W}_{hh}\\mathbf{h}_{t-1} + \\mathbf{b}_h) && \\text{new hidden layer} \\\\\n\\hat{\\mathbf{y}}_t &= \\mathrm{softmax}(\\mathbf{W}_{hy}\\mathbf{h}_t + \\mathbf{b}_y) && \\text{generate output}\n\\end{align*}\n\\]\n\nThe softmax operation creates a probability distribution over the entire vocabulary\nThe probability that a particular word \\(k\\) is the next word is then \\[\nP(w_{t+1}| w_1,\\ldots, w_t ) = \\hat{\\mathbf{y}_t}[k]\n\\]\n\\(\\hat{\\mathbf{y}}\\) is a vector with one field for every word in the vocabulary\nThe output is then the highest-probability word"
   },
   {
     "objectID": "lectures/lstm.html#ce-loss-review",
     "href": "lectures/lstm.html#ce-loss-review",
     "title": "Approaches to biomedical knowledge",
     "section": "CE Loss: Review",
-    "text": "CE Loss: Review\n\nFor a multi-class classification problem, each true label vector \\(\\mathbf{y}\\) is one-hot encoded (meaning \\(y_i = 1\\) for the correct class and \\(y_i = 0\\) otherwise),\nThe model predicts a set of probabilities \\(\\hat{y}_{i}\\) for each class\nFor a multi-class classification problem with \\(K\\) classes, the cross-entropy loss is \\[\n\\log L(\\theta) = -\\sum _{i=1}^{C} y_{i}\\log \\hat{y}_{i}\\\\\n\\tag{6}\\]\nFor the correct class (\\(y_k = 1\\)), the loss term \\(-\\log(p_k)\\) decreases as \\(p_k\\) increases.\nWeight updates that increase the probability of an incorrect class must decrease the probability of the correct class, thereby increasing the loss"
+    "text": "CE Loss: Review\n\nFor a multi-class classification problem, each true label vector \\(\\mathbf{y}\\) is one-hot encoded (meaning \\(y_i = 1\\) for the correct class and \\(y_i = 0\\) otherwise),\nThe model predicts a set of probabilities \\(\\hat{y}_{i}\\) for each class\nFor a multi-class classification problem with \\(K\\) classes, the cross-entropy loss is \\[\n\\log L_{\\mathrm{CE}} = -\\sum _{i=1}^{K} y_{i}\\log \\hat{y}_{i}\\\\\n\\tag{6}\\]\nFor the correct class (\\(y_k = 1\\)), the loss term \\(-\\log(p_k)\\) decreases as \\(\\hat{y}_k\\) increases.\nWeight updates that increase the probability of an incorrect class must decrease the probability of the correct class, thereby increasing the loss"
   },
   {
     "objectID": "lectures/lstm.html#training-rnn-language-models",
     "href": "lectures/lstm.html#training-rnn-language-models",
     "title": "Approaches to biomedical knowledge",
     "section": "Training RNN language Models",
-    "text": "Training RNN language Models\n\nself-supervision: We use a corpus of text as training. The model is trained to predict the next word.\nNo need for gold-standard labelling.\nWe minimize therror in predicting the next word with a cross-entropy loss function\n\n\\[\nL_{CE}(\\hat{\\mathbf{y}_t}, \\mathbf{y}_t) = - \\sum_{w\\in V} \\mathbf{y}_t[w]\\log \\hat{\\mathbf{y}_t}[w]\n\\]\n\nIn language modelling, the correct prediction is the next word, which is represented by a one-hot vector (so \\(\\mathbf{y}_t[w]=1\\)).\nThus our loss is \\[\nL_{CE}(\\hat{\\mathbf{y}_t}, \\mathbf{y}_t) = - \\sum_{w\\in V} \\log \\hat{\\mathbf{y}_t}[w]\n\\]"
+    "text": "Training RNN language Models\n\nself-supervision: We use a corpus of text as training. The model is trained to predict the next word.\nNo need for gold-standard labelling.\nWe minimize the error in predicting the next word with a cross-entropy loss function\n\n\\[\nL_{CE}(\\hat{\\mathbf{y}_t}, \\mathbf{y}_t) = - \\sum_{w\\in V} \\mathbf{y}_t[w]\\log \\hat{\\mathbf{y}_t}[w]\n\\]\n\nIn language modelling, the correct prediction is the next word, which is represented by a one-hot vector (so \\(\\mathbf{y}_t[w]=1\\)).\nThus our loss is \\[\nL_{CE}(\\hat{\\mathbf{y}_t}, \\mathbf{y}_t) = - \\sum_{w\\in V} \\log \\hat{\\mathbf{y}_t}[w]\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#training-1",
@@ -4747,7 +4747,7 @@
     "href": "lectures/lstm.html#the-encoder-decoder-model-3",
     "title": "Approaches to biomedical knowledge",
     "section": "The Encoder-Decoder Model",
-    "text": "The Encoder-Decoder Model\n\nNote that the order of the words does not have to be the same\n\n\nIch habe ein tolles Buch zu Ende gelesen! &lt;s&gt; I finished a great book!\n\n\nSimplest version of the decoder\nTake the context vector (the last hidden state of the encoder): \\(c\\)\nUse the context vector as its own first hidden state: \\(\\mathbf{h}_{0}^d = \\mathbf{c} = \\mathbf{h}_n^{e}\\)\nGenerate outputs autoregressively until end of sentence marker is reached\nThere are many more sophisticated architectures. For insance, we can make the context vector available at each decoding timestep\n\n\\[\n\\begin{align}\n\\mathbf{c} &= \\mathbf{h}_n^{e} \\\\\n\\mathbf{h}_0^{d} &= \\mathbf{c}\\\\\n\\mathbf{h}_{0}^d &= g(\\mathbf{h}_{t-1}^d,\\hat{\\mathbf{y}}_{t-1}, \\mathbf{c})\\\\\n\\hat{\\mathbf{y}}_{t} &= \\mathrm{softmax}(\\mathbf{h}_{t}^d)\n\\end{align}\n\\]"
+    "text": "The Encoder-Decoder Model\n\nNote that the order of the words does not have to be the same\n\n\nIch habe ein tolles Buch zu Ende gelesen! &lt;s&gt; I finished a great book!\n\n\nSimplest version of the decoder\nTake the context vector (the last hidden state of the encoder): \\(\\mathbf{c}\\)\nUse the context vector as its own first hidden state: \\(\\mathbf{h}_{0}^d = \\mathbf{c} = \\mathbf{h}_n^{e}\\)\nGenerate outputs autoregressively until end of sentence marker is reached\nThere are many more sophisticated architectures. For instance, we can make the context vector available at each decoding timestep\n\n\\[\n\\begin{align}\n\\mathbf{c} &= \\mathbf{h}_n^{e} \\\\\n\\mathbf{h}_0^{d} &= \\mathbf{c}\\\\\n\\mathbf{h}_{0}^d &= g(\\mathbf{h}_{t-1}^d,\\hat{\\mathbf{y}}_{t-1}, \\mathbf{c})\\\\\n\\hat{\\mathbf{y}}_{t} &= \\mathrm{softmax}(\\mathbf{h}_{t}^d)\n\\end{align}\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#attention",
@@ -4761,7 +4761,7 @@
     "href": "lectures/lstm.html#attention-relevance",
     "title": "Approaches to biomedical knowledge",
     "section": "Attention: Relevance?",
-    "text": "Attention: Relevance?\n\nIn order to compute \\(\\mathbf{c}_i\\), our goal is to determine how relevant each encoder hidden state is for the current decoder step.\nThat is, we want to have a function for the relevance of encoder state \\(j\\) for decoding step \\(i\\) \\[\n\\mathbf{relevance}(i, j) = f(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^e)\n\\]\nThe simplest function is the dot product, which equates relevance with vector similarity \\[\nf(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^de) = \\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e\n\\]\nWe calculate one such score for each of the encoder states and use softmax to convert into a probability distribution \\[\n\\begin{align}\n\\alpha_{ij} &= \\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e)\\\\\n&= \\dfrac{\\exp(\\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e))}\n{\\sum_k \\exp(\\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{k}^e))}\n\\end{align}\n\\]\n\\(\\mathbf{c}_i\\) is then calculated as the weighted average over these scores \\[\n\\mathbf{c}_i = \\sum_j \\alpha_{ij}\\mathbf{h}_{j}^e\n\\]"
+    "text": "Attention: Relevance?\n\nIn order to compute \\(\\mathbf{c}_i\\), our goal is to determine how relevant each encoder hidden state is for the current decoder step.\nThat is, we want to have a function for the relevance of encoder state \\(j\\) for decoding step \\(i\\) \\[\n\\mathbf{relevance}(i, j) = f(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^e)\n\\]\nThe simplest function is the dot product, which equates relevance with vector similarity \\[\nf(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^de) = \\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e\n\\]\nWe calculate one such score for each of the encoder states and use softmax to convert into a probability distribution \\[\n\\begin{align}\n\\alpha_{ij} &= \\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e)= \\dfrac{\\exp(\\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e))}\n{\\sum_k \\exp(\\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{k}^e))}\n\\end{align}\n\\]\n\\(\\mathbf{c}_i\\) is then calculated as the weighted average over these scores \\[\n\\mathbf{c}_i = \\sum_j \\alpha_{ij}\\mathbf{h}_{j}^e\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#attention-1",
