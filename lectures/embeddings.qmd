@@ -29,55 +29,15 @@ format:
 
 We will study the following topics to prepare the way to understanding transformers and large-language models
 
-- n-grams and skip-grams
-- word2vec
-- tokens and tokenizing
-- byte pair algorithm
-:::
 
 
-## Overview: Word2vec, Embeddings, and Tokenization
 
 
-:::: {.columns}
+* [**Skip-gram**](#skipgram)
+* [**Word2vec**](#word2vec)
+* [**Tokenization**](#token)
+* [**Byte pair encoding**](#bytepair)
 
-::: {.column width="48%"}
-### [Part 1: Skip-gram](#skipgram)
-* n-gram models
-* skip-gram models
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Word2vec](#part-2)
-* Onehot vectors vs. semantic vectors
-* Training word2vec
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 3: Tokenization](#part-3)
-* Tokens
-* Visualizing tokens
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: Byte pair encoding](#part-4)
-* Byte pair encoding algorithm
-* Python (Homework)
-:::
-
-::::
 
 
 
@@ -183,51 +143,7 @@ multiclass predictors in neural networks
 
 
 
-
-## Overview: Word2vec, Embeddings, and Tokenization
-
-
-:::: {.columns}
-
-::: {.column width="48%"}
-### [Part 1: Skip-gram](#skipgram)
-* n-gram models
-* skip-gram models
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Word2vec](#part-2)
-* Onehot vectors vs. semantic vectors
-* Training word2vec
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 3: Tokenization](#part-3)
-* Tokens
-* Visualizing tokens
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: Byte pair encoding](#part-4)
-* Byte pair encoding algorithm
-* Python (Homework)
-:::
-
-::::
-
-## word2vec {#part-2}
+## word2vec {#word2vec}
 
 - word2vec  maps each word to a fixed-length vector, and these vectors can better express the similarity and analogy relationship among different words. 
 
@@ -804,53 +720,8 @@ Ravanmehr V, et al (2021) Supervised learning with word embeddings derived from 
 
 
 
-## Overview: Word2vec, Embeddings, and Tokenization
 
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 1: Skip-gram](#skipgram)
-* n-gram models
-* skip-gram models
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Word2vec](#part-2)
-* Onehot vectors vs. semantic vectors
-* Training word2vec
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" }
-### [Part 3: Tokenization](#part-3)
-* Tokens
-* Visualizing tokens
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 4: Byte pair encoding](#part-4)
-* Byte pair encoding algorithm
-* Python (Homework)
-:::
-
-::::
-
-
-
-
-## Tokens {#part-3}
+## Tokens {#token}
 
 
 ::: {.callout-important icon="true" appearance="default" title="The need for tokenization"}
@@ -1016,51 +887,8 @@ ax.grid(True)
 plt.show()
 ```
 
-## Overview: Word2vec, Embeddings, and Tokenization
 
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 1: Skip-gram](#skipgram)
-* n-gram models
-* skip-gram models
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" .dimmed}
-### [Part 2: Word2vec](#part-2)
-* Onehot vectors vs. semantic vectors
-* Training word2vec
-:::
-
-::::
-
-:::: {.columns}
-
-::: {.column width="48%" .dimmed}
-### [Part 3: Tokenization](#part-3)
-* Tokens
-* Visualizing tokens
-:::
-
-::: {.column width="4%"}
-<br>
-:::
-
-::: {.column width="48%" }
-### [Part 4: Byte pair encoding](#part-4)
-* Byte pair encoding algorithm
-* Python (Homework)
-:::
-
-::::
-
-
-##  Byte Pair Encoding {#part-4}
+##  Byte Pair Encoding {#bytepair}
 
 - Byte Pair Encoding (BPE) is a simple, greedy algorithm that builds a vocabulary by repeatedly merging the most frequent pair of tokens.
 - BPE proceeds by repeatedly identifying the most frequently occurring pair of symbols
