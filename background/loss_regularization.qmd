@@ -25,23 +25,26 @@ format:
 These slides are intended to provide some extra background to better understand the interplay of parameter fitting, regularization and optimization.
 ::: -->
 
-Why regularize? Two points of view, Statistical Learning Theory (SLT) concerned with bias-variance tradeoff, model complexity, and so on, and on the other hand optimization. SLT does not tell us why a quadratic should be better, it just tells us any $||w||^\alpha$ is ok, so why is $\alpha=2$ so popular? Looking at optimization will show us! 
+::: {.incremental}
 
-In the lecture you saw cross entropy loss, typical for sigmoid activation, but why? What about a naive squared error?
-$$
-\begin{equation}
-    \mathcal{L}(\vec{w}) = \frac{1}{2}\sum_{i=1}^N || y_i-\sigma(\vec{w}\cdot\vec{x}_i) ||^2\,.
-\end{equation}
-$$
+- Why regularize? Two points of view, Statistical Learning Theory (SLT) concerned with bias-variance tradeoff, model complexity, and so on, and on the other hand optimization. SLT does not tell us why a quadratic should be better, it just tells us any $||w||^\alpha$ is ok, so why is $\alpha=2$ so popular? Looking at optimization will show us! 
+- In the lecture you saw cross entropy loss, typical for sigmoid activation, but why? What about a naive squared error?
+    $$
+    \begin{equation}
+        \mathcal{L}(\vec{w}) = \frac{1}{2}\sum_{i=1}^N || y_i-\sigma(\vec{w}\cdot\vec{x}_i) ||^2\,.
+    \end{equation}
+    $$
 
-This can be used, but has some issues (this example comes from [here](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)). Different losses have a different speeds of learning. The learning rate is largely determined by the gradient of the loss $\nabla\mathcal{L}$. Slow learning appears when these derivatives become small. For sigmoid (activation) with quadratic vs. cross entropy loss (seen in class) we have
+- This can be used, but has some issues (this example comes from [here](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)). Different losses have a different speeds of learning. The learning rate is largely determined by the gradient of the loss $\nabla\mathcal{L}$. Slow learning appears when these derivatives become small. For sigmoid (activation) with quadratic vs. cross entropy loss (seen in class) we have
 
-$$
-\begin{aligned}
-    \nabla\mathcal{L}_{squared} &\propto \sigma'(x) \cdot \sigma(x)\,,\quad \sigma'(x)\underbrace{\to 0}_{\lim_{x\to 1}}\\
-    \nabla\mathcal{L}_{ent} &\propto \sigma(x)-y\,,
-\end{aligned}
-$$
+    $$
+    \begin{aligned}
+        \nabla\mathcal{L}_{squared} &\propto \sigma'(x) \cdot \sigma(x)\,,\quad \sigma'(x)\underbrace{\to 0}_{\lim_{\sigma\to 1}}\\
+        \nabla\mathcal{L}_{ent} &\propto \sigma(x)-y\,,
+    \end{aligned}
+    $$
+
+:::
 
 
 ## Convergence Speed
@@ -49,31 +52,53 @@ One way to (maybe) gain inuition about the cross entropy: we can actually obtain
 
 <br>
 
+. . .
+
 Let us look more closely at an example of convergence. In general, around an isolated minimum of $L$ we can write the function as a pure quadratic, or a sum of squares to keep things simple: 
 
+::: {.fragment}
+
 $$
-\begin{align}
-    \mathcal{L}(x,y) &= (x-2)^2 + c\cdot (y-2)^2\,,\\[5pt]
-    \nabla\mathcal{L} &= 
-        \begin{pmatrix}
-            2(x-2)\\
-            2c(y-2)
-        \end{pmatrix}
-        =\begin{pmatrix}
-            0\\
-            0
-        \end{pmatrix}
-        \,\rightarrow
-        (x_{min},y_{min})=(2,2)\,,\\[5pt]
-    H\mathcal{L}&=
-        \begin{pmatrix}
-            2 & 0\\
-            0 & 2c
-        \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = c \qquad \longleftarrow \text{condition number}
-\end{align}
+\mathcal{L}(x,y) = (x-2)^2 + c(y-2)^2
 $$
 
-A large condition number means an ill posed optimization problem which will converge slowly. This is an intuitive description, the mathematical formalization of these ideas is more complicated.
+:::
+
+::: {.fragment}
+
+$$
+\nabla\mathcal{L} =
+\begin{pmatrix}
+2(x-2)\\
+2c(y-2)
+\end{pmatrix}
+=
+\begin{pmatrix}
+0\\
+0
+\end{pmatrix}
+\rightarrow (x_{\min},y_{\min})=(2,2)
+$$
+
+:::
+
+::: {.fragment}
+
+$$
+H\mathcal{L} =
+\begin{pmatrix}
+2 & 0\\
+0 & 2c
+\end{pmatrix}
+\rightarrow
+\kappa = \frac{1}{c}
+$$
+
+:::
+
+. . .
+
+Here we take $0<c\leq 1$: the smaller $c$, the flatter the loss is in the $y$-direction compared to the $x$-direction, the larger the condition number $\kappa=1/c$. A large condition number means an ill posed optimization problem which will converge slowly. This is an intuitive description, the mathematical formalization of these ideas is more complicated.
 
 ## Let's plot this:
 
@@ -86,7 +111,7 @@ import plotly.graph_objects as go
 # Fixed grid and coefficient values
 grid = np.linspace(-1, 5, 40)
 X, Y = np.meshgrid(grid, grid)
-c_values = list(range(1, 11))
+c_values = [round(0.1 * k, 1) for k in range(1, 11)]
 
 def loss_surface(c, lam=0):
     return (X-2)**2 + c*(Y-2)**2 + (lam / 2) * (X**2 + Y**2)
@@ -123,7 +148,7 @@ def make_surface_slider(lam=0):
             name=str(c),
             data=[
                 go.Surface(z=loss_surface(c, lam)),
-                minimum_marker(c_values[0], lam)
+                minimum_marker(c, lam)
             ],
             layout=go.Layout(title_text=f"c = {c}, mu = {lam}")
         )
@@ -132,7 +157,7 @@ def make_surface_slider(lam=0):
     fig.frames = frames
 
     fig.update_layout(
-        title=f"c = 1, lambda = {lam}",
+        title=f"c = {c_values[0]}, mu = {lam}",
         scene=dict(
             xaxis=dict(title="x", range=[-1, 5], autorange=False),
             yaxis=dict(title="y", range=[-1, 5], autorange=False),
@@ -169,7 +194,7 @@ make_surface_slider(lam=0).show()
 
 ## Example
 
-Gradient descent with learning rate $\eta$ updates both coordinates simultaneously:
+Gradient descent with learning rate $\eta$ updates both coordinates simultaneously (we write in terms of coordinates shifted by 2 to highlight properties of interest):
 
 $$
 \begin{aligned}
@@ -205,33 +230,114 @@ y_t
 \end{aligned}
 $$
 
-In order for this to converge we must have
+. . .
+
+In order for this to converge we must have (for $0<c\leq 1$ the $x$-direction, which is the steepest, is the restrictive one)
 
 $$
-|1-2c\eta|<1
+|1-2\eta|<1 \text{ and } |1-2c\eta|<1
 \quad\Longleftrightarrow\quad
-0<\eta<\frac{1}{c}.
+0<\eta<1.
 $$
 
-Let $c=10$, $\eta=0.08$, and start at $(x_0,y_0)=(0,0)$. The minimum is at $(2,2)$. The update equations become
+. . .
+
+Let $c=0.1$, $\eta=0.8$, and start at $(x_0,y_0)=(0,0)$. The minimum is at $(2,2)$. The update equations become
 
 $$
 \boxed{
 \begin{aligned}
-x_{t+1}&=0.84x_t+0.32,\\
-y_{t+1}&=-0.6y_t+3.2.
+x_{t+1}&=-0.6x_t+3.2,\\
+y_{t+1}&=0.84y_t+0.32.
 \end{aligned}
 }
 $$
 
 # Example
 Taking a few steps
+
+::: {.fragment}
+
+$$
+\nabla\mathcal{L}(x_0,y_0)=
+\begin{pmatrix}
+    -4\\
+    -0.4
+\end{pmatrix}
+\quad \longrightarrow \quad
+\begin{pmatrix}
+    x_1\\
+    y_1
+\end{pmatrix}
+=
+\begin{pmatrix}
+    0\\
+    0
+\end{pmatrix}
+\underbrace{-0.8}_{=\eta}
+\begin{pmatrix}
+    -4\\
+    -0.4
+\end{pmatrix}
+=
+\begin{pmatrix}
+    3.2\\
+    0.32\\
+\end{pmatrix} 
+\\[12pt]
+$$
+
+:::
+
+::: {.fragment}
+
+$$
+\nabla\mathcal{L}(x_1,y_1) =
+\begin{pmatrix}
+2.4\\
+-0.336
+\end{pmatrix}
+\quad \longrightarrow \quad
+\begin{pmatrix}x_2\\y_2
+\end{pmatrix}
+=
+\begin{pmatrix}3.2\\0.32
+\end{pmatrix}
+-0.8
+\begin{pmatrix}2.4\\-0.336
+\end{pmatrix}
+=
+\begin{pmatrix}1.28\\0.5888
+\end{pmatrix}
+$$
+
+:::
+
+. . .
+
+- The $x$-coordinate overshoots the minimum and switches sides, but its error shrinks by a factor $|1-2\eta|=0.6$ per step. The $y$-coordinate moves steadily towards $2$, but only shrinks its error by a factor $1-2c\eta=0.84$ per step: it is the slow direction and determines how long convergence takes. Both converge because the absolute values of their update factors are less than 1. 
+
+## Example: a smaller learning rate
+
+Same problem, same form, but now $c=0.1$, $\eta=0.45$, and again start at $(x_0,y_0)=(0,0)$. The update equations become
+
+$$
+\boxed{
+\begin{aligned}
+x_{t+1}&=0.1x_t+1.8,\\
+y_{t+1}&=0.91y_t+0.18.
+\end{aligned}
+}
+$$
+
+. . .
+
 $$
 \begin{align}
     \nabla\mathcal{L}(x_0,y_0)=
     \begin{pmatrix}
         -4\\
-        -40
+        -0.4
     \end{pmatrix}
     \quad &\longrightarrow \quad
     \begin{pmatrix}
@@ -243,38 +349,40 @@ $$
         0\\
         0
     \end{pmatrix}
-    -0.08
+    -0.45
     \begin{pmatrix}
         -4\\
-        -40
+        -0.4
     \end{pmatrix}
     =
     \begin{pmatrix}
-        0.32\\
-        3.2\\
-    \end{pmatrix} 
+        1.8\\
+        0.18
+    \end{pmatrix}
     \\[8pt]
     \nabla\mathcal{L}(x_1,y_1) =
     \begin{pmatrix}
-    -3.36\\
-    24
+    -0.4\\
+    -0.364
     \end{pmatrix}
     \quad &\longrightarrow \quad
     \begin{pmatrix}x_2\\y_2
     \end{pmatrix}
     =
-    \begin{pmatrix}0.32\\3.2
+    \begin{pmatrix}1.8\\0.18
     \end{pmatrix}
-    -0.08
-    \begin{pmatrix}-3.36\\24
+    -0.45
+    \begin{pmatrix}-0.4\\-0.364
     \end{pmatrix}
     =
-    \begin{pmatrix}0.5888\\1.28
+    \begin{pmatrix}1.98\\0.3438
     \end{pmatrix}
 \end{align}
 $$
 
-- The $x$-coordinate moves steadily towards $2$, while the $y$-coordinate overshoots the minimum and switches sides. Both converge because the absolute values of their updates are less than 1. 
+. . .
+
+- The $x$-coordinate is already almost at the minimum after two steps: its error shrinks by a factor $|1-2\eta|=0.1$ per step. The $y$-coordinate moves steadily towards $2$, but way too slowly: its error only shrinks by a factor $1-2c\eta=0.91$ per step, so we need $57$ steps to get within $0.01$ of the minimum (against $3$ for $x$). This is slow convergence caused by the small curvature along $y$, i.e. by the large condition number $\kappa=1/c=10$.
 
 
 ## Adding a Ridge (in the Hessian)
@@ -302,7 +410,8 @@ H\mathcal{L}_R &= H\mathcal{L} + \mu\mathcal{I}
     \begin{pmatrix}
         2+\mu & 0\\
         0 & 2c+\mu
-    \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = \frac{2c+\mu}{2+\mu} \,.
+    \end{pmatrix} \,\rightarrow \kappa = \frac{\lambda_{max}}{\lambda_{min}} = \frac{2+\mu}{2c+\mu} \,,\\[5pt]
+\kappa\big|_{c=0.1,\,\mu=4} &= \frac{2+4}{2\cdot 0.1+4} = \frac{6}{4.2} \approx 1.43 \qquad \left(\text{instead of } \kappa=\frac{1}{c}=10 \text{ for } \mu=0\right).
 \end{align}
 $$
 
@@ -317,17 +426,17 @@ $$
 ## Plot with Regularization
 ```{python}
 #| echo: false
-make_surface_slider(lam=2).show()
+make_surface_slider(lam=4).show()
 ```
 
 ## Takeaways
 
 ::: {.incremental}
-- Regularization changes the optimization problem, but that's ok.
-- It encodes additional assumptioms/properties about the model we want.
-- It is oftentimes necessary from a numerical optimizaiton point of view: if one direction in parameter space is way steeper than another one, there is no chance to get to the minimum in a reasonable number of steps! This is equivalent to trying to invert an ill conditioned/singular matrix and related to Tikhonov regularization.  
-- The regularized solution may fit the training data less well (larger variance) but perform better on unseen data (smaller bias).
-- The formalization within Statistical Learning Theory of the bias variance tradeoff is not trivial and modern "overparametrized" models also challenge parts of this (add ref to phys rew paper). It can instruct us (not shown here) to prefer small parameters, i.e. add a term like $||w||$ to some power, but the reason for which ridge regularization (L2-regularization) is oftentimes preferred can be understood in terms of numerical optimization on geometric surfaces.
+- Regularization **changes the optimization problem**, but that's ok.
+- It encodes **additional assumptioms/properties** about the model we want.
+- It is oftentimes necessary from a **numerical optimization** point of view: if one direction in parameter space is way flatter than others, getting to the minimum in a reasonable number of steps is very hard! This is related to inverting an ill conditioned/singular matrix and to Tikhonov regularization.  
+- The **regularized** solution may fit a specific training dataset less well but be **more stable**, i.e. perform better on unseen data. It thus is better at fitting the true underlying distribution all our data comes from (we assume), which means it has a **smaller variance** at the cost of a **larger bias** (we are adding ingredients to the model).
+- The formalization within Statistical Learning Theory of the bias variance tradeoff is not trivial and modern "overparametrized" models also challenge parts of [this](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.4.013201). It can instruct us (not shown here) to prefer small parameters, i.e. add a term like $||w||$ to some power, but a strong reason for which **ridge** regularization (L2-regularization) is oftentimes preferred **can be understood in terms of numerical optimization** on geometric surfaces.
 :::
 
 <!-- ## Bayesian Approach
@@ -350,7 +459,8 @@ for ‘learning’ values of θ that are large numbers. -->
 
 
 ## References: 
-- [Machine Learning for the Sciences](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html)
-- [Ridge Regression: an Essential Concept in Data Science](https://arxiv.org/abs/2006.00371)
-- See Patrick references in lecture 6.
+- [Machine Learning for the Sciences](https://ml-lectures.org/docs/supervised_learning_w_NNs/ml_training_regularization.html). Very good lecture notes aimed at physics/engineering students. Mathematically inclined but extremely pragmatical and with many exercises.
+- [Stanford Computer Vision Notes](https://cs231n.github.io/neural-networks-1/#actfun), section on activation functions.
+- [Ridge Regression: an Essential Concept in Data Science](https://arxiv.org/abs/2006.00371). If you are curious to go very deep into Ridge Regression.
+- See Patrick's references in lecture 6.
 
