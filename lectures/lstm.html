@@ -1521,6 +1521,7 @@ Peter N Robinson
 <li><a href="#/python"><strong>Python</strong></a></li>
 <li><a href="#/lstm"><strong>LSTMs</strong></a></li>
 <li><a href="#/rnn-lm"><strong>RNN language models</strong></a></li>
+<li><a href="#/attention"><strong>Attention</strong></a></li>
 </ul>
 </section>
 <section id="rnns" class="slide level2">
@@ -1574,7 +1575,7 @@ Peter N Robinson
 <section id="rnn-basic-idea" class="slide level2">
 <h2>RNN: Basic idea</h2>
 <div style="width: 65%; margin: 0 auto;">
-<div id="a8a7f112" class="cell" data-execution_count="2">
+<div id="cfb2e2c4" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1632,7 +1633,7 @@ Peter N Robinson
 <section id="rnn-output" class="slide level2">
 <h2>RNN: Output</h2>
 <div style="width: 65%; margin: 0 auto;">
-<div id="30ad3b43" class="cell" data-execution_count="3">
+<div id="34f1dac5" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1681,7 +1682,7 @@ Peter N Robinson
 <h2>RNN types</h2>
 <div class="columns">
 <div class="column" style="width:65%;">
-<div id="7f86d5f4" class="cell" data-execution_count="4">
+<div id="32a1622f" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1717,7 +1718,7 @@ Peter N Robinson
 \tag{1}\]</span></span></p>
 <p><br></p>
 </div><div class="column" style="width:55%;">
-<div id="20b71edb" class="cell" data-execution_count="5">
+<div id="5ad04947" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2057,7 +2058,7 @@ D^{20} &amp;\approx \begin{bmatrix} 0.0115 &amp; 0 \\ 0 &amp; 9.5\times 10^{-7} 
 </ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div id="aeb41968" class="cell" data-execution_count="6">
+<div id="18df56ef" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2094,7 +2095,7 @@ D^{20} &amp;\approx \begin{bmatrix} 0.0115 &amp; 0 \\ 0 &amp; 9.5\times 10^{-7} 
 <li>The point of sentiment analysis is to perform binary classification about the opinion expressed by a certain text</li>
 <li>The classic example is to predict whether a movie review is positive or negative</li>
 </ul>
-<div id="32b8af06" class="cell" data-execution_count="7">
+<div id="e125e558" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2109,7 +2110,7 @@ D^{20} &amp;\approx \begin{bmatrix} 0.0115 &amp; 0 \\ 0 &amp; 9.5\times 10^{-7} 
 </section>
 <section id="sentiment-analysis-embedding" class="slide level2">
 <h2>Sentiment analysis: embedding</h2>
-<div id="3951f78b" class="cell" data-execution_count="8">
+<div id="db7e1776" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2121,7 +2122,7 @@ D^{20} &amp;\approx \begin{bmatrix} 0.0115 &amp; 0 \\ 0 &amp; 9.5\times 10^{-7} 
 </section>
 <section id="sentiment-analysis-unrolling-the-rnn" class="slide level2">
 <h2>Sentiment analysis: Unrolling the RNN</h2>
-<div id="6d5a46ab" class="cell" data-execution_count="9">
+<div id="2d28cbb0" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2138,7 +2139,7 @@ D^{20} &amp;\approx \begin{bmatrix} 0.0115 &amp; 0 \\ 0 &amp; 9.5\times 10^{-7} 
 <ul>
 <li>50,000 reviews, balanced between positive and negative; we merge the original train/test splits and re-split 80/20</li>
 </ul></li>
-<li>The full script is available in the <a href="notebooks/rnn-sentiment.ipynb">course material</a>; we will briefly review some of the salient blocks of code</li>
+<li>The full script is available in the <a href="../notebooks/rnn-sentiment.html">course material</a>; we will briefly review some of the salient blocks of code</li>
 <li>We use PyTorch for most of the heavy lifting: <strong>embedding → RNN → linear layer</strong></li>
 </ul>
 </section>
@@ -2249,7 +2250,7 @@ D^{20} &amp;\approx \begin{bmatrix} 0.0115 &amp; 0 \\ 0 &amp; 9.5\times 10^{-7} 
 </section>
 <section id="loss" class="slide level2">
 <h2>Loss</h2>
-<div id="babdc416" class="cell" data-execution_count="10">
+<div id="8095b7f4" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -2307,7 +2308,7 @@ D^{20} &amp;\approx \begin{bmatrix} 0.0115 &amp; 0 \\ 0 &amp; 9.5\times 10^{-7} 
 </section>
 <section id="lstms-vs-rnns" class="slide level2">
 <h2>LSTMS vs RNNs</h2>
-<div id="91c14c81" class="cell" data-execution_count="11">
+<div id="c7b74a42" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2323,7 +2324,7 @@ D^{20} &amp;\approx \begin{bmatrix} 0.0115 &amp; 0 \\ 0 &amp; 9.5\times 10^{-7} 
 </section>
 <section id="lstms-vs-rnns-1" class="slide level2">
 <h2>LSTMS vs RNNs</h2>
-<div id="b4ce6513" class="cell" data-execution_count="12">
+<div id="8c9c28d8" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2539,7 +2540,7 @@ P(\mathrm{Denmark}\mid \text{Something is rotten in the state of})
 <h2>RNN Language model equations</h2>
 <div class="columns">
 <div class="column" style="width:45%;">
-<div id="37ccf96a" class="cell" data-execution_count="13">
+<div id="87e9b47a" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2599,7 +2600,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <h2>Training</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="8c388384" class="cell" data-execution_count="14">
+<div id="793e01eb" class="cell" data-execution_count="14">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2628,7 +2629,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <h2>Generative RNNs</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div id="5e1d3f09" class="cell" data-execution_count="15">
+<div id="d77622fa" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2658,8 +2659,8 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 </div>
 </div></div>
 </section>
-<section id="the-encoder-decoder-model" class="slide level2">
-<h2>The Encoder-Decoder Model</h2>
+<section id="the-encoder-decoder-model-2" class="slide level2">
+<h2>The Encoder-Decoder Model (2)</h2>
 <ul>
 <li>RNNs were among early examples of the <strong>encoder-decoder model</strong>
 <ul>
@@ -2675,7 +2676,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <li>machine translation</li>
 </ul></li>
 </ul>
-<div id="7ad54d6e" class="cell" data-execution_count="16">
+<div id="1dd33c34" class="cell" data-execution_count="16">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2685,8 +2686,8 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 </div>
 </div>
 </section>
-<section id="the-encoder-decoder-model-1" class="slide level2">
-<h2>The Encoder-Decoder Model</h2>
+<section id="the-encoder-decoder-model-3" class="slide level2">
+<h2>The Encoder-Decoder Model (3)</h2>
 <ul>
 <li>Encoder decoder models have three major components</li>
 </ul>
@@ -2709,9 +2710,9 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <p>Ich bin ein Berliner <code>&lt;s&gt;</code> I am a doughnut</p>
 </blockquote>
 </section>
-<section id="the-encoder-decoder-model-2" class="slide level2">
-<h2>The Encoder-Decoder Model</h2>
-<div id="0914feec" class="cell" data-execution_count="17">
+<section id="the-encoder-decoder-model-4" class="slide level2">
+<h2>The Encoder-Decoder Model (4)</h2>
+<div id="e8ae102a" class="cell" data-execution_count="17">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -2721,7 +2722,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 </div>
 </div>
 </section>
-<section id="the-encoder-decoder-model-3" class="slide level2">
+<section id="the-encoder-decoder-model" class="slide level2">
 <h2>The Encoder-Decoder Model</h2>
 <ul>
 <li>Note that the order of the words does not have to be the same</li>
@@ -2740,7 +2741,7 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 \begin{align}
 \mathbf{c} &amp;= \mathbf{h}_n^{e} \\
 \mathbf{h}_0^{d} &amp;= \mathbf{c}\\
-\mathbf{h}_{0}^d &amp;= g(\mathbf{h}_{t-1}^d,\hat{\mathbf{y}}_{t-1}, \mathbf{c})\\
+\mathbf{h}_{t}^d &amp;= g(\mathbf{h}_{t-1}^d,\hat{\mathbf{y}}_{t-1}, \mathbf{c})\\
 \hat{\mathbf{y}}_{t} &amp;= \mathrm{softmax}(\mathbf{h}_{t}^d)
 \end{align}
 \]</span></p>
@@ -2762,6 +2763,17 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 <li>Note that the context vector is now generated anew for each decoding step <span class="math inline">\(i\)</span>, i.e., we have <span class="math inline">\(\mathbf{c}_i\)</span> instead of the same <span class="math inline">\(\mathbf{c}\)</span> for all steps.</li>
 </ul>
 </section>
+<section id="attention-machine-translation" class="slide level2">
+<h2>Attention: Machine translation</h2>
+<ul>
+<li>Attention is a key innovation for transformers, as we shall see</li>
+<li>A version of attention was first proposed in 2014 to support machine translation using RNNs</li>
+<li>We will review this model to build intuition for the more sophisticated implementation of attention in transformers</li>
+</ul>
+<blockquote>
+<p>Most of the proposed neural machine translation models belong to a family of encoder–decoders with an encoder and a decoder for each language The whole encoder–decoder system, which consists of the encoder and the decoder for a language pair, is jointly trained to maximize the probability of a correct translation given a source sentence. potential issue with this encoder–decoder approach is that a neural network needs to be able to compress all the necessary information of a source sentence into a fixed-length vector. This may make it difficult for the neural network to cope with long sentences, especially those that are longer than the sentences in the training corpus.</p>
+</blockquote>
+</section>
 <section id="attention-relevance" class="slide level2">
 <h2>Attention: Relevance?</h2>
 <ul>
@@ -2770,15 +2782,15 @@ L_{CE}(\hat{\mathbf{y}_t}, \mathbf{y}_t) = - \sum_{w\in V} \log \hat{\mathbf{y}_
 \mathbf{relevance}(i, j) = f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^e)
 \]</span></p></li>
 <li><p>The simplest function is the <strong>dot product</strong>, which equates relevance with vector similarity <span class="math display">\[
-f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^de) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e
+f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^e) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e
 \]</span></p></li>
 <li><p>We calculate one such score for each of the encoder states and use softmax to convert into a probability distribution <span class="math display">\[
 \begin{align}
-\alpha_{ij} &amp;= \mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)= \dfrac{\exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e))}
-{\sum_k \exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{k}^e))}
+\alpha_{ij} &amp;= \mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)= \dfrac{\exp(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)}
+{\sum_k \exp(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{k}^e)}
 \end{align}
 \]</span></p></li>
-<li><p><span class="math inline">\(\mathbf{c}_i\)</span> is then calculated as the weighted average over these scores <span class="math display">\[
+<li><p><span class="math inline">\(\mathbf{c}_i\)</span> is then calculated as the weighted average over the encoder states, using the weights <span class="math inline">\(\alpha_{ij}\)</span>. <span class="math display">\[
 \mathbf{c}_i = \sum_j \alpha_{ij}\mathbf{h}_{j}^e
 \]</span></p></li>
 </ul>
@@ -2788,7 +2800,7 @@ f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^de) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{
 <ul>
 <li><span class="math inline">\(\mathbf{c}_i\)</span> thus takes information from the entire encoder into account and is dynamically updated at each step of decoding</li>
 </ul>
-<div id="ab92dce8" class="cell" data-execution_count="18">
+<div id="19138113" class="cell" data-execution_count="18">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

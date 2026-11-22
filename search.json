@@ -1772,28 +1772,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.84%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.04%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.82%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.72%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.22%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 2.94%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 36.26%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.34%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -4341,7 +4341,7 @@
     "href": "lectures/lstm.html#overview-rnns-and-lstms",
     "title": "Approaches to biomedical knowledge",
     "section": "Overview: RNNs and LSTMs",
-    "text": "Overview: RNNs and LSTMs\n\nBiomedical data are often arranged as sequences: clinical notes, visit histories, ICU time series, DNA and protein sequences.\n\n\nRNNs\nToy example\nTraining RNNs\nPython\nLSTMs\nRNN language models"
+    "text": "Overview: RNNs and LSTMs\n\nBiomedical data are often arranged as sequences: clinical notes, visit histories, ICU time series, DNA and protein sequences.\n\n\nRNNs\nToy example\nTraining RNNs\nPython\nLSTMs\nRNN language models\nAttention"
   },
   {
     "objectID": "lectures/lstm.html#rnns",
@@ -4701,32 +4701,32 @@
     "text": "Generative RNNs\n\n\n\n\n\n\n\n\n\n\n\n\nfigure adapted from Jurafsky and Martin (2026) Speech and Language Processing\n\n\n\n\nRNN-based language models can also be used to generate text (Generative AI)\nAutoregressive generation: Iteratively sample the next work based on previous words\nThis was one of the inspirations for the autoregressive approach used by LLMs\nAlgorithm:\n\nSample a word from the softmax distribution.\nUse the start of sentence marker &lt;s&gt; as the first input\nThe word embedding for the current word is used as input to the network to choose the word for the next time step\nThe output word is used as input for the next step\nContinue until end of sentence marker &lt;/s&gt; is sampled"
   },
   {
-    "objectID": "lectures/lstm.html#the-encoder-decoder-model",
-    "href": "lectures/lstm.html#the-encoder-decoder-model",
-    "title": "Approaches to biomedical knowledge",
-    "section": "The Encoder-Decoder Model",
-    "text": "The Encoder-Decoder Model\n\nRNNs were among early examples of the encoder-decoder model\n\nencode an input sequence of length \\(n\\)\naim to output a sequence of length \\(m\\), where \\(n\\) and \\(m\\) may be distinct\ninput and output sequences do not necessarily align word-to-word\n\nA kind of sequence-to-sequence network\nApplications:\n\nsummarization\nquestion answering\nmachine translation"
-  },
-  {
-    "objectID": "lectures/lstm.html#the-encoder-decoder-model-1",
-    "href": "lectures/lstm.html#the-encoder-decoder-model-1",
-    "title": "Approaches to biomedical knowledge",
-    "section": "The Encoder-Decoder Model",
-    "text": "The Encoder-Decoder Model\n\nEncoder decoder models have three major components\n\n\n\nEncoder: transform an input sequence, \\(x_{1:n}\\) into a corresponding sequence of contextualized representations, \\(h_{1:n}\\).\n\nRNNs, LSTMs, transformers, etc., can be used as encoders\n\nContext: A vector \\(c\\) that is a function of \\(h_{1:n}\\) and represents the “meaning” of the input to the decoder\nDecoder: takes the context \\(c\\) and generates a sequence of hidden states \\(h_{1:m}\\) that can be used to generate a sequence of output states \\(y_{1:m}\\)\n\n\n\nWe can adapt the autoregressive RNN\nRecall that the hidden state is calculated as \\(\\mathbf{h}_t = g(\\mathbf{h}_{t-1},\\mathbf{x}_t)\\) and the output is calculated as \\(\\mathbf{y}_t = \\mathrm{softmax}(\\mathbf{h}_{t})\\)\nFor training we add a sentence separation marker after the source text (language 1), and then add the target text (language 2)\n\n\nIch bin ein Berliner &lt;s&gt; I am a doughnut"
-  },
-  {
     "objectID": "lectures/lstm.html#the-encoder-decoder-model-2",
     "href": "lectures/lstm.html#the-encoder-decoder-model-2",
     "title": "Approaches to biomedical knowledge",
-    "section": "The Encoder-Decoder Model",
-    "text": "The Encoder-Decoder Model"
+    "section": "The Encoder-Decoder Model (2)",
+    "text": "The Encoder-Decoder Model (2)\n\nRNNs were among early examples of the encoder-decoder model\n\nencode an input sequence of length \\(n\\)\naim to output a sequence of length \\(m\\), where \\(n\\) and \\(m\\) may be distinct\ninput and output sequences do not necessarily align word-to-word\n\nA kind of sequence-to-sequence network\nApplications:\n\nsummarization\nquestion answering\nmachine translation"
   },
   {
     "objectID": "lectures/lstm.html#the-encoder-decoder-model-3",
     "href": "lectures/lstm.html#the-encoder-decoder-model-3",
     "title": "Approaches to biomedical knowledge",
+    "section": "The Encoder-Decoder Model (3)",
+    "text": "The Encoder-Decoder Model (3)\n\nEncoder decoder models have three major components\n\n\n\nEncoder: transform an input sequence, \\(x_{1:n}\\) into a corresponding sequence of contextualized representations, \\(h_{1:n}\\).\n\nRNNs, LSTMs, transformers, etc., can be used as encoders\n\nContext: A vector \\(c\\) that is a function of \\(h_{1:n}\\) and represents the “meaning” of the input to the decoder\nDecoder: takes the context \\(c\\) and generates a sequence of hidden states \\(h_{1:m}\\) that can be used to generate a sequence of output states \\(y_{1:m}\\)\n\n\n\nWe can adapt the autoregressive RNN\nRecall that the hidden state is calculated as \\(\\mathbf{h}_t = g(\\mathbf{h}_{t-1},\\mathbf{x}_t)\\) and the output is calculated as \\(\\mathbf{y}_t = \\mathrm{softmax}(\\mathbf{h}_{t})\\)\nFor training we add a sentence separation marker after the source text (language 1), and then add the target text (language 2)\n\n\nIch bin ein Berliner &lt;s&gt; I am a doughnut"
+  },
+  {
+    "objectID": "lectures/lstm.html#the-encoder-decoder-model-4",
+    "href": "lectures/lstm.html#the-encoder-decoder-model-4",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The Encoder-Decoder Model (4)",
+    "text": "The Encoder-Decoder Model (4)"
+  },
+  {
+    "objectID": "lectures/lstm.html#the-encoder-decoder-model",
+    "href": "lectures/lstm.html#the-encoder-decoder-model",
+    "title": "Approaches to biomedical knowledge",
     "section": "The Encoder-Decoder Model",
-    "text": "The Encoder-Decoder Model\n\nNote that the order of the words does not have to be the same\n\n\nIch habe ein tolles Buch zu Ende gelesen! &lt;s&gt; I finished a great book!\n\n\nSimplest version of the decoder\nTake the context vector (the last hidden state of the encoder): \\(\\mathbf{c}\\)\nUse the context vector as its own first hidden state: \\(\\mathbf{h}_{0}^d = \\mathbf{c} = \\mathbf{h}_n^{e}\\)\nGenerate outputs autoregressively until end of sentence marker is reached\nThere are many more sophisticated architectures. For instance, we can make the context vector available at each decoding timestep\n\n\\[\n\\begin{align}\n\\mathbf{c} &= \\mathbf{h}_n^{e} \\\\\n\\mathbf{h}_0^{d} &= \\mathbf{c}\\\\\n\\mathbf{h}_{0}^d &= g(\\mathbf{h}_{t-1}^d,\\hat{\\mathbf{y}}_{t-1}, \\mathbf{c})\\\\\n\\hat{\\mathbf{y}}_{t} &= \\mathrm{softmax}(\\mathbf{h}_{t}^d)\n\\end{align}\n\\]"
+    "text": "The Encoder-Decoder Model\n\nNote that the order of the words does not have to be the same\n\n\nIch habe ein tolles Buch zu Ende gelesen! &lt;s&gt; I finished a great book!\n\n\nSimplest version of the decoder\nTake the context vector (the last hidden state of the encoder): \\(\\mathbf{c}\\)\nUse the context vector as its own first hidden state: \\(\\mathbf{h}_{0}^d = \\mathbf{c} = \\mathbf{h}_n^{e}\\)\nGenerate outputs autoregressively until end of sentence marker is reached\nThere are many more sophisticated architectures. For instance, we can make the context vector available at each decoding timestep\n\n\\[\n\\begin{align}\n\\mathbf{c} &= \\mathbf{h}_n^{e} \\\\\n\\mathbf{h}_0^{d} &= \\mathbf{c}\\\\\n\\mathbf{h}_{t}^d &= g(\\mathbf{h}_{t-1}^d,\\hat{\\mathbf{y}}_{t-1}, \\mathbf{c})\\\\\n\\hat{\\mathbf{y}}_{t} &= \\mathrm{softmax}(\\mathbf{h}_{t}^d)\n\\end{align}\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#attention",
@@ -4736,11 +4736,18 @@
     "text": "Attention\n\nIn the encoder decoder model as described above, the context \\(\\mathbf{c}\\) must represent everything about the input sequence\nInformation present at the beginning of the input text may not be well represented in the context vector\nThe attention mechanism was designed as a way to extract information from all hidden states of the input\n\nWith attention, the context vector is no longer equal to the final hidden state of the input, instead it is dynamically calculated as a function of the hidden states of the encoder.\n\n\\[\n\\mathbf{c}_i = f(\\mathbf{h}_1^{e},\\mathbf{h}_2^{e}, \\ldots, \\mathbf{h}_n^{e})\n\\]\n\nThe goal is for the weights to focus on (‘attend to’) a particular part of the source text that is relevant for the token \\(i\\) that the decoder is currently producing.\nNote that the context vector is now generated anew for each decoding step \\(i\\), i.e., we have \\(\\mathbf{c}_i\\) instead of the same \\(\\mathbf{c}\\) for all steps."
   },
   {
+    "objectID": "lectures/lstm.html#attention-machine-translation",
+    "href": "lectures/lstm.html#attention-machine-translation",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Attention: Machine translation",
+    "text": "Attention: Machine translation\n\nAttention is a key innovation for transformers, as we shall see\nA version of attention was first proposed in 2014 to support machine translation using RNNs\nWe will review this model to build intuition for the more sophisticated implementation of attention in transformers\n\n\nMost of the proposed neural machine translation models belong to a family of encoder–decoders with an encoder and a decoder for each language The whole encoder–decoder system, which consists of the encoder and the decoder for a language pair, is jointly trained to maximize the probability of a correct translation given a source sentence. potential issue with this encoder–decoder approach is that a neural network needs to be able to compress all the necessary information of a source sentence into a fixed-length vector. This may make it difficult for the neural network to cope with long sentences, especially those that are longer than the sentences in the training corpus."
+  },
+  {
     "objectID": "lectures/lstm.html#attention-relevance",
     "href": "lectures/lstm.html#attention-relevance",
     "title": "Approaches to biomedical knowledge",
     "section": "Attention: Relevance?",
-    "text": "Attention: Relevance?\n\nIn order to compute \\(\\mathbf{c}_i\\), our goal is to determine how relevant each encoder hidden state is for the current decoder step.\nThat is, we want to have a function for the relevance of encoder state \\(j\\) for decoding step \\(i\\) \\[\n\\mathbf{relevance}(i, j) = f(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^e)\n\\]\nThe simplest function is the dot product, which equates relevance with vector similarity \\[\nf(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^de) = \\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e\n\\]\nWe calculate one such score for each of the encoder states and use softmax to convert into a probability distribution \\[\n\\begin{align}\n\\alpha_{ij} &= \\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e)= \\dfrac{\\exp(\\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e))}\n{\\sum_k \\exp(\\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{k}^e))}\n\\end{align}\n\\]\n\\(\\mathbf{c}_i\\) is then calculated as the weighted average over these scores \\[\n\\mathbf{c}_i = \\sum_j \\alpha_{ij}\\mathbf{h}_{j}^e\n\\]"
+    "text": "Attention: Relevance?\n\nIn order to compute \\(\\mathbf{c}_i\\), our goal is to determine how relevant each encoder hidden state is for the current decoder step.\nThat is, we want to have a function for the relevance of encoder state \\(j\\) for decoding step \\(i\\) \\[\n\\mathbf{relevance}(i, j) = f(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^e)\n\\]\nThe simplest function is the dot product, which equates relevance with vector similarity \\[\nf(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^e) = \\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e\n\\]\nWe calculate one such score for each of the encoder states and use softmax to convert into a probability distribution \\[\n\\begin{align}\n\\alpha_{ij} &= \\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e)= \\dfrac{\\exp(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e)}\n{\\sum_k \\exp(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{k}^e)}\n\\end{align}\n\\]\n\\(\\mathbf{c}_i\\) is then calculated as the weighted average over the encoder states, using the weights \\(\\alpha_{ij}\\). \\[\n\\mathbf{c}_i = \\sum_j \\alpha_{ij}\\mathbf{h}_{j}^e\n\\]"
   },
   {
     "objectID": "lectures/lstm.html#attention-1",
@@ -5032,7 +5039,19 @@
     "href": "lectures/neural.html#matrixc",
     "title": "Approaches to biomedical knowledge",
     "section": "Matrix calculus: Vector function with scalar argument",
-    "text": "Matrix calculus: Vector function with scalar argument\n\n\n\nWe will review matrix calculus before proceeding.\nConsider the function \\[\n\\mathbf{f}(t) = \\begin{bmatrix} t \\cos(t) \\\\ t \\sin (t) \\\\ t \\end{bmatrix}\n\\]\nIn general, we write such functions as\n\n\\[\n\\mathbf{f}(t) = \\begin{bmatrix} f_1(t) \\\\ f_2(t) \\\\ \\vdots \\\\ f_n(t) \\end{bmatrix}\n\\]",
+    "text": "Matrix calculus: Vector function with scalar argument\n\n\n\nWe will review matrix calculus before proceeding.\nConsider the function \\(\\mathbf{f}:\\mathbb{R}\\to\\mathbb{R}^3\\) \\[\n\\mathbf{f}(t) = \\begin{bmatrix} t \\cos(t) \\\\ t \\sin (t) \\\\ t \\end{bmatrix}\n\\]\nIn general, a function \\(\\mathbf{f}:\\mathbb{R}\\to\\mathbb{R}^m\\) is written as\n\n\\[\n\\mathbf{f}(t) = \\begin{bmatrix} f_1(t) \\\\ f_2(t) \\\\ \\vdots \\\\ f_m(t) \\end{bmatrix}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/neural.html#matrix-calculus-what-we-need-and-where",
+    "href": "lectures/neural.html#matrix-calculus-what-we-need-and-where",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Matrix calculus: what we need, and where",
+    "text": "Matrix calculus: what we need, and where\n\n\n\nDerivative\nShape\nSlide\nUsed in backprop for\n\n\n\n\nvector by scalar (tangent vector)\n\\(m\\times 1\\)\ntangent vector\n\\(\\partial\\mathbf{z}/\\partial w_{ij}\\) (weights)\n\n\nscalar by vector\n\\(1\\times n\\)\nscalar by vector\n\\(\\partial\\mathcal{L}/\\partial\\hat{\\mathbf{y}}\\), \\(\\partial\\mathcal{L}/\\partial\\mathbf{z}\\), \\(\\partial\\mathcal{L}/\\partial\\mathbf{h}\\) (loss, chain)\n\n\nvector by vector (Jacobian)\n\\(m\\times n\\)\nJacobian\nactivation layer (diagonal), dense layer (\\(\\mathbf{W}\\)) (where)\n\n\nscalar by matrix\n\\(n\\times m\\)\nscalar by matrix\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{W}\\) (weights)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5056,7 +5075,7 @@
     "href": "lectures/neural.html#layout-convention-numerator-layout",
     "title": "Approaches to biomedical knowledge",
     "section": "Layout convention: numerator layout",
-    "text": "Layout convention: numerator layout\n\n\n\nRule\n\n\nThe numerator keeps its shape; the denominator is transposed.\n\n\n\n\n\n\n\n\n\n\n\n\n\nDerivative\nResult shape\n\n\n\n\n\\(\\dfrac{\\partial f}{\\partial x}\\) scalar by scalar\n\\(1\\times 1\\)\n\n\n\\(\\dfrac{\\partial \\mathbf{f}}{\\partial x}\\) vector (\\(m\\)) by scalar\n\\(m\\times 1\\)\n\n\n\\(\\dfrac{\\partial f}{\\partial \\mathbf{x}}\\) scalar by vector (\\(n\\))\n\\(1\\times n\\) (row)\n\n\n\\(\\dfrac{\\partial \\mathbf{f}}{\\partial \\mathbf{x}}\\) vector (\\(m\\)) by vector (\\(n\\))\n\\(m\\times n\\) (Jacobian)\n\n\n\\(\\dfrac{\\partial f}{\\partial \\mathbf{X}}\\) scalar by matrix (\\(n\\times m\\))\n\\(m\\times n\\)\n\n\n\n\n\n\nExample: \\(f(\\mathbf{x}) = x_1^2 + 3x_2\\) \\[\n\\dfrac{\\partial f}{\\partial \\mathbf{x}} = \\begin{bmatrix} 2x_1 & 3 \\end{bmatrix},\n\\qquad\n\\nabla f = \\left(\\dfrac{\\partial f}{\\partial \\mathbf{x}}\\right)^T = \\begin{bmatrix} 2x_1 \\\\ 3 \\end{bmatrix}\n\\]\n\nThe derivative is a row; the gradient \\(\\nabla f\\) is the column\nSuppose \\(\\mathcal{L}\\) depends on \\(\\mathbf{x}\\in\\mathbb{R}^n\\) through an intermediate vector \\(\\mathbf{u}=\\mathbf{g}(\\mathbf{x})\\in\\mathbb{R}^m\\). The chain rule is then a plain matrix product, in the same order as the scalar rule; the inner dimension \\(m\\) cancels: \\[\n\\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{x}}}_{1\\times n} = \\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{u}}}_{1\\times m}\\,\\underbrace{\\dfrac{\\partial \\mathbf{u}}{\\partial \\mathbf{x}}}_{m\\times n}\n\\]\n\n\n\n\nMany machine learning texts use the opposite denominator layout, where \\(\\partial f/\\partial\\mathbf{x}\\) is a column. Both are fine if used consistently.",
+    "text": "Layout convention: numerator layout\n\n\n\nRule\n\n\nThe numerator keeps its shape; the denominator is transposed.\n\n\n\n\n\n\n\n\n\n\n\n\n\nDerivative\nResult shape\n\n\n\n\n\\(\\dfrac{\\partial f}{\\partial x}\\) scalar by scalar\n\\(1\\times 1\\)\n\n\n\\(\\dfrac{\\partial \\mathbf{f}}{\\partial x}\\) vector (\\(m\\)) by scalar\n\\(m\\times 1\\)\n\n\n\\(\\dfrac{\\partial f}{\\partial \\mathbf{x}}\\) scalar by vector (\\(n\\))\n\\(1\\times n\\) (row)\n\n\n\\(\\dfrac{\\partial \\mathbf{f}}{\\partial \\mathbf{x}}\\) vector (\\(m\\)) by vector (\\(n\\))\n\\(m\\times n\\) (Jacobian)\n\n\n\\(\\dfrac{\\partial f}{\\partial \\mathbf{X}}\\) scalar by matrix (\\(m\\times n\\))\n\\(n\\times m\\)\n\n\n\n\n\n\nExample: \\(f(\\mathbf{x}) = x_1^2 + 3x_2\\) \\[\n\\dfrac{\\partial f}{\\partial \\mathbf{x}} = \\begin{bmatrix} 2x_1 & 3 \\end{bmatrix},\n\\qquad\n\\nabla f = \\left(\\dfrac{\\partial f}{\\partial \\mathbf{x}}\\right)^T = \\begin{bmatrix} 2x_1 \\\\ 3 \\end{bmatrix}\n\\]\n\nThe derivative is a row; the gradient \\(\\nabla f\\) is the column\nSuppose \\(\\mathcal{L}\\) depends on \\(\\mathbf{x}\\in\\mathbb{R}^n\\) through an intermediate vector \\(\\mathbf{u}=\\mathbf{g}(\\mathbf{x})\\in\\mathbb{R}^m\\). The chain rule is then a plain matrix product, in the same order as the scalar rule; the inner dimension \\(m\\) cancels: \\[\n\\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{x}}}_{1\\times n} = \\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{u}}}_{1\\times m}\\,\\underbrace{\\dfrac{\\partial \\mathbf{u}}{\\partial \\mathbf{x}}}_{m\\times n}\n\\]\n\n\n\n\nMany machine learning texts use the opposite denominator layout, where \\(\\partial f/\\partial\\mathbf{x}\\) is a column. Both are fine if used consistently.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5064,11 +5083,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#tangent-vector",
-    "href": "lectures/neural.html#tangent-vector",
+    "objectID": "lectures/neural.html#tangent",
+    "href": "lectures/neural.html#tangent",
     "title": "Approaches to biomedical knowledge",
     "section": "Tangent vector",
-    "text": "Tangent vector\n\n\n\nTangent vector\n\n\nThe derivative of \\(\\mathbf{f}(t)\\) is called the tangent vector. It is obtained by differentiating each component of \\(\\mathbf{f}(t)\\).\n\n\n\n\n\n\n\\[\n\\dfrac{\\partial \\mathbf{f}}{\\partial t}\n=\n\\begin{bmatrix} \\dfrac{\\partial f_1}{\\partial t} \\\\ \\dfrac{\\partial f_2}{\\partial t} \\\\ \\vdots \\\\ \\dfrac{\\partial f_n}{\\partial t} \\end{bmatrix}^{n\\times 1}\n\\tag{1}\\]\nFor our curve: \\[\n\\dfrac{\\partial \\mathbf{f}}{\\partial t}\n=\n\\begin{bmatrix} \\cos t - t\\sin t \\\\ \\sin t + t\\cos t \\\\ 1 \\end{bmatrix}\n\\]",
+    "text": "Tangent vector\n\n\n\nTangent vector\n\n\nThe derivative of \\(\\mathbf{f}(t)\\) is called the tangent vector. It is obtained by differentiating each component of \\(\\mathbf{f}(t)\\).\n\n\n\n\n\n\n\\[\n\\dfrac{\\partial \\mathbf{f}}{\\partial t}\n=\n\\begin{bmatrix} \\dfrac{\\partial f_1}{\\partial t} \\\\ \\dfrac{\\partial f_2}{\\partial t} \\\\ \\vdots \\\\ \\dfrac{\\partial f_m}{\\partial t} \\end{bmatrix}^{m\\times 1}\n\\tag{1}\\]\nFor our curve: \\[\n\\dfrac{\\partial \\mathbf{f}}{\\partial t}\n=\n\\begin{bmatrix} \\cos t - t\\sin t \\\\ \\sin t + t\\cos t \\\\ 1 \\end{bmatrix}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5076,11 +5095,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#matrix-calculus-scalar-function-with-vector-argument",
-    "href": "lectures/neural.html#matrix-calculus-scalar-function-with-vector-argument",
+    "objectID": "lectures/neural.html#scalar-vec",
+    "href": "lectures/neural.html#scalar-vec",
     "title": "Approaches to biomedical knowledge",
     "section": "Matrix calculus: Scalar function with vector argument",
-    "text": "Matrix calculus: Scalar function with vector argument\n\n\n\n\n\n\nScalar field\n\n\nA function taking a vector argument and returning a scalar is called a scalar field: \\(f: \\mathbb{R}^n \\rightarrow \\mathbb{R}\\)\n\n\n\n\n\nIn numerator layout, the derivative is a row vector: \\[\n\\dfrac{\\partial f(\\mathbf{x})}{\\partial \\mathbf{x}} =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1} & \\dfrac{\\partial f}{\\partial x_2} & \\cdots & \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}  \n\\tag{2}\\]\n\nAnother commonly encountered object is the gradient, which by convention is represented as a column vector\n\\[\n\\nabla f(\\mathbf{x}) =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial \\mathbf{x}} \\end{bmatrix}^T\n=\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1}\\\\ \\dfrac{\\partial f}{\\partial x_2} \\\\ \\vdots \\\\ \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}  \n\\tag{3}\\]\n\n\nExample: \\(f(\\mathbf{x}) = \\|\\mathbf{x}\\|^2 = x_1^2+\\cdots+x_n^2\\). Then \\(\\dfrac{\\partial f}{\\partial \\mathbf{x}} = 2\\mathbf{x}^T\\) and \\(\\nabla f = 2\\mathbf{x}\\)\nThe gradient points in the direction of steepest ascent of \\(f\\), so gradient descent moves along \\(-\\nabla f\\)",
+    "text": "Matrix calculus: Scalar function with vector argument\n\n\n\nScalar field\n\n\nA function \\(f:\\mathbb{R}^n \\rightarrow \\mathbb{R}\\) that takes a vector and returns a scalar is called a scalar field.\n\n\n\n\n\nIn numerator layout, the derivative is a row vector: \\[\n\\dfrac{\\partial f(\\mathbf{x})}{\\partial \\mathbf{x}} =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1} & \\dfrac{\\partial f}{\\partial x_2} & \\cdots & \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}\n\\tag{2}\\]\n\nThe gradient is, by convention, a column vector: \\[\n\\nabla f(\\mathbf{x}) =\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial \\mathbf{x}} \\end{bmatrix}^T\n=\n\\begin{bmatrix} \\dfrac{\\partial f}{\\partial x_1}\\\\ \\vdots \\\\ \\dfrac{\\partial f}{\\partial x_n} \\end{bmatrix}\n\\tag{3}\\]\n\n\nThe gradient points in the direction of steepest ascent of \\(f\\), so gradient descent moves along \\(-\\nabla f\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5088,11 +5107,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#matrix-calculus-vector-function-with-vector-argument",
-    "href": "lectures/neural.html#matrix-calculus-vector-function-with-vector-argument",
+    "objectID": "lectures/neural.html#scalar-vec-example",
+    "href": "lectures/neural.html#scalar-vec-example",
     "title": "Approaches to biomedical knowledge",
-    "section": "Matrix calculus: Vector function with vector argument",
-    "text": "Matrix calculus: Vector function with vector argument\n\n\n\nJacobian\n\n\nFor a function \\(\\mathbf{f}: \\mathbb{R}^n \\rightarrow \\mathbb{R}^m\\), the first derivative is the \\(m\\times n\\) Jacobian matrix. Row \\(i\\) holds the derivatives of output \\(f_i\\); column \\(j\\) holds the derivatives with respect to input \\(x_j\\).\n\n\n\n\\[\n\\dfrac{\\partial \\mathbf{f}}{\\partial \\mathbf{x}}\n=\n\\underbrace{\\begin{bmatrix}\n\\dfrac{\\partial f_1}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_1}{\\partial x_n} \\\\\n\\vdots & \\ddots & \\vdots \\\\\n\\dfrac{\\partial f_m}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_m}{\\partial x_n}\n\\end{bmatrix}}_{m\\times n}\n=\n\\begin{bmatrix}\n\\nabla f_1(\\mathbf{x})^T \\\\ \\vdots \\\\ \\nabla f_m(\\mathbf{x})^T\n\\end{bmatrix}\n\\tag{4}\\]\n\nEach row is a transposed gradient (c.f. Equation 3): the Jacobian stacks the gradients of the output components\nExample: \\(\\mathbf{f}(\\mathbf{x}) = \\begin{bmatrix} x_1x_2 \\\\ x_2+x_3 \\end{bmatrix}\\) gives \\(\\dfrac{\\partial \\mathbf{f}}{\\partial \\mathbf{x}} = \\begin{bmatrix} x_2 & x_1 & 0 \\\\ 0 & 1 & 1 \\end{bmatrix}\\), a \\(2\\times 3\\) matrix",
+    "section": "Scalar function of a vector: example",
+    "text": "Scalar function of a vector: example\nSquared error with a fixed label \\(\\mathbf{y}\\):\n\\[\nf(\\mathbf{x})=\\tfrac12\\lVert\\mathbf{x}-\\mathbf{y}\\rVert^2=\\tfrac12\\sum_{k=1}^{n}(x_k-y_k)^2\n\\quad\\Rightarrow\\quad\n\\dfrac{\\partial f}{\\partial x_k}=x_k-y_k\n\\]\nStacked into a row (the derivative) and a column (the gradient):\n\\[\n\\dfrac{\\partial f}{\\partial \\mathbf{x}}=(\\mathbf{x}-\\mathbf{y})^T,\n\\qquad\n\\nabla f=\\mathbf{x}-\\mathbf{y}\n\\]\n\nFor \\(\\lVert\\mathbf{x}\\rVert^2\\) the same argument gives \\(\\partial f/\\partial\\mathbf{x}=2\\mathbf{x}^T\\).\n\n\n\n\nUsed in backprop\n\n\nThe loss \\(\\mathcal{L}\\) is a scalar, so every derivative that backprop passes around is a row vector of this kind:\n\nWith \\(\\mathbf{x}=\\hat{\\mathbf{y}}\\) this example is exactly the starting point of the backward pass, \\(\\partial\\mathcal{L}/\\partial\\hat{\\mathbf{y}}=(\\hat{\\mathbf{y}}-\\mathbf{y})^T\\) (Equation 7, loss slide)\nThe same holds for \\(\\partial\\mathcal{L}/\\partial\\mathbf{z}_l\\) and \\(\\partial\\mathcal{L}/\\partial\\mathbf{h}_{l-1}\\), which the layers pass backward (backprop derivatives)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5100,11 +5119,47 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#matrix-calculus-scalar-function-with-matrix-argument",
-    "href": "lectures/neural.html#matrix-calculus-scalar-function-with-matrix-argument",
+    "objectID": "lectures/neural.html#jacobian",
+    "href": "lectures/neural.html#jacobian",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Matrix calculus: Vector function with vector argument: Jacobian",
+    "text": "Matrix calculus: Vector function with vector argument: Jacobian\n\n\n\nJacobian\n\n\nFor \\(\\mathbf{f}: \\mathbb{R}^n \\rightarrow \\mathbb{R}^m\\) the first derivative is the \\(m\\times n\\) Jacobian: row \\(i\\) holds the derivatives of output \\(f_i\\), column \\(j\\) those with respect to input \\(x_j\\).\n\n\n\n\\[\n\\dfrac{\\partial \\mathbf{f}}{\\partial \\mathbf{x}}\n=\n\\underbrace{\\begin{bmatrix}\n\\dfrac{\\partial f_1}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_1}{\\partial x_n} \\\\\n\\vdots & \\ddots & \\vdots \\\\\n\\dfrac{\\partial f_m}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_m}{\\partial x_n}\n\\end{bmatrix}}_{m\\times n}\n\\tag{4}\\]\n\nEach row is a transposed gradient (cf. Equation 3): the Jacobian stacks \\(\\nabla f_1(\\mathbf{x})^T,\\ldots,\\nabla f_m(\\mathbf{x})^T\\)\nExample, a \\(2\\times 3\\) Jacobian:\n\n\\[\n\\mathbf{f}(\\mathbf{x}) = \\begin{bmatrix} x_1x_2 \\\\ x_2+x_3 \\end{bmatrix}\n\\;\\Rightarrow\\;\n\\dfrac{\\partial \\mathbf{f}}{\\partial \\mathbf{x}} = \\begin{bmatrix} x_2 & x_1 & 0 \\\\ 0 & 1 & 1 \\end{bmatrix}\n\\]",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/neural.html#jacobian-backprop",
+    "href": "lectures/neural.html#jacobian-backprop",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Where the Jacobian is applied in backprop",
+    "text": "Where the Jacobian is applied in backprop\nFor reference, this slide shows the two places in backprop where we use the Jacobian:\n\n\nActivation layer \\(\\mathbf{h}=\\sigma(\\mathbf{z})\\)\nEach output depends on only one input, so the Jacobian is diagonal:\n\\[\n\\dfrac{\\partial \\mathbf{h}}{\\partial \\mathbf{z}}=\n\\begin{bmatrix}\\sigma'(z_1) & & 0\\\\ & \\ddots & \\\\ 0 & & \\sigma'(z_m)\\end{bmatrix}\n\\]\n\nDense layer \\(\\mathbf{z}=\\mathbf{W}\\mathbf{h}+\\mathbf{b}\\)\nThe Jacobian with respect to \\(\\mathbf{h}\\) is the weight matrix itself:\n\\[\n\\dfrac{\\partial \\mathbf{z}}{\\partial \\mathbf{h}}=\\mathbf{W}\n\\]\n\n\n\nThe Jacobian of the activation layer: Derivation\n\nDerivative of the dense layer: Derivation",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/neural.html#scalar-mat",
+    "href": "lectures/neural.html#scalar-mat",
     "title": "Approaches to biomedical knowledge",
     "section": "Matrix calculus: Scalar function with matrix argument",
-    "text": "Matrix calculus: Scalar function with matrix argument\n\n\n\nScalar function of a matrix\n\n\n\\(f: \\mathbb{R}^{n\\times m}\\rightarrow \\mathbb{R}\\). In numerator layout the denominator is transposed, so if \\(\\mathbf{X}\\) is \\(n\\times m\\), then \\(\\dfrac{\\partial f}{\\partial \\mathbf{X}}\\) is \\(m\\times n\\).\n\n\n\n\n\\[\n\\dfrac{\\partial f}{\\partial \\mathbf{X}}\n=\n\\underbrace{\\begin{bmatrix}\n\\dfrac{\\partial f}{\\partial x_{11}} & \\dfrac{\\partial f}{\\partial x_{21}} & \\cdots & \\dfrac{\\partial f}{\\partial x_{n1}} \\\\\n\\dfrac{\\partial f}{\\partial x_{12}} & \\dfrac{\\partial f}{\\partial x_{22}} & \\cdots & \\dfrac{\\partial f}{\\partial x_{n2}} \\\\\n\\vdots & \\vdots & \\ddots & \\vdots \\\\\n\\dfrac{\\partial f}{\\partial x_{1m}} & \\dfrac{\\partial f}{\\partial x_{2m}} & \\cdots & \\dfrac{\\partial f}{\\partial x_{nm}}\n\\end{bmatrix}}_{m\\times n}\n\\tag{5}\\]\n\n\nCompare with a vector: for \\(\\mathbf{x}\\in\\mathbb{R}^n\\), \\(\\dfrac{\\partial f}{\\partial \\mathbf{x}}\\) is a \\(1\\times n\\) row, ordered like \\(\\mathbf{x}^T\\). In the same way, \\(\\dfrac{\\partial f}{\\partial \\mathbf{X}}\\) is ordered like \\(\\mathbf{X}^T\\): its entry \\((j,i)\\) is \\(\\partial f/\\partial x_{ij}\\)\nExample: for \\(f(\\mathbf{X}) = \\mathbf{a}^T\\mathbf{X}\\,\\mathbf{b}\\) with \\(\\mathbf{a}\\in\\mathbb{R}^n\\), \\(\\mathbf{b}\\in\\mathbb{R}^m\\), we get \\(\\dfrac{\\partial f}{\\partial \\mathbf{X}} = \\mathbf{b}\\,\\mathbf{a}^T\\), an \\(m\\times n\\) matrix",
+    "text": "Matrix calculus: Scalar function with matrix argument\n\n\n\nScalar function of a matrix\n\n\n\\(f: \\mathbb{R}^{m\\times n}\\rightarrow \\mathbb{R}\\). The denominator is transposed in numerator layout, so for \\(\\mathbf{X}\\in\\mathbb{R}^{m\\times n}\\) the derivative \\(\\dfrac{\\partial f}{\\partial \\mathbf{X}}\\) is \\(n\\times m\\).\n\n\n\n\n\\[\n\\dfrac{\\partial f}{\\partial \\mathbf{X}}\n=\n\\underbrace{\\begin{bmatrix}\n\\dfrac{\\partial f}{\\partial x_{11}} & \\dfrac{\\partial f}{\\partial x_{21}} & \\cdots & \\dfrac{\\partial f}{\\partial x_{m1}} \\\\\n\\dfrac{\\partial f}{\\partial x_{12}} & \\dfrac{\\partial f}{\\partial x_{22}} & \\cdots & \\dfrac{\\partial f}{\\partial x_{m2}} \\\\\n\\vdots & \\vdots & \\ddots & \\vdots \\\\\n\\dfrac{\\partial f}{\\partial x_{1n}} & \\dfrac{\\partial f}{\\partial x_{2n}} & \\cdots & \\dfrac{\\partial f}{\\partial x_{mn}}\n\\end{bmatrix}}_{n\\times m}\n\\tag{5}\\]\n\n\nFor a vector \\(\\mathbf{x}\\in\\mathbb{R}^n\\), \\(\\partial f/\\partial\\mathbf{x}\\) is a \\(1\\times n\\) row, ordered like \\(\\mathbf{x}^T\\). Likewise \\(\\partial f/\\partial\\mathbf{X}\\) is ordered like \\(\\mathbf{X}^T\\): its entry \\((j,i)\\) is \\(\\partial f/\\partial x_{ij}\\)",
+    "crumbs": [
+      "Home",
+      "Lectures",
+      "Approaches to biomedical knowledge"
+    ]
+  },
+  {
+    "objectID": "lectures/neural.html#scalar-mat-example",
+    "href": "lectures/neural.html#scalar-mat-example",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Scalar function of a matrix: example",
+    "text": "Scalar function of a matrix: example\nLet \\(\\mathbf{X}\\in\\mathbb{R}^{m\\times n}\\), \\(\\mathbf{a}\\in\\mathbb{R}^{m}\\), \\(\\mathbf{b}\\in\\mathbb{R}^{n}\\) and \\(f(\\mathbf{X})=\\mathbf{a}^T\\mathbf{X}\\,\\mathbf{b}\\). Written out:\n\\[\nf=\\sum_{i=1}^{m}\\sum_{j=1}^{n} a_i\\,x_{ij}\\,b_j\n\\quad\\Rightarrow\\quad\n\\dfrac{\\partial f}{\\partial x_{ij}}=a_i\\,b_j\n\\]\nEntry \\((j,i)\\) of the derivative is \\(b_j a_i\\), so\n\\[\n\\dfrac{\\partial f}{\\partial \\mathbf{X}}\n=\\underbrace{\\mathbf{b}}_{n\\times 1}\\,\\underbrace{\\mathbf{a}^T}_{1\\times m}\n=\\begin{bmatrix} b_1a_1 & \\cdots & b_1a_m\\\\ \\vdots & \\ddots & \\vdots\\\\ b_na_1 & \\cdots & b_na_m\\end{bmatrix}\n\\]\n\n\n\nUsed in backprop\n\n\nIn a dense layer, \\(\\mathcal{L}\\) depends on \\(\\mathbf{W}_l\\in\\mathbb{R}^{m\\times n}\\) only through \\(\\mathbf{z}_l=\\mathbf{W}_l\\mathbf{h}_{l-1}+\\mathbf{b}_l\\). So as far as \\(\\mathbf{W}_l\\) is concerned, \\(\\mathcal{L}\\) changes like \\(\\delta\\,\\mathbf{W}_l\\,\\mathbf{h}_{l-1}\\) with \\(\\delta=\\partial\\mathcal{L}/\\partial\\mathbf{z}_l\\). This is the example with \\(\\mathbf{a}^T=\\delta\\) and \\(\\mathbf{b}=\\mathbf{h}_{l-1}\\):\n\\[\\dfrac{\\partial\\mathcal{L}}{\\partial\\mathbf{W}_l}=\\mathbf{h}_{l-1}\\,\\delta\\]\n\ncf., application \\(\\dfrac{\\partial\\mathcal{L}}{\\partial\\mathbf{W}_l}\\) (see Equation 11 and the derivation).\n\n\n\n\n\nPyTorch’s W.grad has the shape of \\(\\mathbf{W}\\), i.e. the transpose of this derivative. Our code stores \\(\\mathbf{W}^T\\), so its gradient has the shape given here.",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5124,11 +5179,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#backprop-derivatives",
-    "href": "lectures/neural.html#backprop-derivatives",
+    "objectID": "lectures/neural.html#bp-chain",
+    "href": "lectures/neural.html#bp-chain",
     "title": "Approaches to biomedical knowledge",
     "section": "Backprop derivatives",
-    "text": "Backprop derivatives\n\nEvery layer receives, from the layer after it, the derivative of the loss with respect to its output. It must pass on the derivative with respect to its input\nThe chain rule connects the two as a matrix product: \\[\n\\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial(\\text{input})}}_{1\\times n} = \\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial(\\text{output})}}_{1\\times m}\\;\\underbrace{\\dfrac{\\partial(\\text{output})}{\\partial(\\text{input})}}_{m\\times n}\n\\]\nFor our two kinds of layers:\n\n\n\n\n\n\n\n\n\nLayer\n\\(\\partial\\mathcal{L}/\\partial(\\text{output})\\)\n\\(\\partial\\mathcal{L}/\\partial(\\text{input})\\)\n\n\n\n\nDense\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{z}_l\\)\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{h}_{l-1}\\)\n\n\nActivation\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{h}_l\\)\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{z}_l\\)\n\n\n\n\nThe Jacobian \\(\\partial(\\text{output})/\\partial(\\text{input})\\) differs for the two layer types. For an activation layer it is diagonal, and that is where the element-wise product (\\(\\odot\\)) comes from",
+    "text": "Backprop derivatives\n\nEvery layer receives, from the layer after it, the derivative of the loss with respect to its output: a row vector, because \\(\\mathcal{L}\\) is a scalar (scalar by vector). It must pass on the derivative with respect to its input\nThe chain rule connects the two as a matrix product: \\[\n\\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial(\\text{input})}}_{1\\times n} = \\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial(\\text{output})}}_{1\\times m}\\;\\underbrace{\\dfrac{\\partial(\\text{output})}{\\partial(\\text{input})}}_{m\\times n}\n\\]\nFor our two kinds of layers:\n\n\n\n\n\n\n\n\n\nLayer\n\\(\\partial\\mathcal{L}/\\partial(\\text{output})\\)\n\\(\\partial\\mathcal{L}/\\partial(\\text{input})\\)\n\n\n\n\nDense\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{z}_l\\)\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{h}_{l-1}\\)\n\n\nActivation\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{h}_l\\)\n\\(\\partial\\mathcal{L}/\\partial\\mathbf{z}_l\\)\n\n\n\n\nThe Jacobian \\(\\partial(\\text{output})/\\partial(\\text{input})\\) differs for the two layer types. For an activation layer it is diagonal, and that is where the element-wise product (\\(\\odot\\)) comes from",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5136,11 +5191,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#backprop-derivative-of-the-loss",
-    "href": "lectures/neural.html#backprop-derivative-of-the-loss",
+    "objectID": "lectures/neural.html#bp-loss",
+    "href": "lectures/neural.html#bp-loss",
     "title": "Approaches to biomedical knowledge",
     "section": "Backprop: derivative of the loss",
-    "text": "Backprop: derivative of the loss\n\n\n\nWhere backprop starts\n\n\nThe backward pass starts with \\(\\partial\\mathcal{L}/\\partial\\hat{\\mathbf{y}}\\), the derivative of the loss with respect to the network’s output. Its form depends on the loss function.\n\n\n\n\nWe use the squared-error loss. For one example, with prediction \\(\\hat{\\mathbf{y}}\\) and label \\(\\mathbf{y}\\) (both \\(10\\times 1\\) for our digit network): \\[\n\\mathcal{L} = \\tfrac{1}{2}\\lVert \\hat{\\mathbf{y}} - \\mathbf{y}\\rVert^2 = \\tfrac{1}{2}\\sum_{k=1}^{10}(\\hat{y}_k - y_k)^2\n\\tag{6}\\]\nDifferentiating with respect to each component gives \\(\\partial\\mathcal{L}/\\partial\\hat{y}_k = \\hat{y}_k - y_k\\). Since \\(\\hat{\\mathbf{y}}\\) is a column vector, numerator layout stacks these into a row vector: \\[\n\\dfrac{\\partial \\mathcal{L}}{\\partial \\hat{\\mathbf{y}}}\n= \\underbrace{\\begin{bmatrix} \\hat{y}_1 - y_1 & \\hat{y}_2 - y_2 & \\cdots & \\hat{y}_{10} - y_{10} \\end{bmatrix}}_{1\\times 10}\n= (\\hat{\\mathbf{y}} - \\mathbf{y})^T\n\\tag{7}\\]",
+    "text": "Backprop: derivative of the loss\n\n\n\nWhere backprop starts\n\n\nThe backward pass starts with \\(\\partial\\mathcal{L}/\\partial\\hat{\\mathbf{y}}\\), the derivative of the loss with respect to the network’s output. Its form depends on the loss function.\n\n\n\n\nWe use the squared-error loss. For one example, with prediction \\(\\hat{\\mathbf{y}}\\) and label \\(\\mathbf{y}\\) (both \\(10\\times 1\\) for our digit network): \\[\n\\mathcal{L} = \\tfrac{1}{2}\\lVert \\hat{\\mathbf{y}} - \\mathbf{y}\\rVert^2 = \\tfrac{1}{2}\\sum_{k=1}^{10}(\\hat{y}_k - y_k)^2\n\\tag{6}\\]\nDifferentiating with respect to each component gives \\(\\partial\\mathcal{L}/\\partial\\hat{y}_k = \\hat{y}_k - y_k\\).\nThis is the scalar function by vector example with \\(\\mathbf{x}=\\hat{\\mathbf{y}}\\) (Equation 2).\nSince \\(\\hat{\\mathbf{y}}\\) is a column vector, numerator layout stacks these into a row vector: \\[\n\\dfrac{\\partial \\mathcal{L}}{\\partial \\hat{\\mathbf{y}}}\n= \\underbrace{\\begin{bmatrix} \\hat{y}_1 - y_1 & \\hat{y}_2 - y_2 & \\cdots & \\hat{y}_{10} - y_{10} \\end{bmatrix}}_{1\\times 10}\n= (\\hat{\\mathbf{y}} - \\mathbf{y})^T\n\\tag{7}\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5148,11 +5203,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#the-jacobian-of-the-activation-layer",
-    "href": "lectures/neural.html#the-jacobian-of-the-activation-layer",
+    "objectID": "lectures/neural.html#bp-act-jac",
+    "href": "lectures/neural.html#bp-act-jac",
     "title": "Approaches to biomedical knowledge",
     "section": "The Jacobian of the activation layer",
-    "text": "The Jacobian of the activation layer\n\nThe activation layer maps \\(\\mathbf{z}\\in\\mathbb{R}^m\\) to \\(\\mathbf{h}=\\sigma(\\mathbf{z})\\in\\mathbb{R}^m\\), applying \\(\\sigma\\) to each element separately\nSince \\(h_i\\) depends only on \\(z_i\\) (and on no other \\(z_j\\)), we have \\(\\partial h_i/\\partial z_j = 0\\) for \\(i\\neq j\\): the Jacobian is diagonal\n\n\\[\n\\dfrac{\\partial \\mathbf{h}}{\\partial \\mathbf{z}} =\n\\begin{bmatrix}\n\\dfrac{\\partial h_1}{\\partial z_1} & \\cdots & \\dfrac{\\partial h_1}{\\partial z_m} \\\\\n\\vdots & \\ddots & \\vdots \\\\\n\\dfrac{\\partial h_m}{\\partial z_1} & \\cdots & \\dfrac{\\partial h_m}{\\partial z_m}\n\\end{bmatrix}\n=\n\\begin{bmatrix}\n\\sigma'(z_1) & & 0 \\\\\n& \\ddots & \\\\\n0 & & \\sigma'(z_m)\n\\end{bmatrix}\n\\]\n\nThe matrix is square (\\(m\\times m\\)). For the sigmoid, \\(\\sigma'(z_i) = h_i(1-h_i)\\), which we already know from the forward pass",
+    "text": "The Jacobian of the activation layer\n\nThe activation layer maps \\(\\mathbf{z}\\in\\mathbb{R}^m\\) to \\(\\mathbf{h}=\\sigma(\\mathbf{z})\\in\\mathbb{R}^m\\), applying \\(\\sigma\\) to each element separately\nSince \\(h_i\\) depends only on \\(z_i\\) (and on no other \\(z_j\\)), we have \\(\\partial h_i/\\partial z_j = 0\\) for \\(i\\neq j\\): the Jacobian is diagonal\nThis is the Jacobian of \\(\\mathbf{h}=\\sigma(\\mathbf{z})\\) (Equation 4 with \\(\\mathbf{f}=\\mathbf{h}\\) and \\(\\mathbf{x}=\\mathbf{z}\\))\n\n\\[\n\\dfrac{\\partial \\mathbf{h}}{\\partial \\mathbf{z}} =\n\\begin{bmatrix}\n\\dfrac{\\partial h_1}{\\partial z_1} & \\cdots & \\dfrac{\\partial h_1}{\\partial z_m} \\\\\n\\vdots & \\ddots & \\vdots \\\\\n\\dfrac{\\partial h_m}{\\partial z_1} & \\cdots & \\dfrac{\\partial h_m}{\\partial z_m}\n\\end{bmatrix}\n=\n\\begin{bmatrix}\n\\sigma'(z_1) & & 0 \\\\\n& \\ddots & \\\\\n0 & & \\sigma'(z_m)\n\\end{bmatrix}\n\\]\n\nThe matrix is square (\\(m\\times m\\)). For the sigmoid, \\(\\sigma'(z_i) = h_i(1-h_i)\\), which we already know from the forward pass",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5172,11 +5227,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#backprop-through-a-dense-layer-the-input",
-    "href": "lectures/neural.html#backprop-through-a-dense-layer-the-input",
+    "objectID": "lectures/neural.html#bp-dense",
+    "href": "lectures/neural.html#bp-dense",
     "title": "Approaches to biomedical knowledge",
     "section": "Backprop through a dense layer: the input",
-    "text": "Backprop through a dense layer: the input\nFor \\(\\mathbf{z}_l = \\mathbf{W}_l\\mathbf{h}_{l-1} + \\mathbf{b}_l\\), the chain rule gives \\[\n\\begin{aligned}\n\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{h}_{l-1}} &= \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\frac{\\partial \\mathbf{z}_l}{\\partial \\mathbf{h}_{l-1}} \\\\\n&= \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\frac{\\partial (\\mathbf{W}_l\\mathbf{h}_{l-1}+\\mathbf{b}_l)}{\\partial \\mathbf{h}_{l-1}} \\\\\n&= \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\mathbf{W}_l\n\\end{aligned}\n\\tag{9}\\]\n\nThe Jacobian \\(\\partial\\mathbf{z}_l/\\partial\\mathbf{h}_{l-1}\\) is \\(\\mathbf{W}_l\\) (derivation on the next slide). The bias does not depend on \\(\\mathbf{h}_{l-1}\\), so it drops out\nThe shapes match, with no transpose needed: \\[\n\\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}}_{1\\times m}\\;\\underbrace{\\mathbf{W}_l}_{m\\times n} = \\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{h}_{l-1}}}_{1\\times n}\n\\]",
+    "text": "Backprop through a dense layer: the input\nFor \\(\\mathbf{z}_l = \\mathbf{W}_l\\mathbf{h}_{l-1} + \\mathbf{b}_l\\), the chain rule gives \\[\n\\begin{aligned}\n\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{h}_{l-1}} &= \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\frac{\\partial \\mathbf{z}_l}{\\partial \\mathbf{h}_{l-1}} \\\\\n&= \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\frac{\\partial (\\mathbf{W}_l\\mathbf{h}_{l-1}+\\mathbf{b}_l)}{\\partial \\mathbf{h}_{l-1}} \\\\\n&= \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\mathbf{W}_l\n\\end{aligned}\n\\tag{9}\\]\n\nThe Jacobian \\(\\partial\\mathbf{z}_l/\\partial\\mathbf{h}_{l-1}\\) (Equation 4) is \\(\\mathbf{W}_l\\) (derivation). The bias does not depend on \\(\\mathbf{h}_{l-1}\\), so it drops out\nThe shapes match, with no transpose needed:\n\n\\[\n\\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}}_{1\\times m}\\;\\underbrace{\\mathbf{W}_l}_{m\\times n} = \\underbrace{\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{h}_{l-1}}}_{1\\times n}\n\\]",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5184,11 +5239,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#derivative-of-the-dense-layer-derivation",
-    "href": "lectures/neural.html#derivative-of-the-dense-layer-derivation",
+    "objectID": "lectures/neural.html#bp-dense-jac",
+    "href": "lectures/neural.html#bp-dense-jac",
     "title": "Approaches to biomedical knowledge",
     "section": "Derivative of the dense layer: derivation",
-    "text": "Derivative of the dense layer: derivation\nDropping the layer index for readability, \\(\\mathbf{z} = \\mathbf{W}\\mathbf{h} + \\mathbf{b}\\) with \\(\\mathbf{h}\\in\\mathbb{R}^n\\) and \\(\\mathbf{z}\\in\\mathbb{R}^m\\). Written out, the first output is \\[\nz_1 = w_{11}h_1 + w_{12}h_2 + \\dots + w_{1n}h_n + b_1\n\\]\nIts derivative with respect to the first input \\(h_1\\) is \\[\n\\frac{\\partial z_1}{\\partial h_1} = w_{11}\n\\]\n\nIn general, \\(\\dfrac{\\partial z_i}{\\partial h_j} = w_{ij}\\): output \\(i\\) depends on input \\(j\\) only through the single term \\(w_{ij}h_j\\)\nRow \\(i\\) of the Jacobian collects these for all inputs \\(j\\), so stacking the rows gives the weight matrix: \\[\n\\frac{\\partial \\mathbf{z}}{\\partial \\mathbf{h}} = \\begin{bmatrix} w_{11} & \\cdots & w_{1n}\\\\ \\vdots & \\ddots & \\vdots\\\\ w_{m1} & \\cdots & w_{mn}\\end{bmatrix} = \\mathbf{W} \\qquad (m\\times n)\n\\]",
+    "text": "Derivative of the dense layer: derivation\nDropping the layer index for readability, \\(\\mathbf{z} = \\mathbf{W}\\mathbf{h} + \\mathbf{b}\\) with \\(\\mathbf{h}\\in\\mathbb{R}^n\\) and \\(\\mathbf{z}\\in\\mathbb{R}^m\\). Written out, the first output is \\[\nz_1 = w_{11}h_1 + w_{12}h_2 + \\dots + w_{1n}h_n + b_1\n\\]\nIts derivative with respect to the first input \\(h_1\\) is \\[\n\\frac{\\partial z_1}{\\partial h_1} = w_{11}\n\\]\n\nIn general, \\(\\dfrac{\\partial z_i}{\\partial h_j} = w_{ij}\\): output \\(i\\) depends on input \\(j\\) only through the single term \\(w_{ij}h_j\\)\nRow \\(i\\) of the Jacobian collects these for all inputs \\(j\\), so stacking the rows gives the weight matrix: \\[\n\\frac{\\partial \\mathbf{z}}{\\partial \\mathbf{h}} = \\begin{bmatrix} w_{11} & \\cdots & w_{1n}\\\\ \\vdots & \\ddots & \\vdots\\\\ w_{m1} & \\cdots & w_{mn}\\end{bmatrix} = \\mathbf{W} \\qquad (m\\times n)\n\\]\nThis is the Jacobian (Equation 4) of the linear map \\(\\mathbf{h}\\mapsto\\mathbf{W}\\mathbf{h}+\\mathbf{b}\\). It is used in the backward pass of the dense layer",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5200,7 +5255,7 @@
     "href": "lectures/neural.html#partial-derivatives-of-the-bias",
     "title": "Approaches to biomedical knowledge",
     "section": "Partial derivatives of the bias",
-    "text": "Partial derivatives of the bias\n\nSo far we have passed the derivative \\(\\partial\\mathcal{L}/\\partial\\mathbf{z}_l\\) backward from layer to layer\nThe goal of backprop is the derivative with respect to each bias and weight (how would a change in the parameter affect the loss?), which gradient descent uses to update them\nFor the bias, the chain rule gives \\[\n\\begin{aligned}\n\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{b}_l} &= \\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\dfrac{\\partial \\mathbf{z}_l}{\\partial \\mathbf{b}_l} \\\\\n&= \\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\dfrac{\\partial (\\mathbf{W}_l\\mathbf{h}_{l-1}+\\mathbf{b}_l)}{\\partial \\mathbf{b}_l}\\\\\n&= \\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,(\\mathbf{0} + \\mathbf{I} )\\\\\n&= \\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\n\\end{aligned}\n\\tag{10}\\]\nThe bias gradient is the derivative that has just arrived at the layer’s output, so there is nothing more to compute",
+    "text": "Partial derivatives of the bias\n\nSo far we have passed the derivative \\(\\partial\\mathcal{L}/\\partial\\mathbf{z}_l\\) backward from layer to layer\nThe goal of backprop is the derivative with respect to each bias and weight (how would a change in the parameter affect the loss?), which gradient descent uses to update them\nFor the bias, the chain rule gives \\[\n\\begin{aligned}\n\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{b}_l} &= \\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\dfrac{\\partial \\mathbf{z}_l}{\\partial \\mathbf{b}_l} \\\\\n&= \\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,\\dfrac{\\partial (\\mathbf{W}_l\\mathbf{h}_{l-1}+\\mathbf{b}_l)}{\\partial \\mathbf{b}_l}\\\\\n&= \\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\\,(\\mathbf{0} + \\mathbf{I} )\\\\\n&= \\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l}\n\\end{aligned}\n\\tag{10}\\]\nThe bias gradient is the derivative that has just arrived at the layer’s output, so there is nothing more to compute\nBoth \\(\\partial(\\mathbf{W}_l\\mathbf{h}_{l-1})/\\partial\\mathbf{b}_l=\\mathbf{0}\\) and \\(\\partial\\mathbf{b}_l/\\partial\\mathbf{b}_l=\\mathbf{I}\\) are Jacobians",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5208,11 +5263,11 @@
     ]
   },
   {
-    "objectID": "lectures/neural.html#partial-derivatives-of-the-weights-derivation",
-    "href": "lectures/neural.html#partial-derivatives-of-the-weights-derivation",
+    "objectID": "lectures/neural.html#bp-weights",
+    "href": "lectures/neural.html#bp-weights",
     "title": "Approaches to biomedical knowledge",
     "section": "Partial derivatives of the weights: derivation",
-    "text": "Partial derivatives of the weights: derivation\n\nWrite \\(\\mathbf{h}=\\mathbf{h}_{l-1}\\). Output \\(i\\) of the dense layer uses only row \\(i\\) of \\(\\mathbf{W}_l\\): \\[\nz_i = \\sum_{j=1}^{n} w_{ij}h_j + b_i\n\\]\nSo the weight \\(w_{ij}\\) affects only \\(z_i\\), and \\[\n\\dfrac{\\partial z_k}{\\partial w_{ij}} = \\begin{cases} h_j & k = i \\\\ 0 & k\\neq i \\end{cases}\n\\]\nThe chain rule, summed over all outputs \\(z_k\\), then gives \\[\n\\dfrac{\\partial \\mathcal{L}}{\\partial w_{ij}} = \\sum_{k=1}^{m}\\dfrac{\\partial \\mathcal{L}}{\\partial z_k}\\,\\dfrac{\\partial z_k}{\\partial w_{ij}} = \\dfrac{\\partial \\mathcal{L}}{\\partial z_i}\\,h_j\n\\]\nDifferentiating a vector by a matrix would need a three-index array. Working one weight at a time avoids it",
+    "text": "Partial derivatives of the weights: derivation\n\nWrite \\(\\mathbf{h}=\\mathbf{h}_{l-1}\\). Output \\(i\\) of the dense layer uses only row \\(i\\) of \\(\\mathbf{W}_l\\): \\[\nz_i = \\sum_{j=1}^{n} w_{ij}h_j + b_i\n\\]\nSo the weight \\(w_{ij}\\) affects only \\(z_i\\), and \\[\n\\dfrac{\\partial z_k}{\\partial w_{ij}} = \\begin{cases} h_j & k = i \\\\ 0 & k\\neq i \\end{cases}\n\\]\nThe chain rule, summed over all outputs \\(z_k\\), then gives \\[\n\\dfrac{\\partial \\mathcal{L}}{\\partial w_{ij}} = \\sum_{k=1}^{m}\\dfrac{\\partial \\mathcal{L}}{\\partial z_k}\\,\\dfrac{\\partial z_k}{\\partial w_{ij}} = \\dfrac{\\partial \\mathcal{L}}{\\partial z_i}\\,h_j\n\\]\nDifferentiating a vector by a matrix would need a three-index array. Working one weight at a time avoids it\ncf. the matrix calculus example, where \\(\\partial f/\\partial x_{ij}=a_ib_j\\) gave \\(\\mathbf{b}\\mathbf{a}^T\\)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5224,7 +5279,7 @@
     "href": "lectures/neural.html#partial-derivatives-of-the-weights-result",
     "title": "Approaches to biomedical knowledge",
     "section": "Partial derivatives of the weights: result",
-    "text": "Partial derivatives of the weights: result\nLet \\(\\delta_i = \\partial\\mathcal{L}/\\partial z_i\\), so that \\(\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l} = \\begin{bmatrix}\\delta_1 & \\cdots & \\delta_m\\end{bmatrix}\\). Then \\(\\partial\\mathcal{L}/\\partial w_{ij} = \\delta_i h_j\\), and in numerator layout entry \\((j,i)\\) of \\(\\partial\\mathcal{L}/\\partial\\mathbf{W}_l\\) is \\(h_j\\delta_i\\):\n\\[\n\\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{W}_l}}_{n\\times m}\n=\n\\underbrace{\\begin{bmatrix} h_1\\\\ \\vdots\\\\ h_n \\end{bmatrix}}_{\\mathbf{h}_{l-1},\\; n\\times 1}\n\\underbrace{\\begin{bmatrix} \\delta_1 & \\cdots & \\delta_m \\end{bmatrix}}_{\\partial\\mathcal{L}/\\partial\\mathbf{z}_l,\\; 1\\times m}\n=\n\\begin{bmatrix} h_1\\delta_1 & \\cdots & h_1\\delta_m\\\\ \\vdots & \\ddots & \\vdots\\\\ h_n\\delta_1 & \\cdots & h_n\\delta_m \\end{bmatrix}\n\\tag{11}\\]\n\nThe gradient is an outer product: the layer’s input times the derivative at its output\n\\(\\mathbf{W}_l\\) is \\(m\\times n\\) but its gradient is \\(n\\times m\\) (the denominator is transposed). In the Python code we will store \\(\\mathbf{W}_l^T\\), so the gradient has exactly the shape of the stored matrix",
+    "text": "Partial derivatives of the weights: result\nLet \\(\\delta_i = \\partial\\mathcal{L}/\\partial z_i\\), so that \\(\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}_l} = \\begin{bmatrix}\\delta_1 & \\cdots & \\delta_m\\end{bmatrix}\\). Then \\(\\partial\\mathcal{L}/\\partial w_{ij} = \\delta_i h_j\\), and in numerator layout entry \\((j,i)\\) of \\(\\partial\\mathcal{L}/\\partial\\mathbf{W}_l\\) is \\(h_j\\delta_i\\):\n\\[\n\\underbrace{\\dfrac{\\partial \\mathcal{L}}{\\partial \\mathbf{W}_l}}_{n\\times m}\n=\n\\underbrace{\\begin{bmatrix} h_1\\\\ \\vdots\\\\ h_n \\end{bmatrix}}_{\\mathbf{h}_{l-1},\\; n\\times 1}\n\\underbrace{\\begin{bmatrix} \\delta_1 & \\cdots & \\delta_m \\end{bmatrix}}_{\\partial\\mathcal{L}/\\partial\\mathbf{z}_l,\\; 1\\times m}\n=\n\\begin{bmatrix} h_1\\delta_1 & \\cdots & h_1\\delta_m\\\\ \\vdots & \\ddots & \\vdots\\\\ h_n\\delta_1 & \\cdots & h_n\\delta_m \\end{bmatrix}\n\\tag{11}\\]\n\nThe gradient is an outer product: the layer’s input times the derivative at its output\n\\(\\mathbf{W}_l\\) is \\(m\\times n\\) but its derivative \\(\\partial\\mathcal{L}/\\partial\\mathbf{W}_l\\) is \\(n\\times m\\) (the denominator is transposed). In the Python code we will store \\(\\mathbf{W}_l^T\\), so this derivative has exactly the shape of the stored matrix",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5260,7 +5315,7 @@
     "href": "lectures/neural.html#stochastic-gradient-descent",
     "title": "Approaches to biomedical knowledge",
     "section": "Stochastic gradient descent",
-    "text": "Stochastic gradient descent\n\nThe loss over a training set of \\(N\\) examples is the average of the per-example losses: \\[\n\\mathcal{L}(\\theta) = \\dfrac{1}{N}\\sum_{i=1}^{N}\\mathcal{L}_i(\\theta), \\qquad \\mathcal{L}_i(\\theta) = L(\\theta; \\mathbf{x}_i, \\mathbf{y}_i)\n\\]\nGradient descent needs \\(\\nabla_\\theta\\mathcal{L}\\), which is obtained by backprop\nbatch training refers to averaging over all \\(N\\) training examples for each step\nAs the volume of training data increased, it became less sensible to pass all data to the model for each gradient descent step\nminibatch training refers to using a subset of the data for each gradient descent step\nBecause this procedure is noisy compared to full batch training, we refer to it as stochastic gradient descent (SGD). The noise may even be an advantage, because it may help avoid falling into local minima\nThe minibatch size is a hyperparameter. Typically the order of the examples is randomized and chunks of data are used until all samples have been seen (one pass is an epoch). Our code simply draws a fresh random minibatch for every step",
+    "text": "Stochastic gradient descent\n\nThe loss over a training set of \\(N\\) examples is the average of the per-example losses: \\[\n\\mathcal{L}(\\theta) = \\dfrac{1}{N}\\sum_{i=1}^{N}\\mathcal{L}_i(\\theta), \\qquad \\mathcal{L}_i(\\theta) = L(\\theta; \\mathbf{x}_i, \\mathbf{y}_i)\n\\]\nGradient descent needs \\(\\nabla_\\theta\\mathcal{L}\\), the transpose of the row derivatives \\(\\partial\\mathcal{L}/\\partial\\theta\\) that backprop computes (scalar by vector)\nbatch training refers to averaging over all \\(N\\) training examples for each step\nAs the volume of training data increased, it became less sensible to pass all data to the model for each gradient descent step\nminibatch training refers to using a subset of the data for each gradient descent step\nBecause this procedure is noisy compared to full batch training, we refer to it as stochastic gradient descent (SGD). The noise may even be an advantage, because it may help avoid falling into local minima\nThe minibatch size is a hyperparameter. Typically the order of the examples is randomized and chunks of data are used until all samples have been seen (one pass is an epoch). Our code simply draws a fresh random minibatch for every step",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5284,7 +5339,7 @@
     "href": "lectures/neural.html#python",
     "title": "Approaches to biomedical knowledge",
     "section": "FFN in Python: Dimensions and orientations",
-    "text": "FFN in Python: Dimensions and orientations\n\nIn the theory slides, vectors are columns. For a dense layer (dropping the layer index): \\[\n\\underbrace{\\mathbf{z}}_{m \\times 1} = \\underbrace{\\mathbf{W}}_{m \\times n} \\underbrace{\\mathbf{h}}_{n \\times 1} + \\underbrace{\\mathbf{b}}_{m \\times 1}\n\\]\nFrameworks such as scikit-learn and PyTorch work with row vectors. Transposing both sides gives the form we implement: \\[\n\\begin{aligned}\n\\mathbf{z}^T &= (\\mathbf{W}\\mathbf{h} + \\mathbf{b})^T = (\\mathbf{W}\\mathbf{h})^T + \\mathbf{b}^T \\\\\n\\underbrace{\\mathbf{z}^T}_{1 \\times m} &= \\underbrace{\\mathbf{h}^T}_{1 \\times n} \\underbrace{\\mathbf{W}^T}_{n \\times m} + \\underbrace{\\mathbf{b}^T}_{1 \\times m}\n\\end{aligned}\n\\]\nOur code stores \\(\\mathbf{W}^T\\) (shape \\(n\\times m\\)) directly, as scikit-learn does. The gradients are rows as well (numerator layout), so the backprop formulas carry over almost line by line",
+    "text": "FFN in Python: Dimensions and orientations\n\nIn the theory slides, vectors are columns. For a dense layer (dropping the layer index): \\[\n\\underbrace{\\mathbf{z}}_{m \\times 1} = \\underbrace{\\mathbf{W}}_{m \\times n} \\underbrace{\\mathbf{h}}_{n \\times 1} + \\underbrace{\\mathbf{b}}_{m \\times 1}\n\\]\nFrameworks such as scikit-learn and PyTorch work with row vectors. Transposing both sides gives the form we implement: \\[\n\\begin{aligned}\n\\mathbf{z}^T &= (\\mathbf{W}\\mathbf{h} + \\mathbf{b})^T = (\\mathbf{W}\\mathbf{h})^T + \\mathbf{b}^T \\\\\n\\underbrace{\\mathbf{z}^T}_{1 \\times m} &= \\underbrace{\\mathbf{h}^T}_{1 \\times n} \\underbrace{\\mathbf{W}^T}_{n \\times m} + \\underbrace{\\mathbf{b}^T}_{1 \\times m}\n\\end{aligned}\n\\]\nOur code stores \\(\\mathbf{W}^T\\) (shape \\(n\\times m\\)) directly, as scikit-learn does. The derivatives are rows as well (numerator layout), so the backprop formulas carry over almost line by line",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5320,7 +5375,7 @@
     "href": "lectures/neural.html#ffn-in-python",
     "title": "Approaches to biomedical knowledge",
     "section": "FFN in Python",
-    "text": "FFN in Python\n\n\n\nToy FFN\n\n\nTo help illustrate the concepts in this lecture, we close with the demonstration of a toy Python implementation we will use to predict the identity of hand-written digits\n\n\n\n\nLet’s begin with the encoding of our activation function (sigmoid; See ?@eq-sigmoid). We want the function to accept an \\(n\\times 1\\) vector as input and to return a vector of the same size\n\n\ndef sigmoid(x: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:\n    \"\"\"Computes the sigmoid of x (our activation function).\"\"\"\n    return 1.0 / (1.0 + np.exp(-x))\n\n\nThe datatype of the argument is NumPy (np.float64). Therefore, the function is vectorized. If the argument is a scalar (single number), it returns a single number; if the argument is a vector, it returns a vector of the same dimension and applies the same function to each element of the vector.\nHOMEWORK Write similar functions for sigmoid_prime (the first derivative). Use squared-error loss mse (as in Equation 6) and its derivative mse_prime (first derivative of the mse)",
+    "text": "FFN in Python\n\n\n\nToy FFN\n\n\nTo help illustrate the concepts in this lecture, we close with the demonstration of a toy Python implementation we will use to predict the identity of hand-written digits\n\n\n\n\nLet’s begin with the encoding of our activation function (sigmoid; See Equation 12). We want the function to accept an \\(n\\times 1\\) vector as input and to return a vector of the same size \\[\n\\sigma(z) = \\dfrac{1}{1 + e^{-z}}\n\\tag{12}\\]\n\n\ndef sigmoid(x: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:\n    \"\"\"Computes the sigmoid of x (our activation function).\"\"\"\n    return 1.0 / (1.0 + np.exp(-x))\n\n\nThe datatype of the argument is NumPy (np.float64). Therefore, the function is vectorized. If the argument is a scalar (single number), it returns a single number; if the argument is a vector, it returns a vector of the same dimension and applies the same function to each element of the vector.\nHOMEWORK Write similar functions for sigmoid_prime (the first derivative). Use squared-error loss mse (as in Equation 6) and its derivative mse_prime (first derivative of the mse)",
     "crumbs": [
       "Home",
       "Lectures",
@@ -5512,7 +5567,7 @@
     "href": "lectures/neural.html#backprop-accumulating-errors",
     "title": "Approaches to biomedical knowledge",
     "section": "Backprop: Accumulating errors",
-    "text": "Backprop: Accumulating errors\n\nfor layer in reversed(self.layers):\n    error = layer.backward(error)\n\n\n\\(\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{x}}\\) from the activation layer becomes \\(\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{y}}\\) for the Fully Connected Layer that is called on the next (reversed) iteration\nThe error that was returned from activation layer had a dimension of \\(1\\times 10\\); this is passed to the layer.backward method in the next iteration.",
+    "text": "Backprop: Accumulating errors\n\nfor layer in reversed(self.layers):\n    error = layer.backward(error)\n\n\n\\(\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{z}}\\) from the activation layer becomes the output_error of the dense layer that is called in the next (reversed) iteration. for the Fully Connected Layer that is called on the next (reversed) iteration\nThe error that was returned from activation layer had a dimension of \\(1\\times 10\\); this is passed to the layer.backward method in the next iteration.",
     "crumbs": [
       "Home",
       "Lectures",
