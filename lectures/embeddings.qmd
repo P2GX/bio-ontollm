@@ -3,7 +3,7 @@ title: "Approaches to biomedical knowledge"
 subtitle: "Session #8: Embeddings and tokens"
 author: "Peter N Robinson"
 institute: "Free University Berlin"
-date: 2026-04-26
+date: 2026-11-22
 jupyter: python3
 format: 
   revealjs:
@@ -74,7 +74,7 @@ plt.plot()
 - The skip-gram model considers the conditional probability for generating the context words: “the”, “man”, “his”, and “dog”, which are no more than 2 words away from the center word:
 
 $$
-P(the, man, his, dog \mid loves)
+P(\text{the}, \text{man}, \text{his}, \text{dog} \mid \text{loves})
 $$
 
 
@@ -275,7 +275,7 @@ Word2vec is a group of related models that are used to produce word embeddings, 
 ::: {.callout-note appearance="simple" icon=false}
 
 - You shall know a word by the company it keeps J.R. Firth, 1957
-- Dime con quien andas, y te diré quien eres (Don Quijote de la Mancha, 1615)
+- Dime con quién andas, y te diré quién eres (Don Quijote de la Mancha, 1615)
 :::
  
 * Word2vec essentially looks at the context in which a word appears
@@ -297,7 +297,7 @@ $$
 $$
 
  
-* For position $t=1,\ldots,T$ in the training text, look at the context words within a window of size $m$ around $w_t$. The objective function $J(\Theta)$ is then
+* For each position $t=1,\ldots,T$ in the training text, look at the context words within a window of size $m$ around $w_t$. The objective function $J(\Theta)$ is then
 $$
 J(\Theta)=\prod_{t=1}^{T} \prod_{\substack{-m\le j\le m\\ j\ne 0}} p(w_{t+j}\mid w_t;\Theta)
 $$
@@ -327,7 +327,7 @@ $$ {#eq-w2v-score}
 * Rather than maximizing the objective function  $J(\Theta)$, it is more convenient to minimize the corresponding loss function
 
 $$
-\ell(\Theta)=-\log J(\Theta)= -\dfrac{1}{|D|} \sum_{(w,c)\in D} \log p(c|w,\Theta)
+\ell(\Theta)=-\dfrac{1}{|D|} \log J(\Theta)= -\dfrac{1}{|D|} \sum_{(w,c)\in D} \log p(c|w,\Theta)
 $$ {#eq-cost}
 
 
@@ -337,9 +337,10 @@ $$
  p(w_{t+j}|w_t,\Theta) =  p(o|c) = \dfrac{\exp (\mathbf{u}_{o}^{T}\mathbf{v}_c) }{\sum_{w=1}^{V} \exp (\mathbf{u}_{w}^{T}\mathbf{v}_c)}
 $$ {#eq-loss-per-word}
  
- 
-* Here, $V$ is the total number of vocabulary of words (different from $T$ the total number of words in a large corpus (where individual words are repeated).
-
+::: {.small-text}
+* $V$: the total number of vocabulary of words 
+* $T$: the total number of words in a large corpus (where individual words are repeated).
+:::
  
 ## Two vectors per word
 ::: {.callout-note appearance="simple" icon=false}
@@ -465,7 +466,9 @@ $$
 $$
 
 ::: {.tiny-credit}
-Note that in this equation, $\log$ pays the part of the outer function $f$ and $\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)$ is the inner function $g$; the first derivative of $\log x$ is $\dfrac{1}{x}$.
+Note that in this equation, $\log$ plays the role of the outer function $f$ and 
+$\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)$ is the inner function $g$; 
+the first derivative of $\log x$ is $\dfrac{1}{x}$.
 :::
 
 ## gradient descent (3)
@@ -516,9 +519,6 @@ $$
 
 * The probabilities $p(\cdot\mid c)=\text{softmax}(\mathbf{U}\mathbf{v}_c)$ form a vector of length $V$. In matrix form the gradient is $\mathbf{U}^{T}(\mathbf{y}-p(\cdot\mid c))$, where $\mathbf{y}$ is the one-hot truth vector.
 * $\Theta$ has $2Vd$ entries, but for one training pair the gradient is nonzero only for $\mathbf{v}_c$ and the outside vectors $\mathbf{u}_w$.
-* Note that $p(x|c)$ is a vector with dimensions $V\times 1$. 
-* The gradients  would be calculated for all $2Vd$ parameters in the model, i.e., all $\mathbf{v}_c$ and  $\mathbf{u}_o$ 
-
 
 
 ## gradient descent (6)
@@ -666,70 +666,60 @@ Ravanmehr V, et al (2021) [Supervised learning with word embeddings derived from
 
 
 
-
-
-
 ## Tokens {#token}
-
-
 ::: {.callout-important icon="true" appearance="default" title="The need for tokenization"}
 
 * LLMs (and many other machine learning algorithms) process numbers rather than text
-* Therefore, to process text, it first must be converted to numbers.
+* Therefore, text must first be converted to numbers.
 :::
-
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 
-Tokenization by Open-AI 
+Tokenization by OpenAI
 
-![Created with https://platform.openai.com/tokenizer](img/tokenizing.png){#fig-tokens width=80% fig-align="center"}
+![Created with <https://platform.openai.com/tokenizer>](img/tokenizing.png){width=80% fig-align="center"}
 
 :::
 ::: {.column width="50%"}
 
-* A __token__ is a piece of text that can be represented by an __integer__. 
-* Here, we see an example GPT subword tokenization of the word *discombobulate*:
+* A __token__ is an entry in the tokenizer's fixed __vocabulary__ (a word, a part of a word, or a single character). Each token has an integer, its __token ID__ (or __token index__).
+* Here we see an example GPT subword tokenization of the word *discombobulate*:
     - dis: 4220
     - comb: 43606
     - ob: 630
-    - ulate; 10111
-* The integer that is associated with the token is called __token ID__ or __token index__.^[See https://tiktokenizer.vercel.app/ for an app to visualize different tokenizing schemes.]
+    - ulate: 10111
+* The IDs are arbitrary labels: the fact that 4220 is close to 4221 means nothing.^[See [tiktokenizer](https://tiktokenizer.vercel.app/) for an app to visualize different tokenizing schemes.]
 
 :::
 :::
 
-
-## Tokenization 
+## Tokenization (2)
 
 ::: {.callout-note}
 ## Definition
- the process of converting a sequence of text into smaller parts, known as tokens. These tokens can be as small as characters or as long as words. 
+**Tokenization** is the process of converting a sequence of text into smaller parts, known as tokens. Tokens can be as small as single characters or as long as words.
 :::
-
 
 ::: {.token-table}
 
-| Tokenization Method | Example | Granularity | Pros | Cons |
+| Method | Granularity | Example | Pros | Cons |
 |:---|:---|:---|:---|:---|
-| **Word** | Full words | ["Machine", "learning"] | High semantic clarity | Massive vocabulary; fails on "unknown" words |
-| **Subword** | Meaningful chunks | ["ma", "chine", "learn", "ing"] | Handles new words well | Slightly more complex to implement |
-| **Character** | Individual letters | ["m", "a", "c", "h", "i", "n", "e", "l", "r", "g"] |  Tiny vocabulary; no "unknown" words | Loses semantic meaning; very long sequences |
+| **Word** | Full words | ["machine", "learning"] | High semantic clarity | Massive vocabulary; fails on unknown words |
+| **Subword** | Meaningful chunks | ["machine", "learn", "ing"] | Handles new words well | Vocabulary must be learned from data (e.g., BPE); longer sequences than words |
+| **Character** | Individual letters | ["m", "a", "c", "h", "i", "n", "e", "␣", "l", "e", "a", "r", "n", "i", "n", "g"] | Tiny vocabulary; no unknown words | Loses semantic meaning; very long sequences |
 
 :::
 
 
-## Why not just use character embeddings?
+## Words, characters, and subwords
 
-Major problems with word embeddings
+**Problems with word-level vocabularies**
 
 - There are extremely many unique words in natural language
-- Words can have different lexical forms (run, runs, ran, running, ...)
-- Out of vocabulary words cannot be represented
-
-
+- Words have different lexical forms (run, runs, ran, running, ...)
+- Out-of-vocabulary words cannot be represented
 
 ::: {.columns}
 
@@ -739,117 +729,50 @@ Major problems with word embeddings
 :::
 
 ::: {.tiny-credit}
-image credit: <https://github.com/minimaxir/char-embeddings>
+Embeddings of characters, projected to 2D: digits, uppercase, lowercase and punctuation each form a cluster. Image credit: <https://github.com/minimaxir/char-embeddings>
 :::
 :::
 
+::: {.column width="55%"}
 
-::: {.column width="10%"}
+**Limitations of character-level models**
+
+  - Sequences become very long, which makes training and inference expensive
+  - A single character carries almost no meaning
+  - Unicode has more than 150K characters
+
+**Subword tokens**: a vocabulary of tens of thousands of pieces, no out-of-vocabulary words, and much shorter sequences than characters.
+
+:::
 :::
 
-
-::: {.column width="50%"}
-* Limitations of character embeddings
-  - Unicode currently has $>$150K characters (growing!)
-  - character-based embeddings ignore linguistic regularities (e.g., in English, 't' is more often followed by 'h' than by 'q')
-  - requires a lot of memory to cover any given text in the context (there are more character embeddings than subword embeddings and more subword embeddings than word embeddings)
-
-:::
-:::
 
 ## Tokens are then converted to embeddings
 
-- LLMs do not use tokens directly.
-- Instead, an intermediate step converts input tokens to embeddings
-
-
-::: {.callout-important icon="true" appearance="default" title="Embeddings"}
-
-* Embeddings are dense numeric representations of tokens
-* Advantages over integers
- - More text can be represented using fewer numbers
- - Semantic relations across tokens can be captured
-:::
-
-- During training, an LLM learns embeddings to represent individual tokens
+- LLMs do not use tokens directly, but instead convert input tokens to embeddings
+- Embeddings are dense numeric representations of tokens
+- During training, an LLM [learns]{.emph} embeddings to represent individual tokens
 
 ```{python}
-#| label: fig-polar
-#| fig-cap: "coding tokens as embeddings"
-#| fig-height: 2
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-
-# Data Setup
-input_text = ["[CLS]", "I", "love", "to", "code", ".", "[SEP]"]
-token_ids = [101, 2023, 2003, 1037, 7953, 1012, 102]
-# Simulated embedding vectors (first 3 dimensions)
-embeddings = [
-    [0.03, -0.01, -0.02], [0.05, 0.01, 0.00], [-0.04, -0.02, -0.02],
-    [0.01, -0.00, -0.04], [0.00, 0.00, -0.33], [0.01, -0.42, -0.71], [-0.07, 0.02, -0.03]
-]
-
-fig, ax = plt.subplots(figsize=(12, 6))
-ax.set_xlim(0, 10)
-ax.set_ylim(0, 10)
-ax.axis('off')
-
-# 1. Draw Tokenization Row
-ax.text(0.5, 10, "I love to code.", fontsize=16, fontweight='bold')
-ax.text(0.5, 8.1, "Tokenization", fontsize=16, fontweight='bold')
-for i, (txt, tid) in enumerate(zip(input_text, token_ids)):
-    x_pos = 1 + i*1.2
-    # Text box
-    ax.add_patch(patches.FancyBboxPatch((x_pos, 7), 1, 0.8, boxstyle="round,pad=0.1", fc="#fbe5c6", ec="gray"))
-    ax.text(x_pos+0.5, 7.4, txt, ha='center', fontsize=11)
-    # ID box
-    ax.add_patch(patches.Rectangle((x_pos, 6.2), 1, 0.8, fc="#fff2cc", ec="gray"))
-    ax.text(x_pos+0.5, 6.6, str(tid), ha='center', fontsize=11)
-
-# 2. Draw Transition Arrow
-ax.annotate('', xy=(5, 4.5), xytext=(5, 6), arrowprops=dict(facecolor='black', shrink=0.05, width=2))
-
-# 3. Draw Embeddings Row
-ax.text(0.5, 3.7, "Embeddings", fontsize=16, fontweight='bold')
-for i, vec in enumerate(embeddings):
-    x_pos = 1 + i*1.2
-    ax.add_patch(patches.Rectangle((x_pos, 1), 1, 2.5, fc="#fbe5c6", ec="gray"))
-    for j, val in enumerate(vec):
-        ax.text(x_pos+0.5, 3 - j*0.6, f"{val:.4f}", ha='center', fontsize=9)
-    ax.text(x_pos+0.5, 1.2, "...", ha='center')
-
-plt.tight_layout()
-plt.show()
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-r = np.arange(0, 2, 0.01)
-theta = 2 * np.pi * r
-fig, ax = plt.subplots(
-  subplot_kw = {'projection': 'polar'} 
-)
-ax.plot(theta, r)
-ax.set_rticks([0.5, 1, 1.5, 2])
-ax.grid(True)
-plt.show()
+#| label: fig-token-embeddings
+#| echo: false
+#| fig-cap: "Tokenization and embedding (illustrative vectors; the first 3 of $d$ dimensions are shown)"
+token_embeddings()
 ```
 
+## Byte Pair Encoding {#bytepair}
 
-##  Byte Pair Encoding {#bytepair}
+- Byte Pair Encoding (BPE) is a simple, greedy algorithm. It starts from single characters (or bytes) and repeatedly **merges the most frequent pair of adjacent symbols** into one new symbol.
+- Each merge shortens the text and adds one entry to the vocabulary. The list of merges, in order, is stored as a table of **merge rules**.
+- The merge rules are all we need to tokenize new text: apply them in the same order to its characters.
+- Originally a compression algorithm ([Gage, 1994](https://jacobfilipp.com/DrDobbs/articles/CUJ/1994/9402/gage/gage.htm))
+- adapted for subword tokenization in NLP by [Sennrich et al. (2016)](https://aclanthology.org/P16-1162/).
 
-- Byte Pair Encoding (BPE) is a simple, greedy algorithm that builds a vocabulary by repeatedly merging the most frequent pair of tokens.
-- BPE proceeds by repeatedly identifying the most frequently occurring pair of symbols
-and replacing all occurrences of this pair with a new symbol, thereby shortening the text.
--  The
-new symbols, together with the pairs they replace, are stored in a lookup-table, which allows the
-reconstruction of the original text. 
 
-## BPE 
+## BPE: a small example
 
-- BPE is widely used in the preprocessing stage of training large language models 
-- Originally introduced as a compression algorithm that repeatedly identifies the most frequently occurring pair of symbols
-and replaces all occurrences of this pair with a new symbol, thereby shortening the text.
+- BPE is widely used in the preprocessing stage of training large language models
+- Two different merge sequences for the input $s= \mathrm{aabaaaba}$:
 
 $$
 \begin{alignat}{3}
@@ -858,68 +781,80 @@ $$
 \end{alignat}
 $$
 
-- Input $s= \mathrm{aabaaaba}$
-- Top: BPE merge sequence ($\mathrm{aa} \to \mathrm{X}$, $\mathrm{Xb} \to \mathrm {Y}$, $\mathrm{YX}\to \mathrm{Z}$)
-- Bottom: BPE merge sequence ($\mathrm{ab} \to \mathrm{X}$, $\mathrm{aX} \to \mathrm {Y}$, $\mathrm{Ya}\to \mathrm{Z}$)
-- Compression utility of $\mathrm{aabaaaba} \to \mathrm{Zaba}$ is $8- 4= 4$
-- Compression utility of $\mathrm{aabaaaba} \to \mathrm{ZZ}$ is $8-2=6$
+- Top: merges $\mathrm{aa} \to \mathrm{X}$, $\mathrm{Xb} \to \mathrm{Y}$, $\mathrm{YX}\to \mathrm{Z}$
+- Bottom: merges $\mathrm{ab} \to \mathrm{X}$, $\mathrm{aX} \to \mathrm{Y}$, $\mathrm{Ya}\to \mathrm{Z}$
+- The *utility* of a merge sequence is the number of symbols saved, $|s|-|s^{\prime}|$:
+  - top: $8-4=4$; bottom: $8-2=6$
+- In the first step, $\mathrm{aa}$, $\mathrm{ab}$ and $\mathrm{ba}$ can each be replaced twice, so a greedy algorithm may pick any of them. The choice changes the final result: greedy merging is not guaranteed to be optimal.
 
-## Problem definition
+## Problem definition (1)
 
-- Consider an input string $s$ over an alphabet $\Sigma$
-- Represent the concatenation of strings $a$ and $b$ as $a\cdot b$ (somes we will show simply $ab$ when clear from context)
-- The length of a string $a$: $|a|$, the $i^{th}$ character of the string is $a[i]$, and the substring $a[i]\cdot a[i+1]\cdot\cdot\cdot a[j]$ is $a[i:j]$
-- A replacement rule is a function $\mathrm{replace}_{x\to y}$ that transforms a string $s$ by replacing all occurrences
-of the string $x$ in $s$ with the string $y$. 
-  - If $s$ does not contain $x$ then $\mathrm{replace}_{x\to y}(s) = s$
-  - Otherwise $$\mathrm{replace}_{x\to y}(s) = s[1:i]\cdot y\cdot \mathrm{replace}_{x\to y}(s[i+|x| + 1:|s|)$$ where i is the smallest index for
-which $s[i + 1 : i + |x|] = x$
+- Consider an input string $s$ over an alphabet $\Sigma$ of symbols (merging will add new symbols to the alphabet)
+- Write the concatenation of strings $a$ and $b$ as $a\cdot b$ (sometimes simply $ab$ when clear from context)
+- The length of a string $a$ is $|a|$, its $i^{th}$ character is $a[i]$, and the substring $a[i]\cdot a[i+1]\cdots a[j]$ (both end points included) is $a[i:j]$
+- A **replacement rule** $\mathrm{replace}_{x\to y}$ transforms a string $s$ by replacing the occurrences of the string $x$ in $s$ with the string $y$, scanning from left to right without overlaps:
+  - If $s$ does not contain $x$, then $\mathrm{replace}_{x\to y}(s) = s$
+  - Otherwise, let $i\ge 0$ be the number of symbols before the first occurrence of $x$, i.e., the smallest $i$ with $s[i+1 : i+|x|] = x$. Then
 
-## Probem definition (2)
+$$
+\mathrm{replace}_{x\to y}(s) = s[1:i]\cdot y\cdot \mathrm{replace}_{x\to y}\bigl(s[i+|x|+1:|s|]\bigr)
+$$
 
-- A sequence of replacement rules $\mathbb{R} = (\mathbb{R}_1,\ldots ,\mathbb{R}_k)$ with $\mathbb{R}_i = \mathrm{replace}_{a_ib_i\to c_i}$
-, where $a_i, b_i$, and $c_i$ are symbols, is called a merge sequence of length $k$. 
-Denoting $s^{\prime} =(\mathbb{R}_k \circ \ldots \circ \mathbb{R}_1)(s)$, where $\circ$ is function composition, we refer to $|s^{\prime}|$
- as the compressed length, and $|s| − |s^{\prime}|$ as the utility of$\mathbb{R}$ for $s$. 
+- Example: $\mathrm{replace}_{\mathrm{aa}\to\mathrm{X}}(\mathrm{aabaaaba}) = \mathrm{XbXaba}$ (in $\mathrm{aaa}$ only the leftmost $\mathrm{aa}$ is replaced)
 
-- BPE starts with the input string $s$, it performs $k$ locally optimal full merge steps, always choosing a pair whose
-replacement maximizes compression utility
-- This leads to a vocabulary of $k$ tokens (why?)
+## Problem definition (2)
+
+- A sequence of replacement rules $\mathbb{R} = (\mathbb{R}_1,\ldots ,\mathbb{R}_k)$ with $\mathbb{R}_i = \mathrm{replace}_{a_ib_i\to c_i}$, where $a_i$, $b_i$ and $c_i$ are symbols, is called a **merge sequence** of length $k$.
+- Applying it to $s$ means applying $\mathbb{R}_1$ first, then $\mathbb{R}_2$, and so on: $s^{\prime} =(\mathbb{R}_k \circ \cdots \circ \mathbb{R}_1)(s)$, where $\circ$ is function composition.
+- $|s^{\prime}|$ is the **compressed length**, and $|s| - |s^{\prime}|$ is the **utility** of $\mathbb{R}$ for $s$.
+
+- BPE starts from the input string $s$ and performs $k$ merge steps. In each step it replaces *all* occurrences of one pair, choosing the pair whose replacement gives the largest utility (the pair with the most non-overlapping occurrences).
+- How many symbols does the vocabulary contain after $k$ merges?
+
+. . .
+
+- $|\Sigma|+k$: each merge adds exactly one new symbol $c_i$. (GPT-2: 256 bytes + 50,000 merges + 1 end-of-text token = 50,257.)
 
 ## BPE algorithm
 
-Choose a desired $k$ (vocabulary size) and the input text corpus $s$
+**Input:** a text corpus $s$ and the number of merges $k$ (the final vocabulary has $|\Sigma|+k$ symbols)
 
 - Let $s^{(0)} = s$
-- Let $s^{(i)} = \mathbb{R}_i(s^{(i-1)})$ for $i\in k$
-- Output $\mathbb{R} = (\mathbb{R}_1,\ldots ,\mathbb{R}_k)$ with $\mathbb{R}_i = \mathrm{replace}_{a_ib_i\to c_i}$
-- Each $c_i$ is a new symbol not occuring in $s^{(j)}$ for $j<i$
-- The pair $a_ib_i$ is chosen so that $|\mathbb{R}_i((s^{(i-1)})|$ is minimal
+- For $i = 1,\ldots,k$:
+  1. Choose the pair of symbols $a_ib_i$ for which replacing it gives the shortest string $s^{(i)}=\mathbb{R}_i(s^{(i-1)})$. Break ties by a fixed rule (e.g., the lexicographically smallest pair).
+  2. Create a new symbol $c_i$ that is not in $\Sigma$ and differs from $c_1,\ldots,c_{i-1}$.
+  3. Let $\mathbb{R}_i = \mathrm{replace}_{a_ib_i\to c_i}$ and apply it.
+- **Output:** the merge sequence $\mathbb{R} = (\mathbb{R}_1,\ldots ,\mathbb{R}_k)$
 
 [HOMEWORK]{.hw-badge} You will implement a version of BPE
+
 
 ## BPE Applications
 
 ::: {.mybox}
-### LLMs and BPE
+**LLMs and BPE**
 
-Virutally every major LLM uses BPE to transform input text into number (tokens) that are processed by the model
+Most major LLMs use BPE, or a close variant, to transform input text into sequences of integers (token IDs), which the model then maps to embeddings
 
-- GPE
+- GPT models (byte-level BPE, introduced with GPT-2)
 - Llama
 - Mistral
-- Claude
 :::
 
+::: {.small-text}
+Not all do: BERT uses WordPiece, and T5 uses a unigram language-model tokenizer.
+:::
 
-## BPE Applications
+## BPE Applications (2)
 
-- Balances between character-level (too slow, results in long sequences) and word-level (too many parameters for rare words, poor generalization).
-- BPE handles rare words (e.g., not in training vocabulary) by falling back to smaller subwords or individual characters/bytes.
-- Models learn morphological patterns (e.g., “ing”, “ed”, “tion”, “pre”, “un”) which may help with analysis of grammar
-- Cross-lingual: May help with relating synonymous words in different languages (Produktion, production, producíon,...)
+- BPE balances between character-level (long sequences, so slow) and word-level (too many parameters for rare words, poor generalization)
+- BPE handles rare words (e.g., those not in the training vocabulary) by falling back to smaller subwords or individual characters/bytes
+- Frequent affixes ("ing", "ed", "tion", "pre", "un") tend to become tokens of their own, so the model can share information between word forms. The merges are statistical, not linguistic, so they do not always match morphemes
+- Cross-lingual: shared pieces can relate cognates in different languages (Produktion, production, producción, ...).
 
-## BPE Applications
+
+
+## BPE Applications (3)
 
 - Better parameter efficiency: Model spends capacity on meaningful patterns rather than memorizing every word variant.
 - Consider the German word "Abwasserbehandlungsanlage"
@@ -937,7 +872,7 @@ Sennrich, R, et al. (2016) [Neural Machine Translation of Rare Words with Subwor
 ## Strawberry
 
 ::: {.mybox}
-**Older versions of GPT famously were not able to determine how many r's there are in the word strawberry
+**Older versions of GPT** famously were not able to determine how many r's there are in the word strawberry
 :::
 
 ![](./img/strawberry.png){width=40% fig-align="center"}
@@ -946,22 +881,30 @@ Sennrich, R, et al. (2016) [Neural Machine Translation of Rare Words with Subwor
 
 ## Strawberry tokens
 
-![](./img/strawberry-tokens.png){width=25% fig-align="center"}
+<span style="background-color: #e0f2fe; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 1.4em;">str</span>
+<span style="background-color: #fef3c7; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 1.4em;">aw</span>
+<span style="background-color: #dcfce7; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 1.4em;">berry</span>
 
-- GPT had difficulties with letter-based calculations because it represents words with tokens
-- Language models do not work with text the way that humans do!
-- LLMs work with embedding vectors derived from tokens
-- Sometimes those tokens and their embeddings correspond to our conceptualization of language
-- More modern LLMs have been trained to deal with this issue, e.g., by writing a script to calculate the number of 'r's
+::: {.small-text}
+Example tokenization from the OpenAI tokenizer
+:::
+
+- The model does not see letters: it sees three token IDs. The r's are hidden inside the tokens (1 in *str*, 0 in *aw*, 2 in *berry*)
+- BPE merges frequent character sequences into single tokens, which hides the letters inside them
+- LLMs work with embedding vectors derived from tokens. Sometimes those tokens and their embeddings correspond to our conceptualization of language, and sometimes they do not
+- Newer LLMs often get this right, e.g., by spelling the word out letter by letter first, or by running a small script to count
 
 
 ## Sources
 
-The sources used to prepare this lecture include
-
-- Goldberg Y and Levy O (2014) [word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding method, arXiv 1402.3722](https://arxiv.org/abs/1402.3722)
-- Kozma L and Voderholzer J (2024) [Theoretical Analysis of Byte-Pair Encoding, arXiv  2411.08671](https://arxiv.org/abs/2411.08671)
-- Mikolov, T. et al. (2013) [Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781](https://arxiv.org/abs/1301.3781)
-- Mikolov, T. et al. (2013) [Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems. arXiv:1310.4546](https://arxiv.org/abs/1310.4546)
-
-
+::: {.small-text}
+- Gage P (1994) [A New Algorithm for Data Compression](https://drdobbs.com/a-new-algorithm-for-data-compression/184402829). C Users Journal 12(2)
+- Goldberg Y, Levy O (2014) [word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding method](https://arxiv.org/abs/1402.3722). arXiv:1402.3722
+- Kozma L, Voderholzer J (2024) [Theoretical Analysis of Byte-Pair Encoding](https://arxiv.org/abs/2411.08671). arXiv:2411.08671
+- Mikolov T, Chen K, Corrado G, Dean J (2013) [Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/abs/1301.3781). arXiv:1301.3781
+- Mikolov T, Sutskever I, Chen K, Corrado G, Dean J (2013) [Distributed representations of words and phrases and their compositionality](https://arxiv.org/abs/1310.4546). NeurIPS 26
+- Mikolov T, Yih W, Zweig G (2013) [Linguistic Regularities in Continuous Space Word Representations](https://aclanthology.org/N13-1090/). NAACL 2013
+- Ravanmehr V, et al. (2021) Supervised learning with word embeddings derived from PubMed captures latent knowledge about protein kinases and cancer. NAR Genom Bioinform 3:lqab113
+- Sennrich R, Haddow B, Birch A (2016) [Neural Machine Translation of Rare Words with Subword Units](https://aclanthology.org/P16-1162/). ACL 2016
+- Alammar J, [The Illustrated Word2vec](https://jalammar.github.io/illustrated-word2vec/)
+:::

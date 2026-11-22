@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 import numpy as np
+from matplotlib.patches import FancyBboxPatch, Rectangle   
 
-
+GRAY = "#7F8C8D"    
 BLUE = "#4472C4"
 LIGHT_BLUE = "#AED6F1"
 DARK_BLUE = "#5DADE2"
@@ -210,5 +211,97 @@ def plot_skipgram(figsize=(7, 3.2)):
     ax.set_ylim(-1.0, 2.8)
     ax.set_aspect("equal")
     ax.axis("off")
+
+    plt.tight_layout()
+
+
+
+
+
+def token_embeddings(sentence="I love to code.",
+                     tokens=None, token_ids=None, vectors=None,
+                     n_dims=3, figsize=(12, 5.2)):
+    """
+    Illustrates the pipeline  text -> tokens -> token IDs -> embedding vectors.
+
+    The default vectors are made up for illustration; only the first
+    `n_dims` dimensions of each vector are shown (followed by a vertical
+    ellipsis). Cells are shaded by value (blue = negative, red = positive).
+    """
+    if tokens is None:
+        tokens = ["[CLS]", "i", "love", "to", "code", ".", "[SEP]"]
+    if token_ids is None:
+        token_ids = [101, 1045, 2293, 2000, 3642, 1012, 102]  # verify with bert-base-uncased
+    if vectors is None:
+        vectors = [
+            [0.03, -0.01, -0.02], [0.05, 0.01, 0.00], [-0.04, -0.02, -0.02],
+            [0.01, 0.00, -0.04], [0.00, 0.00, -0.33], [0.01, -0.42, -0.71],
+            [-0.07, 0.02, -0.03],
+        ]
+    if not (len(tokens) == len(token_ids) == len(vectors)):
+        raise ValueError("tokens, token_ids and vectors must have the same length")
+
+    n = len(tokens)
+    step, w = 1.3, 1.0
+    x0 = 1.0                                   # left edge of first column
+    x_last = x0 + step * (n - 1) + w
+    x_mid = (x0 + x_last) / 2
+
+    shown = np.array([v[:n_dims] for v in vectors], dtype=float)
+    vmax = np.abs(shown).max() or 1.0
+    cmap = plt.get_cmap("RdBu_r")
+
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.set_xlim(-1.2, x_last + 0.5)
+    ax.set_ylim(2.1, 10.0)
+    ax.axis("off")
+
+    # Input sentence
+    ax.text(x_mid, 9.4, f"\u201c{sentence}\u201d", ha="center", va="center",
+            fontsize=18, fontstyle="italic")
+
+    # Row labels
+    for y, label in [(8.25, "Tokens"), (7.05, "Token IDs"), (3.75, "Embeddings")]:
+        ax.text(-1.15, y, label, ha="left", va="center", fontsize=13,
+                fontweight="bold", color=BLUE)
+
+    def rbox(x, y, width, height, **kw):
+        ax.add_patch(FancyBboxPatch((x, y), width, height,
+                     boxstyle="round,pad=0,rounding_size=0.12", **kw))
+
+    cell_h, top = 0.62, 5.0
+    for i, (tok, tid, vec) in enumerate(zip(tokens, token_ids, vectors)):
+        x, xc = x0 + i * step, x0 + i * step + w / 2
+
+        # token pill and ID box
+        rbox(x, 7.9, w, 0.7, fc=LIGHT_BLUE, ec=BLUE, lw=1.2)
+        ax.text(xc, 8.25, tok, ha="center", va="center", fontsize=12)
+        rbox(x, 6.7, w, 0.7, fc="white", ec=BLUE, lw=1.2)
+        ax.text(xc, 7.05, str(tid), ha="center", va="center", fontsize=12,
+                family="monospace")
+
+        # arrow ID -> embedding column
+        ax.annotate("", xy=(xc, top + 0.12), xytext=(xc, 6.6),
+                    arrowprops=dict(arrowstyle="-|>", color=GRAY, lw=1.2,
+                                    shrinkA=0, shrinkB=0))
+
+        # embedding column: one shaded cell per dimension
+        bottom = top - cell_h * n_dims
+        rbox(x - 0.04, bottom - 0.55, w + 0.08, top - bottom + 0.62,
+             fc="white", ec=GRAY, lw=1.0)
+        for j, val in enumerate(vec[:n_dims]):
+            y = top - cell_h * (j + 1)
+            ax.add_patch(Rectangle((x + 0.04, y + 0.03), w - 0.08, cell_h - 0.06,
+                         fc=cmap(0.5 + 0.5 * val / vmax), ec="none", alpha=0.85))
+            ax.text(xc, y + cell_h / 2, f"{val:.2f}", ha="center", va="center",
+                    fontsize=10.5,
+                    color="white" if abs(val) / vmax > 0.6 else "black")
+        ax.text(xc, bottom - 0.25, "\u22ee", ha="center", va="center",
+                fontsize=14, color=GRAY)
+
+    # label on the arrows
+    ax.text(x_mid, 5.85, "embedding lookup", ha="center", va="center",
+            fontsize=11, color=GRAY, fontstyle="italic",
+            bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="none"))
 
     plt.tight_layout()
