@@ -40,6 +40,7 @@ Biomedical data  are often arranged as sequences: clinical notes, visit historie
 * [**Python**](#python)
 * [**LSTMs**](#lstm)
 * [**RNN language models**](#rnn-lm)
+* [**Attention**](#attention)
 
 
 
@@ -568,7 +569,7 @@ plt.plot()
 
 - We will present a bare-bones implementation of an RNN trained to perform sentiment analysis on the IMDB movie review dataset
   - 50,000 reviews, balanced between positive and negative; we merge the original train/test splits and re-split 80/20
-- The full script is available in the [course material](notebooks/rnn-sentiment.ipynb); we will briefly review some of the salient blocks of code
+- The full script is available in the [course material](../notebooks/rnn-sentiment.ipynb); we will briefly review some of the salient blocks of code
 - We use PyTorch for most of the heavy lifting: **embedding → RNN → linear layer**
 
 
@@ -1139,7 +1140,7 @@ figure adapted from Jurafsky and Martin (2026) Speech and Language Processing
 ::::
 
 
-## The Encoder-Decoder Model 
+## The Encoder-Decoder Model (2)
 
 - RNNs were among early examples of the **encoder-decoder model**
   - encode an input sequence of length $n$
@@ -1159,7 +1160,7 @@ encode_decode()
 plt.plot()
 ```
 
-## The Encoder-Decoder Model 
+## The Encoder-Decoder Model (3)
 
 - Encoder decoder models have three major components
 
@@ -1176,7 +1177,7 @@ plt.plot()
 > Ich bin ein Berliner `<s>` I am a doughnut
 
 
-## The Encoder-Decoder Model 
+## The Encoder-Decoder Model (4)
 
 ```{python}
 #| echo: false
@@ -1201,13 +1202,13 @@ $$
 \begin{align}
 \mathbf{c} &= \mathbf{h}_n^{e} \\
  \mathbf{h}_0^{d} &= \mathbf{c}\\
-\mathbf{h}_{0}^d &= g(\mathbf{h}_{t-1}^d,\hat{\mathbf{y}}_{t-1}, \mathbf{c})\\
+\mathbf{h}_{t}^d &= g(\mathbf{h}_{t-1}^d,\hat{\mathbf{y}}_{t-1}, \mathbf{c})\\
 \hat{\mathbf{y}}_{t} &= \mathrm{softmax}(\mathbf{h}_{t}^d)
 \end{align}
 $$
 
 
-## Attention
+## Attention {#attention}
 
 - In the encoder decoder model as described above, the context $\mathbf{c}$ must represent **everything** about the input sequence
 - Information present at the beginning of the input text may not be well represented in the context vector
@@ -1223,6 +1224,21 @@ the source text that is relevant for the token $i$ that the decoder is currently
 - Note that the context vector is now generated anew for each decoding step $i$, i.e., we have $\mathbf{c}_i$ instead of the same $\mathbf{c}$ for all steps.
 
 
+## Attention: Machine translation
+
+* Attention is a key innovation for transformers, as we shall see
+* A version of attention was first proposed in 2014 to support machine translation using RNNs
+* We will review this model to build intuition for the more sophisticated implementation of attention in transformers
+
+> Most of the proposed neural machine translation models belong to a family of encoder–decoders with an encoder and a decoder for each language
+> The whole encoder–decoder system, which consists of the encoder and the decoder for a language pair,
+is jointly trained to maximize the probability of a correct translation given a source sentence.
+> potential issue with this encoder–decoder approach is that a neural network needs to be able to
+compress all the necessary information of a source sentence into a fixed-length vector. This may
+make it difficult for the neural network to cope with long sentences, especially those that are longer
+than the sentences in the training corpus.
+
+
 ## Attention: Relevance?
 
 - In order to compute $\mathbf{c}_i$, our goal is to determine how *relevant* each encoder hidden state is for the current decoder step.
@@ -1232,18 +1248,18 @@ $$
 $$
 - The simplest function is the **dot product**, which equates relevance with vector similarity
 $$
-f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^de) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e
+f(\mathbf{h}_{i-1}^d, \mathbf{h}_{j}^e) = \mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e
 $$
 
 
 - We calculate one such score for each of the encoder states and use softmax to convert into a probability distribution
 $$
 \begin{align}
-\alpha_{ij} &= \mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)= \dfrac{\exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e))}
-{\sum_k \exp(\mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{k}^e))}
+\alpha_{ij} &= \mathrm{softmax}(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)= \dfrac{\exp(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{j}^e)}
+{\sum_k \exp(\mathbf{h}_{i-1}^d \cdot \mathbf{h}_{k}^e)}
 \end{align}
 $$
-- $\mathbf{c}_i$ is then calculated as the weighted average over these scores
+- $\mathbf{c}_i$ is then calculated as the weighted average over  the encoder states, using the weights $\alpha_{ij}$.
 $$
 \mathbf{c}_i = \sum_j \alpha_{ij}\mathbf{h}_{j}^e
 $$

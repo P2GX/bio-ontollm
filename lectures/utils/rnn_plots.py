@@ -1143,9 +1143,9 @@ def doughnut(figsize=(15, 6.5)):
     encoder_decoder_mt_diagram.py
 
     Recreates the classic encoder-decoder machine-translation figure:
-    source words (English) are encoded by an RNN into a final hidden state
+    source words are encoded by an RNN into a final hidden state
     h_n, which then seeds an autoregressive decoder that predicts target
-    words (Spanish) one at a time, each predicted word being fed back in
+    words one at a time, each predicted word being fed back in
     as the next input word.
     """
     fig, ax = plt.subplots(figsize=figsize)
