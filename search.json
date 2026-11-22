@@ -1772,28 +1772,28 @@
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 32.04%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=10\\)\n\n\nAcceptance rate: 31.98%\n\n\n\n\n\n\n\n\n\n\n\nTop panel (“trace”): The value \\(x_t\\) at each iteration\nAcceptance rate of about 33% is considered optimal"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d0.1",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 98.72%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=0.1\\)\n\n\nAcceptance rate: 99.52%\n\n\n\n\n\n\n\n\n\n\n\nVery small proposal width, so that we have not reached true distribution for much of the run\nVery high acceptance rate\nThe chain has not (yet) explored the entire space"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_00-d100",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)",
-    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 2.94%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
+    "text": "MCMC: Run with start position \\(x_0=0\\), \\(d=100\\)\n\n\nAcceptance rate: 3.62%\n\n\n\n\n\n\n\n\n\n\n\nVery large proposal width\nThe chain often proposes values very far away from the true value, so there is a Very low acceptance rate"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "href": "lectures/mgsa.html#mcmc-run-with-start-position-x_0-1000-d10",
     "title": "Approaches to biomedical knowledge",
     "section": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)",
-    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.34%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
+    "text": "MCMC: Run with start position \\(x_0=-1000\\), \\(d=10\\)\n\n\nAcceptance rate: 35.16%\n\n\n\n\n\n\n\n\n\n\n\nWe start very far away from the true distribution\nIt takes the chain about 1000 iterations, but it does seem to reach the true distribution\nThe chain has a dependency on the starting distribution"
   },
   {
     "objectID": "lectures/mgsa.html#mcmc-wrap-up",
@@ -4740,7 +4740,21 @@
     "href": "lectures/lstm.html#attention-machine-translation",
     "title": "Approaches to biomedical knowledge",
     "section": "Attention: Machine translation",
-    "text": "Attention: Machine translation\n\nAttention is a key innovation for transformers, as we shall see\nA version of attention was first proposed in 2014 to support machine translation using RNNs\nWe will review this model to build intuition for the more sophisticated implementation of attention in transformers\n\n\nMost of the proposed neural machine translation models belong to a family of encoder–decoders with an encoder and a decoder for each language The whole encoder–decoder system, which consists of the encoder and the decoder for a language pair, is jointly trained to maximize the probability of a correct translation given a source sentence. potential issue with this encoder–decoder approach is that a neural network needs to be able to compress all the necessary information of a source sentence into a fixed-length vector. This may make it difficult for the neural network to cope with long sentences, especially those that are longer than the sentences in the training corpus."
+    "text": "Attention: Machine translation\n\n\n\nAttention is a key innovation for transformers, as we shall see\nA version of attention was first proposed in 2014 to support machine translation using RNNs (Bahdanau et al.)\nWe will review this model to build intuition for the more sophisticated implementation of attention in transformers\n\n\nA potential issue with this encoder–decoder approach is that a neural network needs to be able to compress all the necessary information of a source sentence into a fixed-length vector. This may make it difficult for the neural network to cope with long sentences, especially those that are longer than the sentences in the training corpus.\n— Bahdanau D, Cho K, Bengio Y (2016)\n\n\n\n\n\n\n\n\nFigure 1 of Bahdanau et al. (2016). Their notation: \\(s_t\\) decoder state, \\(\\alpha_{t,j}\\) weights, \\(\\overrightarrow{h}_j,\\overleftarrow{h}_j\\) encoder states"
+  },
+  {
+    "objectID": "lectures/lstm.html#attention-the-bahdanau-model",
+    "href": "lectures/lstm.html#attention-the-bahdanau-model",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Attention: The Bahdanau model",
+    "text": "Attention: The Bahdanau model\n\n\n\n\n\n\n\n\n\n\n\n\n\nAfter Bahdanau D, Cho K, Bengio Y (2016) Neural Machine Translation by Jointly Learning to Align and Translate. arXiv:1409.0473 (ICLR 2015).\nIn the paper’s notation, \\(s_t\\to\\mathbf{h}^d_i\\), \\(h_j\\to\\mathbf{h}^e_j\\), \\(\\alpha{t,j}\\to\\alpha{ij}\\)“."
+  },
+  {
+    "objectID": "lectures/lstm.html#the-encoderdecoder-framework-2-the-decoder",
+    "href": "lectures/lstm.html#the-encoderdecoder-framework-2-the-decoder",
+    "title": "Approaches to biomedical knowledge",
+    "section": "The encoder–decoder framework (2): the decoder",
+    "text": "The encoder–decoder framework (2): the decoder\n\n\n\nDecoder\n\n\nThe decoder generates the translation \\(y_{1:m}=(y_1,\\ldots,y_m)\\) one word at a time. Each word depends on the context \\(\\mathbf{c}\\) and on all previously generated words.\n\n\n\n\\[\n\\begin{aligned}\np(y_{1:m}) &= \\prod_{i=1}^{m} p\\bigl(y_i \\mid y_1,\\ldots,y_{i-1},\\ \\mathbf{c}\\bigr) && \\text{chain rule of probability}\\\\[4pt]\n\\mathbf{h}^d_i &= g\\bigl(\\mathbf{h}^d_{i-1},\\ \\hat{\\mathbf{y}}_{i-1},\\ \\mathbf{c}\\bigr), \\qquad\n\\hat{\\mathbf{y}}_i = \\mathrm{softmax}\\bigl(\\mathbf{h}^d_i\\bigr) && \\text{an RNN models each factor}\n\\end{aligned}\n\\]\n\nThe product splits the probability of a whole sentence into one next-word probability per position, exactly as in an RNN language model, but now conditioned on the source sentence through \\(\\mathbf{c}\\)\nEach factor \\(p(y_i\\mid y_1,\\ldots,y_{i-1},\\mathbf{c})\\) is the softmax output \\(\\hat{\\mathbf{y}}_i\\) of the decoder RNN. In the simplest version the decoder starts from \\(\\mathbf{h}^d_0=\\mathbf{c}\\)\nEncoder and decoder are trained jointly to maximize the probability of the correct translation given the source sentence\n\n\nDuring training the true previous word \\(y_{i-1}\\) is fed back in; at test time the model’s own prediction \\(\\hat{y}_{i-1}\\) is used."
   },
   {
     "objectID": "lectures/lstm.html#attention-relevance",
@@ -4750,25 +4764,39 @@
     "text": "Attention: Relevance?\n\nIn order to compute \\(\\mathbf{c}_i\\), our goal is to determine how relevant each encoder hidden state is for the current decoder step.\nThat is, we want to have a function for the relevance of encoder state \\(j\\) for decoding step \\(i\\) \\[\n\\mathbf{relevance}(i, j) = f(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^e)\n\\]\nThe simplest function is the dot product, which equates relevance with vector similarity \\[\nf(\\mathbf{h}_{i-1}^d, \\mathbf{h}_{j}^e) = \\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e\n\\]\nWe calculate one such score for each of the encoder states and use softmax to convert into a probability distribution \\[\n\\begin{align}\n\\alpha_{ij} &= \\mathrm{softmax}(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e)= \\dfrac{\\exp(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{j}^e)}\n{\\sum_k \\exp(\\mathbf{h}_{i-1}^d \\cdot \\mathbf{h}_{k}^e)}\n\\end{align}\n\\]\n\\(\\mathbf{c}_i\\) is then calculated as the weighted average over the encoder states, using the weights \\(\\alpha_{ij}\\). \\[\n\\mathbf{c}_i = \\sum_j \\alpha_{ij}\\mathbf{h}_{j}^e\n\\]"
   },
   {
-    "objectID": "lectures/lstm.html#attention-1",
-    "href": "lectures/lstm.html#attention-1",
+    "objectID": "lectures/lstm.html#attention-the-weights-alpha_ij-as-a-picture",
+    "href": "lectures/lstm.html#attention-the-weights-alpha_ij-as-a-picture",
     "title": "Approaches to biomedical knowledge",
-    "section": "Attention:",
-    "text": "Attention:\n\n\\(\\mathbf{c}_i\\) thus takes information from the entire encoder into account and is dynamically updated at each step of decoding"
+    "section": "Attention: the weights \\(\\alpha_{ij}\\) as a picture",
+    "text": "Attention: the weights \\(\\alpha_{ij}\\) as a picture\n\n\n\n\n\n\n\n\nBahdanau et al. (2014), alignment found by the attention model (Fig. 3a)\n\n\n\nRows: the French words the decoder generates (\\(i\\)). Columns: the English source words (\\(j\\))\nEach pixel is \\(\\alpha_{ij}\\): white is 1, black is 0. Every row sums to 1\nMostly diagonal: the languages share word order\nNot on the diagonal: zone économique européenne attends to European Economic Area in reverse order, because the adjective follows the noun in French\nThe model finds this alignment itself, without any alignment labels"
   },
   {
-    "objectID": "lectures/lstm.html#attention-2",
-    "href": "lectures/lstm.html#attention-2",
+    "objectID": "lectures/lstm.html#attention-translation-quality-and-sentence-length",
+    "href": "lectures/lstm.html#attention-translation-quality-and-sentence-length",
     "title": "Approaches to biomedical knowledge",
-    "section": "Attention",
-    "text": "Attention\n\nThe dot product is a relatively simple way of calculating an attention score\nWe will return to this topic in the lectures about transformers"
+    "section": "Attention: translation quality and sentence length",
+    "text": "Attention: translation quality and sentence length\n\n\n\nRNNenc: fixed-length context vector. RNNsearch: attention. The suffix (30 or 50) is the maximum sentence length in training\nRNNenc degrades as the source sentence grows. RNNsearch-50 stays roughly flat, even beyond 50 words\n\n\n\nBahdanau et al. (2014), Fig. 2"
+  },
+  {
+    "objectID": "lectures/lstm.html#how-is-attention-trained",
+    "href": "lectures/lstm.html#how-is-attention-trained",
+    "title": "Approaches to biomedical knowledge",
+    "section": "How is attention trained?",
+    "text": "How is attention trained?\n\nThe weights \\(\\alpha_{ij}\\) are trained by backpropagation. The gradient of the loss \\(\\mathcal{L}\\) follows the path\n\n\\[\n\\mathcal{L}\\;\\rightarrow\\;\\hat{\\mathbf{y}}_i\\;\\rightarrow\\;\\mathbf{h}^d_i\\;\\rightarrow\\;\\mathbf{c}_i\\;\\rightarrow\\;\\bigl(\\alpha_{ij},\\ \\mathbf{h}^e_j\\bigr)\\;\\rightarrow\\;\\text{scores}\\;\\rightarrow\\;\\bigl(\\mathbf{h}^d_{i-1},\\ \\mathbf{h}^e_j\\bigr)\\;\\rightarrow\\;\\text{encoder and decoder RNNs}\n\\]\n\nWe will refer to the original paper for details, the basic ideas of backprop were presented in Lecture 5"
+  },
+  {
+    "objectID": "lectures/lstm.html#attention-summary-and-outlook",
+    "href": "lectures/lstm.html#attention-summary-and-outlook",
+    "title": "Approaches to biomedical knowledge",
+    "section": "Attention: summary and outlook",
+    "text": "Attention: summary and outlook\n\n\nAttention in RNN encoder–decoders\n\nProblem: one fixed-length context vector \\(\\mathbf{c}\\) must carry the whole source sentence\nIdea: a new context vector for every output step, \\(\\mathbf{c}_i=\\sum_j\\alpha_{ij}\\,\\mathbf{h}^e_j\\)\nWeights: \\(\\alpha_{ij}=\\mathrm{softmax}_j\\,f(\\mathbf{h}^d_{i-1},\\mathbf{h}^e_j)\\), the relevance of encoder state \\(j\\) for output step \\(i\\). The dot product is the simplest \\(f\\)\nLike a soft dictionary lookup: the decoder state is the query, the encoder states are keys and values\nLearned together with the translation model, and the weights \\(\\alpha_{ij}\\) can be inspected as alignments\n\n\nWhere we go next: the transformer\n\nRNNs still read words one after another: slow to train, and long paths between distant words\nTransformer (Vaswani et al., 2017): attention replaces recurrence\nQueries, keys and values become separate learned projections of the token vectors, and the score is a scaled dot product: \\(\\mathrm{softmax}\\!\\left(\\mathbf{Q}\\mathbf{K}^T/\\sqrt{d_k}\\right)\\mathbf{V}\\)\nSelf-attention: every token attends to every other token of the same sentence, all positions in parallel"
   },
   {
     "objectID": "lectures/lstm.html#sources",
     "href": "lectures/lstm.html#sources",
     "title": "Approaches to biomedical knowledge",
     "section": "Sources",
-    "text": "Sources\nSources for this lecture include\n\nDan Jurafsky and James H. Martin (2026) Speech and Language Processing (3rd ed. draft)\nAlex Sherstinsky (2020) Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network, Physica D: Nonlinear Phenomena, Volume 404,132306\nAndrej Karpathy and Justin Johnson and Li Fei-Fei (2015) Visualizing and Understanding Recurrent Networks, arXiv\nAurélien Géron (2025) Hands-On Machine Learning with Scikit-Learn and PyTorch, O’Reilly"
+    "text": "Sources\nSources for this lecture include\n\nDan Jurafsky and James H. Martin (2026) Speech and Language Processing (3rd ed. draft)\nAlex Sherstinsky (2020) Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network, Physica D: Nonlinear Phenomena, Volume 404,132306\nAndrej Karpathy and Justin Johnson and Li Fei-Fei (2015) Visualizing and Understanding Recurrent Networks, arXiv\nAurélien Géron (2025) Hands-On Machine Learning with Scikit-Learn and PyTorch, O’Reilly\nBahdanau D, et al. (2016) Neural Machine Translation by Jointly Learning to Align and Translate. arXiv 1409.0473"
   },
   {
     "objectID": "lectures/neural.html#overview-neural-networks",
