@@ -1223,20 +1223,68 @@ $$
 the source text that is relevant for the token $i$ that the decoder is currently producing.
 - Note that the context vector is now generated anew for each decoding step $i$, i.e., we have $\mathbf{c}_i$ instead of the same $\mathbf{c}$ for all steps.
 
-
 ## Attention: Machine translation
 
+::: {.columns}
+::: {.column width="62%"}
 * Attention is a key innovation for transformers, as we shall see
-* A version of attention was first proposed in 2014 to support machine translation using RNNs
+* A version of attention was first proposed in 2014 to support machine translation using RNNs (Bahdanau et al.)
 * We will review this model to build intuition for the more sophisticated implementation of attention in transformers
 
-> Most of the proposed neural machine translation models belong to a family of encoder–decoders with an encoder and a decoder for each language
-> The whole encoder–decoder system, which consists of the encoder and the decoder for a language pair,
-is jointly trained to maximize the probability of a correct translation given a source sentence.
-> potential issue with this encoder–decoder approach is that a neural network needs to be able to
-compress all the necessary information of a source sentence into a fixed-length vector. This may
-make it difficult for the neural network to cope with long sentences, especially those that are longer
-than the sentences in the training corpus.
+> A potential issue with this encoder–decoder approach is that a neural network needs to be able to
+> compress all the necessary information of a source sentence into a fixed-length vector. This may
+> make it difficult for the neural network to cope with long sentences, especially those that are longer
+> than the sentences in the training corpus.
+>
+> --- Bahdanau D, Cho K, Bengio Y (2016)
+:::
+
+::: {.column width="38%"}
+![](./img/bahdanau-rnn.png){width=80% fig-align="center"}
+
+::: {.tiny-credit}
+Figure 1 of Bahdanau et al. (2016). Their notation: $s_t$ decoder state, $\alpha_{t,j}$ weights, $\overrightarrow{h}_j,\overleftarrow{h}_j$ encoder states
+:::
+:::
+:::
+
+## Attention: The Bahdanau model
+
+::: {style="width: 60%; margin: 0 auto;"}
+```{python}
+#| echo: false
+#| fig-align: center
+bahdanau_attention()
+```
+:::
+
+::: {.small-text}
+* After Bahdanau D, Cho K, Bengio Y (2016) [Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473). arXiv:1409.0473 (ICLR 2015).
+* In the paper's notation, $s_t\to\mathbf{h}^d_i$, $h_j\to\mathbf{h}^e_j$, $\alpha{t,j}\to\alpha{ij}$".
+:::
+
+## The encoder–decoder framework (2): the decoder
+
+::: {.callout-note icon=false title="Decoder"}
+The decoder generates the translation $y_{1:m}=(y_1,\ldots,y_m)$ one word at a time. Each word depends on the context $\mathbf{c}$ and on all previously generated words.
+:::
+
+$$
+\begin{aligned}
+p(y_{1:m}) &= \prod_{i=1}^{m} p\bigl(y_i \mid y_1,\ldots,y_{i-1},\ \mathbf{c}\bigr) && \text{chain rule of probability}\\[4pt]
+\mathbf{h}^d_i &= g\bigl(\mathbf{h}^d_{i-1},\ \hat{\mathbf{y}}_{i-1},\ \mathbf{c}\bigr), \qquad
+\hat{\mathbf{y}}_i = \mathrm{softmax}\bigl(\mathbf{h}^d_i\bigr) && \text{an RNN models each factor}
+\end{aligned}
+$$
+
+- The product splits the probability of a whole sentence into one **next-word probability** per position, exactly as in an RNN language model, but now conditioned on the source sentence through $\mathbf{c}$
+- Each factor $p(y_i\mid y_1,\ldots,y_{i-1},\mathbf{c})$ is the softmax output $\hat{\mathbf{y}}_i$ of the decoder RNN. In the simplest version the decoder starts from $\mathbf{h}^d_0=\mathbf{c}$
+- Encoder and decoder are trained **jointly** to maximize the probability of the correct translation given the source sentence
+
+::: {.small-text}
+During training the true previous word $y_{i-1}$ is fed back in; at test time the model's own prediction $\hat{y}_{i-1}$ is used.
+:::
+
 
 
 ## Attention: Relevance?
@@ -1264,22 +1312,76 @@ $$
 \mathbf{c}_i = \sum_j \alpha_{ij}\mathbf{h}_{j}^e
 $$
 
+## Attention: the weights $\alpha_{ij}$ as a picture
 
-## Attention: 
+::: {.columns}
+::: {.column width="48%"}
+![](./img/bahdanau-activation.png){width=100% fig-align="center"}
 
-- $\mathbf{c}_i$ thus takes information from the entire encoder into account and is dynamically updated at each step of decoding
+::: {.tiny-credit}
+Bahdanau et al. (2014), alignment found by the attention model (Fig. 3a)
+:::
+:::
 
-```{python}
-#| echo: false
-#| fig-align: center
-attention(figsize=(12,6))
-plt.plot()
-```
+::: {.column width="52%"}
+* Rows: the French words the decoder generates ($i$). Columns: the English source words ($j$)
+* Each pixel is $\alpha_{ij}$: white is 1, black is 0. Every row sums to 1
+* Mostly diagonal: the languages share word order
+* **Not** on the diagonal: *zone économique européenne* attends to *European Economic Area* in **reverse order**, because the adjective follows the noun in French
+* The model finds this alignment itself, without any alignment labels
+:::
+:::
 
-## Attention
+## Attention: translation quality and sentence length
 
-- The dot product is a relatively simple way of calculating an attention score
-- We will return to this topic in the lectures about transformers
+![](./img/bahdanau-bleu.png){width=65% fig-align="center"}
+
+::: {.small-text}
+* **RNNenc**: fixed-length context vector. **RNNsearch**: attention. The suffix (30 or 50) is the maximum sentence length in training
+* RNNenc degrades as the source sentence grows. RNNsearch-50 stays roughly flat, even beyond 50 words
+:::
+
+::: {.tiny-credit}
+Bahdanau et al. (2014), Fig. 2
+:::
+
+
+## How is attention trained?
+
+- The weights $\alpha_{ij}$ are trained by  **backpropagation**. The gradient of the loss $\mathcal{L}$ follows the path
+
+$$
+\mathcal{L}\;\rightarrow\;\hat{\mathbf{y}}_i\;\rightarrow\;\mathbf{h}^d_i\;\rightarrow\;\mathbf{c}_i\;\rightarrow\;\bigl(\alpha_{ij},\ \mathbf{h}^e_j\bigr)\;\rightarrow\;\text{scores}\;\rightarrow\;\bigl(\mathbf{h}^d_{i-1},\ \mathbf{h}^e_j\bigr)\;\rightarrow\;\text{encoder and decoder RNNs}
+$$
+
+- We will refer to the original paper for details, the basic ideas of backprop were presented in [Lecture 5](./neural.qmd)
+
+
+
+
+## Attention: summary and outlook
+
+:::: {.columns}
+::: {.column width="50%"}
+**Attention in RNN encoder–decoders**
+
+- **Problem:** one fixed-length context vector $\mathbf{c}$ must carry the whole source sentence
+- **Idea:** a new context vector for every output step, $\mathbf{c}_i=\sum_j\alpha_{ij}\,\mathbf{h}^e_j$
+- **Weights:** $\alpha_{ij}=\mathrm{softmax}_j\,f(\mathbf{h}^d_{i-1},\mathbf{h}^e_j)$, the relevance of encoder state $j$ for output step $i$. The dot product is the simplest $f$
+- Like a **soft dictionary lookup**: the decoder state is the query, the encoder states are keys and values
+- Learned together with the translation model, and the weights $\alpha_{ij}$ can be inspected as alignments
+:::
+
+::: {.column width="50%"}
+**Where we go next: the transformer**
+
+- RNNs still read words one after another: slow to train, and long paths between distant words
+- Transformer (Vaswani et al., 2017): **attention replaces recurrence**
+- Queries, keys and values become separate learned projections of the token vectors, and the score is a scaled dot product: $\mathrm{softmax}\!\left(\mathbf{Q}\mathbf{K}^T/\sqrt{d_k}\right)\mathbf{V}$
+- **Self-attention:** every token attends to every other token of the same sentence, all positions in parallel
+:::
+::::
+
 
 ## Sources
 
@@ -1291,3 +1393,4 @@ Sources for this lecture include
 Physica D: Nonlinear Phenomena, Volume 404,132306](https://www.sciencedirect.com/science/article/abs/pii/S0167278919305974)
 - Andrej Karpathy and Justin Johnson and Li Fei-Fei (2015) [Visualizing and Understanding Recurrent Networks, arXiv](https://arxiv.org/abs/1506.02078)
 - Aurélien Géron (2025) Hands-On Machine Learning with Scikit-Learn and PyTorch, O'Reilly 
+- Bahdanau D, et al. (2016) [Neural Machine Translation by Jointly Learning to Align and Translate. arXiv 1409.0473](https://arxiv.org/abs/1409.0473)

@@ -1189,6 +1189,7 @@ def doughnut(figsize=(15, 6.5)):
     # Helpers
     # ----------------------------------------------------------------------
     rng = np.random.default_rng(9)
+    peaks = [1,4,2,5,0]  # bar of the predicted word in each (illustrative) softmax pill
 
     def arrow(xy_from, xy_to, lw=1.6, mscale=13, color="black", zorder=3, style="-"):
         a = FancyArrowPatch(xy_from, xy_to, arrowstyle="-|>", mutation_scale=mscale,
@@ -1197,7 +1198,7 @@ def doughnut(figsize=(15, 6.5)):
         ax.add_patch(a)
 
 
-    def histogram_pill(ax, xc, y0, y1, w=0.85):
+    def histogram_pill(ax, xc, y0, y1, w=0.85, peak=None):
         h = y1 - y0
         box = FancyBboxPatch(
             (xc - w / 2, y0), w, h,
@@ -1206,7 +1207,10 @@ def doughnut(figsize=(15, 6.5)):
         )
         ax.add_patch(box)
         n_bars = 6
-        heights = rng.uniform(0.25, 0.85, n_bars) * (h - 0.12)
+        heights = rng.uniform(0.08, 0.28, n_bars) * (h - 0.12)
+        if peak is not None:
+            # predicted word gets bar
+            heights[peak] = 0.95 * (h - 0.12)
         bar_w = (w - 0.26) / n_bars
         base = y0 + 0.06
         for i, hh in enumerate(heights):
@@ -1261,14 +1265,21 @@ def doughnut(figsize=(15, 6.5)):
                     va="center", zorder=4, color="black")
 
         if i < len(col_x) - 1:
+            bottleneck = (i == n_src - 1)
             arrow((xc + sq_w / 2, (hid_y0 + hid_y1) / 2),
-                (col_x[i + 1] - sq_w / 2, (hid_y0 + hid_y1) / 2))
+                (col_x[i + 1] - sq_w / 2, (hid_y0 + hid_y1) / 2),
+                    lw=3.0 if bottleneck else 1.6,
+                    color=GREEN_EDGE if bottleneck else "black")
+            if bottleneck:
+                ax.text((xc + col_x[i + 1]) / 2, (hid_y0 + hid_y1) / 2 + 0.28,
+                        r"$\mathbf{c}=\mathbf{h}_n$", fontsize=14, ha="center",
+                        va="bottom", zorder=6, color=GREEN_EDGE)
 
         if not is_source[i]:
             arrow((xc, hid_y1), (xc, sm_y0))
-            histogram_pill(ax, xc, sm_y0, sm_y1)
-            arrow((xc, sm_y1), (xc, pred_y - 0.28))
             j = i - n_src
+            histogram_pill(ax, xc, sm_y0, sm_y1, peak=peaks[j])
+            arrow((xc, sm_y1), (xc, pred_y - 0.28))
             ax.text(xc, pred_y, tgt_pred_words[j], fontsize=14, ha="center",
                     va="center", color="#CC2222", fontweight="bold")
 
@@ -1348,220 +1359,6 @@ def doughnut(figsize=(15, 6.5)):
 
     plt.tight_layout()
 
-
-def attention(figsize=(15, 7.5)):
-    """
-    attention_encoder_decoder_diagram.py
-
-    Recreates the attention-based seq2seq diagram: encoder hidden states
-    h^e_1..h^e_n, attention weights alpha_ij computed via dot product with
-    the previous decoder state, combined into context vector c_i, which
-    (together with the previous predicted word) drives the decoder hidden
-    states h^d_{i-1}, h^d_i and their softmax predictions y_{i-1}, y_i.
-    """
-
-    BLUE_CELL = "#AAAAE8"
-    BLUE_EDGE = "#5A5AC0"
-    GREEN = "#7FE896"
-    GREEN_EDGE = "#2E9E4A"
-    GREEN_TEXT = "#1E7A34"
-    RED_TEXT = "#CC2222"
-    BLUE_TEXT = "#2255CC"
-  
-
-    fig, ax = plt.subplots(figsize=figsize)
-
-    rng = np.random.default_rng(11)
-
-    # ----------------------------------------------------------------------
-    # Helpers
-    # ----------------------------------------------------------------------
-    def arrow(xy_from, xy_to, lw=1.5, mscale=13, color="black", zorder=3, style="-"):
-        a = FancyArrowPatch(xy_from, xy_to, arrowstyle="-|>", mutation_scale=mscale,
-                            linewidth=lw, color=color, zorder=zorder,
-                            linestyle=style, shrinkA=0, shrinkB=0)
-        ax.add_patch(a)
-
-
-    def histogram_pill(ax, xc, y0, y1, w=0.85):
-        h = y1 - y0
-        box = FancyBboxPatch(
-            (xc - w / 2, y0), w, h,
-            boxstyle="round,pad=0.01,rounding_size=" + str(h / 2),
-            linewidth=1.0, edgecolor="black", facecolor=WHITE, zorder=3,
-        )
-        ax.add_patch(box)
-        n_bars = 6
-        heights = rng.uniform(0.25, 0.85, n_bars) * (h - 0.12)
-        bar_w = (w - 0.26) / n_bars
-        base = y0 + 0.06
-        for i, hh in enumerate(heights):
-            bx = xc - w / 2 + 0.13 + i * bar_w
-            ax.add_patch(Rectangle((bx, base), bar_w * 0.65, hh,
-                                    facecolor="black", edgecolor="none", zorder=4))
-
-
-    def curly_brace(ax, x_start, x_end, y_ref, depth=0.32, lw=1.6, direction="down"):
-        sign = -1 if direction == "down" else 1
-        x_mid = (x_start + x_end) / 2
-        dx = (x_end - x_start) * 0.22
-        verts = [
-            (x_start, y_ref),
-            (x_start, y_ref + sign * depth * 0.9), (x_mid - dx, y_ref + sign * depth * 0.9),
-            (x_mid, y_ref + sign * depth * 1.6),
-            (x_mid + dx, y_ref + sign * depth * 0.9), (x_end, y_ref + sign * depth * 0.9),
-            (x_end, y_ref),
-        ]
-        codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4,
-                Path.CURVE4, Path.CURVE4, Path.LINETO]
-        ax.add_patch(PathPatch(Path(verts, codes), facecolor="none",
-                                edgecolor="black", linewidth=lw, zorder=2))
-        return x_mid, y_ref + sign * depth * 1.6
-
-    # ----------------------------------------------------------------------
-    # Layout
-    # ----------------------------------------------------------------------
-    enc_x = [1.0, 2.5, 4.0, 5.9]
-    enc_labels = [r"$h^e_1$", r"$h^e_2$", r"$h^e_3$", r"$h^e_n$"]
-    x_labels = [r"$x_1$", r"$x_2$", r"$x_3$", r"$x_n$"]
-    attn_vals = [".4", ".3", ".1", ".2"]
-
-    hid_y0, hid_y1 = 2.15, 2.85
-    attn_y = 4.1
-    x_y = 1.2
-    sq_w = 0.65
-
-    ci_x, ci_y0, ci_y1 = 8.0, 3.55, 4.45
-    ci_w = 0.75
-
-    dec_x = [10.3, 11.9]
-    dec_labels = [r"$h^d_{i-1}$", r"$h^d_i$"]
-    pred_labels = [r"$y_{i-1}$", r"$y_i$"]
-    y_in_labels = [r"$y_{i-2}$", r"$y_{i-1}$"]
-    sm_y0, sm_y1 = attn_y - 0.35, attn_y + 0.35
-    pred_y = 5.15
-
-    # ----------------------------------------------------------------------
-    # Encoder hidden states + inputs
-    # ----------------------------------------------------------------------
-    for i, xc in enumerate(enc_x):
-        ax.text(xc, x_y - 0.55, x_labels[i], fontsize=13, ha="center", va="center", color=BLUE_TEXT)
-        arrow((xc, x_y - 0.3), (xc, hid_y0))
-        ax.add_patch(Rectangle((xc - sq_w / 2, hid_y0), sq_w, hid_y1 - hid_y0,
-                                facecolor=BLUE_CELL, edgecolor=BLUE_EDGE, linewidth=1.4, zorder=3))
-        ax.text(xc, (hid_y0 + hid_y1) / 2, enc_labels[i], fontsize=12, ha="center", va="center", zorder=4)
-        if i < len(enc_x) - 1:
-            arrow((xc + sq_w / 2, (hid_y0 + hid_y1) / 2), (enc_x[i + 1] - sq_w / 2, (hid_y0 + hid_y1) / 2))
-
-    # arrow + dots continuing right of h^e_n
-    arrow((enc_x[-1] + sq_w / 2, (hid_y0 + hid_y1) / 2), (enc_x[-1] + 0.85, (hid_y0 + hid_y1) / 2))
-    ax.text(enc_x[-1] + 1.05, (hid_y0 + hid_y1) / 2, "...", fontsize=14, ha="center", va="center")
-
-    # attention-weight circles + dashed connections
-    for i, xc in enumerate(enc_x):
-        ax.add_patch(Circle((xc, attn_y), 0.28, facecolor="none", edgecolor=GREEN_EDGE,
-                            linewidth=1.4, linestyle="--", zorder=4))
-        ax.text(xc, attn_y, attn_vals[i], fontsize=11, ha="center", va="center",
-                color=GREEN_TEXT, zorder=5)
-        # dashed arrow down into own h^e cell
-        arrow((xc, attn_y - 0.28), (xc, hid_y1 + 0.03), lw=1.1, mscale=10,
-            color=GREEN_EDGE, style="--", zorder=2)
-        # solid green arrow up-right into c_i
-        arrow((xc + 0.22, attn_y + 0.2), (ci_x - ci_w / 2 - 0.05, ci_y0 + (ci_y1 - ci_y0) * (0.3 + 0.15 * i)),
-            lw=1.3, mscale=11, color=GREEN_EDGE, zorder=2)
-        # dashed green arrow fanning down-right into decoder h^d_{i-1}
-        arrow((xc + 0.15, attn_y - 0.22), (dec_x[0] - sq_w / 2 - 0.05, (hid_y0 + hid_y1) / 2 + 0.05),
-            lw=1.0, mscale=9, color=GREEN_EDGE, style="--", zorder=2)
-
-    ax.text((enc_x[0] + enc_x[-1]) / 2, attn_y + 0.9,
-            r"$\sum_j \alpha_{ij} h^e_j$", fontsize=15, ha="center", va="center", color=GREEN_TEXT)
-    ax.text((enc_x[1] + enc_x[2]) / 2 + 1.6, attn_y - 0.75,
-            r"$h^d_{i-1} \cdot h^e_j$", fontsize=11, ha="center", va="center", color="black")
-    ax.text(enc_x[0] - 0.95, attn_y, "attention\nweights\n" + r"$\alpha_{ij}$",
-            fontsize=10.5, ha="center", va="center", color="black")
-
-    # ----------------------------------------------------------------------
-    # Context vector c_i
-    # ----------------------------------------------------------------------
-    ax.add_patch(FancyBboxPatch(
-        (ci_x - ci_w / 2, ci_y0), ci_w, ci_y1 - ci_y0,
-        boxstyle="round,pad=0.02,rounding_size=0.12",
-        linewidth=1.6, edgecolor=GREEN_EDGE, facecolor=GREEN, zorder=4,
-    ))
-    ax.text(ci_x, (ci_y0 + ci_y1) / 2, r"$c_i$", fontsize=14, ha="center", va="center", zorder=5)
-
-    # c_i -> decoder h^d_{i-1} (solid black elbow arrow, built manually)
-    elbow_mid = (ci_x, hid_y1 + 0.35)
-    ax.plot([ci_x, ci_x], [ci_y0, elbow_mid[1]], color="black", linewidth=1.4, zorder=2)
-    ax.plot([ci_x, dec_x[0]], [elbow_mid[1], elbow_mid[1]], color="black", linewidth=1.4, zorder=2)
-    arrow((dec_x[0], elbow_mid[1]), (dec_x[0], hid_y1), lw=1.4, mscale=12)
-
-    # ----------------------------------------------------------------------
-    # Decoder: leading dots, hidden states, softmax, predictions
-    # ----------------------------------------------------------------------
-    ax.text(dec_x[0] - 1.0, (hid_y0 + hid_y1) / 2, "...", fontsize=14, ha="center", va="center")
-    arrow((dec_x[0] - 0.8, (hid_y0 + hid_y1) / 2), (dec_x[0] - sq_w / 2, (hid_y0 + hid_y1) / 2))
-
-    for i, xc in enumerate(dec_x):
-        ax.add_patch(Rectangle((xc - sq_w / 2, hid_y0), sq_w, hid_y1 - hid_y0,
-                                facecolor=BLUE_CELL, edgecolor=BLUE_EDGE, linewidth=1.4, zorder=3))
-        ax.text(xc, (hid_y0 + hid_y1) / 2, dec_labels[i], fontsize=12, ha="center", va="center", zorder=4)
-        if i < len(dec_x) - 1:
-            arrow((xc + sq_w / 2, (hid_y0 + hid_y1) / 2), (dec_x[i + 1] - sq_w / 2, (hid_y0 + hid_y1) / 2))
-
-        arrow((xc, hid_y1), (xc, sm_y0))
-        histogram_pill(ax, xc, sm_y0, sm_y1)
-        arrow((xc, sm_y1), (xc, pred_y - 0.28))
-        ax.text(xc, pred_y, pred_labels[i], fontsize=14, ha="center", va="center",
-                color=RED_TEXT, fontweight="bold")
-
-        # y input from below
-        ax.text(xc, x_y - 0.55, y_in_labels[i], fontsize=13, ha="center", va="center",
-                color=RED_TEXT, fontweight="bold")
-        arrow((xc, x_y - 0.3), (xc, hid_y0))
-
-    # c_{i-1} / c_i small labels feeding decoder cells from lower-left
-    ax.text(dec_x[0] - 0.55, x_y - 0.05, r"$c_{i-1}$", fontsize=10.5, ha="center", va="center")
-    ax.text(dec_x[1] - 0.55, x_y - 0.05, r"$c_i$", fontsize=10.5, ha="center", va="center")
-
-    # arrow + dots continuing right of h^d_i
-    arrow((dec_x[-1] + sq_w / 2, (hid_y0 + hid_y1) / 2), (dec_x[-1] + 0.85, (hid_y0 + hid_y1) / 2))
-    ax.text(dec_x[-1] + 1.05, (hid_y0 + hid_y1) / 2, "...", fontsize=14, ha="center", va="center")
-
-    # dashed vertical separator before the shown decoder cells
-    sep_x = dec_x[0] - 0.85
-    ax.plot([sep_x, sep_x], [x_y - 1.0, pred_y + 0.55], linestyle="--", color="#888888",
-            linewidth=1.3, zorder=1)
-
-    # curved dashed feedback arrow (autoregressive), bottom of decoder
-    fb = FancyArrowPatch(
-        (dec_x[0], x_y - 0.75), (dec_x[1], x_y - 0.75),
-        connectionstyle="arc3,rad=-0.4",
-        arrowstyle="-|>", mutation_scale=11, linewidth=1.1,
-        linestyle="--", color="#888888", zorder=2,
-    )
-    ax.add_patch(fb)
-
-    # ----------------------------------------------------------------------
-    # Encoder / Decoder braces + labels
-    # ----------------------------------------------------------------------
-    _, tip_y = curly_brace(ax, enc_x[0] - sq_w, enc_x[-1] + sq_w, x_y - 0.9, depth=0.28, direction="down")
-    ax.text((enc_x[0] + enc_x[-1]) / 2, tip_y - 0.3, "Encoder", fontsize=15,
-            ha="center", va="center", fontweight="bold")
-
-    _, tip_y2 = curly_brace(ax, sep_x, dec_x[-1] + sq_w, pred_y + 0.55, depth=0.25, direction="up")
-    ax.text((sep_x + dec_x[-1]) / 2, tip_y2 + 0.3, "Decoder", fontsize=15,
-            ha="center", va="center", fontweight="bold")
-
-    # ----------------------------------------------------------------------
-    # Layout
-    # ----------------------------------------------------------------------
-    ax.set_xlim(enc_x[0] - 2.2, dec_x[-1] + 2.0)
-    ax.set_ylim(x_y - 1.6, tip_y2 + 1.0)
-    ax.set_aspect("equal")
-    ax.axis("off")
-
-    plt.tight_layout()
 
 
 def rnn_vs_lstm_1():
@@ -2083,3 +1880,107 @@ def plot_derivatives(figsize=(5.5, 3.5)):
     ax.legend()
     fig.tight_layout()
     return fig
+
+def bahdanau_attention(src_words=("Ich", "bin", "ein", "Berliner"),
+                       weights=(0.05, 0.05, 0.13, 0.77),
+                       y_prev="a", y_t="doughnut", bidirectional=True,
+                       figsize=(13, 7.2)):
+    """
+    Attention-based encoder-decoder, after Figure 1 of Bahdanau et al. (2014),
+    in the notation of the lecture: the encoder states h^e_j are scored against
+    the previous decoder state h^d_{i-1}; the softmax of the scores gives the
+    weights alpha_ij, and the weighted sum of the encoder states is the context
+    vector c_i that enters the decoder at step i. The weights are illustrative.
+    bidirectional=True draws the bidirectional encoder of the paper.
+    """
+    n = len(src_words)
+    xs = [1.6 + 1.9 * j for j in range(n)]
+    xc = float(np.mean(xs))                     # x position of the context node
+    fig, ax = plt.subplots(figsize=figsize)
+
+    def arrow(p, q, lw=1.5, color="black", ls="-", ms=12, z=2, rad=0.0):
+        ax.add_patch(FancyArrowPatch(p, q, arrowstyle="-|>", mutation_scale=ms,
+                     linewidth=lw, color=color, linestyle=ls, shrinkA=0, shrinkB=0,
+                     zorder=z, connectionstyle=f"arc3,rad={rad}"))
+
+    def cell(x, y, w, h, fc, text=None, fs=13, ec="black"):
+        ax.add_patch(FancyBboxPatch((x - w / 2, y - h / 2), w, h,
+                     boxstyle="round,pad=0,rounding_size=0.1",
+                     fc=fc, ec=ec, lw=1.3, zorder=3))
+        if text:
+            ax.text(x, y, text, ha="center", va="center", fontsize=fs, zorder=4)
+
+    # ---------------- encoder
+    y_word, y_fwd, y_bwd, bw, bh = 0.2, 1.5, 2.5, 0.9, 1.0
+    y_low = y_fwd if bidirectional else y_bwd       # lowest cell row
+    for j, (x, w) in enumerate(zip(xs, src_words)):
+        ax.text(x, y_word, w, ha="center", va="center", fontsize=14,
+                fontweight="bold", color="#2255CC")
+        arrow((x, y_word + 0.3), (x, y_low - bh / 2 - 0.02), lw=1.3)
+        if bidirectional:
+            cell(x, y_fwd, bw, bh, BLUE_CELL, "\u2192")
+            cell(x, y_bwd, bw, bh, ORANGE, "\u2190")
+            hh = 2 * bh + 0.16
+        else:
+            cell(x, y_bwd, bw, bh, BLUE_CELL)
+            hh = bh + 0.16
+        ax.add_patch(FancyBboxPatch((x - bw / 2 - 0.08, y_low - bh / 2 - 0.08),
+                     bw + 0.16, hh, boxstyle="round,pad=0,rounding_size=0.15",
+                     fc="none", ec=GREEN_EDGE, lw=1.6, zorder=2))
+        ax.text(x, 3.8, rf"$\mathbf{{h}}^e_{j + 1}$", ha="center", va="center", fontsize=15)
+        if j < n - 1:
+            yy = y_fwd if bidirectional else y_bwd
+            arrow((x + bw / 2 + 0.08, yy), (xs[j + 1] - bw / 2 - 0.08, yy))
+            if bidirectional:
+                arrow((xs[j + 1] - bw / 2 - 0.08, y_bwd), (x + bw / 2 + 0.08, y_bwd))
+    if bidirectional:
+        ax.text(xs[0] - 1.05, y_fwd, "forward\nRNN", ha="right", va="center", fontsize=11)
+        ax.text(xs[0] - 1.05, y_bwd, "backward\nRNN", ha="right", va="center", fontsize=11)
+    else:
+        ax.text(xs[0] - 1.05, y_bwd, "encoder\nRNN", ha="right", va="center", fontsize=11)
+
+    # ---------------- attention: weighted arrows from h^e_j to the context node
+    y_ctx = 7.2
+    for j, (x, a) in enumerate(zip(xs, weights)):
+        ax.text(x, 4.45, rf"$\alpha_{{i{j + 1}}}={a:.2f}$", ha="center",
+                va="center", fontsize=11, color=ARROW_BLUE, fontweight="bold")
+        arrow((x, 4.85), (xc, y_ctx - 0.5), lw=1.2 + 8 * a, color=ARROW_BLUE,
+              ms=10 + 10 * a, z=2)
+    ax.add_patch(Circle((xc, y_ctx), 0.5, fc=GREEN_CELL, ec=GREEN_EDGE, lw=1.6, zorder=3))
+    ax.text(xc, y_ctx, r"$\Sigma$", ha="center", va="center", fontsize=18, zorder=4)
+    ax.text(xc, y_ctx + 0.95, r"$\mathbf{c}_i=\sum_j \alpha_{ij}\,\mathbf{h}^e_j$",
+            ha="center", va="center", fontsize=14)
+
+    # ---------------- decoder
+    y_dec, xs1, xs2 = 9.2, 9.2, 11.9
+    cell(xs1, y_dec, 1.4, 0.85, PURPLE, r"$\mathbf{h}^d_{i-1}$")
+    cell(xs2, y_dec, 1.4, 0.85, PURPLE, r"$\mathbf{h}^d_{i}$")
+    arrow((xs1 - 1.7, y_dec), (xs1 - 0.7, y_dec))
+    arrow((xs1 + 0.7, y_dec), (xs2 - 0.7, y_dec))
+    arrow((xs2, y_dec + 0.43), (xs2, y_dec + 1.2))                      # h^d_i -> y_i
+    ax.text(xs2, y_dec + 1.5, y_t, ha="center", va="center", fontsize=15,
+            fontweight="bold", color="#CC2222")
+    ax.text(xs2 + 0.25 + 0.115 * len(y_t), y_dec + 1.5, r"$\hat{y}_i$", ha="left",
+            va="center", fontsize=13, color="#555555")
+    arrow((xs2, y_dec - 1.15), (xs2, y_dec - 0.45))                     # y_{i-1} -> h^d_i
+    ax.text(xs2, y_dec - 1.4, y_prev, ha="center", va="center", fontsize=15,
+            fontweight="bold", color="#CC2222")
+    ax.text(xs2 + 0.25 + 0.115 * len(y_prev), y_dec - 1.4, r"$\hat{y}_{i-1}$", ha="left",
+            va="center", fontsize=13, color="#555555")
+    arrow((xc + 0.5, y_ctx + 0.05), (xs2 - 0.7, y_dec - 0.2), lw=2.2,
+          color=GREEN_EDGE, ms=14)                                       # c_i -> h^d_i
+
+    # relevance: h^d_{i-1} is compared with every encoder state (dashed)
+    arrow((xs1, y_dec - 0.43), (6.0, 5.9), lw=1.4, color="#444444", ls="--", ms=11)
+    ax.text(8.3, 5.3, "relevance\n" + r"$f(\mathbf{h}^d_{i-1},\mathbf{h}^e_j)$" + "\n"
+            + r"softmax $\rightarrow \alpha_{ij}$", ha="left", va="center", fontsize=12)
+
+    ax.text(xc, -0.7, "source text (bidirectional RNN encoder)" if bidirectional
+            else "source text (RNN encoder)", ha="center", va="center", fontsize=12,
+            style="italic", color="#444444")
+    xlim, ylim = (-1.7, 13.9), (-1.2, 11.6)
+    ax.add_patch(Rectangle((xlim[0], ylim[0]), xlim[1] - xlim[0], ylim[1] - ylim[0],
+                 fc="none", ec="black", lw=1.2, zorder=0))
+    ax.set_xlim(*xlim); ax.set_ylim(*ylim)
+    ax.set_aspect("equal"); ax.axis("off")
+    plt.tight_layout()
