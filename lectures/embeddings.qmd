@@ -42,6 +42,8 @@ Topics
 
 * [**Skip-gram**](#skipgram)
 * [**Word2vec**](#word2vec)
+* [**Negative sampling**](#negsample)
+* [**Biomedical concept replacement**](#concept)
 * [**Tokenization**](#token)
 * [**Byte pair encoding**](#bytepair)
 
@@ -244,7 +246,9 @@ w2v_analogy()
 plt.plot()
 ```
 
-- Word embeddings are semantically meaningful representations of words
+- Word embeddings are semantically meaningful representations of words: relations such as gender (red) and plural (blue) correspond to roughly constant vector offsets
+- This supports analogies by vector arithmetic: $\mathbf{v}_{\text{king}} - \mathbf{v}_{\text{man}} + \mathbf{v}_{\text{woman}} \approx \mathbf{v}_{\text{queen}}$
+- (The plot is a 2D projection of high-dimensional vectors)
 
 ::: {.tiny-credit}
 Redrawn after Figure 2 of Mikolov T, et al. (2013) [Linguistic Regularities in Continuous Space Word Representations](https://aclanthology.org/N13-1090/)
@@ -253,28 +257,29 @@ Redrawn after Figure 2 of Mikolov T, et al. (2013) [Linguistic Regularities in C
 ## word2vec
 
 ::: {.callout-note appearance="simple" icon=false}
-Word2vec is a group of related models that are used to produce word embeddings, based on a series extensions of the original Skip-gram model.
+Word2vec is a group of related models that are used to produce word embeddings, based on a series of extensions of the original Skip-gram model.
 :::
 
-- It is mainly  based on two different models: 
+* It is mainly  based on two different models: 
   - skip-gram (SG)
-  - continuous bag of words (CBOW)
-* **word2vec** is a shallow, two-layer neural networks trained to reconstruct linguistic contexts of words. 
+  - continuous bag of words (CBOW)^[Continuous bag of words, not covered in this lecture.]
+* **word2vec** is a shallow, two-layer neural network trained to reconstruct linguistic contexts of words. 
 * **Input**: a large corpus of text 
-* **Output**: a vector space, typically of several hundred dimensions, with each unique word in the corpus being assigned a corresponding vector in the space. 
+* **Output**: a vector space, typically of 100-1000 dimensions, with each unique word in the corpus being assigned a corresponding vector in the space. 
 * Word vectors are positioned in the vector space such that words that share common contexts in the corpus are located in close proximity to one another in the space.
 
 
 
 ## distributional similarity
+
 ::: {.callout-note appearance="simple" icon=false}
 
-- You shall know a word by the company it keeps J.R. Firth, 1957 \newline
+- You shall know a word by the company it keeps J.R. Firth, 1957
 - Dime con quien andas, y te diré quien eres (Don Quijote de la Mancha, 1615)
 :::
  
 * Word2vec essentially looks at the context in which a word appears
-* Find the distribution of a word's neighbors in a large corpus of text---this will represent the `meaning` of the word
+* The distribution of a word's neighbors in a large corpus of text approximates the *meaning* of the word
 
 ![](./img/quijote.jpg){ fig-align="center"}
 
@@ -292,287 +297,247 @@ $$
 $$
 
  
-* For each word $t$ in our training text $T$, look at the context words that surround $t$. Our objective function, $J(\Theta)$, is the product of such probabilites for all words and corresponding context words.
-* Our goal is to find $\Theta$ that maximizes the probability ($\Theta$ is the embedding weight matrix)
- $$
- \begin{equation}
-  \arg \max_{\Theta} J(\Theta)=\prod_{t=1}^{T} \prod_{\substack{-m\le j\le m\\ j\ne 0}} p(w_{t+j}|w_t,\Theta)
- \end{equation}
- $$
- We can **simplify** this equation by simply showing the product over all word and context pairs $(w,c)$ in the dataset $D$ of such pairs that is created from $T$.
- $$
- \begin{equation}
-    \arg \max_{\Theta}  J(\Theta)=\prod_{(w,c)\in D} p(w_{t+j}|w_t,\Theta)
- \end{equation}
- $$
+* For position $t=1,\ldots,T$ in the training text, look at the context words within a window of size $m$ around $w_t$. The objective function $J(\Theta)$ is then
+$$
+J(\Theta)=\prod_{t=1}^{T} \prod_{\substack{-m\le j\le m\\ j\ne 0}} p(w_{t+j}\mid w_t;\Theta)
+$$
+* We can **simplify** the notation by writing $D$ for the set of all (center, outside) word pairs $(c,o)$ extracted from the text:
+$$
+J(\Theta)=\prod_{(c,o)\in D} p(o\mid c;\Theta)
+$$
+* Our goal is to find the parameters $\Theta$ that maximize it: $\hat{\Theta}=\arg\max_{\Theta} J(\Theta)$
+
+## The score: how well do two words fit together?
+
+::: {.callout-note appearance="simple" icon=false}
+Everything in word2vec is built on one number: the **score** of a (center word, outside word) pair is the dot product of their vectors
+:::
+
+$$
+s_{o,c}=\mathbf{u}_o^{T}\mathbf{v}_c=\sum_{i=1}^{d} u_{o,i}\,v_{c,i} = \Vert\mathbf{u}_o\Vert\,\Vert\mathbf{v}_c\Vert \cos\theta
+$$ {#eq-w2v-score}
+
+* **Large and positive** when the two vectors point in a similar direction: the words tend to occur together
+* **Near zero** when the vectors are unrelated (perpendicular)
+* **Negative** when they point in opposite directions: the words avoid each other
+* This is the cosine similarity from before, without the normalization. Unlike one-hot vectors, whose dot product is always 0 for different words, dense vectors can give graded scores.
 
 ## Defining a loss function
-::: {.callout-note appearance="simple" icon=false}
-The major parameters in this model are the vector representations of the words ($\Theta$).
-:::
+
 * Rather than maximizing the objective function  $J(\Theta)$, it is more convenient to minimize the corresponding loss function
 
 $$
-\begin{equation}
-  \ell(\Theta)=-\log J(\Theta)= \dfrac{1}{|D|} \sum_{(w,c)\in D} \log p(c|w,\Theta)
-\end{equation}
+\ell(\Theta)=-\log J(\Theta)= -\dfrac{1}{|D|} \sum_{(w,c)\in D} \log p(c|w,\Theta)
 $$ {#eq-cost}
 
 
-* We now need to define the term $p(c|w,\Theta)$. We will start off with the \textbf{softmax} function mentioned above
-  - $o$ means the outside word 
-  - $c$ means the center word for some skipgram defined by some $t$ and some $j$, i.e., $w_{t+j}$ is shown here as $o$ and $w_t$ is shown as $c$.
+* We now need to define the term $p(c|w,\Theta)$. We will start off with the **softmax** with $o$: **outside word** and  $c$: **center word** for some skipgram defined by some $t$ and some $j$, i.e., $w_{t+j}$ is shown here as $o$ and $w_t$ is shown as $c$.
 
 $$
-\begin{equation}
  p(w_{t+j}|w_t,\Theta) =  p(o|c) = \dfrac{\exp (\mathbf{u}_{o}^{T}\mathbf{v}_c) }{\sum_{w=1}^{V} \exp (\mathbf{u}_{w}^{T}\mathbf{v}_c)}
-\end{equation}
 $$ {#eq-loss-per-word}
  
  
 * Here, $V$ is the total number of vocabulary of words (different from $T$ the total number of words in a large corpus (where individual words are repeated).
 
-
  
-##  word2vec
+## Two vectors per word
 ::: {.callout-note appearance="simple" icon=false}
- Each word actually has two vector representations
+Each word actually has two vector representations, both in $\mathbb{R}^d$
 :::
 
-* $\mathbf{v}_c$ is the representation for a word in the center of the window
-* $\mathbf{u}_o$ is the representation for a word in the context (outside) of the center word
-* Note that in this model the position of the context word in the window is not important
-
-
+* $\mathbf{v}_c$ is the representation of a word when it is the center word of the window
+* $\mathbf{u}_o$ is the representation of a word when it is an outside (context) word of the center word
+* In this model the position of the context word in the window is not important: the same softmax is used for every offset $j$
+* After training, the vectors $\mathbf{v}$ (or the average of $\mathbf{u}$ and $\mathbf{v}$) are used as the word embeddings
  
  
-## word2vec: initialize from one hot
+## word2vec: from one-hot vector to embedding
 ::: {.callout-note appearance="simple" icon=false}
-  Initializing the model from a one-hot vector for some word $t$ gives us...
+The first layer is a lookup: multiplying the one-hot vector of the center word by the matrix $\mathbf{W}$ selects that word's vector.
 :::
 
- We have
- $$
-\begin{equation}
-  \mathbf{w}_t\mathbf{W}=\mathbf{v}_c
-\end{equation}
- $$
-
- where $\mathbf{w}_t$ is a $V\times 1$ vector, $\mathbf{W}$ is a randomly initialized $d\times V$ matrix, and $\mathbf{v}_c$ is a $d\times 1$ vector.
+Let $\mathbf{x}_c \in \{0,1\}^{V}$ be the one-hot vector of the center word $c$ and let $\mathbf{W}\in\mathbb{R}^{d\times V}$ be a randomly initialized matrix whose columns are the center-word vectors. Then
 
 $$
-\begin{equation}
-  \begin{bmatrix}
-   0\\ 0\\ \vdots \\ 0 \\ 1 \\ 0 \\ 0
-  \end{bmatrix}^{|V|\times 1}
-    \begin{bmatrix}
-    \ldots & \ldots & 0.2& \ldots & \ldots \\
-     \ldots & \ldots & -1.4& \ldots & \ldots \\
-      \ldots & \ldots & 0.3& \ldots & \ldots \\
-      && \vdots && \\
-       \ldots & \ldots & 0.7& \ldots & \ldots \\
-        \ldots & \ldots & 0.6& \ldots & \ldots \\
-    \end{bmatrix}^{d \times |V|}
-    =
-      \begin{bmatrix}
-       0.2\\ -1.4\\ 0.3\\ \vdots \\ 0.7 \\ 0.6
-  \end{bmatrix}^{d \times 1}
-\end{equation}
+\mathbf{v}_c = \mathbf{W}\mathbf{x}_c
+$$
+
+$$
+\underbrace{\begin{bmatrix}
+  \ldots & \ldots & 0.2 & \ldots & \ldots \\
+  \ldots & \ldots & -1.4 & \ldots & \ldots \\
+  \ldots & \ldots & 0.3 & \ldots & \ldots \\
+  && \vdots && \\
+  \ldots & \ldots & 0.7 & \ldots & \ldots \\
+  \ldots & \ldots & 0.6 & \ldots & \ldots
+\end{bmatrix}}_{\mathbf{W}\;(d\times V)}
+\underbrace{\begin{bmatrix} 0\\ 0\\ 1\\ 0\\ 0 \end{bmatrix}}_{\mathbf{x}_c\;(V\times 1)}
+=
+\underbrace{\begin{bmatrix} 0.2\\ -1.4\\ 0.3\\ \vdots \\ 0.7 \\ 0.6 \end{bmatrix}}_{\mathbf{v}_c\;(d\times 1)}
 $$
 
 ## word2vec: calculate the loss
 
-
-:::{.text-small}
-We have a second ($|V|\times d$) matrix $\mathbf{U}$  that contains the context word vector representations
-(just as $\mathbf{W}$ contains the center word representations).
+::: {.small-text}
+We have a second matrix $\mathbf{U}\in\mathbb{R}^{V\times d}$ whose *rows* are the outside-word vectors $\mathbf{u}_w^{T}$ (whereas the *columns* of $\mathbf{W}$ are the center-word vectors).
+Multiplying by $\mathbf{v}_c$ gives one score for every word in the vocabulary:
 :::
 
 $$
-\begin{equation}
- \mathbf{v}_c\mathbf{U} = \ldots
-\end{equation}
+\underbrace{\begin{bmatrix}
+  \mathbf{u}_1^{T} \\ \mathbf{u}_2^{T} \\ \mathbf{u}_3^{T} \\ \vdots \\ \mathbf{u}_{V}^{T}
+\end{bmatrix}}_{\mathbf{U}\;(V\times d)}
+\underbrace{\begin{bmatrix} 0.2\\ -1.4\\ 0.3\\ \vdots \\ 0.7 \\ 0.6 \end{bmatrix}}_{\mathbf{v}_c\;(d\times 1)}
+=
+\underbrace{\begin{bmatrix}
+  \mathbf{u}_1^{T}\mathbf{v}_c \\ \mathbf{u}_2^{T}\mathbf{v}_c \\ \mathbf{u}_3^{T}\mathbf{v}_c \\ \vdots \\ \mathbf{u}_{V}^{T}\mathbf{v}_c
+\end{bmatrix}}_{\text{scores}\;(V\times 1)}
 $$
-as
-$$
-\begin{equation}
-  \begin{bmatrix}
-       0.2\\ -1.4\\ 0.3\\ \vdots \\ 0.7 \\ 0.6
-  \end{bmatrix}^{d \times 1}
-  \begin{bmatrix}
-    \ldots & \ldots & 0.4& \ldots & \ldots \\
-     \ldots & \ldots & 0.4& \ldots & \ldots \\
-      \ldots & \ldots & 1.3& \ldots & \ldots \\
-      && \vdots && \\
-       \ldots & \ldots & -0.7& \ldots & \ldots \\
-        \ldots & \ldots & 0.1& \ldots & \ldots \\
-    \end{bmatrix}^{ |V|\times d}
-    =
-      \begin{bmatrix}
-       0.3\\ 0.01\\ -0.2\\ \vdots \\ 0.9 \\ 0.1
-  \end{bmatrix}^{|V| \times 1}
-\end{equation}
-$$
- 
- 
+
 ## word2vec: calculate the loss (2)
- 
+
 ::: {.callout-note appearance="simple" icon=false}
-To calculate the loss in this example, we take the softmax of the product of  $\mathbf{v}_c$ and $\mathbf{U}$ and 
-compare it to the truth vector (which is a one-hot vector $u_{truth}$ containing the ``truth'', i.e., the word that really was at the indicated position of the context).
+To calculate the loss, we apply the softmax to the scores $\mathbf{U}\mathbf{v}_c$ and compare the result to the *truth* vector $\mathbf{y}$, a one-hot vector that marks the word that really occurred in the context.
 :::
 
 $$
-\begin{equation}
- \text{softmax}( \mathbf{v}_c\mathbf{U}) = 
-       \begin{bmatrix}
-       p_1\\ p_2\\ p_3\\ \vdots \\ p_{V-1} \\ p_{V}
-  \end{bmatrix}
-\end{equation}
+\text{softmax}(\mathbf{U}\mathbf{v}_c) =
+\begin{bmatrix} p_1\\ p_2\\ p_3\\ \vdots \\ p_{V-1} \\ p_{V} \end{bmatrix},
+\qquad p_w = p(w \mid c)
 $$
-If the truth vector has a one at position i, then we would feed $1-p_i$ to our loss function.
 
- 
-## word2vec: Train model
+If the truth vector has a one at position $o$, the loss for this example is $-\log p_o$ (the cross-entropy between $\mathbf{y}$ and the predicted distribution). It is small when the model gives the true outside word a probability near 1.
+
+
+## word2vec: the parameters
 ::: {.callout-note appearance="simple" icon=false}
- As is usual in deep learning, we will train the model using gradient descent. We first define a vector $\Theta$ with all parameters (both the center ($\mathbf{v}$)
- and the outside ($\mathbf{u}$) vectors for all words
+As is usual in deep learning, we will train the model using gradient descent. We first collect all of the parameters, i.e., both the center vectors ($\mathbf{v}$) and the outside vectors ($\mathbf{u}$) of all words, in a single vector $\Theta$.
 :::
 
 $$
-\begin{equation}
- \Theta = \begin{bmatrix}
+\Theta = \begin{bmatrix}
            \mathbf{v}_{aardvark} \\ \vdots \\  \mathbf{v}_{zebra} \\  \mathbf{u}_{aardvark} \\ \vdots \\  \mathbf{u}_{zebra}
           \end{bmatrix}
 \in \mathbb{R}^{2dV}
-\end{equation}
 $$
 
-:::{.text-small}
-
-thus, there is a $d$ dimensional vector for each word, and we have a total of $V$ words, each of which is represented twice.
-All of this gets flattened into a $2dV \times 1$ dimensional vector we call $\Theta$.
+::: {.small-text}
+There is a $d$-dimensional vector for each of the $V$ words, and each word is represented twice (as center and as outside word). All of this is flattened into a $2dV \times 1$ vector $\Theta$, which contains the columns of $\mathbf{W}$ and the rows of $\mathbf{U}$.
+For example, with $V=100{,}000$ and $d=300$ there are $60$ million parameters.
 :::
- 
+
+
 ## gradient descent
 ::: {.callout-note appearance="simple" icon=false}
- word2vec uses gradient descent to find ``optimum'' values of its parameters. Note that backpropagation as used in artificial neural networks/deep learning is 
- basically a form of gradient descent with some extra bells and whistles such as memoization.
+We use gradient descent^[Refer to previous two lectures for details] to find the vectors that minimize the loss.
 :::
 
-![](./img/cs571-gradient-descent-4-638.jpg){width=70% fig-align="center"}
-
- 
-## gradient descent
-::: {.callout-note appearance="simple" icon=false}
- We use gradient descent to obtain a collection of vectors that minimize the cost.
-:::
-
-The optimization equations for each word are as follows (using a center for for this example; it is analogous for context words).
+* For a single (center, outside) pair $(c,o)$ we need the gradient of $\log p(o\mid c)$. 
+* The loss is $-\log p(o\mid c)$, so its gradient is the negative of this.
+* We compute it with respect to the center vector $\mathbf{v}_c$; the gradient with respect to the outside vectors $\mathbf{u}_w$ is similar.
 
 $$
 \begin{eqnarray*}
-\log p(w_{t+j}|w_t) &=& \log p(o|c) \\
+\log p(w_{t+j}\mid w_t) &=& \log p(o\mid c) \\
 &=& \log \dfrac{\exp (\mathbf{u}_{o}^{T}\mathbf{v}_{c})}{\sum_{w=1}^{V} \exp (\mathbf{u}_{w}^{T}\mathbf{v}_{c})} \\
 &=& \mathbf{u}_{o}^{T}\mathbf{v}_{c} - \log \sum_{w=1}^{V} \exp (\mathbf{u}_{w}^{T}\mathbf{v}_{c})
 \end{eqnarray*}
 $$
 
-We will separate these into the two terms for clarity
+We will differentiate the two terms separately.
  
 ## gradient descent
 
 - For the first term we have:
 $$
-\begin{align*}
-\nabla \mathbf{u}_{o}^{T}\mathbf{v}_{c} &=\frac{\partial}{\partial \mathbf{v}_{c}} \mathbf{u}_{o}^{T}\mathbf{v}_{c} \\
-&= \mathbf{u}_{o}
-\end{align*}
+\nabla_{\mathbf{v}_c}\, \mathbf{u}_{o}^{T}\mathbf{v}_{c} = \frac{\partial}{\partial \mathbf{v}_{c}} \mathbf{u}_{o}^{T}\mathbf{v}_{c} = \mathbf{u}_{o}
 $$
 
-- For the second term recall the chain rule $D\left\{ f(g(x)) \right\} = f^{\prime}(g(x))\cdot g^{\prime}(x)$. In the following we will ignore the sign of the second term for the moment.
+- For the second term, recall the chain rule $\frac{d}{dx} f(g(x)) = f^{\prime}(g(x))\cdot g^{\prime}(x)$. 
+- Here $f=\log$ is the outer function, $g(\mathbf{v}_c)=\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)$ is the inner function, and $\frac{d}{dx}\log x = \frac{1}{x}$. 
+- We use $x$ as the summation index of the inner sum, to avoid confusion with the $w$ in the denominator.
 
-::: {.text-small}
+
 $$
-\begin{eqnarray*}
- \frac{\partial}{\partial \mathbf{v}_{c}}  \log \sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c) &=&
- \dfrac{1}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}  \frac{\partial}{\partial \mathbf{v}_{c}}  \sum_{x=1}^{V} \exp(\mathbf{u}_x^{T}\mathbf{v}_c) 
-\end{eqnarray*}
+\frac{\partial}{\partial \mathbf{v}_{c}}  \log \sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c) =
+\dfrac{1}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}  \frac{\partial}{\partial \mathbf{v}_{c}}  \sum_{x=1}^{V} \exp(\mathbf{u}_x^{T}\mathbf{v}_c)
 $$
-:::
 
 ::: {.tiny-credit}
 Note that in this equation, $\log$ pays the part of the outer function $f$ and $\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)$ is the inner function $g$; the first derivative of $\log x$ is $\dfrac{1}{x}$.
 :::
 
+## gradient descent (3)
 
-## gradient descent
- continuing
+We still need the derivative of the sum from the previous slide:
+
 $$
- \begin{eqnarray*}
-  \frac{\partial}{\partial \mathbf{v}_{c}} \sum_{x=1}^{V} \exp(\mathbf{u}_x^{T}\mathbf{v}_c)  &=& \sum_{x=1}^{V}\frac{\partial}{\partial \mathbf{v}_{c}}   \exp(\mathbf{u}_x^{T}\mathbf{v}_c) \\
-   &=& \sum_{x=1}^{V}  \exp(\mathbf{u}_x^{T}\mathbf{v}_c) \frac{\partial}{\partial \mathbf{v}_{c}}   \mathbf{u}_x^{T}\mathbf{v}_c \\
-     &=& \sum_{x=1}^{V}  \exp(\mathbf{u}_x^{T}\mathbf{v}_c)   \mathbf{u}_x \\
- \end{eqnarray*}
+\begin{aligned}
+\frac{\partial}{\partial \mathbf{v}_{c}} \sum_{x=1}^{V} \exp(\mathbf{u}_x^{T}\mathbf{v}_c)
+ &= \sum_{x=1}^{V}\frac{\partial}{\partial \mathbf{v}_{c}} \exp(\mathbf{u}_x^{T}\mathbf{v}_c) \\
+ &= \sum_{x=1}^{V} \exp(\mathbf{u}_x^{T}\mathbf{v}_c) \frac{\partial}{\partial \mathbf{v}_{c}} \mathbf{u}_x^{T}\mathbf{v}_c \\
+ &= \sum_{x=1}^{V} \exp(\mathbf{u}_x^{T}\mathbf{v}_c)\, \mathbf{u}_x
+\end{aligned}
 $$
 
-* where the second line follows from the chain rule and the fact that $\frac{d e^x}{dx}=e^x$. 
-* Note we changed the summation variable of the inner sum (which does not change the value) to avoid interference.
+* The first line holds because the derivative of a sum is the sum of the derivatives.
+* The second line follows from the chain rule and the fact that $\frac{d e^x}{dx}=e^x$.
+
+## gradient descent (4)
+
+Pulling the parts together:
+
+$$
+\begin{aligned}
+\frac{\partial}{\partial \mathbf{v}_{c}}  \log \dfrac{\exp (\mathbf{u}_{o}^{T}\mathbf{v}_{c})}{\sum_{w=1}^{V} \exp (\mathbf{u}_{w}^{T}\mathbf{v}_{c})}
+&= \mathbf{u}_{o}  - \dfrac{1}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}  \sum_{x=1}^{V}  \exp(\mathbf{u}_x^{T}\mathbf{v}_c)\,\mathbf{u}_x \\
+&= \mathbf{u}_{o}  -  \sum_{x=1}^{V} \dfrac{\exp(\mathbf{u}_x^{T}\mathbf{v}_c)}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}\,\mathbf{u}_x
+\end{aligned}
+$$
+
+
+The second line holds because $\dfrac{1}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}$ is just a scalar and can be pulled into the sum.
+
+The fraction inside the sum is exactly the <span style="color:blue">softmax</span> probability that word $x$ occurs as an outside word of the center word $c$:
+
+$$
+p(x\mid c)=\dfrac{\exp(\mathbf{u}_x^{T}\mathbf{v}_c)}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}
+$$
  
- 
-## gradient descent
-
-::: {.text-small}
-  continuing and pulling all the parts together
-  $$
- \begin{eqnarray*}
-  \frac{\partial}{\partial \mathbf{v}_{c}}  \log \dfrac{\exp (\mathbf{u}_{o}^{T}\mathbf{v}_{c})}{\sum_{w=1}^{V} \exp (\mathbf{u}_{w}^{T}\mathbf{v}_{c})} 
-&=& \mathbf{u}_{o}  - \dfrac{1}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}  \sum_{x=1}^{V}  \exp(\mathbf{u}_x^{T}\mathbf{v}_c)   \mathbf{u}_x \\
-&=& \mathbf{u}_{o}  -  \sum_{x=1}^{V} \dfrac{ \exp(\mathbf{u}_x^{T}\mathbf{v}_c)}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}    \mathbf{u}_x \\
- \end{eqnarray*}
- $$
- where the second line follows from the fact that $\dfrac{1}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}$ is just a scalar number and can be pulled into the sum. We now recall that the definition of our <span style="color:blue">softmax function</span>   for the probability that word $x$ occurs as a context word of center word $c$ is defined using the softmax function as
-$$
- \begin{equation}
-  p(x|c)=\mathbf{u}_{o} -  \sum_{x=1}^{V} \dfrac{ \exp(\mathbf{u}_x^{T}\mathbf{v}_c)}{\sum_{w=1}^{V} \exp(\mathbf{u}_w^{T}\mathbf{v}_c)}    \mathbf{u}_x 
- \end{equation}
-$$
-:::
-
-## gradient descent
+## gradient descent (5)
 ::: {.callout-note appearance="simple" icon=false}
-  Therefore, the gradient actually has the form of an observed value ($\mathbf{u}_o$) subtracted by the expectation across all context words 
+Therefore, the gradient actually has the form of an observed value ($\mathbf{u}_o$) subtracted by the expectation across all context words 
 :::
 
 $$
-\begin{equation}
-\frac{\partial}{\partial \mathbf{v}_{c}} \log p(w_{t+j}|w_t)  = \mathbf{u}_{o} -  \sum_{x=1}^{V} p(x|c)   \mathbf{u}_x
-\end{equation}
- $$
- Note that $p(x|c)$ is a vector with dimensions $V\times 1$. 
+\frac{\partial}{\partial \mathbf{v}_{c}} \log p(o\mid c) = \mathbf{u}_{o} -  \sum_{x=1}^{V} p(x\mid c)\,\mathbf{u}_x
+$$
 
+* The probabilities $p(\cdot\mid c)=\text{softmax}(\mathbf{U}\mathbf{v}_c)$ form a vector of length $V$. In matrix form the gradient is $\mathbf{U}^{T}(\mathbf{y}-p(\cdot\mid c))$, where $\mathbf{y}$ is the one-hot truth vector.
+* $\Theta$ has $2Vd$ entries, but for one training pair the gradient is nonzero only for $\mathbf{v}_c$ and the outside vectors $\mathbf{u}_w$.
+* Note that $p(x|c)$ is a vector with dimensions $V\times 1$. 
 * The gradients  would be calculated for all $2Vd$ parameters in the model, i.e., all $\mathbf{v}_c$ and  $\mathbf{u}_o$ 
 
-## gradient descent
+
+
+## gradient descent (6)
 ::: {.callout-note appearance="simple" icon=false}
-  To minimize the objective function $J(\Theta)$ over the entire batch of training data, we would perform an update step using a proper learning rate $\alpha$
+To minimize the loss $\ell(\Theta)$ we take a step against its gradient with learning rate $\eta$. For a single training pair $(c,o)$ (stochastic gradient descent) the update for the center vector is
 :::
- 
- $$
- \begin{eqnarray*}
-  \Theta^{(i+1)}_j \gets  \Theta^{(i)}_j -\eta  \left[ \mathbf{u}_{o} -  \sum_{x=1}^{V} p(x|c)   \mathbf{u}_x \right]
- \end{eqnarray*}
- $$
 
- 
+$$
+\mathbf{v}_c \;\gets\; \mathbf{v}_c + \eta \left[ \mathbf{u}_{o} -  \sum_{x=1}^{V} p(x\mid c)\,\mathbf{u}_x \right]
+$$
+
+The plus sign appears because the loss is $-\log p(o\mid c)$, so its gradient is the negative of the bracket.
+
 - $\eta$ is the learning rate
-- $\eta\mathbf{u}_o$ adds a positive multiple of $\mathbf{u}_o$ to $\mathbf{v}_c$, moving the latter vector towards the actual context vector $\mathbf{u}_o$.
-- $-\eta\mathbb{E}_{w_k\sim P(\cdot\mid w_c)}[\mathbf{u}_k])$ subtracts the expected vector 
-- $\mathbb{E}_{w_k\sim P(\cdot\mid w_c)}[\mathbf{u}_k])$ is an expectation taken over every word $k\in V$ in the vocabulary 
-according to the models own distribution $P(w_o\mid w_c)$, i.e., the softmax output.
-
-​- This is also why the exact skip-gram gradient is expensive: computing this expectation requires touching every word vector in the vocabulary at every single training step, which is the practical bottleneck that motivates approximations like negative sampling (which replaces the full sum with a small sample of "negative" words)
-
+- $+\eta\,\mathbf{u}_o$ moves $\mathbf{v}_c$ towards the vector $\mathbf{u}_o$ of the word that actually occurred in the context
+- $-\eta\,\mathbb{E}_{x\sim p(\cdot\mid c)}[\mathbf{u}_x]$ moves $\mathbf{v}_c$ away from the expected outside vector
+- The expectation is taken over every word $x\in V$ in the vocabulary, using the model's own distribution $p(x\mid c)$ (the softmax output)
+- The exact gradient is [expensive]{.emph}: the expectation touches every word vector in the vocabulary at every training step. 
+- This is the practical bottleneck that motivates approximations like [negative sampling]{.emph}, which replaces the full sum with a small sample of "negative" words
 
 
 
@@ -580,8 +545,7 @@ according to the models own distribution $P(w_o\mid w_c)$, i.e., the softmax out
 ## word2vec: scaling up
 ![](./img/softmax-classifier.png){width=40% fig-align="center"}
 
-* this is very expensive, because we need to compute and normalize each probability using the score for all $V$ other words $w^{\prime}$ in the current context $h$, at every training step.
-
+* The softmax is very expensive: to compute and normalize one probability we need the score of **every** one of the $V$ words in the vocabulary, at every training step.
 
 ## word2vec: scaling up
 ::: {.callout-note appearance="simple" icon=false}
@@ -590,123 +554,116 @@ according to the models own distribution $P(w_o\mid w_c)$, i.e., the softmax out
 
 ![](./img/noise-classifier.png){width=40% fig-align="center"}
 
+## Negative sampling {#negsample}
 
+- Consider a pair $(c,o)$ of a center word and an outside word
+- The probability that this pair came from the corpus is $p(Z=1\mid c,o;\Theta)$ (i.e., it corresponded to a skip-gram in the actual data)
+- The probability that the pair did not come from the corpus is $p(Z=0\mid c,o;\Theta) = 1 - p(Z=1\mid c,o;\Theta)$
 
-## Negative sampling
-
-- Consider a pair $(w,c)$ of word and context
-- The probability that this pair came from the corpus data is $p(D=1\mid w,c;\Theta)$ (i.e., this corresponded to a skip gram in the actual data)
-- The probably that the pair did not come from the corpus data is $p(D=0\mid w,c;\Theta) = 1 - $p(D=1\mid w,c;\Theta)$
-
-* **Goal**: find parameters $\Theta$ that maximize the probabilities that all of the observations indeed come from the data
+* **Goal**: find parameters $\Theta$ that maximize the probability that all of the observed pairs indeed come from the data
 
 $$
-\begin{align}
-& \arg \max_{\Theta} \prod_{(w,c)\in D} p(D=1\mid w,c;\Theta)\\
-&=\arg \max_{\Theta} \log \prod_{(w,c)\in D} p(D=1\mid w,c;\Theta)\\
-&=\arg \max_{\Theta}  \sum_{(w,c)\in D} \log p(D=1\mid w,c;\Theta)\\
-\end{align}
+\begin{align*}
+& \arg \max_{\Theta} \prod_{(c,o)\in D} p(Z=1\mid c,o;\Theta)\\
+&=\arg \max_{\Theta} \log \prod_{(c,o)\in D} p(Z=1\mid c,o;\Theta)\\
+&=\arg \max_{\Theta}  \sum_{(c,o)\in D} \log p(Z=1\mid c,o;\Theta)
+\end{align*}
 $$
+
+* On its own this objective has a trivial solution (make every pair look real), which is why negative examples are needed
+
 
 ## Negative sampling (2)
 
-- The quantity $p(D=1\mid w,c;\Theta)$ can be defined as a softmax probability
+- The probability $p(Z=1\mid c,o;\Theta)$ can be defined using the sigmoid function $\sigma(x) = \dfrac{1}{1+e^{-x}}$ applied to the same score as before:
+- Recall $\mathbf{u}_o^{T}\mathbf{v}_c$ (c.f. @eq-w2v-score), the score of each pair of words
 $$
-p(D=1\mid w,c;\Theta) = \dfrac{1}{1 + e^{-\mathbf{v}_c\mathbf{v}_w}}
-$$
-
-We can now rewrite the objective function
-$$
-\begin{align}
-&=\arg \max_{\Theta}  \sum_{(w,c)\in D} \log  \dfrac{1}{1 + e^{-\mathbf{v}_c\cdot \mathbf{v}_w}}\\
-\end{align}
+p(Z=1\mid c,o;\Theta) = \sigma(\mathbf{u}_o^{T}\mathbf{v}_c) = \dfrac{1}{1 + e^{-\mathbf{u}_o^{T}\mathbf{v}_c}}
 $$
 
-## Negative sampling (3)
+We can now rewrite the objective function:
 
-- The "vanilla" solution to the optimization would involve sampling all context words for each word, which would be prohibitively computationally expensive
-- Negative sampling means that we sample a subset of random (and therefore presumed) negative examples) from a set we call $D^{\prime}$.
-- The optimization objective now becomes:
 $$
-\begin{align}
-& \arg\max_{\Theta} \prod_{(w,c)\in D}p(D=1\mid c,w;\Theta)
- \prod_{(w,c)\in D^{\prime}}p(D=0\mid c,w;\Theta) \\
- &= \arg\max_{\Theta} \prod_{(w,c)\in D}p(D=1\mid c,w;\Theta)
- \prod_{(w,c)\in D^{\prime}}(1- p(D=1\mid c,w;\Theta)) \\
- &= \arg\max_{\Theta} \sum_{(w,c)\in D}\log p(D=1\mid c,w;\Theta)
- \sum_{(w,c)\in D^{\prime}} \log (1- p(D=1\mid c,w;\Theta)) \\
-  &= \arg\max_{\Theta} \sum_{(w,c)\in D}\log \frac{1}{1+e^{-v_c\cdot v_w}} +
- \sum_{(w,c)\in D^{\prime}} \log \left(1- \frac{1}{1+e^{-v_c\cdot v_w}}\right) \\
-  &= \arg\max_{\Theta} \sum_{(w,c)\in D}\log \frac{1}{1+e^{-v_c\cdot v_w}} +
- \sum_{(w,c)\in D^{\prime}} \log \left(\frac{1}{1+e^{v_c\cdot v_w}}\right) \\
- \end{align}
+\arg \max_{\Theta}  \sum_{(c,o)\in D} \log \sigma(\mathbf{u}_o^{T}\mathbf{v}_c)
 $$
 
-## Negative sampling (4)
+## Negative sampling (3): adding negative examples
 
-- Letting $\sigma(x) = \frac{1}{1+e^{-x}}$, we obtain
-$$
-\arg\max_{\Theta} \sum_{(w,c)\in D}\log \sigma(v_c\cdot v_w) +
- \sum_{(w,c)\in D^{\prime}} \log \sigma(-v_c\cdot v_w) \\
-$$
+- Maximizing only $\sum_{D}\log\sigma(\mathbf{u}_o^{T}\mathbf{v}_c)$ is not enough: it can be made large by making all scores large. We therefore add **negative examples**: a set $D^{\prime}$ of pairs $(c,\tilde{o})$ that did *not* come from the corpus. Each is made by pairing a center word with a randomly drawn word, which is presumed to be unrelated to it.
+- We now maximize the probability that real pairs are labelled $Z=1$ and noise pairs are labelled $Z=0$:
 
-- As written, this equation is still over all examples
-- The negative sampling as presented draws $k$ times as many negative examples as there are positive examples. 
-- For each $(w,c)\in D$, we construct $k$ random (presumed negative samples) $(w,c_1), (w, c2), \ldots; (w,c_k)$ 
--  $c_j$ is drawn according to its unigram distribution
-raised to the 3/4 power.
-- The "unigram distribution" just means the raw frequency of each word in the training corpus 
-- word2vec raises this to the 3/4 power, which downweights frequent words and upweights rare words
 $$
-P_{3/4}(w)=
-\frac{\mathrm{count}(w)_{3/4}}
-{\sum_{w^{\prime}} \mathrm{count}(w^{\prime})_{3/4}}
+\begin{align*}
+&\arg\max_{\Theta} \prod_{(c,o)\in D}p(Z=1\mid c,o;\Theta)
+ \prod_{(c,\tilde{o})\in D^{\prime}}p(Z=0\mid c,\tilde{o};\Theta) \\
+&= \arg\max_{\Theta} \sum_{(c,o)\in D}\log p(Z=1\mid c,o;\Theta)
+ + \sum_{(c,\tilde{o})\in D^{\prime}} \log \bigl(1- p(Z=1\mid c,\tilde{o};\Theta)\bigr) \\
+&= \arg\max_{\Theta} \sum_{(c,o)\in D}\log \sigma(\mathbf{u}_o^{T}\mathbf{v}_c)
+ + \sum_{(c,\tilde{o})\in D^{\prime}} \log \sigma(-\mathbf{u}_{\tilde{o}}^{T}\mathbf{v}_c)
+\end{align*}
 $$
 
-::: {.tiny-credit}
-Tomas Mikolov, Ilya Sutskever, Kai Chen, Gregory S. Corrado, and Jeﬀrey
-Dean. Distributed representations of words and phrases and their composi-
-tionality. In Advances in Neural Information Processing Systems 26: 27th
-Annual Conference on Neural Information Processing Systems 2013. 
+::: {.small-text}
+* The second line takes the logarithm (the maximizer does not change, and the product becomes a sum). 
+* The third line uses $p(Z=1\mid\cdot)=\sigma(\mathbf{u}^{T}\mathbf{v}_c)$ and the identity $1-\sigma(x)=\sigma(-x)$.^[See [lecture 4](./logreg.qmd)]
 :::
 
-## Concept replacement
+## Negative sampling (4): choosing the negatives
+
+- $D^{\prime}$ could contain every wrong word for every center word, up to $V-1$ pairs per positive pair, which would bring back the cost of the full softmax. Instead we **sample** the negatives.
+- For each $(c,o)\in D$ we draw $k$ random words $\tilde{o}_1,\ldots,\tilde{o}_k$ and use the pairs $(c,\tilde{o}_1),\ldots,(c,\tilde{o}_k)$ as presumed negatives. So there are $k$ times as many negative as positive examples.
+- The unigram distribution is the relative frequency of each word in the training corpus. Words $\tilde{o}_j$ are drawn from the unigram distribution **raised to the power 3/4** and renormalized:
+
+$$
+P_{n}(w)=
+\frac{\mathrm{count}(w)^{3/4}}
+{\sum_{w^{\prime}} \mathrm{count}(w^{\prime})^{3/4}}
+$$
+
+- This downweights frequent words and upweights rare ones. For example, relative frequencies $0.90,\ 0.09,\ 0.01$ become about $0.83,\ 0.15,\ 0.03$.
+
+::: {.tiny-credit}
+Mikolov T, Sutskever I, Chen K, Corrado GS, Dean J (2013) [Distributed representations of words and phrases and their compositionality. Advances in Neural Information Processing Systems 26](https://dl.acm.org/doi/10.5555/2999792.2999959).
+:::
 
 
-The original word2vec method operates on individual words (tokens). However, many medical concepts span multiple tokens. For instance, 
-<span style="background-color: #e0f2fe; padding: 2px 6px; border-radius: 4px;">non-small-cell lung carcinoma</span>
- would be treated by word2vec as three or five tokens (depending on how the hyphen is handled in preprocessing), but it represents a single medical concept. 
- 
-- Some approaches collapse multiword concepts into a single token prior to embedding by replacing the multiword concepts with a single concept id. 
-For instance, `non-small-cell lung carcinoma` can be replaced by its MeSH id D002289.
 
-## latent knowledge about protein kinases and cancer
+## Concept replacement {#concept}
+
+The original word2vec method operates on individual words (tokens). However, many medical concepts span multiple tokens. For instance, <span style="background-color: #e0f2fe; padding: 2px 6px; border-radius: 4px;">non-small-cell lung carcinoma</span> would be treated by word2vec as three or five tokens (depending on how the hyphen is handled in preprocessing), but it represents a single medical concept.
+
+- Some approaches collapse multiword concepts into a single token before embedding, by replacing each mention with a **concept ID**. For instance, <span style="background-color: #e0f2fe; padding: 2px 6px; border-radius: 4px;">non-small-cell lung carcinoma</span> can be replaced by its MeSH ID D002289.
+- Synonyms ("NSCLC", "non small cell lung cancer", ...) are replaced by the same ID and therefore share one embedding.
+- This requires concept recognition: finding the mentions in the text and linking them to the correct ID, a step that has errors of its own.
+
+
+## latent knowledge about protein kinases and cancer (1)
 ::: {.callout-note appearance="simple" icon=false}
 We used concept replacement as one of many steps to create concept embeddings to investigate protein kinases and cancer.
 :::
 ![](./img/pkinase-f1.jpg){width=60% fig-align="center"}
 
-## latent knowledge about protein kinases and cancer
+## latent knowledge about protein kinases and cancer (2)
 ::: {.callout-note appearance="simple" icon=false}
-Inhibiting protein kinases (PKs) that cause cancers has been an important topic in cancer therapy for years
+Inhibiting protein kinases (PKs) that drive cancers has been an important topic in cancer therapy for years
 :::
 
-- Our approach represents PKs and cancers as semantically meaningful concept vectors using word2vec in ca. 10 million PubMed abstracts
-- We used  random forest classification to predict the relevance of inhibiting PKs for specific cancers 
+- We represented PKs and cancers as 100-dimensional concept vectors, using word2vec on ca. 10 million PubMed abstracts <!-- verify -->
+- A random forest, trained on phase I–IV trial information from ClinicalTrials.gov, predicts the relevance of inhibiting a given PK for a given cancer
 
 ![](./img/pkinase-f2.jpg){width=60% fig-align="center"}
 
-## latent knowledge about protein kinases and cancer
-
+## latent knowledge about protein kinases and cancer (3)
 ::: {.callout-note appearance="simple" icon=false}
-In an historical validation study, the AUROC ranged from 77% to 86%, and the average precision ranged from 28% to 41%
+Historical validation: we trained on data up to a given year and tested whether the highest-scoring PK–cancer pairs entered trials later. AUROC ranged from 77% to 86% and average precision from 28% to 41% <!-- verify; add the baseline precision (fraction of positive pairs) -->
 :::
 
 ![](./img/pkinase-f3.jpg){width=60% fig-align="center"}
 
 ::: {.tiny-credit}
-Ravanmehr V, et al (2021) Supervised learning with word embeddings derived from PubMed captures latent knowledge about protein kinases and cancer. NAR Genom Bioinform **3**:lqab113.
+Ravanmehr V, et al (2021) [Supervised learning with word embeddings derived from PubMed captures latent knowledge about protein kinases and cancer. NAR Genom Bioinform **3**:lqab113](https://pubmed.ncbi.nlm.nih.gov/34888523/).
 :::
+
 
 
 

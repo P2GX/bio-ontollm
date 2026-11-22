@@ -120,9 +120,10 @@ def w2v_analogy(figsize=(11, 5)):
 
     # Blue = "plural" vectors, Red = "gender" vectors
     draw_arrow(ax_right, points_right["KING"], points_right["KINGS"], BLUE)
-    draw_arrow(ax_right, points_right["KING"], points_right["QUEEN"], BLUE)
+    draw_arrow(ax_right, points_right["QUEEN"], points_right["QUEENS"], BLUE)
+    draw_arrow(ax_right, points_right["KING"], points_right["QUEEN"], RED)
     draw_arrow(ax_right, points_right["KINGS"], points_right["QUEENS"], RED)
-    draw_arrow(ax_right, points_right["QUEEN"], points_right["QUEENS"], RED)
+    
 
     label_offsets_right = {
         "KING":   dict(dx=0.0, dy=-0.35, ha="center", va="top"),
