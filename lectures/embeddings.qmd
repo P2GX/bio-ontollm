@@ -21,17 +21,24 @@ format:
     controls: true
 ---
 
+```{python}
+#| include: false
+import sys
+sys.path.append('utils')
+import matplotlib.pyplot as plt
+from embed_plots import *
+```
+
 
 ## Overview
 
 ::: {.mybox}
-### Today
+**Today**:
 
 We will study the following topics to prepare the way to understanding transformers and large-language models
+:::
 
-
-
-
+Topics
 
 * [**Skip-gram**](#skipgram)
 * [**Word2vec**](#word2vec)
@@ -52,12 +59,6 @@ In the fields of computational linguistics, an **n-gram** is a contiguous sequen
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from embed_plots import plot_skipgram
-
 plot_skipgram()
 plt.plot()
 ```
@@ -75,10 +76,10 @@ P(the, man, his, dog \mid loves)
 $$
 
 
+* The skip-gram model assumes the context words are conditionally independent given the center word, so the probability factorizes:
 
-The probability
 $$
-P(the, man, his, dog \mid loves) = P(the \mid loves) \cdot P(man\mid loves) \cdot P( his \mid loves) \cdot P(dog \mid loves) 
+P(\text{the}, \text{man}, \text{his}, \text{dog} \mid \text{loves}) = P(\text{the} \mid \text{loves}) \cdot P(\text{man} \mid \text{loves}) \cdot P(\text{his} \mid \text{loves}) \cdot P(\text{dog} \mid \text{loves})
 $$
 
 - Each word in the vocabulary has two $d$-dimensional vector representations (embeddings): 
@@ -89,23 +90,24 @@ $$
 ## Skip-gram model
 
 ::: {.callout-note appearance="simple" icon=false}
- skip-grams are generalizations of n-grams in which we are allowed to skip words, with the components occuring at not more than a specified distance to each other
+**Skip-grams** are generalizations of **n-grams** in which we are allowed to skip words, so that the components occur within a specified total number of skipped words.
 :::
 
-* an n-gram is a strictly consecutive subsequence of length n of some sequence of tokens $w_1,\ldots, w_n$. A $k$-skip-$n$-gram is a length-$n$ subsequence where the components occur at distance at most $k$ from each other.
-* $k$-skip: A allowance to skip up to $k$ words between components.
-* $n$: The total number of words in the final extracted subsequence.
-* For instance, a $1$-skip $4$-gram means
-  - sequence of 4 words
-  - In the original text, the gap between any two adjacent chosen words can be at most 1 skipped word ($k = 1$).
+* An n-gram is a strictly consecutive subsequence of length $n$ of a sequence of tokens $w_1,\ldots, w_m$.
+* A $k$-skip-$n$-gram is a length-$n$ subsequence in which a total of at most $k$ words are skipped.
+* $k$: the allowance of skipped words (summed over all gaps).
+* $n$: the number of words in the extracted subsequence.
+* For instance, a $1$-skip $4$-gram is
+  - a sequence of 4 words from the text, in order,
+  - with at most 1 word skipped in total ($k = 1$).
 
 ## Skip-gram model (2) 
 
 * Some $1$-skip $4$-grams of <span style="background-color: #e0f2fe; padding: 2px 6px; border-radius: 4px;">**to be or not to be**</span> are:
-  - to be or not: (Valid $1$-skip $4$-gram - it's actually a standard 0-skip 4-gram, and 0 is $\le 1$).
-  - to or not to: Valid (positions 1,2,4,5)
-  - be or to be: Valid (positions 2,3,5,6 )
-  - to be not be: Not valid (Indices: 1, 2, 4, 6)
+  - to be or not: valid (positions 1,2,3,4; 0 words skipped, and $0 \le 1$)
+  - to or not to: valid (positions 1,3,4,5; 1 word skipped)
+  - be or to be: valid (positions 2,3,5,6; 1 word skipped)
+  - to be not be: **not** valid (positions 1,2,4,6; 2 words skipped)
 
 
 ## skip-gram model (3)
@@ -115,30 +117,29 @@ $$
 predicting the surrounding words in a sentence or a document.
 :::
 
-- Given a sequence of training words $w_1,w_2,\ldots,w_T$, we maximize as follows
+- Given a sequence of training words $w_1,w_2,\ldots,w_T$ and a window size $m$, we maximize the average log probability of the context words:
+
 $$
-\begin{equation}
-  \max \dfrac{1}{T}\sum_{t=1}^{T} \sum_{\substack{ -c\leq j\leq c\\ c\neq j}} \log p(w_{t+j}|w_{t})
-\end{equation}
+\max_{\Theta} \; \dfrac{1}{T}\sum_{t=1}^{T} \sum_{\substack{-m\leq j\leq m\\ j\neq 0}} \log p(w_{t+j}\mid w_{t})
 $$
 
 ::: {.small-text}
-In this formulation of the skip gram model, all forwards and backwards skips of up to $c-1$ words are considered.
-Larger $c$ results in more training examples and thus can lead to a higher accuracy, at the expense of the
-training time.
+Here $m$ is the window size: for each center word $w_t$, all context words up to $m$ positions before and after it are used. A larger $m$ gives more training examples and can lead to higher accuracy, at the expense of training time.
 :::
+
 
 ## skip-gram model
 
 ::: {.callout-note appearance="simple" icon=false}
-   The basic Skip-gram formulation defines $p(w_t+j|w_t)$ using the softmax function, which is also often used for 
+   The basic Skip-gram formulation defines $p(w_{t+j}\mid w_t)$ using the softmax function, which is also often used for 
 multiclass predictors in neural networks
 :::
 
 ![](./img/word-softmax.png){width=70% fig-align="center"}
 
 ::: {.small-text}
-- softmax turns a collection of numbers into a probability distribution ($z_i\rightarrow \text{softmax}(z_i)=p_i$ implies that $p_i\geq 0$ (because of the exponentiation) and $\sum p_i=1$ (because of the normalization in the denominator)
+- softmax turns a collection of numbers into a probability distribution
+- $z_i\rightarrow \text{softmax}(z_i)=p_i$ implies that $p_i\geq 0$ (because of the exponentiation) and $\sum p_i=1$ (because of the normalization in the denominator)
 :::
 
 
@@ -156,15 +157,16 @@ multiclass predictors in neural networks
 - The word2vec algorithm has several features that influenced the development of transformers and it is a good place to learn about how embeddings can be created.
 
 ::: {.mybox}
-### One-hot vectors {#id10}
+**One-hot vectors**:
 
-Before explaing the word2vec algorithm, let's study why semantic vectors are an improvement over one-hot vectors
+Before explaining the word2vec algorithm, let's study why semantic vectors are an improvement over one-hot vectors
 :::
 
 
 
 ## One-hot encoding
 
+Sentence: *the quick brown fox jumps over the lazy dog* (9 tokens, vocabulary size $V = 8$)
 
 | Word | brown | dog | fox | jumps | lazy | over | quick | the |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -178,14 +180,16 @@ Before explaing the word2vec algorithm, let's study why semantic vectors are an 
 | **lazy** | 0 | 0 | 0 | 0 | <span style="color:blue">**1**</span> | 0 | 0 | 0 |
 | **dog** | 0 | <span style="color:blue">**1**</span> | 0 | 0 | 0 | 0 | 0 | 0 |
 
-* A <span style="color:blue">one-hot vector</span> is a vector used to represent a categorical value in which exactly one element is 1 and all other elements are 0.
+* A <span style="color:blue">one-hot vector</span> is a vector used to represent a categorical value in which exactly one element is 1 and all other elements are 0. Its length equals the vocabulary size $V$.
 
 ## One hot for nucleotides
 
 ![](./img/onehot-bases.jpg){width=50% fig-align="center"}
 
+* The DNA sequence ACATCGTAG with each base as a one-hot column (rows: A, T, C, G). Here each *column* is a token.
+
 ::: {.tiny-credit}
-Image adapted from https://jalammar.github.io/illustrated-word2vec/
+Image adapted from [illustrated-word2vec](https://jalammar.github.io/illustrated-word2vec/).
 :::
 
 
@@ -198,12 +202,6 @@ Image adapted from https://jalammar.github.io/illustrated-word2vec/
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from embed_plots import cars_pca
-
 cars_pca(figsize=(7.5, 6))
 ```
 
@@ -212,10 +210,10 @@ cars_pca(figsize=(7.5, 6))
 
 ::: {.small-text}
 
-- In this constructed t space, we have three dimensions representing cars: size, color, and price
-- We can represent a arbitrary car in this space. 
+- This three dimensional space represents cars according to _size_, _color_, and _price_.
+- We can represent an arbitrary car in this space. 
 - Cars that are semantically similar (have similar attributes) are close to each other in this space
-
+- In word2vec the axes are not chosen by hand: they are learned from data, typically with 100–1000 dimensions, and are not individually interpretable.
 :::
 
 
@@ -226,12 +224,12 @@ cars_pca(figsize=(7.5, 6))
 ## Semantics of one-hot vectors
 
 - We would like to be able to test whether, say, "Man" and "Uncle" are relatively similar, but "Tofu" and "Airplane" are not very similar.
-- The usual way of comparing vectors $\mathbf{x},\mathbf{y} \in \mathbb{R}^d$ is a cosine similarity (cosine of the angle between the vectors)
+- The usual way of comparing vectors^[cosine similarity is defined for non-zero vectors] $\mathbf{x},\mathbf{y} \in \mathbb{R}^d$ is a cosine similarity (cosine of the angle between the vectors)
 
 $$
 \text{cosine similarity}(\mathbf{x},\mathbf{y}) =
 \dfrac{\mathbf{x}^T\mathbf{y}}{\Vert \mathbf{x}\Vert  \Vert \mathbf{y}\Vert }
-\in {-1,1}
+\in [-1,1]
 $$
 
 - cosine similarity between one-hot vectors of any two different words is 0
@@ -242,12 +240,6 @@ $$
 ```{python}
 #| echo: false
 #| fig-align: center
-import sys
-import matplotlib.pyplot as plt
-
-sys.path.append('utils') 
-from embed_plots import w2v_analogy
-
 w2v_analogy()
 plt.plot()
 ```
@@ -267,9 +259,9 @@ Word2vec is a group of related models that are used to produce word embeddings, 
 - It is mainly  based on two different models: 
   - skip-gram (SG)
   - continuous bag of words (CBOW)
-* shallow, two-layer neural networks that are trained to reconstruct linguistic contexts of words. 
-* Input: a large corpus of text 
-* Output: a vector space, typically of several hundred dimensions, with each unique word in the corpus being assigned a corresponding vector in the space. 
+* **word2vec** is a shallow, two-layer neural networks trained to reconstruct linguistic contexts of words. 
+* **Input**: a large corpus of text 
+* **Output**: a vector space, typically of several hundred dimensions, with each unique word in the corpus being assigned a corresponding vector in the space. 
 * Word vectors are positioned in the vector space such that words that share common contexts in the corpus are located in close proximity to one another in the space.
 
 
@@ -288,7 +280,7 @@ Word2vec is a group of related models that are used to produce word embeddings, 
 
 ## Goal of word2vec
 ::: {.callout-note appearance="simple" icon=false}
-  Choose a dense vector for each word that will be good at predicting which words it co-appears with
+  Choose a [dense vector]{.emph} for each word that will be good at predicting which words it co-appears with
 :::
 
 
@@ -300,14 +292,14 @@ $$
 $$
 
  
-* The following means that for each word $t$ in our training text $T$, look at the context words that surround $t$. Our objective function, $J(\Theta)$, is the product of such probabilites for all words and corresponding context words.
+* For each word $t$ in our training text $T$, look at the context words that surround $t$. Our objective function, $J(\Theta)$, is the product of such probabilites for all words and corresponding context words.
 * Our goal is to find $\Theta$ that maximizes the probability ($\Theta$ is the embedding weight matrix)
  $$
  \begin{equation}
   \arg \max_{\Theta} J(\Theta)=\prod_{t=1}^{T} \prod_{\substack{-m\le j\le m\\ j\ne 0}} p(w_{t+j}|w_t,\Theta)
  \end{equation}
  $$
- We can simplify this equation by simply showing the product over all word and context pairs $(w,c)$ in the dataset $D$ of such pairs that is created from $T$.
+ We can **simplify** this equation by simply showing the product over all word and context pairs $(w,c)$ in the dataset $D$ of such pairs that is created from $T$.
  $$
  \begin{equation}
     \arg \max_{\Theta}  J(\Theta)=\prod_{(w,c)\in D} p(w_{t+j}|w_t,\Theta)
@@ -316,7 +308,7 @@ $$
 
 ## Defining a loss function
 ::: {.callout-note appearance="simple" icon=false}
-  The major parameters in this model are the vector representations of the words---all of which are represented here as $\Theta$. There are several hyperparameters.
+The major parameters in this model are the vector representations of the words ($\Theta$).
 :::
 * Rather than maximizing the objective function  $J(\Theta)$, it is more convenient to minimize the corresponding loss function
 
@@ -324,7 +316,7 @@ $$
 \begin{equation}
   \ell(\Theta)=-\log J(\Theta)= \dfrac{1}{|D|} \sum_{(w,c)\in D} \log p(c|w,\Theta)
 \end{equation}
-$$
+$$ {#eq-cost}
 
 
 * We now need to define the term $p(c|w,\Theta)$. We will start off with the \textbf{softmax} function mentioned above
@@ -335,7 +327,7 @@ $$
 \begin{equation}
  p(w_{t+j}|w_t,\Theta) =  p(o|c) = \dfrac{\exp (\mathbf{u}_{o}^{T}\mathbf{v}_c) }{\sum_{w=1}^{V} \exp (\mathbf{u}_{w}^{T}\mathbf{v}_c)}
 \end{equation}
-$$
+$$ {#eq-loss-per-word}
  
  
 * Here, $V$ is the total number of vocabulary of words (different from $T$ the total number of words in a large corpus (where individual words are repeated).
@@ -389,9 +381,7 @@ $$
 $$
 
 ## word2vec: calculate the loss
-::: {.callout-note appearance="simple" icon=false}
- Continuing the example from the previous page, and imagining that we are looking at one specific instance, where we have a vector called $u_{truth}$, we would calculate the loss as follows.
-:::
+
 
 :::{.text-small}
 We have a second ($|V|\times d$) matrix $\mathbf{U}$  that contains the context word vector representations
@@ -428,7 +418,8 @@ $$
 ## word2vec: calculate the loss (2)
  
 ::: {.callout-note appearance="simple" icon=false}
-To calculate the loss in this example, we take the softmax of the product of  $\mathbf{v}_c$ and $\mathbf{U}$ and compare it to the truth vector (which is a one-hot vector containing the ``truth'', i.e., the word that really was at the indicated position of the context).
+To calculate the loss in this example, we take the softmax of the product of  $\mathbf{v}_c$ and $\mathbf{U}$ and 
+compare it to the truth vector (which is a one-hot vector $u_{truth}$ containing the ``truth'', i.e., the word that really was at the indicated position of the context).
 :::
 
 $$

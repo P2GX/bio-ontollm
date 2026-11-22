@@ -45,9 +45,9 @@ def cars_pca(figsize=(10, 8)):
     # Set informative labels for the semantic vector space
     ax.set_xlabel(r'Size (Compact $\rightarrow$ Large)', labelpad=10, fontsize=11)
     ax.set_ylabel(r'Color Spectrum (Warm $\rightarrow$ Cool)', labelpad=10, fontsize=11)
-    ax.set_zlabel('Price ($k)', labelpad=10, fontsize=11)
+    ax.set_zlabel('Price (thousand $)', labelpad=10, fontsize=11)
     # Add a color bar representing the color dimension
-    cbar = fig.colorbar(scatter, ax=ax, pad=0.1, shrink=0.6)
+    cbar = fig.colorbar(scatter, ax=ax, pad=0.25, shrink=0.6)
     cbar.set_label('Color Metric', fontsize=10)
 
     # Adjust viewing angle for an optimal 3D perspective
